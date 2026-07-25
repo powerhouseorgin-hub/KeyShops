@@ -77,6 +77,14 @@ export class AuthService implements OnModuleInit {
           throw new BadRequestException('Email address already registered to another user');
         }
       }
+      if (dto.method === 'phone') {
+        const existing = await this.tenantService.prisma.user.findUnique({
+          where: { phone: dto.identifier },
+        });
+        if (existing) {
+          throw new BadRequestException('This mobile number is already registered to another shop');
+        }
+      }
     }
 
     if (dto.purpose === 'reset') {
@@ -203,8 +211,11 @@ export class AuthService implements OnModuleInit {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.tenantService.prisma.user.findUnique({
-      where: { email: loginDto.email },
+    // `loginDto.email` is either the account's email address or its mobile
+    // number - both are valid login identifiers for a Shop Admin (see
+    // RegisterShopDto/registerShop below), sharing the same password.
+    const user = await this.tenantService.prisma.user.findFirst({
+      where: { OR: [{ email: loginDto.email }, { phone: loginDto.email }] },
     });
 
     if (!user) {
@@ -306,21 +317,9 @@ export class AuthService implements OnModuleInit {
         where: { email: dto.identifier },
       });
     } else {
-      // Find shop by matching phone number in companyDetails
-      const shops = await this.tenantService.prisma.shop.findMany();
-      const matchingShop = shops.find(s => {
-        try {
-          const details = JSON.parse(s.companyDetails || '{}');
-          return details.phone && details.phone.replace(/\s+/g, '') === dto.identifier.replace(/\s+/g, '');
-        } catch (e) {
-          return false;
-        }
+      user = await this.tenantService.prisma.user.findUnique({
+        where: { phone: dto.identifier },
       });
-      if (matchingShop) {
-        user = await this.tenantService.prisma.user.findFirst({
-          where: { shopId: matchingShop.id },
-        });
-      }
     }
 
     if (!user) {
@@ -349,19 +348,32 @@ export class AuthService implements OnModuleInit {
   }
 
   // Public self-registration wizard's submit handler - two frontend steps
-  // (Step 1: shop/owner details + OTP-verified mobile; Step 2: password,
-  // plan, payment) collapse into this single call. There's no `email`
-  // field collected from the owner, so a login email is auto-generated from
-  // the verified phone number and returned to the frontend so it can be
-  // shown once on the success screen (the owner needs it to log in later).
+  // (Step 1: a single flat "Basic Details" form covering shop/owner details,
+  // email, OTP-verified mobile and password; Step 2: plan + payment)
+  // collapse into this single call. The owner-chosen email and phone are
+  // both stored as login identifiers on the User record - either can be
+  // used to sign in afterwards with the same password (see AuthService.login).
   async registerShop(dto: RegisterShopDto) {
-    const loginEmail = `${dto.phone}@keyshop.app`;
-
-    const existingUser = await this.tenantService.prisma.user.findUnique({
-      where: { email: loginEmail },
+    // Re-check uniqueness at submit time (in addition to the check already
+    // done when the OTP was sent) since time may have passed and another
+    // registration could have raced in between.
+    const existingUser = await this.tenantService.prisma.user.findFirst({
+      where: { OR: [{ email: dto.email }, { phone: dto.phone }] },
     });
     if (existingUser) {
+      if (existingUser.email === dto.email) {
+        throw new BadRequestException('This email address is already registered to another shop');
+      }
       throw new BadRequestException('This mobile number is already registered to another shop');
+    }
+
+    // Category must reference a real, still-active ShopCategory (a Super
+    // Admin may have deleted the one the client had cached in its dropdown).
+    const category = await this.tenantService.prisma.shopCategory.findFirst({
+      where: { id: dto.categoryId, deletedAt: null },
+    });
+    if (!category) {
+      throw new BadRequestException('Please select a valid shop category');
     }
 
     const salt = await bcrypt.genSalt(12);
@@ -391,14 +403,18 @@ export class AuthService implements OnModuleInit {
           // the shop owner granted location permission (see RegisterShopDto).
           latitude: dto.latitude ?? null,
           longitude: dto.longitude ?? null,
+          // Type of shop being registered, picked from the Super-Admin-curated
+          // dropdown (see ShopCategoryService).
+          categoryId: dto.categoryId,
         },
       });
 
-      // 2. Create User - login email is auto-generated (see loginEmail above),
-      // the shop owner only ever chose a password.
+      // 2. Create User - both email and phone are stored as login
+      // identifiers, sharing the single password the owner chose.
       await tx.user.create({
         data: {
-          email: loginEmail,
+          email: dto.email,
+          phone: dto.phone,
           name: dto.ownerName,
           passwordHash,
           role: Role.SHOP_ADMIN,
@@ -436,7 +452,8 @@ export class AuthService implements OnModuleInit {
       return {
         success: true,
         shopId: shop.id,
-        loginEmail,
+        loginEmail: dto.email,
+        loginPhone: dto.phone,
         message: 'Registration successful! Your shop account is now active - you can log in right away.',
       };
     });

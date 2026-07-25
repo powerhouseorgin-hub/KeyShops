@@ -12,6 +12,7 @@ import { AdModule } from './ad/ad.module';
 import { ReportModule } from './report/report.module';
 import { NotificationModule } from './notification/notification.module';
 import { PromotionModule } from './promotion/promotion.module';
+import { ShopCategoryModule } from './shop-category/shop-category.module';
 import { TenantInterceptor } from './tenant/tenant.interceptor';
 
 @Module({
@@ -26,6 +27,7 @@ import { TenantInterceptor } from './tenant/tenant.interceptor';
     ReportModule,
     NotificationModule,
     PromotionModule,
+    ShopCategoryModule,
   ],
   controllers: [AppController, GeoController],
   providers: [

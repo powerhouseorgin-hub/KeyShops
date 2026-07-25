@@ -40,6 +40,12 @@ enum PromotionType {
 model User {
   id           String        @id @default(uuid())
   email        String        @unique
+  // Login identifier alternative to email - a Shop Admin can sign in with
+  // either their email or mobile number using the same password (see
+  // AuthService.login). Nullable/unique: Super Admin accounts have no phone,
+  // and Postgres allows multiple NULLs under a unique constraint. Captured
+  // on the public self-registration wizard (see AuthService.registerShop).
+  phone        String?       @unique
   passwordHash String
   name         String
   role         Role
@@ -83,6 +89,15 @@ model Shop {
   latitude  Float?
   longitude Float?
 
+  // Type of shop being registered (e.g. "Dealers"), picked from the list of
+  // categories a Super Admin curates via the Shop Categories screen (see
+  // ShopCategoryService) and selected on the public self-registration
+  // wizard's Basic Details step. Nullable/SetNull so deleting a category
+  // doesn't cascade-delete the shops that reference it - they just become
+  // uncategorized.
+  categoryId String?
+  category   ShopCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
   users         User[]
   subscriptions Subscription[]
   customers     Customer[]
@@ -91,6 +106,25 @@ model Shop {
   masterKeys    MasterKey[]
   documents     ShopDocument[]
   promotions    Promotion[]
+
+  deletedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deletedAt])
+  @@index([categoryId])
+}
+
+// Super-Admin-managed reference list of shop "types" (e.g. Dealers) offered
+// as a dropdown on the public self-registration wizard - see
+// ShopCategoryController/Service. A "Dealers" row is seeded by migration so
+// the dropdown is never empty out of the box.
+model ShopCategory {
+  id   String @id @default(uuid())
+  name String @unique
+
+  shops Shop[]
 
   deletedAt DateTime?
 

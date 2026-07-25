@@ -314,6 +314,15 @@ export const AuthProvider = ({ children }) => {
 
     getSupportConfig: async () => request('/api/support-config'),
     updateSupportConfig: async (dto) => request('/api/super/support-config', 'POST', dto),
+
+    // --- SHOP CATEGORIES ---
+    // getShopCategories is intentionally callable pre-login (no auth header
+    // required by the backend) since it also powers the Category dropdown on
+    // the public self-registration wizard, before a token exists.
+    getShopCategories: async () => request('/api/shop-categories'),
+    createShopCategory: async (name) => request('/api/super/shop-categories', 'POST', { name }),
+    updateShopCategory: async (id, name) => request(`/api/super/shop-categories/${id}`, 'PUT', { name }),
+    deleteShopCategory: async (id) => request(`/api/super/shop-categories/${id}`, 'DELETE'),
   };
 
   return (

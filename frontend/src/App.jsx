@@ -1133,6 +1133,7 @@ export default function App() {
   const [showRegisterShop, setShowRegisterShop] = useState(false);
   const [regShopName, setRegShopName] = useState('');
   const [regOwnerName, setRegOwnerName] = useState('');
+  const [regEmail, setRegEmail] = useState('');
   const [regPhone, setRegPhone] = useState('');
   const [regLocation, setRegLocation] = useState('');
   // Raw GPS coordinates from captureShopLocation, kept alongside the
@@ -1152,15 +1153,22 @@ export default function App() {
   const [regState, setRegState] = useState('');
   const [regPinCode, setRegPinCode] = useState('');
   const [regAadhaarNumber, setRegAadhaarNumber] = useState('');
+  // Shop "type" dropdown, populated from the Super-Admin-curated list (see
+  // ShopCategoriesView) via the public GET /api/shop-categories endpoint -
+  // fetched once the registration dialog opens (see useEffect below).
+  const [regCategoryId, setRegCategoryId] = useState('');
+  const [regCategories, setRegCategories] = useState([]);
+  const [regCategoriesLoading, setRegCategoriesLoading] = useState(false);
   const [regPassword, setRegPassword] = useState('');
   const [regPlan, setRegPlan] = useState('MONTHLY'); // 'MONTHLY' | 'HALF_YEARLY' | 'YEARLY'
   const [regError, setRegError] = useState('');
   const [regSuccessMessage, setRegSuccessMessage] = useState('');
-  // Auto-generated login identifier returned by the backend (there's no
-  // email field in this flow - see AuthService.registerShop) - shown once
-  // on the success screen so the owner knows how to log in later.
+  // Login email returned by the backend (echoes dto.email - see
+  // AuthService.registerShop) - shown once on the success screen so the
+  // owner knows they can log in with either this email or their mobile
+  // number, both sharing the one password set in Step 1.
   const [regLoginEmail, setRegLoginEmail] = useState('');
-  const [regStep, setRegStep] = useState(1); // 1: Shop & owner details (+ mobile OTP), 2: Password, plan & payment
+  const [regStep, setRegStep] = useState(1); // 1: Owner/shop details, email, mobile OTP & password, 2: Plan & payment
   // Pre-login shop signup wizard: Back steps back one stage while mid-flow,
   // same as the authenticated CustomerRegistrationWizard above. At step 1
   // there's nothing to intercept, so Back correctly falls through to the
@@ -1201,6 +1209,18 @@ export default function App() {
       fetchNotifications();
     }
   }, [isAuthenticated, user]);
+
+  // Populate the registration wizard's Category dropdown as soon as the
+  // dialog opens - this must work pre-login, since self-registration has no
+  // auth token yet (see api.getShopCategories).
+  useEffect(() => {
+    if (!showRegisterShop) return;
+    setRegCategoriesLoading(true);
+    api.getShopCategories()
+      .then((cats) => setRegCategories(cats || []))
+      .catch((e) => console.error('Failed to load shop categories:', e))
+      .finally(() => setRegCategoriesLoading(false));
+  }, [showRegisterShop]);
 
 
 
@@ -1389,6 +1409,8 @@ export default function App() {
       const res = await api.registerShop({
         shopName: regShopName,
         ownerName: regOwnerName,
+        categoryId: regCategoryId,
+        email: regEmail,
         phone: regPhone,
         location: regLocation,
         city: regCity,
@@ -1415,6 +1437,7 @@ export default function App() {
     setShowRegisterShop(false);
     setRegShopName('');
     setRegOwnerName('');
+    setRegEmail('');
     setRegPhone('');
     setRegLocation('');
     setRegLat(null);
@@ -1426,6 +1449,7 @@ export default function App() {
     setRegState('');
     setRegPinCode('');
     setRegAadhaarNumber('');
+    setRegCategoryId('');
     setRegPassword('');
     setRegPlan('MONTHLY');
     setRegError('');
@@ -1542,11 +1566,11 @@ export default function App() {
                 <div className="reg-section">
                   <div className="reg-section-head"><div className="reg-num">1</div><h3>Sign In Details</h3></div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>Email Address <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>Email or Mobile Number <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
-                        type="email" required value={authEmail} onChange={(e) => setAuthEmail(e.target.value)}
-                        placeholder="admin@keyshop.com or shop@keyshop.com"
+                        type="text" required value={authEmail} onChange={(e) => setAuthEmail(e.target.value)}
+                        placeholder="Email address or mobile number"
                       />
                     </div>
                   </div>
@@ -1837,9 +1861,10 @@ export default function App() {
             {regLoginEmail && (
               <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 20 }}>
                 <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                  Your login email
+                  You can log in with either
                 </p>
                 <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800 }}>{regLoginEmail}</p>
+                {regPhone && <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800, marginTop: 2 }}>{regPhone}</p>}
               </div>
             )}
             <button
@@ -1854,13 +1879,6 @@ export default function App() {
           </div>
         ) : (
           <div>
-            {/* Step Progress indicator - two steps */}
-            <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 14, marginBottom: 18, fontSize: 10.5 }}>
-              <span style={{ color: regStep === 1 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>1. Shop Details</span>
-              <ChevronRight className="h-3 w-3" style={{ color: 'var(--text-3)' }} />
-              <span style={{ color: regStep === 2 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>2. Plan &amp; Payment</span>
-            </div>
-
             {regError && (
               <div style={{ display: 'flex', gap: 8, background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', padding: 10, borderRadius: 12, fontSize: 12, color: '#b91c1c', fontWeight: 600, marginBottom: 16 }}>
                 <AlertTriangle className="h-4 w-4 shrink-0" />
@@ -1868,14 +1886,14 @@ export default function App() {
               </div>
             )}
 
-            {/* STEP 1: Shop & owner details (matches the public registration screenshot),
-                including inline mobile OTP verification - not a separate step. */}
+            {/* STEP 1: Basic Details - a single flat form (no section labels),
+                matching the app's registration screenshot, including inline
+                mobile OTP verification and password - not separate steps. */}
             {regStep === 1 && (
               <div>
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">1</div><h3>Owner &amp; Shop Details</h3></div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>Owner Name <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>Name <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="text" required value={regOwnerName} onChange={(e) => setRegOwnerName(e.target.value)}
@@ -1983,10 +2001,28 @@ export default function App() {
                       />
                     </div>
                   </div>
-                </div>
-
-                <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">2</div><h3>Mobile Verification</h3></div>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange, #f59e0b)' }}><Tag /></div><b>Category <span className="req">*</span></b></div>
+                    <select
+                      className="sel"
+                      required value={regCategoryId} onChange={(e) => setRegCategoryId(e.target.value)}
+                      disabled={regCategoriesLoading}
+                    >
+                      <option value="">{regCategoriesLoading ? 'Loading categories…' : 'Select shop category'}</option>
+                      {regCategories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>Email Address <span className="req">*</span></b></div>
+                    <div className="input-wrap">
+                      <input
+                        type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
+                        placeholder="you@example.com"
+                      />
+                    </div>
+                  </div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Mobile Number <span className="req">*</span></b></div>
                     <div className="input-wrap">
@@ -2041,14 +2077,36 @@ export default function App() {
                       </button>
                     </div>
                   )}
+
+                  <div className="reg-field" style={{ marginTop: 13 }}>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>Password <span className="req">*</span></b></div>
+                    <div className="input-wrap">
+                      <input
+                        type={showRegPassword ? "text" : "password"} required minLength={6} value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
+                        placeholder="Min 6 characters" style={{ paddingRight: 42 }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowRegPassword(!showRegPassword)}
+                        className="pwd-toggle-btn"
+                        style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }}
+                      >
+                        {showRegPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex justify-end" style={{ marginTop: 20 }}>
                   <button
                     type="button"
                     onClick={() => {
-                      if (!regShopName || !regOwnerName || !regPhone || !regLocation || !regCity || !regState || !regPinCode) {
+                      if (!regShopName || !regOwnerName || !regCategoryId || !regEmail || !regPhone || !regLocation || !regCity || !regState || !regPinCode) {
                         alert('Please fill out all required registration fields.');
+                        return;
+                      }
+                      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
+                        alert('Please enter a valid email address.');
                         return;
                       }
                       if (!PHONE_REGEX.test(regPhone)) {
@@ -2067,6 +2125,10 @@ export default function App() {
                         alert('Please verify your mobile number with the OTP before continuing.');
                         return;
                       }
+                      if (!regPassword || regPassword.length < 6) {
+                        alert('Password must be at least 6 characters.');
+                        return;
+                      }
                       setRegStep(2);
                     }}
                     className="btn btn-primary reg-submit-btn"
@@ -2077,30 +2139,9 @@ export default function App() {
               </div>
             )}
 
-            {/* STEP 2a: Password & Plan */}
+            {/* STEP 2a: Plan selection */}
             {regStep === 2 && !regShowPayment && (
               <div>
-                <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">1</div><h3>Account Password</h3></div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>Create Password <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type={showRegPassword ? "text" : "password"} required minLength={6} value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
-                        placeholder="Min 6 characters" style={{ paddingRight: 42 }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowRegPassword(!showRegPassword)}
-                        className="pwd-toggle-btn"
-                        style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }}
-                      >
-                        {showRegPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
                 <div style={{ marginBottom: 20 }}>
                   <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>Choose subscription plan</label>
                   <div className="store-tabs" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
@@ -2140,13 +2181,7 @@ export default function App() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      if (!regPassword || regPassword.length < 6) {
-                        alert('Password must be at least 6 characters.');
-                        return;
-                      }
-                      setRegShowPayment(true);
-                    }}
+                    onClick={() => setRegShowPayment(true)}
                     className="btn btn-primary"
                   >
                     Continue to payment <ArrowRight />
@@ -8094,8 +8129,21 @@ export function SupportConfigView({ t, api }) {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Shop Categories management - the Super-Admin-curated list of shop
+  // "types" (e.g. Dealers) that populates the Category dropdown on the
+  // public self-registration wizard. Kept independent from the
+  // whatsapp/videos form above: its own fetch, its own save-per-action.
+  const [categories, setCategories] = useState([]);
+  const [catLoading, setCatLoading] = useState(true);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [addingCategory, setAddingCategory] = useState(false);
+  const [editingCatId, setEditingCatId] = useState(null);
+  const [editingCatName, setEditingCatName] = useState('');
+  const [savingCatId, setSavingCatId] = useState(null);
+
   useEffect(() => {
     fetchConfig();
+    fetchCategories();
   }, []);
 
   const fetchConfig = async () => {
@@ -8120,6 +8168,71 @@ export function SupportConfigView({ t, api }) {
       alert(`Save failed: ${e.message}`);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const fetchCategories = async () => {
+    try {
+      const res = await api.getShopCategories();
+      setCategories(res || []);
+    } catch (e) {
+      console.error('Failed to load shop categories:', e);
+    } finally {
+      setCatLoading(false);
+    }
+  };
+
+  const handleAddCategory = async () => {
+    const name = newCategoryName.trim();
+    if (!name) {
+      alert('Please enter a category name.');
+      return;
+    }
+    setAddingCategory(true);
+    try {
+      await api.createShopCategory(name);
+      setNewCategoryName('');
+      await fetchCategories();
+    } catch (e) {
+      alert(`Failed to add category: ${e.message}`);
+    } finally {
+      setAddingCategory(false);
+    }
+  };
+
+  const handleStartEditCategory = (cat) => {
+    setEditingCatId(cat.id);
+    setEditingCatName(cat.name);
+  };
+
+  const handleSaveEditCategory = async (id) => {
+    const name = editingCatName.trim();
+    if (!name) {
+      alert('Please enter a category name.');
+      return;
+    }
+    setSavingCatId(id);
+    try {
+      await api.updateShopCategory(id, name);
+      setEditingCatId(null);
+      await fetchCategories();
+    } catch (e) {
+      alert(`Failed to update category: ${e.message}`);
+    } finally {
+      setSavingCatId(null);
+    }
+  };
+
+  const handleDeleteCategory = async (cat) => {
+    if (!confirm(`Delete the "${cat.name}" category? Shops already using it keep it, but it will no longer be offered on the registration form.`)) return;
+    setSavingCatId(cat.id);
+    try {
+      await api.deleteShopCategory(cat.id);
+      await fetchCategories();
+    } catch (e) {
+      alert(`Failed to delete category: ${e.message}`);
+    } finally {
+      setSavingCatId(null);
     }
   };
 
@@ -8235,6 +8348,76 @@ export function SupportConfigView({ t, api }) {
             </button>
           </div>
         </form>
+      </div>
+
+      <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
+        <div className="reg-section" style={{ marginBottom: 0 }}>
+          <div className="reg-section-head">
+            <div className="reg-num">3</div>
+            <h3 style={{ flex: 1 }}>Shop Categories</h3>
+            <span className="sub" style={{ marginRight: 10 }}>{categories.length} categor{categories.length === 1 ? 'y' : 'ies'}</span>
+          </div>
+          <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
+            Manage the shop "type" options offered on the public self-registration wizard's Category dropdown.
+          </p>
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            <input
+              type="text" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)}
+              placeholder="e.g. Dealers" style={{ flex: 1 }}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCategory(); } }}
+            />
+            <button type="button" onClick={handleAddCategory} disabled={addingCategory} className="btn btn-outline btn-sm">
+              {addingCategory ? <RefreshCw className="animate-spin" /> : <Plus />} Add
+            </button>
+          </div>
+
+          {catLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
+              <RefreshCw className="animate-spin" style={{ width: 22, height: 22, color: 'var(--gold)' }} />
+            </div>
+          ) : categories.length === 0 ? (
+            <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
+              No shop categories yet. Add one above - the registration form's dropdown will be empty until you do.
+            </p>
+          ) : (
+            <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
+              {categories.map((cat) => (
+                <div key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
+                  {editingCatId === cat.id ? (
+                    <>
+                      <input
+                        type="text" value={editingCatName} onChange={(e) => setEditingCatName(e.target.value)}
+                        style={{ flex: 1 }} autoFocus
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSaveEditCategory(cat.id); } }}
+                      />
+                      <button type="button" onClick={() => handleSaveEditCategory(cat.id)} disabled={savingCatId === cat.id} className="icon-btn" title="Save" style={{ color: 'var(--jgreen)' }}>
+                        {savingCatId === cat.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4" />}
+                      </button>
+                      <button type="button" onClick={() => setEditingCatId(null)} className="icon-btn" title="Cancel">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Tag style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
+                      <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{cat.name}</span>
+                      <button type="button" onClick={() => handleStartEditCategory(cat)} className="icon-btn" title="Edit">
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button" onClick={() => handleDeleteCategory(cat)} disabled={savingCatId === cat.id}
+                        className="icon-btn" style={{ color: 'var(--red)' }} title="Delete"
+                      >
+                        {savingCatId === cat.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

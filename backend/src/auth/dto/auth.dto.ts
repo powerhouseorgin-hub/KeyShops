@@ -2,8 +2,13 @@ import { IsEmail, IsNotEmpty, IsString, IsOptional, MinLength, Matches, IsNumber
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
 
 export class LoginDto {
-  @IsEmail({}, { message: 'Please enter a valid email address' })
-  @IsNotEmpty({ message: 'Email address is required' })
+  // Accepts either the account's email address OR its mobile number - both
+  // are valid login identifiers sharing the same password (see
+  // AuthService.login). Kept as `email` (rather than renaming to
+  // `identifier`) to avoid a breaking API change; validation is relaxed to
+  // a plain non-empty string since a phone number isn't valid email format.
+  @IsString()
+  @IsNotEmpty({ message: 'Email address or mobile number is required' })
   email: string;
 
   @IsString()
@@ -78,13 +83,12 @@ export class VerifyOtpDto {
 }
 
 // Public self-registration wizard's payload - two steps on the frontend:
-// Step 1 (shop/owner details, matches the app's registration screenshot -
-// name, shop name, address+GPS, city, state, PIN code, optional Aadhaar
-// number, OTP-verified mobile number) and Step 2 (password, plan, payment).
-// There's no `email` field - login credentials aren't collected from the
-// shop owner directly; AuthService.registerShop() auto-generates a login
-// email from the verified phone number and returns it in the response so
-// it can be shown to the owner once (see the Step 2 success screen).
+// Step 1 (basic details - name, shop name, address+GPS, city, state, PIN
+// code, optional Aadhaar number, email, OTP-verified mobile number,
+// password, all in one flat form) and Step 2 (plan + payment only).
+// Both email and phone double as login identifiers post-registration (see
+// AuthService.login) and must each be unique across all shop accounts -
+// enforced in AuthService.registerShop().
 export class RegisterShopDto {
   @IsString()
   @IsNotEmpty()
@@ -94,10 +98,21 @@ export class RegisterShopDto {
   @IsNotEmpty()
   ownerName: string;
 
+  @IsEmail({}, { message: 'Please enter a valid email address' })
+  @IsNotEmpty({ message: 'Email address is required' })
+  email: string;
+
   @IsString()
   @IsNotEmpty()
   @Matches(PHONE_REGEX, { message: PHONE_REGEX_MESSAGE })
   phone: string;
+
+  // References a ShopCategory row (see shop-category module), picked from
+  // the Super-Admin-curated dropdown on the registration form. Defines what
+  // "type" of shop this account is (e.g. Dealers).
+  @IsString()
+  @IsNotEmpty({ message: 'Please select a shop category' })
+  categoryId: string;
 
   @IsString()
   @IsNotEmpty()
