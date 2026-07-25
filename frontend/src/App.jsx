@@ -1564,7 +1564,6 @@ export default function App() {
 
               <form onSubmit={handleLoginSubmit}>
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">1</div><h3>Sign In Details</h3></div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>Email or Mobile Number <span className="req">*</span></b></div>
                     <div className="input-wrap">
@@ -3686,7 +3685,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
             <form onSubmit={handleCreateShopSubmit}>
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">1</div><h3>Shop Info</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>Shop Name <span className="req">*</span></b></div>
                   <div className="input-wrap">
@@ -3708,7 +3706,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">2</div><h3>Owner Details</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><User /></div><b>Admin Full Name <span className="req">*</span></b></div>
                   <div className="input-wrap">
@@ -3772,7 +3769,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">3</div><h3>Subscription</h3></div>
                 <div className="form-grid">
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>Subscription Plan <span className="req">*</span></b></div>
@@ -3797,7 +3793,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">4</div><h3>Upload Shop Documents</h3></div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
                     <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--purple)' }}><Camera /></div><b>Shop Photo <span className="req">*</span></b></div>
@@ -3889,7 +3884,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
             <form onSubmit={handleEditShopSubmit}>
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">1</div><h3>Workspace Details</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>Workspace Name <span className="req">*</span></b></div>
                   <div className="input-wrap">
@@ -3901,7 +3895,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">2</div><h3>Contact &amp; Location</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Phone Number <span className="req">*</span></b></div>
                   <div className="input-wrap">
@@ -3922,7 +3915,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">3</div><h3>Verification Documents Review</h3></div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {/* Shop Photo */}
                   <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 10, borderRadius: 14, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 8 }}>
@@ -4046,7 +4038,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
             <form onSubmit={handleUpdateSubscriptionSubmit}>
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">1</div><h3>Plan &amp; Validity</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>Plan Tier <span className="req">*</span></b></div>
                   <select
@@ -4468,7 +4459,6 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             </div>
 
             <div className="reg-section">
-              <div className="reg-section-head"><div className="reg-num">1</div><h3>Contact &amp; Identity</h3></div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Phone /></div><b>Phone Contact</b></div>
@@ -4490,7 +4480,6 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             </div>
 
             <div className="reg-section">
-              <div className="reg-section-head"><div className="reg-num">2</div><h3>Verification &amp; Location</h3></div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Fingerprint /></div><b>ID Verification</b></div>
@@ -4533,7 +4522,6 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             </div>
 
             <div className="reg-section" style={{ marginBottom: 0 }}>
-              <div className="reg-section-head"><div className="reg-num">3</div><h3>Documents &amp; Photo</h3></div>
               <div className="reg-field">
                 <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Camera /></div><b>Webcam Photo</b></div>
                 {viewCust.photoUrl ? (
@@ -4797,7 +4785,6 @@ function KeysCatalogView({ api, searchDispatch }) {
 
             {editKey && (
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">1</div><h3>Linked Records</h3></div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Hash /></div><b>Key Number / Code</b></div>
@@ -4829,7 +4816,6 @@ function KeysCatalogView({ api, searchDispatch }) {
 
             <form onSubmit={handleSubmit}>
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">{editKey ? 2 : 1}</div><h3>Key Identity</h3></div>
                 <div className="form-grid">
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Hash /></div><b>Key Code <span className="req">*</span></b></div>
@@ -4853,7 +4839,6 @@ function KeysCatalogView({ api, searchDispatch }) {
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">{editKey ? 3 : 2}</div><h3>Reference Image</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Camera /></div><b>Back Image URL</b></div>
                   <div className="input-wrap">
@@ -5718,7 +5703,6 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
 
             <form onSubmit={handleSubmit}>
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">1</div><h3>Listing Details</h3></div>
 
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Tag /></div><b>Name <span className="req">*</span></b></div>
@@ -5751,7 +5735,6 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">2</div><h3>Media &amp; Pricing</h3></div>
 
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><ImageIcon /></div><b>{type === 'PRODUCT' ? 'Product Photo (optional)' : 'Image / Media (optional)'}</b></div>
@@ -5813,7 +5796,6 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
 
               {type === 'OFFER' && (
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">3</div><h3>Offer Terms</h3></div>
 
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Percent /></div><b>Discount Percentage (optional)</b></div>
@@ -5970,7 +5952,6 @@ function PricingOffersView({ api }) {
         ) : (
           <form onSubmit={handleUpdatePrices}>
             <div className="reg-section">
-              <div className="reg-section-head"><div className="reg-num">1</div><h3>Subscription Rates</h3></div>
 
               <div className="reg-field">
                 <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><IndianRupee /></div><b>Monthly Recurring Plan (&#8377;) <span className="req">*</span></b></div>
@@ -6153,7 +6134,6 @@ function RevenueManagementView({ api }) {
 
           <form onSubmit={handleSubmit}>
             <div className="reg-section">
-              <div className="reg-section-head"><div className="reg-num">1</div><h3>Collection Period</h3></div>
 
               <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
@@ -6181,7 +6161,6 @@ function RevenueManagementView({ api }) {
             </div>
 
             <div className="reg-section">
-              <div className="reg-section-head"><div className="reg-num">2</div><h3>Payout Details</h3></div>
 
               <div className="reg-field">
                 <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><IndianRupee /></div><b>Amount Collected (&#8377;) <span className="req">*</span></b></div>
@@ -6349,7 +6328,6 @@ function KeysSearchView({ api, searchDispatch }) {
       </div>
 
       <div className="reg-section" style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
-        <div className="reg-section-head"><div className="reg-num">1</div><h3>Search Registry</h3></div>
         <div className="reg-field" style={{ marginBottom: 0 }}>
           <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Search /></div><b>Key Code, Vehicle No, or Category</b></div>
           <div className="search-box" style={{ width: '100%', minWidth: 0, background: 'var(--card-2)' }}>
@@ -6438,7 +6416,6 @@ function KeysSearchView({ api, searchDispatch }) {
             </div>
 
             <div className="reg-section">
-              <div className="reg-section-head"><div className="reg-num">1</div><h3>Key Specification</h3></div>
               <div className="reg-field" style={{ marginBottom: selectedResult.keySpec.backImageUrl ? 13 : 0 }}>
                 <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Tag /></div><b>Lock Category</b></div>
                 <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-0)' }}>{selectedResult.keySpec.category}</span>
@@ -6455,7 +6432,6 @@ function KeysSearchView({ api, searchDispatch }) {
             {/* ASSOCIATED CUSTOMER REGISTRY SECTION */}
             {selectedResult.customer && (
               <div className="reg-section" style={{ marginBottom: 0 }}>
-                <div className="reg-section-head"><div className="reg-num">2</div><h3>Associated Customer Compliance Record</h3></div>
 
                 {(user?.role === 'SUPER_ADMIN' || selectedResult.customer.shopId === user?.shopId) ? (
                   <>
@@ -7046,7 +7022,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
               {superAdminMode && (
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">1</div><h3>Shop Assignment</h3></div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Store /></div><b>Shop <span className="req">*</span></b></div>
                     <select className="sel" required value={selectedShopId} onChange={(e) => setSelectedShopId(e.target.value)}>
@@ -7075,7 +7050,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               )}
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">{superAdminMode ? 2 : 1}</div><h3>Customer &amp; Vehicle</h3></div>
                 <div className="form-grid">
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>Full Customer Name <span className="req">*</span></b></div>
@@ -7093,7 +7067,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">{superAdminMode ? 3 : 2}</div><h3>Key &amp; Contact</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Code / Key Number <span className="req">*</span></b></div>
                   <div className="input-wrap">
@@ -7151,7 +7124,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">{superAdminMode ? 4 : 3}</div><h3>Address &amp; Location</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label">
                     <div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div>
@@ -7278,7 +7250,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               <p className="desc">Capture a live photo via webcam, or upload an existing image for the compliance record.</p>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">1</div><h3>Live Photo Capture</h3></div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22 }}>
                   <div className="capture-preview" style={{ width: 260, height: 200, borderRadius: 20, overflow: 'hidden', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     {isWebcamActive ? (
@@ -7340,7 +7311,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               <p className="desc">Upload a copy of the government ID proof used to verify this customer.</p>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">1</div><h3>Document Type</h3></div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>Document Type</b></div>
                   <select className="sel" value={idProofType} onChange={(e) => setIdProofType(e.target.value)}>
@@ -7353,7 +7323,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">2</div><h3>Upload Copy</h3></div>
                 <label htmlFor="docUploadInput" className="dropzone">
                   <div className="icon-badge orange"><UploadCloud className="h-5 w-5" /></div>
                   <div className="dz-title">Drop or browse a copy of {idProofType}</div>
@@ -7393,7 +7362,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               <p className="desc">Verify every detail entered below before submitting this compliance registration. Nothing is captured or modified automatically on this step.</p>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">1</div><h3>Customer &amp; Key</h3></div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
                     <div className="icon-badge purple" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><User style={{ width: 16, height: 16 }} /></div>
@@ -7434,7 +7402,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               </div>
 
               <div className="reg-section">
-                <div className="reg-section-head"><div className="reg-num">2</div><h3>Compliance Documents</h3></div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
                     <div className="icon-badge skyblue" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Fingerprint style={{ width: 16, height: 16 }} /></div>
@@ -7647,9 +7614,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
           mounted the whole time and keeps focus. */}
       <div className="card table-card">
         <div className="table-head">
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 17 }}>
-            Registration Log <span style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 13 }}>({customers.length})</span>
-          </h2>
           <div className="search-box">
             <Search />
             <input
@@ -7740,7 +7704,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
             {!isEditing ? (
               <>
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">1</div><h3>Contact &amp; Identity</h3></div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="reg-field">
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Phone /></div><b>Phone Contact</b></div>
@@ -7762,7 +7725,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 </div>
 
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">2</div><h3>Location Verification</h3></div>
                   <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 16, padding: 14 }}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -7794,7 +7756,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 </div>
 
                 <div className="reg-section" style={{ marginBottom: 0 }}>
-                  <div className="reg-section-head"><div className="reg-num">3</div><h3>Documents &amp; Photo</h3></div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Camera /></div><b>Webcam Photo</b></div>
                     {selectedCust.photoUrl ? (
@@ -7847,7 +7808,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
             ) : (
               <form onSubmit={handleSaveChanges}>
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">1</div><h3>Identity &amp; Contact</h3></div>
                   <div className="form-grid">
                     <div className="reg-field">
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>Full Customer Name</b></div>
@@ -7865,7 +7825,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 </div>
 
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">2</div><h3>Vehicle &amp; Key</h3></div>
                   <div className="form-grid">
                     <div className="reg-field">
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>Vehicle Number</b></div>
@@ -7883,7 +7842,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 </div>
 
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">3</div><h3>Manual Address Details</h3></div>
 
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>Address Line</b></div>
@@ -7915,7 +7873,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 </div>
 
                 <div className="reg-section" style={{ marginBottom: 0 }}>
-                  <div className="reg-section-head"><div className="reg-num">4</div><h3>Update ID Verification Document</h3></div>
                   <div className="form-grid">
                     <div className="reg-field">
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><ShieldCheck /></div><b>Document ID Type</b></div>
@@ -8258,7 +8215,6 @@ export function SupportConfigView({ t, api }) {
       <div className="card" style={{ maxWidth: 720 }}>
         <form onSubmit={handleSave}>
           <div className="reg-section">
-            <div className="reg-section-head"><div className="reg-num">1</div><h3>Support Contact Channel</h3></div>
             <div className="reg-field" style={{ marginBottom: 0 }}>
               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><MessageCircle /></div><b>Customer Support WhatsApp Number <span className="req">*</span></b></div>
               <div className="input-wrap">
@@ -8271,9 +8227,7 @@ export function SupportConfigView({ t, api }) {
           </div>
 
           <div className="reg-section" style={{ marginBottom: 0 }}>
-            <div className="reg-section-head">
-              <div className="reg-num">2</div>
-              <h3 style={{ flex: 1 }}>Support &amp; Training Videos</h3>
+            <div className="reg-section-head" style={{ justifyContent: 'flex-end' }}>
               <span className="sub" style={{ marginRight: 10 }}>{videos.length} video{videos.length === 1 ? '' : 's'}</span>
               <button
                 type="button"
@@ -8352,9 +8306,7 @@ export function SupportConfigView({ t, api }) {
 
       <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
         <div className="reg-section" style={{ marginBottom: 0 }}>
-          <div className="reg-section-head">
-            <div className="reg-num">3</div>
-            <h3 style={{ flex: 1 }}>Shop Categories</h3>
+          <div className="reg-section-head" style={{ justifyContent: 'flex-end' }}>
             <span className="sub" style={{ marginRight: 10 }}>{categories.length} categor{categories.length === 1 ? 'y' : 'ies'}</span>
           </div>
           <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
@@ -8667,7 +8619,6 @@ function ShopSettingsView({ t, api }) {
 
         <form onSubmit={handleUpdate}>
           <div className="reg-section">
-            <div className="reg-section-head"><div className="reg-num">1</div><h3>Workspace Identity</h3></div>
             <div className="reg-field">
               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>Workspace Display Name <span className="req">*</span></b></div>
               <div className="input-wrap">
@@ -8692,7 +8643,6 @@ function ShopSettingsView({ t, api }) {
 
           {/* Shop Verification Documents Section */}
           <div className="reg-section" style={{ marginBottom: 0 }}>
-            <div className="reg-section-head"><div className="reg-num">2</div><h3>Shop Verification Documents</h3></div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {[
@@ -8789,7 +8739,6 @@ function ShopSettingsView({ t, api }) {
         </div>
 
         <div className="reg-section">
-          <div className="reg-section-head"><div className="reg-num">1</div><h3>Account Info</h3></div>
           <div className="reg-field" style={{ marginBottom: 12 }}>
             <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>Username / Name</b></div>
             <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)', fontFamily: 'var(--display)' }}>{user.name}</p>
@@ -8805,7 +8754,6 @@ function ShopSettingsView({ t, api }) {
         </div>
 
         <div className="reg-section" style={{ marginBottom: 0 }}>
-          <div className="reg-section-head"><div className="reg-num">2</div><h3>Account Security</h3></div>
           <div className="reg-field" style={{ marginBottom: 14 }}>
             <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><KeyRound /></div><b>Workspace Password</b></div>
             <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '10px 14px' }}>
@@ -9150,7 +9098,6 @@ export function ReportsPortalView({ t, api }) {
 
         <form onSubmit={handleGenerate}>
           <div className="reg-section">
-            <div className="reg-section-head"><div className="reg-num">1</div><h3>Report Date Range</h3></div>
             <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <div className="reg-field" style={{ marginBottom: 0 }}>
                 <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>From Date</b></div>
