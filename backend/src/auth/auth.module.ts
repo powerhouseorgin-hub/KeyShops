@@ -5,7 +5,6 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { RolesGuard } from './roles.guard';
-import { FileModule } from '../common/file.module';
 
 @Module({
   imports: [
@@ -14,7 +13,6 @@ import { FileModule } from '../common/file.module';
       secret: process.env.JWT_SECRET || 'kee-jwt-super-secret-key-2026-phase-1',
       signOptions: { expiresIn: '24h' },
     }),
-    FileModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, RolesGuard],

@@ -43,7 +43,6 @@ export class ShopService {
       const shop = await tx.shop.create({
         data: {
           name: dto.name,
-          logoUrl: dto.logoUrl,
           companyDetails: dto.companyDetails,
           themeColor: dto.themeColor || '#9C27B0',
         },
@@ -187,7 +186,6 @@ export class ShopService {
       select: {
         id: true,
         name: true,
-        logoUrl: true,
         themeColor: true,
         companyDetails: true,
         createdAt: true,
@@ -211,7 +209,6 @@ export class ShopService {
       return {
         id: shop.id,
         name: shop.name,
-        logoUrl: shop.logoUrl,
         themeColor: shop.themeColor,
         address,
         phone,

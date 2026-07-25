@@ -63,11 +63,17 @@ model User {
 model Shop {
   id             String  @id @default(uuid())
   name           String
-  logoUrl        String?
-  companyDetails String? // Stores JSON or text details (GST, address, phone, etc. - NOT documents, see ShopDocument)
+  companyDetails String? // Stores JSON or text details (GST, address, city, state, pinCode, phone, etc. - NOT documents, see ShopDocument)
   themeColor     String  @default("#9C27B0")
   isActive       Boolean @default(true)
   storageUsed    BigInt  @default(0) // bytes
+
+  // Owner's Aadhaar (Indian ID) number, captured as a plain 12-digit number
+  // field on the public self-registration wizard's Step 1 (screenshot-driven
+  // redesign) rather than as an uploaded document. Encrypted at rest via
+  // CryptoService, mirroring Customer.idProofNumber's pattern - see
+  // AuthService.registerShop().
+  aadhaarNumber String?
 
   // GPS coordinates captured via the "Current Location" button on the public
   // self-registration wizard's Shop Details step (see captureShopLocation in

@@ -6,15 +6,14 @@ import * as nodemailer from 'nodemailer';
 import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto } from './dto/auth.dto';
 import { Role } from '@prisma/client';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
-import { FileService } from '../customer/file.service';
-import { persistShopDocuments } from '../common/shop-document.util';
+import { CryptoService } from '../crypto/crypto.service';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
   constructor(
     private readonly tenantService: TenantService,
     private readonly jwtService: JwtService,
-    private readonly fileService: FileService,
+    private readonly cryptoService: CryptoService,
   ) {}
 
   async onModuleInit() {
@@ -349,12 +348,20 @@ export class AuthService implements OnModuleInit {
     return { success: true, message: 'Password reset successfully' };
   }
 
+  // Public self-registration wizard's submit handler - two frontend steps
+  // (Step 1: shop/owner details + OTP-verified mobile; Step 2: password,
+  // plan, payment) collapse into this single call. There's no `email`
+  // field collected from the owner, so a login email is auto-generated from
+  // the verified phone number and returned to the frontend so it can be
+  // shown once on the success screen (the owner needs it to log in later).
   async registerShop(dto: RegisterShopDto) {
+    const loginEmail = `${dto.phone}@keyshop.app`;
+
     const existingUser = await this.tenantService.prisma.user.findUnique({
-      where: { email: dto.email },
+      where: { email: loginEmail },
     });
     if (existingUser) {
-      throw new BadRequestException('Email address already registered to another user');
+      throw new BadRequestException('This mobile number is already registered to another shop');
     }
 
     const salt = await bcrypt.genSalt(12);
@@ -368,16 +375,18 @@ export class AuthService implements OnModuleInit {
           name: dto.shopName,
           themeColor: '#8C24FF',
           isActive: true,
-          // NOTE: shopPhoto/shopLicense/ownerAadhaar are NOT stored here anymore -
-          // they're persisted as real files + ShopDocument rows below (see
-          // persistShopDocuments). companyDetails now only holds free-text
-          // contact/registration fields.
           companyDetails: JSON.stringify({
             address: dto.location || 'Pending registration details',
+            city: dto.city,
+            state: dto.state,
+            pinCode: dto.pinCode,
             gst: 'Pending',
             phone: dto.phone,
-            whatsappNumber: dto.whatsappNumber || '',
           }),
+          // Owner Aadhaar is a plain 12-digit number on this wizard (not an
+          // uploaded document) - encrypted at rest, see CustomerService's
+          // idProofNumber for the same pattern.
+          aadhaarNumber: dto.aadhaarNumber ? this.cryptoService.encrypt(dto.aadhaarNumber) : null,
           // GPS coordinates from the wizard's "Current Location" button, when
           // the shop owner granted location permission (see RegisterShopDto).
           latitude: dto.latitude ?? null,
@@ -385,18 +394,11 @@ export class AuthService implements OnModuleInit {
         },
       });
 
-      // 1b. Persist uploaded documents (shop photo, shop license, owner Aadhaar)
-      // as ShopDocument rows instead of embedding base64 in companyDetails.
-      await persistShopDocuments(this.fileService, tx, shop.id, {
-        shopPhoto: dto.shopPhoto,
-        shopLicense: dto.shopLicense,
-        ownerAadhaar: dto.ownerAadhaar,
-      });
-
-      // 2. Create User
+      // 2. Create User - login email is auto-generated (see loginEmail above),
+      // the shop owner only ever chose a password.
       await tx.user.create({
         data: {
-          email: dto.email,
+          email: loginEmail,
           name: dto.ownerName,
           passwordHash,
           role: Role.SHOP_ADMIN,
@@ -431,7 +433,12 @@ export class AuthService implements OnModuleInit {
         },
       });
 
-      return { success: true, shopId: shop.id, message: 'Registration successful! Your shop account is now active - you can log in right away.' };
+      return {
+        success: true,
+        shopId: shop.id,
+        loginEmail,
+        message: 'Registration successful! Your shop account is now active - you can log in right away.',
+      };
     });
   }
 }

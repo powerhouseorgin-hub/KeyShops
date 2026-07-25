@@ -303,11 +303,7 @@ function ShopResultCard({ shop, index }) {
   return (
     <Reveal delay={index * 50} className="card public-shop-card">
       <div className="public-shop-card-top">
-        {shop.logoUrl ? (
-          <img src={shop.logoUrl} alt={shop.name} className="public-shop-logo" />
-        ) : (
-          <div className="icon-badge solid"><Store /></div>
-        )}
+        <div className="icon-badge solid"><Store /></div>
         <div>
           <h3>{shop.name}</h3>
           <span className="pill-badge" style={{ animation: 'none', padding: '4px 10px 4px 8px', fontSize: 11 }}>

@@ -77,6 +77,14 @@ export class VerifyOtpDto {
   code: string;
 }
 
+// Public self-registration wizard's payload - two steps on the frontend:
+// Step 1 (shop/owner details, matches the app's registration screenshot -
+// name, shop name, address+GPS, city, state, PIN code, optional Aadhaar
+// number, OTP-verified mobile number) and Step 2 (password, plan, payment).
+// There's no `email` field - login credentials aren't collected from the
+// shop owner directly; AuthService.registerShop() auto-generates a login
+// email from the verified phone number and returns it in the response so
+// it can be shown to the owner once (see the Step 2 success screen).
 export class RegisterShopDto {
   @IsString()
   @IsNotEmpty()
@@ -86,14 +94,38 @@ export class RegisterShopDto {
   @IsNotEmpty()
   ownerName: string;
 
-  @IsEmail()
-  @IsNotEmpty()
-  email: string;
-
   @IsString()
   @IsNotEmpty()
   @Matches(PHONE_REGEX, { message: PHONE_REGEX_MESSAGE })
   phone: string;
+
+  @IsString()
+  @IsNotEmpty()
+  location: string;
+
+  // City & state are auto-filled on the frontend from reverse-geocoding the
+  // GPS position captured by the "Current Location" button (Nominatim's
+  // district/state fields - see geo.controller.ts) but stay editable, so
+  // they're still required here rather than derived server-side.
+  @IsString()
+  @IsNotEmpty()
+  city: string;
+
+  @IsString()
+  @IsNotEmpty()
+  state: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^\d{6}$/, { message: 'PIN code must be exactly 6 digits' })
+  pinCode: string;
+
+  // Optional - captured as a plain 12-digit number (not an uploaded
+  // document) and encrypted at rest, see AuthService.registerShop().
+  @IsOptional()
+  @IsString()
+  @Matches(/^\d{12}$/, { message: 'Aadhaar number must be exactly 12 digits' })
+  aadhaarNumber?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -103,15 +135,6 @@ export class RegisterShopDto {
   @IsString()
   @IsNotEmpty()
   plan: string; // 'MONTHLY' | 'HALF_YEARLY' | 'YEARLY' (the free trial plan has been retired)
-
-  @IsString()
-  @IsNotEmpty()
-  @Matches(PHONE_REGEX, { message: PHONE_REGEX_MESSAGE })
-  whatsappNumber: string;
-
-  @IsString()
-  @IsNotEmpty()
-  location: string;
 
   // Captured alongside `location` by the "Current Location" GPS button (see
   // captureShopLocation in App.jsx) - optional since a shop owner can type
@@ -123,16 +146,4 @@ export class RegisterShopDto {
   @IsOptional()
   @IsNumber()
   longitude?: number;
-
-  @IsOptional()
-  @IsString()
-  shopPhoto?: string;
-
-  @IsOptional()
-  @IsString()
-  shopLicense?: string;
-
-  @IsOptional()
-  @IsString()
-  ownerAadhaar?: string;
 }

@@ -1125,14 +1125,15 @@ export default function App() {
   const [resetSuccess, setResetSuccess] = useState(false);
   const [resetOtpDevCode, setResetOtpDevCode] = useState('');
 
-  // Shop Self-Registration states
+  // Shop Self-Registration states - two-step wizard: Step 1 collects the
+  // shop/owner details shown in the public registration screenshot (name,
+  // shop name, address+GPS, city, state, PIN code, optional Aadhaar number,
+  // OTP-verified mobile number); Step 2 collects password, subscription
+  // plan and payment before submitting.
   const [showRegisterShop, setShowRegisterShop] = useState(false);
   const [regShopName, setRegShopName] = useState('');
   const [regOwnerName, setRegOwnerName] = useState('');
-  const [regEmail, setRegEmail] = useState('');
   const [regPhone, setRegPhone] = useState('');
-  const [regWhatsapp, setRegWhatsapp] = useState('');
-  const [sameAsPhone, setSameAsPhone] = useState(false);
   const [regLocation, setRegLocation] = useState('');
   // Raw GPS coordinates from captureShopLocation, kept alongside the
   // free-text `regLocation` address so they can be sent to the backend and
@@ -1143,11 +1144,23 @@ export default function App() {
   const [regLocLoading, setRegLocLoading] = useState(false);
   const [regLocError, setRegLocError] = useState('');
   const [regLocErrorKind, setRegLocErrorKind] = useState('');
+  // City & State are auto-filled from reverse-geocoding the GPS position
+  // captured via "Current Location" (Nominatim's district/state - see
+  // captureShopLocation and geo.controller.ts) but stay editable in case
+  // the auto-detected value needs correcting.
+  const [regCity, setRegCity] = useState('');
+  const [regState, setRegState] = useState('');
+  const [regPinCode, setRegPinCode] = useState('');
+  const [regAadhaarNumber, setRegAadhaarNumber] = useState('');
   const [regPassword, setRegPassword] = useState('');
   const [regPlan, setRegPlan] = useState('MONTHLY'); // 'MONTHLY' | 'HALF_YEARLY' | 'YEARLY'
   const [regError, setRegError] = useState('');
   const [regSuccessMessage, setRegSuccessMessage] = useState('');
-  const [regStep, setRegStep] = useState(1); // 1: Info, 2: OTP, 3: Password & Plan, 4: Review, 5: Payment
+  // Auto-generated login identifier returned by the backend (there's no
+  // email field in this flow - see AuthService.registerShop) - shown once
+  // on the success screen so the owner knows how to log in later.
+  const [regLoginEmail, setRegLoginEmail] = useState('');
+  const [regStep, setRegStep] = useState(1); // 1: Shop & owner details (+ mobile OTP), 2: Password, plan & payment
   // Pre-login shop signup wizard: Back steps back one stage while mid-flow,
   // same as the authenticated CustomerRegistrationWizard above. At step 1
   // there's nothing to intercept, so Back correctly falls through to the
@@ -1155,36 +1168,28 @@ export default function App() {
   // signup form before you're logged in).
   useBackHandler(regStep > 1, () => setRegStep((s) => Math.max(1, s - 1)));
 
-  // Self-Registration OTP states
+  // Mobile OTP verification - inline within Step 1 (the screenshot shows the
+  // verify affordance directly under the Mobile Number field, not as a
+  // separate wizard step). Phone-only - there's no email to verify against.
   const [regOtpSent, setRegOtpSent] = useState(false);
   const [regOtpVerified, setRegOtpVerified] = useState(false);
   const [regOtpInput, setRegOtpInput] = useState('');
   const [regOtpError, setRegOtpError] = useState('');
   const [regOtpLoading, setRegOtpLoading] = useState(false);
-  // 'phone' (real SMS via Twilio, if configured) | 'email' (real email via SMTP,
-  // if configured) — lets a tester switch to email OTP when no SMS provider is
-  // set up, without needing a real phone to receive a text.
-  const [regOtpMethod, setRegOtpMethod] = useState('phone');
-  // Testing convenience: backend only returns this when no real SMTP/Twilio
-  // provider is configured for the chosen method, so it's shown on-screen as
-  // a substitute for actual SMS/email delivery. Disappears automatically once
-  // a real provider is configured server-side.
+  // Testing convenience: backend only returns this when no real SMS
+  // provider is configured, shown on-screen as a substitute for actual SMS
+  // delivery. Disappears automatically once a real provider is configured.
   const [regOtpDevCode, setRegOtpDevCode] = useState('');
 
-  // Self-Registration Payment states
+  // Self-Registration Payment states (Step 2's final sub-stage)
   const [regShowPayment, setRegShowPayment] = useState(false);
   const [regPayMethod, setRegPayMethod] = useState('card');
   const [regCardNumber, setRegCardNumber] = useState('');
   const [regCardExpiry, setRegCardExpiry] = useState('');
   const [regCardCvv, setRegCardCvv] = useState('');
   const [regCardHolder, setRegCardHolder] = useState('');
-  const [regUpiId, setRegUpiId] = useState('');
   const [regPayProcessing, setRegPayProcessing] = useState(false);
   const [regPaySuccess, setRegPaySuccess] = useState(false);
-
-  const [regShopPhoto, setRegShopPhoto] = useState('');
-  const [regShopLicense, setRegShopLicense] = useState('');
-  const [regOwnerAadhaar, setRegOwnerAadhaar] = useState('');
 
   // Password visibility states
   const [showAuthPassword, setShowAuthPassword] = useState(false);
@@ -1291,17 +1296,21 @@ export default function App() {
     setResetOtpDevCode('');
   };
 
+  // Inline mobile OTP verification for Step 1 - phone-only, no email option.
   const handleSendRegOtp = async () => {
-    if (!regEmail || !regPhone) {
-      alert('Please enter your email address and phone number first.');
+    if (!regPhone) {
+      alert('Please enter your mobile number first.');
+      return;
+    }
+    if (!PHONE_REGEX.test(regPhone)) {
+      alert(`Mobile number: ${PHONE_REGEX_MESSAGE}`);
       return;
     }
     setRegOtpLoading(true);
     setRegOtpError('');
     setRegOtpDevCode('');
     try {
-      const identifier = regOtpMethod === 'email' ? regEmail : regPhone;
-      const result = await api.sendOtp(identifier, regOtpMethod, 'register');
+      const result = await api.sendOtp(regPhone, 'phone', 'register');
       if (result?.devCode) setRegOtpDevCode(result.devCode);
       setRegOtpSent(true);
     } catch (err) {
@@ -1316,10 +1325,8 @@ export default function App() {
     setRegOtpError('');
     setRegOtpLoading(true);
     try {
-      const identifier = regOtpMethod === 'email' ? regEmail : regPhone;
-      await api.verifyOtp(identifier, regOtpMethod, 'register', regOtpInput);
+      await api.verifyOtp(regPhone, 'phone', 'register', regOtpInput);
       setRegOtpVerified(true);
-      setRegStep(3);
     } catch (err) {
       setRegOtpError(err.message || 'Incorrect verification OTP code. Please try again.');
     } finally {
@@ -1329,8 +1336,12 @@ export default function App() {
 
   // "Current Location" button for the Shop Registration wizard - captures the
   // device's real GPS position and reverse-geocodes it into the free-text
-  // location field. The field stays a normal editable input afterwards, so
-  // the shop owner can correct/refine whatever gets auto-filled here.
+  // location field, plus auto-fills the dedicated City & State fields from
+  // Nominatim's district/state (see geo.controller.ts - `district`, not
+  // `city`, is used because state_district is the correct Indian
+  // administrative "district", matching what the City field expects here).
+  // All three fields stay normal editable inputs afterwards, so the shop
+  // owner can correct/refine whatever gets auto-filled.
   const captureShopLocation = async () => {
     setRegLocError('');
     setRegLocErrorKind('');
@@ -1348,12 +1359,12 @@ export default function App() {
     setRegLng(lng);
     const data = await reverseGeocode(lat, lng);
     if (data) {
-      const parts = [data.street, data.locality, data.city, data.state].filter(Boolean);
-      if (parts.length > 0) {
-        setRegLocation(parts.join(', '));
-        setRegLocLoading(false);
-        return;
-      }
+      const parts = [data.street, data.locality].filter(Boolean);
+      setRegLocation(parts.length > 0 ? parts.join(', ') : `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+      if (data.district) setRegCity(data.district);
+      if (data.state) setRegState(data.state);
+      setRegLocLoading(false);
+      return;
     }
     setRegLocation(`${lat.toFixed(5)}, ${lng.toFixed(5)}`);
     setRegLocLoading(false);
@@ -1362,7 +1373,7 @@ export default function App() {
   const handleRegCheckout = async (e) => {
     e.preventDefault();
     setRegPayProcessing(true);
-    
+
     const logs = [
       'Establishing secure payment tunnel...',
       'Verifying account assets & fraud parameters...',
@@ -1378,21 +1389,21 @@ export default function App() {
       const res = await api.registerShop({
         shopName: regShopName,
         ownerName: regOwnerName,
-        email: regEmail,
         phone: regPhone,
+        location: regLocation,
+        city: regCity,
+        state: regState,
+        pinCode: regPinCode,
+        aadhaarNumber: regAadhaarNumber || undefined,
         password: regPassword,
         plan: regPlan,
-        whatsappNumber: regWhatsapp,
-        location: regLocation,
         latitude: regLat ?? undefined,
         longitude: regLng ?? undefined,
-        shopPhoto: regShopPhoto,
-        shopLicense: regShopLicense,
-        ownerAadhaar: regOwnerAadhaar
       });
 
       setRegPayProcessing(false);
       setRegPaySuccess(true);
+      setRegLoginEmail(res.loginEmail || '');
       setRegSuccessMessage(res.message || 'Registration successful! Your shop account is now active - you can log in right away.');
     } catch (err) {
       setRegPayProcessing(false);
@@ -1404,27 +1415,34 @@ export default function App() {
     setShowRegisterShop(false);
     setRegShopName('');
     setRegOwnerName('');
-    setRegEmail('');
     setRegPhone('');
-    setRegWhatsapp('');
-    setSameAsPhone(false);
     setRegLocation('');
+    setRegLat(null);
+    setRegLng(null);
     setRegLocLoading(false);
+    setRegLocError('');
+    setRegLocErrorKind('');
+    setRegCity('');
+    setRegState('');
+    setRegPinCode('');
+    setRegAadhaarNumber('');
     setRegPassword('');
     setRegPlan('MONTHLY');
     setRegError('');
     setRegSuccessMessage('');
+    setRegLoginEmail('');
     setRegOtpSent(false);
     setRegOtpVerified(false);
     setRegOtpInput('');
     setRegOtpError('');
     setRegOtpLoading(false);
+    setRegOtpDevCode('');
     setRegShowPayment(false);
+    setRegPayMethod('card');
     setRegCardNumber('');
     setRegCardExpiry('');
     setRegCardCvv('');
     setRegCardHolder('');
-    setRegUpiId('');
     setRegPayProcessing(false);
     setRegPaySuccess(false);
     setRegStep(1);
@@ -1813,9 +1831,17 @@ export default function App() {
               <Check />
             </div>
             <h3 style={{ fontSize: 16 }}>Registration submitted</h3>
-            <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, lineHeight: 1.6, padding: '0 8px', marginTop: 8, marginBottom: 20 }}>
+            <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, lineHeight: 1.6, padding: '0 8px', marginTop: 8, marginBottom: regLoginEmail ? 12 : 20 }}>
               {regSuccessMessage}
             </p>
+            {regLoginEmail && (
+              <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 20 }}>
+                <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
+                  Your login email
+                </p>
+                <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800 }}>{regLoginEmail}</p>
+              </div>
+            )}
             <button
               onClick={() => {
                 resetRegisterShopFlow();
@@ -1828,17 +1854,11 @@ export default function App() {
           </div>
         ) : (
           <div>
-            {/* Step Progress indicators */}
+            {/* Step Progress indicator - two steps */}
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 14, marginBottom: 18, fontSize: 10.5 }}>
-              <span style={{ color: regStep === 1 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>1. Business info</span>
+              <span style={{ color: regStep === 1 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>1. Shop Details</span>
               <ChevronRight className="h-3 w-3" style={{ color: 'var(--text-3)' }} />
-              <span style={{ color: regStep === 2 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>2. Verification</span>
-              <ChevronRight className="h-3 w-3" style={{ color: 'var(--text-3)' }} />
-              <span style={{ color: regStep === 3 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>3. Subscription</span>
-              <ChevronRight className="h-3 w-3" style={{ color: 'var(--text-3)' }} />
-              <span style={{ color: regStep === 4 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>4. Review</span>
-              <ChevronRight className="h-3 w-3" style={{ color: 'var(--text-3)' }} />
-              <span style={{ color: regStep === 5 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>5. Payment</span>
+              <span style={{ color: regStep === 2 ? 'var(--gold)' : 'var(--text-3)', fontWeight: 800, fontFamily: 'var(--display)' }}>2. Plan &amp; Payment</span>
             </div>
 
             {regError && (
@@ -1848,11 +1868,12 @@ export default function App() {
               </div>
             )}
 
-            {/* STEP 1: Info — "Sectioned Cards" layout (design-mockups/mobile-app/v2-sectioned-cards) */}
+            {/* STEP 1: Shop & owner details (matches the public registration screenshot),
+                including inline mobile OTP verification - not a separate step. */}
             {regStep === 1 && (
               <div>
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">1</div><h3>Personal Details</h3></div>
+                  <div className="reg-section-head"><div className="reg-num">1</div><h3>Owner &amp; Shop Details</h3></div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>Owner Name <span className="req">*</span></b></div>
                     <div className="input-wrap">
@@ -1862,19 +1883,6 @@ export default function App() {
                       />
                     </div>
                   </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>Email Address <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
-                        placeholder="shop@example.com"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">2</div><h3>Shop Details</h3></div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><Building2 /></div><b>Shop Name <span className="req">*</span></b></div>
                     <div className="input-wrap">
@@ -1899,12 +1907,13 @@ export default function App() {
                     <div className="input-wrap">
                       <input
                         type="text" required value={regLocation} onChange={(e) => setRegLocation(e.target.value)}
-                        placeholder="City, State / landmark"
+                        placeholder="Street / landmark"
                       />
                     </div>
-                    {/* GPS coordinates captured via the button above - shown so the
-                        shop owner can see/confirm exactly what will be stored
-                        alongside the free-text address (see regLat/regLng state). */}
+                    {/* GPS coordinates captured via the button above are reverse-geocoded
+                        server-side and used to auto-fill City/State below (still editable),
+                        as well as being shown here so the owner can confirm what will be
+                        stored alongside the free-text address (see regLat/regLng state). */}
                     {regLat != null && regLng != null && (
                       <p style={{ marginTop: 6, fontSize: 11, color: 'var(--text-3)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
                         <MapPin style={{ width: 11, height: 11 }} /> {regLat.toFixed(5)}, {regLng.toFixed(5)}
@@ -1936,156 +1945,140 @@ export default function App() {
                       </div>
                     )}
                   </div>
+                  <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                    <div className="reg-field" style={{ marginBottom: 0 }}>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><MapPin /></div><b>City <span className="req">*</span></b></div>
+                      <div className="input-wrap">
+                        <input
+                          type="text" required value={regCity} onChange={(e) => setRegCity(e.target.value)}
+                          placeholder="Auto-filled from GPS"
+                        />
+                      </div>
+                    </div>
+                    <div className="reg-field" style={{ marginBottom: 0 }}>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>State <span className="req">*</span></b></div>
+                      <div className="input-wrap">
+                        <input
+                          type="text" required value={regState} onChange={(e) => setRegState(e.target.value)}
+                          placeholder="Auto-filled from GPS"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><MapPin /></div><b>PIN Code <span className="req">*</span></b></div>
+                    <div className="input-wrap">
+                      <input
+                        type="text" required inputMode="numeric" maxLength={6} value={regPinCode} onChange={(e) => setRegPinCode(e.target.value.replace(/\D/g, ''))}
+                        placeholder="6-digit PIN code"
+                      />
+                    </div>
+                  </div>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><CreditCard /></div><b>Aadhaar Number</b></div>
+                    <div className="input-wrap">
+                      <input
+                        type="text" inputMode="numeric" maxLength={12} value={regAadhaarNumber} onChange={(e) => setRegAadhaarNumber(e.target.value.replace(/\D/g, ''))}
+                        placeholder="12-digit Aadhaar number (optional)"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">3</div><h3>Contact &amp; Verification</h3></div>
+                  <div className="reg-section-head"><div className="reg-num">2</div><h3>Mobile Verification</h3></div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Phone Number <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Mobile Number <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
-                        type="tel" required value={regPhone} onChange={(e) => setRegPhone(e.target.value)}
-                        placeholder="10-digit mobile"
+                        type="tel" required value={regPhone} disabled={regOtpVerified}
+                        onChange={(e) => { setRegPhone(e.target.value); setRegOtpSent(false); setRegOtpVerified(false); setRegOtpDevCode(''); }}
+                        placeholder="10-digit mobile" style={{ opacity: regOtpVerified ? 0.6 : 1 }}
                       />
                     </div>
                   </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label">
-                      <div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div>
-                      <b>WhatsApp Number <span className="req">*</span></b>
-                      <label className="reg-trailing">
+
+                  {regOtpVerified ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--green)', fontSize: 12, fontWeight: 800 }}>
+                      <CheckCircle2 className="h-4 w-4" /> Mobile number verified
+                    </div>
+                  ) : !regOtpSent ? (
+                    <button
+                      type="button" onClick={handleSendRegOtp} disabled={regOtpLoading}
+                      className="btn btn-primary" style={{ width: '100%' }}
+                    >
+                      {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}
+                      Send OTP to verify
+                    </button>
+                  ) : (
+                    <div>
+                      {regOtpError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginBottom: 10 }}>{regOtpError}</div>}
+
+                      {regOtpDevCode && (
+                        <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 12 }}>
+                          <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
+                            Testing mode &mdash; no SMS provider configured
+                          </p>
+                          <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{regOtpDevCode}</p>
+                        </div>
+                      )}
+
+                      <div className="flex gap-2">
                         <input
-                          type="checkbox" checked={sameAsPhone}
-                          onChange={(e) => {
-                            setSameAsPhone(e.target.checked);
-                            if (e.target.checked) setRegWhatsapp(regPhone);
-                          }}
-                          style={{ accentColor: 'var(--gold)', width: 13, height: 13 }}
+                          type="text" maxLength={4} value={regOtpInput} onChange={(e) => setRegOtpInput(e.target.value.replace(/\D/g, ''))}
+                          placeholder="OTP"
+                          style={{ flex: 1, background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '11px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
                         />
-                        <span>Same as phone</span>
-                      </label>
+                        <button type="button" onClick={handleVerifyRegOtp} disabled={regOtpLoading} className="btn btn-primary">
+                          {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Verify'}
+                        </button>
+                      </div>
+                      <button
+                        type="button" onClick={() => { setRegOtpSent(false); setRegOtpDevCode(''); setRegOtpInput(''); }}
+                        style={{ display: 'block', margin: '10px auto 0', fontSize: 11, color: 'var(--text-3)', fontWeight: 700, textDecoration: 'underline' }}
+                      >
+                        Resend OTP
+                      </button>
                     </div>
-                    <div className="input-wrap">
-                      <input
-                        type="tel" required value={regWhatsapp} onChange={(e) => setRegWhatsapp(e.target.value)}
-                        disabled={sameAsPhone} placeholder="WhatsApp number"
-                        style={{ opacity: sameAsPhone ? 0.5 : 1 }}
-                      />
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 <div className="flex justify-end" style={{ marginTop: 20 }}>
                   <button
                     type="button"
                     onClick={() => {
-                      if (!regShopName || !regOwnerName || !regEmail || !regPhone || !regWhatsapp || !regLocation) {
-                        alert('Please fill out all registration fields.');
+                      if (!regShopName || !regOwnerName || !regPhone || !regLocation || !regCity || !regState || !regPinCode) {
+                        alert('Please fill out all required registration fields.');
                         return;
                       }
                       if (!PHONE_REGEX.test(regPhone)) {
-                        alert(`Phone number: ${PHONE_REGEX_MESSAGE}`);
+                        alert(`Mobile number: ${PHONE_REGEX_MESSAGE}`);
                         return;
                       }
-                      if (!PHONE_REGEX.test(regWhatsapp)) {
-                        alert(`WhatsApp number: ${PHONE_REGEX_MESSAGE}`);
+                      if (!/^\d{6}$/.test(regPinCode)) {
+                        alert('PIN code must be exactly 6 digits.');
+                        return;
+                      }
+                      if (regAadhaarNumber && !/^\d{12}$/.test(regAadhaarNumber)) {
+                        alert('Aadhaar number must be exactly 12 digits.');
+                        return;
+                      }
+                      if (!regOtpVerified) {
+                        alert('Please verify your mobile number with the OTP before continuing.');
                         return;
                       }
                       setRegStep(2);
                     }}
                     className="btn btn-primary reg-submit-btn"
                   >
-                    Continue to OTP <ArrowRight />
+                    Continue <ArrowRight />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* STEP 2: OTP Verification */}
-            {regStep === 2 && (
-              <div>
-                <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 14 }}>
-                  We need to verify your credentials. A secure OTP code will be sent to <strong style={{ color: 'var(--gold)' }}>{regOtpMethod === 'email' ? regEmail : regPhone}</strong>.
-                </p>
-
-                {!regOtpSent && (
-                  <div className="flex justify-center gap-2" style={{ marginBottom: 16 }}>
-                    <button
-                      type="button" onClick={() => setRegOtpMethod('phone')}
-                      className={`store-tab ${regOtpMethod === 'phone' ? 'active' : ''}`}
-                    >
-                      <Phone className="h-3.5 w-3.5" />
-                      <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>Phone OTP</span>
-                    </button>
-                    <button
-                      type="button" onClick={() => setRegOtpMethod('email')}
-                      className={`store-tab ${regOtpMethod === 'email' ? 'active' : ''}`}
-                    >
-                      <Mail className="h-3.5 w-3.5" />
-                      <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>Email OTP (testing)</span>
-                    </button>
-                  </div>
-                )}
-
-                {!regOtpSent ? (
-                  <div className="flex justify-center" style={{ padding: '18px 0' }}>
-                    <button
-                      type="button" onClick={handleSendRegOtp} disabled={regOtpLoading}
-                      className="btn btn-primary"
-                    >
-                      {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : (regOtpMethod === 'email' ? <Mail className="h-4 w-4" /> : <Phone className="h-4 w-4" />)}
-                      Send verification OTP
-                    </button>
-                  </div>
-                ) : (
-                  <form onSubmit={handleVerifyRegOtp}>
-                    {regOtpError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>{regOtpError}</div>}
-                    <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 14 }}>
-                      A 4-digit code has been dispatched via {regOtpMethod === 'email' ? 'email' : 'SMS'} to <span style={{ color: 'var(--gold)', fontWeight: 800 }}>{regOtpMethod === 'email' ? regEmail : regPhone}</span>.
-                    </p>
-
-                    {regOtpDevCode && (
-                      <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
-                        <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                          Testing mode &mdash; no {regOtpMethod === 'email' ? 'SMTP' : 'SMS'} provider configured
-                        </p>
-                        <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{regOtpDevCode}</p>
-                      </div>
-                    )}
-
-                    <div className="field">
-                      <label style={{ textAlign: 'center' }}>Enter verification OTP</label>
-                      <input
-                        type="text" required maxLength={4} value={regOtpInput} onChange={(e) => setRegOtpInput(e.target.value.replace(/\D/g, ''))}
-                        placeholder="1234"
-                        style={{ width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '13px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
-                      />
-                    </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        type="button" onClick={() => { setRegOtpSent(false); setRegOtpDevCode(''); }}
-                        className="btn btn-ghost" style={{ flex: 1 }}
-                      >
-                        Resend
-                      </button>
-                      <button type="submit" disabled={regOtpLoading} className="btn btn-primary" style={{ flex: 2 }}>
-                        {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Verify OTP'}
-                      </button>
-                    </div>
-                  </form>
-                )}
-
-                <div style={{ borderTop: '1px solid var(--border)', paddingTop: 14, marginTop: 16 }}>
-                  <button type="button" onClick={() => setRegStep(1)} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-3)', fontWeight: 700 }}>
-                    <ArrowLeft className="h-3.5 w-3.5" /> Back to shop info
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 3: Plan & Password */}
-            {regStep === 3 && (
+            {/* STEP 2a: Password & Plan */}
+            {regStep === 2 && !regShowPayment && (
               <div>
                 <div className="reg-section">
                   <div className="reg-section-head"><div className="reg-num">1</div><h3>Account Password</h3></div>
@@ -2141,68 +2134,8 @@ export default function App() {
                   </div>
                 </div>
 
-                <div className="reg-section">
-                  <div className="reg-section-head"><div className="reg-num">2</div><h3>Upload Shop Documents</h3></div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <div>
-                      <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--pink)' }}><Camera /></div><b>Shop Photo <span className="req">*</span></b></div>
-                      <input
-                        type="file" accept="image/*" required
-                        onClick={primeStoragePermission}
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          if (file) {
-                            const r = new FileReader();
-                            r.onloadend = () => compressBase64Image(r.result, setRegShopPhoto);
-                            r.readAsDataURL(file);
-                          }
-                        }}
-                        className="w-full text-xs cursor-pointer file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:uppercase"
-                        style={{ color: 'var(--text-3)' }}
-                      />
-                    </div>
-
-                    <div>
-                      <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--orange)' }}><FileText /></div><b>Shop License <span className="req">*</span></b></div>
-                      <input
-                        type="file" accept="image/*,application/pdf" required
-                        onClick={primeStoragePermission}
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          if (file) {
-                            const r = new FileReader();
-                            r.onloadend = () => compressBase64Image(r.result, setRegShopLicense);
-                            r.readAsDataURL(file);
-                          }
-                        }}
-                        className="w-full text-xs cursor-pointer file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:uppercase"
-                        style={{ color: 'var(--text-3)' }}
-                      />
-                    </div>
-
-                    <div>
-                      <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--maroon)' }}><CreditCard /></div><b>Owner Aadhaar <span className="req">*</span></b></div>
-                      <input
-                        type="file" accept="image/*,application/pdf" required
-                        onClick={primeStoragePermission}
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          if (file) {
-                            const r = new FileReader();
-                            r.onloadend = () => compressBase64Image(r.result, setRegOwnerAadhaar);
-                            r.readAsDataURL(file);
-                          }
-                        }}
-                        className="w-full text-xs cursor-pointer file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:uppercase"
-                        style={{ color: 'var(--text-3)' }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
                 <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 20 }}>
-                  <button type="button" onClick={() => setRegStep(2)} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-3)', fontWeight: 700 }}>
+                  <button type="button" onClick={() => setRegStep(1)} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-3)', fontWeight: 700 }}>
                     <ArrowLeft className="h-3.5 w-3.5" /> Back
                   </button>
                   <button
@@ -2212,75 +2145,18 @@ export default function App() {
                         alert('Password must be at least 6 characters.');
                         return;
                       }
-                      if (!regOwnerAadhaar) {
-                        alert('Owner Aadhaar document is mandatory to register.');
-                        return;
-                      }
-                      setRegStep(4);
+                      setRegShowPayment(true);
                     }}
                     className="btn btn-primary"
                   >
-                    Review details <ArrowRight />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 4: Review - confirm everything entered so far before paying */}
-            {regStep === 4 && (
-              <div className="animate-fade-in">
-                <h3 style={{ fontSize: 15, fontWeight: 800, fontFamily: 'var(--display)', marginBottom: 4 }}>Review your details</h3>
-                <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 18 }}>Confirm everything below is correct before proceeding to payment.</p>
-
-                <div className="form-grid" style={{ paddingBottom: 18, marginBottom: 18, borderBottom: '1px solid var(--border)' }}>
-                  <div className="field"><label>Shop Name</label><div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 14 }}>{regShopName}</div></div>
-                  <div className="field"><label>Owner Name</label><div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 14 }}>{regOwnerName}</div></div>
-                  <div className="field"><label>Email</label><div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 14 }}>{regEmail}</div></div>
-                  <div className="field"><label>Phone</label><div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 14 }}>{regPhone}</div></div>
-                  <div className="field"><label>WhatsApp</label><div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 14 }}>{regWhatsapp}</div></div>
-                  <div className="field full">
-                    <label>Shop Location</label>
-                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 14 }}>{regLocation}</div>
-                    {regLat != null && regLng != null && (
-                      <div style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 11.5, marginTop: 3 }}>
-                        GPS: {regLat.toFixed(5)}, {regLng.toFixed(5)}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="form-grid" style={{ paddingBottom: 18, marginBottom: 18, borderBottom: '1px solid var(--border)' }}>
-                  <div className="field"><label>Subscription Plan</label><div style={{ color: 'var(--gold)', fontWeight: 800, fontSize: 14 }}>{regPlan === 'MONTHLY' ? 'Monthly (Rs. 49)' : regPlan === 'HALF_YEARLY' ? '6 Months (Rs. 269)' : 'Yearly (Rs. 499)'}</div></div>
-                  <div className="field"><label>Account Password</label><div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 14 }}>&bull;&bull;&bull;&bull;&bull;&bull; (set)</div></div>
-                </div>
-
-                <span className="side-section-label" style={{ padding: 0, display: 'block', marginBottom: 10 }}>Uploaded documents</span>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3" style={{ marginBottom: 6 }}>
-                  {[
-                    { label: 'Shop photo', value: regShopPhoto },
-                    { label: 'Shop license', value: regShopLicense },
-                    { label: 'Owner Aadhaar', value: regOwnerAadhaar },
-                  ].map(doc => (
-                    <div key={doc.label} style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 12px' }}>
-                      {doc.value ? <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--green)', flexShrink: 0 }} /> : <AlertTriangle className="h-4 w-4" style={{ color: 'var(--amber)', flexShrink: 0 }} />}
-                      <span style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--text-1)' }}>{doc.label}</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 20 }}>
-                  <button type="button" onClick={() => setRegStep(3)} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-3)', fontWeight: 700 }}>
-                    <ArrowLeft className="h-3.5 w-3.5" /> Back
-                  </button>
-                  <button type="button" onClick={() => setRegStep(5)} className="btn btn-primary">
                     Continue to payment <ArrowRight />
                   </button>
                 </div>
               </div>
             )}
 
-            {/* STEP 5: Payment Checkout */}
-            {regStep === 5 && (
+            {/* STEP 2b: Payment Checkout */}
+            {regStep === 2 && regShowPayment && (
               <form onSubmit={handleRegCheckout} className="animate-fade-in relative overflow-hidden">
                 {regPayProcessing && (
                   <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: 'rgba(10,9,8,0.92)', zIndex: 20 }}>
@@ -2370,7 +2246,7 @@ export default function App() {
                 )}
 
                 <div className="flex gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
-                  <button type="button" onClick={() => setRegStep(4)} className="btn btn-ghost" style={{ flex: 1 }}>
+                  <button type="button" onClick={() => setRegShowPayment(false)} className="btn btn-ghost" style={{ flex: 1 }}>
                     Back
                   </button>
                   <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>
@@ -3165,11 +3041,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
           dashboard's card grid on one screen without scrolling. */}
       <div className="page-head" style={{ marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          {data.shop?.logoUrl ? (
-            <img src={cleanGoogleImageUrl(data.shop.logoUrl)} alt="Shop Logo" style={{ width: 48, height: 48, borderRadius: 14, objectFit: 'cover', border: '1px solid var(--border-2)' }} />
-          ) : (
-            <img src={keyShopLogo} alt="Key Shop" style={{ width: 58, height: 58, objectFit: 'contain', flexShrink: 0 }} />
-          )}
+          <img src={keyShopLogo} alt="Key Shop" style={{ width: 58, height: 58, objectFit: 'contain', flexShrink: 0 }} />
           <div>
             <div className="eyebrow"><Store /> {t('shopTerminal')}</div>
             <h1>Namaste, {firstName} 👋</h1>
@@ -3317,7 +3189,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
   // Form States for Edit Shop Details (Super Admin capability)
   const [editName, setEditName] = useState('');
-  const [editLogoUrl, setEditLogoUrl] = useState('');
   const [editAddress, setEditAddress] = useState('');
   const [editGst, setEditGst] = useState('');
   const [editPhone, setEditPhone] = useState('');
@@ -3554,7 +3425,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const handleEditShopClick = (shop) => {
     setSelectedShop(shop);
     setEditName(shop.name);
-    setEditLogoUrl(shop.logoUrl || '');
 
     if (shop.companyDetails) {
       try {
@@ -3607,7 +3477,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
       await api.updateShop(selectedShop.id, {
         name: editName,
-        logoUrl: editLogoUrl,
         companyDetails
       });
       setShowEditModal(false);
@@ -3991,14 +3860,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   <div className="input-wrap">
                     <input
                       type="text" required value={editName} onChange={(e) => setEditName(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><ExternalLink /></div><b>Logo URL</b></div>
-                  <div className="input-wrap">
-                    <input
-                      type="text" value={editLogoUrl} onChange={(e) => setEditLogoUrl(e.target.value)}
                     />
                   </div>
                 </div>
@@ -8385,7 +8246,6 @@ function ShopSettingsView({ t, api }) {
   const [address, setAddress] = useState('');
   const [gst, setGst] = useState('');
   const [phone, setPhone] = useState('');
-  const [logoUrl, setLogoUrl] = useState('');
   const [shopPhoto, setShopPhoto] = useState(null);
   const [shopLicense, setShopLicense] = useState(null);
   const [ownerAadhaar, setOwnerAadhaar] = useState(null);
@@ -8433,7 +8293,6 @@ function ShopSettingsView({ t, api }) {
     try {
       const res = await api.getSettings();
       setShopName(res.name);
-      setLogoUrl(res.logoUrl || '');
 
       if (res.companyDetails) {
         try {
@@ -8472,7 +8331,7 @@ function ShopSettingsView({ t, api }) {
 
   const persistCompanyDetails = async (overrides = {}) => {
     const companyDetails = JSON.stringify({ address, phone, gst, ...overrides });
-    await api.updateSettings({ name: shopName, logoUrl, companyDetails });
+    await api.updateSettings({ name: shopName, companyDetails });
   };
 
   const handleUpdate = async (e) => {
@@ -8648,75 +8507,9 @@ function ShopSettingsView({ t, api }) {
             </div>
           </div>
 
-          {/* Branding */}
-          <div className="reg-section">
-            <div className="reg-section-head"><div className="reg-num">2</div><h3>Branding</h3></div>
-
-            <div className="reg-field" style={{ marginBottom: logoUrl ? 12 : 0 }}>
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><ExternalLink /></div><b>Logo URL / Image Source</b></div>
-              <div className="flex gap-2">
-                <div className="input-wrap" style={{ flex: 1 }}>
-                  <input
-                    type="text" value={logoUrl}
-                    onChange={(e) => setLogoUrl(cleanGoogleImageUrl(e.target.value))}
-                    placeholder="Paste image URL or Google Images link"
-                  />
-                </div>
-                <label className="btn btn-ghost btn-sm" style={{ cursor: 'pointer', flexShrink: 0 }}>
-                  <Upload />
-                  <span>Upload</span>
-                  <input
-                    type="file" accept="image/*" className="hidden"
-                    onClick={primeStoragePermission}
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setLogoUrl(reader.result);
-                        };
-                        reader.readAsDataURL(file);
-                      }
-                    }}
-                  />
-                </label>
-              </div>
-              <p style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 6, fontWeight: 600 }}>
-                Paste a web link or pick a local image — Google Images links are parsed automatically.
-              </p>
-            </div>
-
-            {logoUrl && (
-              <div className="flex items-center gap-3" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 10, borderRadius: 14, marginBottom: 18 }}>
-                <img
-                  src={cleanGoogleImageUrl(logoUrl)}
-                  alt="Logo Preview"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                  }}
-                  className="w-11 h-11 object-cover rounded-lg"
-                  style={{ border: '1px solid var(--border-2)' }}
-                />
-                <div className="flex-1 min-w-0">
-                  <span className="badge badge-active" style={{ marginBottom: 4 }}><span className="dot"></span>Live preview</span>
-                  <span className="truncate" style={{ fontSize: 11, color: 'var(--text-3)', display: 'block' }}>{logoUrl.startsWith('data:') ? 'Local system image' : logoUrl}</span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setLogoUrl('')}
-                  className="icon-btn"
-                  style={{ color: 'var(--red)' }}
-                  title="Clear logo"
-                >
-                  <X />
-                </button>
-              </div>
-            )}
-          </div>
-
           {/* Shop Verification Documents Section */}
           <div className="reg-section" style={{ marginBottom: 0 }}>
-            <div className="reg-section-head"><div className="reg-num">3</div><h3>Shop Verification Documents</h3></div>
+            <div className="reg-section-head"><div className="reg-num">2</div><h3>Shop Verification Documents</h3></div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {[

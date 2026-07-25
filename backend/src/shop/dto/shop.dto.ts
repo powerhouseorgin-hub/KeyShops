@@ -8,10 +8,6 @@ export class CreateShopDto {
 
   @IsString()
   @IsOptional()
-  logoUrl?: string;
-
-  @IsString()
-  @IsOptional()
   companyDetails?: string;
 
   @IsString()
@@ -64,10 +60,6 @@ export class UpdateShopDto {
 
   @IsString()
   @IsOptional()
-  logoUrl?: string;
-
-  @IsString()
-  @IsOptional()
   companyDetails?: string;
 
   @IsString()
@@ -84,10 +76,6 @@ export class UpdateSettingsDto {
   @IsString()
   @IsOptional()
   name?: string;
-
-  @IsString()
-  @IsOptional()
-  logoUrl?: string;
 
   @IsString()
   @IsOptional()
