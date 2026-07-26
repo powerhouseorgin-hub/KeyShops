@@ -14,6 +14,7 @@ import { NotificationModule } from './notification/notification.module';
 import { PromotionModule } from './promotion/promotion.module';
 import { ShopCategoryModule } from './shop-category/shop-category.module';
 import { ProductTypeModule } from './product-type/product-type.module';
+import { KeyTypeModule } from './key-type/key-type.module';
 import { TenantInterceptor } from './tenant/tenant.interceptor';
 
 @Module({
@@ -30,6 +31,7 @@ import { TenantInterceptor } from './tenant/tenant.interceptor';
     PromotionModule,
     ShopCategoryModule,
     ProductTypeModule,
+    KeyTypeModule,
   ],
   controllers: [AppController, GeoController],
   providers: [

@@ -4386,6 +4386,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
                 <td>
                   <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
+                  {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
                 </td>
                 <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
                   {new Date(c.createdAt).toLocaleDateString()}
@@ -4456,7 +4457,10 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 </div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Blank Code</b></div>
-                  <span className="badge badge-active"><span className="dot" />{viewCust.keyNumber}</span>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="badge badge-active"><span className="dot" />{viewCust.keyNumber}</span>
+                    {viewCust.keyType && <span className="badge" style={{ background: 'var(--purple-dim, rgba(124,77,255,0.12))', color: 'var(--purple)' }}>{viewCust.keyType}</span>}
+                  </div>
                 </div>
               </div>
             </div>
@@ -6380,6 +6384,12 @@ function KeysSearchView({ api, searchDispatch }) {
                           <div className="icon-badge skyblue" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><Car style={{ width: 10, height: 10 }} /></div>
                           <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>Vehicle No: <strong style={{ color: 'var(--green)' }}>{r.customer.vehicleNumber || 'N/A'}</strong></p>
                         </div>
+                        {r.customer.keyType && (
+                          <div className="flex items-center gap-2" style={{ marginTop: 4 }}>
+                            <div className="icon-badge purple" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><KeyRound style={{ width: 10, height: 10 }} /></div>
+                            <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>Key Type: <strong style={{ color: 'var(--text-0)' }}>{r.customer.keyType}</strong></p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -6445,6 +6455,12 @@ function KeysSearchView({ api, searchDispatch }) {
                         <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Calendar /></div><b>Registry Date</b></div>
                         <span style={{ color: 'var(--text-1)', fontWeight: 600, fontSize: 12.5 }}>{new Date(selectedResult.customer.createdAt).toLocaleDateString()}</span>
                       </div>
+                      {selectedResult.customer.keyType && (
+                        <div className="reg-field">
+                          <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>Key Type</b></div>
+                          <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.keyType}</span>
+                        </div>
+                      )}
                     </div>
 
                     <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 14, borderRadius: 14, marginTop: 4 }}>
@@ -6576,12 +6592,17 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [idProofNumber, setIdProofNumber] = useState('N/A');
   const [reason, setReason] = useState('N/A');
   const [keyNumber, setKeyNumber] = useState('');
+  const [keyType, setKeyType] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [addressLine, setAddressLine] = useState('');
   const [stateVal, setStateVal] = useState('Tamil Nadu');
   const [district, setDistrict] = useState('Chennai');
   const [country, setCountry] = useState('India');
   const [masterKeyId, setMasterKeyId] = useState('');
+
+  // Super-Admin-managed list of key types (see KeyType model / api.getKeyTypes)
+  // that powers the Key Type dropdown next to the Key Code field below.
+  const [keyTypes, setKeyTypes] = useState([]);
 
   // Inline OTP states
   const [otpSent, setOtpSent] = useState(false);
@@ -6652,6 +6673,15 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       setCapturedAddress(finalAddress);
     }
   }, [addressLine, district, stateVal, country]);
+
+  useEffect(() => {
+    api.getKeyTypes()
+      .then((res) => {
+        setKeyTypes(res || []);
+        setKeyType((prev) => prev || res?.[0]?.name || '');
+      })
+      .catch((e) => console.error('Failed to load key types:', e));
+  }, []);
 
   // "Current Location" button for the Contact & Key step - captures the device's
   // real GPS position and reverse-geocodes it to best-effort prefill the address
@@ -6897,7 +6927,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
       const payload = {
         name, phone, address, idProofType, idProofNumber, reason,
-        keyNumber, vehicleNumber, masterKeyId: finalMasterKeyId, manualKey,
+        keyNumber, keyType, vehicleNumber, masterKeyId: finalMasterKeyId, manualKey,
         latitude: finalLat,
         longitude: finalLng,
         mapsLink: (finalLat && finalLng) ? `https://www.google.com/maps?q=${finalLat},${finalLng}` : null,
@@ -7059,13 +7089,23 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               </div>
 
               <div className="reg-section">
-                <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Code / Key Number <span className="req">*</span></b></div>
-                  <div className="input-wrap">
-                    <input
-                      type="text" required value={keyNumber}
-                      onChange={(e) => { setKeyNumber(e.target.value); setDuplicateKeyWarning(false); }}
-                      placeholder="Enter key code (e.g. TN09B)"
+                <div className="form-grid">
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Code / Key Number <span className="req">*</span></b></div>
+                    <div className="input-wrap">
+                      <input
+                        type="text" required value={keyNumber}
+                        onChange={(e) => { setKeyNumber(e.target.value); setDuplicateKeyWarning(false); }}
+                        placeholder="Enter key code (e.g. TN09B)"
+                      />
+                    </div>
+                  </div>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>Key Type</b></div>
+                    <CustomSelect
+                      value={keyType} onChange={setKeyType}
+                      placeholder="Select key type…"
+                      options={keyTypes.map(kt => ({ value: kt.name, label: kt.name }))}
                     />
                   </div>
                 </div>
@@ -7378,7 +7418,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     <div className="icon-badge pink" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><KeyRound style={{ width: 16, height: 16 }} /></div>
                     <div>
                       <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>Key Blank</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}</div>
+                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}{keyType ? ` (${keyType})` : ''}</div>
                     </div>
                   </div>
                 </div>
@@ -7654,6 +7694,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                     <td className="cell-sub" data-label="Vehicle" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.vehicleNumber || 'N/A'}</td>
                     <td data-label="Key Code">
                       <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
+                      {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
                     </td>
                     <td className="cell-sub" data-label="Location" style={{ fontWeight: 700, color: 'var(--text-2)', maxWidth: 180 }}>
                       <span className="flex items-center gap-1" style={{ overflow: 'hidden' }}>
@@ -7709,7 +7750,10 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                     </div>
                     <div className="reg-field" style={{ marginBottom: 0 }}>
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Blank Code</b></div>
-                      <span className="badge badge-active"><span className="dot" />{selectedCust.keyNumber}</span>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="badge badge-active"><span className="dot" />{selectedCust.keyNumber}</span>
+                        {selectedCust.keyType && <span className="badge" style={{ background: 'var(--purple-dim, rgba(124,77,255,0.12))', color: 'var(--purple)' }}>{selectedCust.keyType}</span>}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -7760,26 +7804,34 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                   </div>
 
                   {selectedCust.documents && selectedCust.documents.length > 0 && (
-                    <div className="reg-field space-y-2" style={{ marginBottom: 0 }}>
+                    <div className="reg-field space-y-2" style={{ marginBottom: 0, minWidth: 0 }}>
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><FileCheck /></div><b>Attached ID Copies</b></div>
                       {selectedCust.documents.map((d, di) => {
                         const docColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
                         const docColor = docColors[di % docColors.length];
+                        const uploaded = !!(d.fileUrl || d.fileKey);
                         return (
-                          <div key={d.id} style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 10, borderRadius: 12 }} className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-2">
-                              <div className={`icon-badge ${docColor}`} style={{ width: 26, height: 26, borderRadius: 8 }}>
-                                <FileText style={{ width: 13, height: 13 }} />
-                              </div>
-                              <span style={{ color: 'var(--text-1)', fontWeight: 600 }}>{d.documentType} ({d.fileKey})</span>
+                          <div key={d.id} style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 10, borderRadius: 12, minWidth: 0 }} className="flex items-center gap-2 text-xs">
+                            <div className={`icon-badge ${docColor}`} style={{ width: 26, height: 26, borderRadius: 8, flexShrink: 0 }}>
+                              <FileText style={{ width: 13, height: 13 }} />
                             </div>
+                            <span style={{ color: 'var(--text-1)', fontWeight: 600, flex: '1 1 auto', minWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={d.documentType}>{d.documentType}</span>
+                            <span
+                              className={`badge ${uploaded ? 'badge-active' : 'badge-suspended'}`}
+                              style={{ flexShrink: 0, fontSize: 9.5 }}
+                            >
+                              {uploaded ? 'Uploaded' : 'Missing'}
+                            </span>
                             <button
                               type="button"
+                              title="Download"
+                              aria-label="Download"
+                              disabled={!uploaded}
                               onClick={() => downloadAsset(d.fileUrl, d.originalName || d.fileKey || 'document')}
-                              style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--gold)' }}
-                              className="hover:underline"
+                              className="icon-btn"
+                              style={{ width: 28, height: 28, borderRadius: 8, flexShrink: 0, opacity: uploaded ? 1 : 0.4, cursor: uploaded ? 'pointer' : 'not-allowed' }}
                             >
-                              Download
+                              <Download style={{ width: 13, height: 13 }} />
                             </button>
                           </div>
                         );
@@ -8100,10 +8152,22 @@ export function SupportConfigView({ t, api }) {
   const [editingPtName, setEditingPtName] = useState('');
   const [savingPtId, setSavingPtId] = useState(null);
 
+  // Key Types management - the Super-Admin-curated list of key "types" (e.g.
+  // Vehicle Key) that populates the Key Type dropdown on the Customer
+  // Registration form. Mirrors the Shop Categories/Product Types blocks above.
+  const [keyTypes, setKeyTypes] = useState([]);
+  const [ktLoading, setKtLoading] = useState(true);
+  const [newKeyTypeName, setNewKeyTypeName] = useState('');
+  const [addingKeyType, setAddingKeyType] = useState(false);
+  const [editingKtId, setEditingKtId] = useState(null);
+  const [editingKtName, setEditingKtName] = useState('');
+  const [savingKtId, setSavingKtId] = useState(null);
+
   useEffect(() => {
     fetchConfig();
     fetchCategories();
     fetchProductTypes();
+    fetchKeyTypes();
   }, []);
 
   const fetchConfig = async () => {
@@ -8261,6 +8325,71 @@ export function SupportConfigView({ t, api }) {
     }
   };
 
+  const fetchKeyTypes = async () => {
+    try {
+      const res = await api.getKeyTypes();
+      setKeyTypes(res || []);
+    } catch (e) {
+      console.error('Failed to load key types:', e);
+    } finally {
+      setKtLoading(false);
+    }
+  };
+
+  const handleAddKeyType = async () => {
+    const name = newKeyTypeName.trim();
+    if (!name) {
+      alert('Please enter a key type name.');
+      return;
+    }
+    setAddingKeyType(true);
+    try {
+      await api.createKeyType(name);
+      setNewKeyTypeName('');
+      await fetchKeyTypes();
+    } catch (e) {
+      alert(`Failed to add key type: ${e.message}`);
+    } finally {
+      setAddingKeyType(false);
+    }
+  };
+
+  const handleStartEditKeyType = (kt) => {
+    setEditingKtId(kt.id);
+    setEditingKtName(kt.name);
+  };
+
+  const handleSaveEditKeyType = async (id) => {
+    const name = editingKtName.trim();
+    if (!name) {
+      alert('Please enter a key type name.');
+      return;
+    }
+    setSavingKtId(id);
+    try {
+      await api.updateKeyType(id, name);
+      setEditingKtId(null);
+      await fetchKeyTypes();
+    } catch (e) {
+      alert(`Failed to update key type: ${e.message}`);
+    } finally {
+      setSavingKtId(null);
+    }
+  };
+
+  const handleDeleteKeyType = async (kt) => {
+    if (!confirm(`Delete the "${kt.name}" key type? Customers already using it keep it, but it will no longer be offered on the Customer Registration form.`)) return;
+    setSavingKtId(kt.id);
+    try {
+      await api.deleteKeyType(kt.id);
+      await fetchKeyTypes();
+    } catch (e) {
+      alert(`Failed to delete key type: ${e.message}`);
+    } finally {
+      setSavingKtId(null);
+    }
+  };
+
   if (loading) {
     return (
       <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
@@ -8374,22 +8503,28 @@ export function SupportConfigView({ t, api }) {
 
       <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
         <div className="reg-section" style={{ marginBottom: 0 }}>
-          <div className="reg-section-head" style={{ justifyContent: 'flex-end' }}>
-            <span className="sub" style={{ marginRight: 10 }}>{categories.length} categor{categories.length === 1 ? 'y' : 'ies'}</span>
+          <div className="reg-section-head">
+            <div className="reg-ico" style={{ background: 'var(--purple)' }}><Tag /></div>
+            <h3>Shop Categories</h3>
+            <span className="sub" style={{ marginLeft: 'auto' }}>{categories.length} categor{categories.length === 1 ? 'y' : 'ies'}</span>
           </div>
           <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
             Manage the shop "type" options offered on the public self-registration wizard's Category dropdown.
           </p>
 
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-            <input
-              type="text" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)}
-              placeholder="e.g. Dealers" style={{ flex: 1 }}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCategory(); } }}
-            />
-            <button type="button" onClick={handleAddCategory} disabled={addingCategory} className="btn btn-outline btn-sm">
-              {addingCategory ? <RefreshCw className="animate-spin" /> : <Plus />} Add
-            </button>
+          <div className="reg-field" style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div className="input-wrap" style={{ flex: 1 }}>
+                <input
+                  type="text" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="Enter category name"
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCategory(); } }}
+                />
+              </div>
+              <button type="button" onClick={handleAddCategory} disabled={addingCategory} className="btn btn-outline btn-sm">
+                {addingCategory ? <RefreshCw className="animate-spin" /> : <Plus />} Add
+              </button>
+            </div>
           </div>
 
           {catLoading ? (
@@ -8442,22 +8577,28 @@ export function SupportConfigView({ t, api }) {
 
       <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
         <div className="reg-section" style={{ marginBottom: 0 }}>
-          <div className="reg-section-head" style={{ justifyContent: 'flex-end' }}>
-            <span className="sub" style={{ marginRight: 10 }}>{productTypes.length} type{productTypes.length === 1 ? '' : 's'}</span>
+          <div className="reg-section-head">
+            <div className="reg-ico" style={{ background: 'var(--blue)' }}><Layers /></div>
+            <h3>Product Types</h3>
+            <span className="sub" style={{ marginLeft: 'auto' }}>{productTypes.length} type{productTypes.length === 1 ? '' : 's'}</span>
           </div>
           <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
             Manage the Product Type options offered on the Inventory Product Creation form.
           </p>
 
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-            <input
-              type="text" value={newProductTypeName} onChange={(e) => setNewProductTypeName(e.target.value)}
-              placeholder="e.g. Key Cutting Machines" style={{ flex: 1 }}
-              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddProductType(); } }}
-            />
-            <button type="button" onClick={handleAddProductType} disabled={addingProductType} className="btn btn-outline btn-sm">
-              {addingProductType ? <RefreshCw className="animate-spin" /> : <Plus />} Add
-            </button>
+          <div className="reg-field" style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div className="input-wrap" style={{ flex: 1 }}>
+                <input
+                  type="text" value={newProductTypeName} onChange={(e) => setNewProductTypeName(e.target.value)}
+                  placeholder="Enter product type"
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddProductType(); } }}
+                />
+              </div>
+              <button type="button" onClick={handleAddProductType} disabled={addingProductType} className="btn btn-outline btn-sm">
+                {addingProductType ? <RefreshCw className="animate-spin" /> : <Plus />} Add
+              </button>
+            </div>
           </div>
 
           {ptLoading ? (
@@ -8498,6 +8639,80 @@ export function SupportConfigView({ t, api }) {
                         className="icon-btn" style={{ color: 'var(--red)' }} title="Delete"
                       >
                         {savingPtId === pt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
+        <div className="reg-section" style={{ marginBottom: 0 }}>
+          <div className="reg-section-head">
+            <div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div>
+            <h3>Key Types</h3>
+            <span className="sub" style={{ marginLeft: 'auto' }}>{keyTypes.length} type{keyTypes.length === 1 ? '' : 's'}</span>
+          </div>
+          <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
+            Manage the Key Type options offered next to the Key field on the Customer Registration form.
+          </p>
+
+          <div className="reg-field" style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div className="input-wrap" style={{ flex: 1 }}>
+                <input
+                  type="text" value={newKeyTypeName} onChange={(e) => setNewKeyTypeName(e.target.value)}
+                  placeholder="Enter key type"
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddKeyType(); } }}
+                />
+              </div>
+              <button type="button" onClick={handleAddKeyType} disabled={addingKeyType} className="btn btn-outline btn-sm">
+                {addingKeyType ? <RefreshCw className="animate-spin" /> : <Plus />} Add
+              </button>
+            </div>
+          </div>
+
+          {ktLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
+              <RefreshCw className="animate-spin" style={{ width: 22, height: 22, color: 'var(--gold)' }} />
+            </div>
+          ) : keyTypes.length === 0 ? (
+            <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
+              No key types yet. Add one above - the Customer Registration dropdown will be empty until you do.
+            </p>
+          ) : (
+            <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
+              {keyTypes.map((kt) => (
+                <div key={kt.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
+                  {editingKtId === kt.id ? (
+                    <>
+                      <input
+                        type="text" value={editingKtName} onChange={(e) => setEditingKtName(e.target.value)}
+                        style={{ flex: 1 }} autoFocus
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSaveEditKeyType(kt.id); } }}
+                      />
+                      <button type="button" onClick={() => handleSaveEditKeyType(kt.id)} disabled={savingKtId === kt.id} className="icon-btn" title="Save" style={{ color: 'var(--jgreen)' }}>
+                        {savingKtId === kt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4" />}
+                      </button>
+                      <button type="button" onClick={() => setEditingKtId(null)} className="icon-btn" title="Cancel">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <KeyRound style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
+                      <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{kt.name}</span>
+                      <button type="button" onClick={() => handleStartEditKeyType(kt)} className="icon-btn" title="Edit">
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button" onClick={() => handleDeleteKeyType(kt)} disabled={savingKtId === kt.id}
+                        className="icon-btn" style={{ color: 'var(--red)' }} title="Delete"
+                      >
+                        {savingKtId === kt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
                       </button>
                     </>
                   )}

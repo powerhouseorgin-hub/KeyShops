@@ -332,6 +332,14 @@ export const AuthProvider = ({ children }) => {
     createProductType: async (name) => request('/api/super/product-types', 'POST', { name }),
     updateProductType: async (id, name) => request(`/api/super/product-types/${id}`, 'PUT', { name }),
     deleteProductType: async (id) => request(`/api/super/product-types/${id}`, 'DELETE'),
+
+    // --- KEY TYPES ---
+    // Requires login: powers the Key Type dropdown on Customer Registration
+    // and the Super Admin's Key Types management screen.
+    getKeyTypes: async () => request('/api/key-types'),
+    createKeyType: async (name) => request('/api/super/key-types', 'POST', { name }),
+    updateKeyType: async (id, name) => request(`/api/super/key-types/${id}`, 'PUT', { name }),
+    deleteKeyType: async (id) => request(`/api/super/key-types/${id}`, 'DELETE'),
   };
 
   return (

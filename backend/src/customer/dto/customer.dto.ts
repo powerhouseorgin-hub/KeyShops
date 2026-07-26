@@ -44,6 +44,10 @@ export class CreateCustomerDto {
 
   @IsString()
   @IsOptional()
+  keyType?: string;
+
+  @IsString()
+  @IsOptional()
   vehicleNumber?: string;
 
   @IsString()
@@ -123,6 +127,10 @@ export class UpdateCustomerDto {
   @IsString()
   @IsOptional()
   keyNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  keyType?: string;
 
   @IsString()
   @IsOptional()
