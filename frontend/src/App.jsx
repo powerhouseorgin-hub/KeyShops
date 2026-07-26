@@ -2848,9 +2848,10 @@ export default function App() {
 // COMPONENT 1: DASHBOARD VIEW WITH INTERACTIVE CARD DETAILS
 // ============================================================================
 // Product-type shortcut cards shown on both the Shop Admin and Super Admin
-// dashboards. `type` values must exactly match entries in PRODUCT_TYPES (see
-// PromotionsFeed below) so tapping a card can route straight into the
-// Inventory screen pre-filtered to that category via searchDispatch.
+// dashboards. `type` values must exactly match a product type name managed
+// by the Super Admin (Support > Product Types, see PromotionsFeed below) so
+// tapping a card can route straight into the Inventory screen pre-filtered
+// to that category via searchDispatch.
 // Flat two-tone "add customer" glyph (light-blue head/shoulders + a white
 // plus-badge) used on the New/Add Customer cards on both dashboards,
 // mirroring the look of the reference design the user asked for. This is
@@ -5256,12 +5257,13 @@ function AdsManagementView({ api }) {
 // Management sub-tabs alongside the plain marketplace feed.
 // ============================================================================
 // OLX-style inventory categories. Freeform on the backend (productType is a
-// plain string, not an enum) so this list can grow without a migration.
-// This is now the ONLY type classification a listing has - the old separate
-// "Listing Type" (Inventory Product / Advertisement / Offer/Discount) picker
-// has been removed from the create/edit form; every new listing is created
-// as a plain PRODUCT and categorized purely via this list.
-const PRODUCT_TYPES = ['Key Cutting Machines', 'Used Machines', 'ECM Service', 'Meter Service', 'Scanning Service'];
+// plain string, not an enum) so this list can grow without a migration - the
+// options themselves are Super-Admin-managed (see ProductType model /
+// api.getProductTypes) rather than hardcoded here. This is now the ONLY type
+// classification a listing has - the old separate "Listing Type" (Inventory
+// Product / Advertisement / Offer/Discount) picker has been removed from the
+// create/edit form; every new listing is created as a plain PRODUCT and
+// categorized purely via this list.
 
 function PromotionsView({ api, user, searchDispatch }) {
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
@@ -5339,11 +5341,16 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [price, setPrice] = useState('');
-  const [productType, setProductType] = useState(PRODUCT_TYPES[0]);
+  const [productType, setProductType] = useState('');
   const [phone, setPhone] = useState('');
   const [discountPercentage, setDiscountPercentage] = useState('');
   const [validUntil, setValidUntil] = useState('');
   const [linkedPromotionId, setLinkedPromotionId] = useState('');
+
+  // Super-Admin-managed list of product types (see ProductType model /
+  // api.getProductTypes) that powers the Product Type dropdown below -
+  // replaces what used to be a hardcoded PRODUCT_TYPES array.
+  const [productTypes, setProductTypes] = useState([]);
 
   // OLX-style category filter chip, applied client-side over the fetched feed.
   const [categoryFilter, setCategoryFilter] = useState('ALL');
@@ -5354,6 +5361,12 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
 
   useEffect(() => {
     fetchPromotions();
+    api.getProductTypes()
+      .then((res) => {
+        setProductTypes(res || []);
+        setProductType((prev) => prev || res?.[0]?.name || '');
+      })
+      .catch((e) => console.error('Failed to load product types:', e));
   }, []);
 
   useEffect(() => {
@@ -5361,8 +5374,8 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
       setTextQuery(searchDispatch.query);
       if (searchDispatch.type === 'productType') {
         // If the query exactly matches a known category, jump straight to that chip.
-        const match = PRODUCT_TYPES.find(pt => pt.toLowerCase() === searchDispatch.query.trim().toLowerCase());
-        if (match) setCategoryFilter(match);
+        const match = productTypes.find(pt => pt.name.toLowerCase() === searchDispatch.query.trim().toLowerCase());
+        if (match) setCategoryFilter(match.name);
       }
     }
   }, [searchDispatch?.nonce]);
@@ -5388,7 +5401,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
     setDescription('');
     setImageUrl('');
     setPrice('');
-    setProductType(PRODUCT_TYPES[0]);
+    setProductType(productTypes[0]?.name || '');
     setPhone('');
     setDiscountPercentage('');
     setValidUntil('');
@@ -5405,7 +5418,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
     setDescription(promo.description || '');
     setImageUrl(promo.imageUrl || '');
     setPrice(promo.price ?? '');
-    setProductType(promo.productType || PRODUCT_TYPES[0]);
+    setProductType(promo.productType || productTypes[0]?.name || '');
     setPhone(promo.phone || '');
     setDiscountPercentage(promo.discountPercentage ?? '');
     setValidUntil(promo.validUntil ? promo.validUntil.slice(0, 10) : '');
@@ -5697,11 +5710,12 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
 
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><Layers /></div><b>Product Type</b></div>
-                  <select className="sel" value={productType} onChange={(e) => setProductType(e.target.value)}>
-                    {PRODUCT_TYPES.map(pt => (
-                      <option key={pt} value={pt}>{pt}</option>
-                    ))}
-                  </select>
+                  <CustomSelect
+                    value={productType} onChange={setProductType}
+                    placeholder="Select product type"
+                    emptyLabel="No product types available yet"
+                    options={productTypes.map(pt => ({ value: pt.name, label: pt.name }))}
+                  />
                 </div>
 
                 <div className="reg-field">
@@ -5801,12 +5815,13 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
 
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Boxes /></div><b>Link to one of your existing listings (optional)</b></div>
-                    <select className="sel" value={linkedPromotionId} onChange={(e) => setLinkedPromotionId(e.target.value)}>
-                      <option value="">No linked listing</option>
-                      {linkableListings.map(p => (
-                        <option key={p.id} value={p.id}>{p.title} ({p.type === 'AD' ? 'Advertisement' : 'Product'})</option>
-                      ))}
-                    </select>
+                    <CustomSelect
+                      value={linkedPromotionId} onChange={setLinkedPromotionId}
+                      options={[
+                        { value: '', label: 'No linked listing' },
+                        ...linkableListings.map(p => ({ value: p.id, label: `${p.title} (${p.type === 'AD' ? 'Advertisement' : 'Product'})` })),
+                      ]}
+                    />
                   </div>
                 </div>
               )}
@@ -6119,16 +6134,13 @@ function RevenueManagementView({ api }) {
               <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Calendar /></div><b>Month</b></div>
-                  <select
-                    className="sel"
-                    value={month} onChange={(e) => setMonth(Number(e.target.value))}
-                  >
-                    {Array.from({ length: 12 }, (_, i) => (
-                      <option key={i + 1} value={i + 1}>
-                        {new Date(2000, i).toLocaleString('default', { month: 'long' })}
-                      </option>
-                    ))}
-                  </select>
+                  <CustomSelect
+                    value={month} onChange={(v) => setMonth(Number(v))}
+                    options={Array.from({ length: 12 }, (_, i) => ({
+                      value: i + 1,
+                      label: new Date(2000, i).toLocaleString('default', { month: 'long' }),
+                    }))}
+                  />
                 </div>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CalendarRange /></div><b>Year</b></div>
@@ -7005,12 +7017,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 <div className="reg-section">
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Store /></div><b>Shop <span className="req">*</span></b></div>
-                    <select className="sel" required value={selectedShopId} onChange={(e) => setSelectedShopId(e.target.value)}>
-                      <option value="">Select a shop&hellip;</option>
-                      {shops.map(s => (
-                        <option key={s.id} value={s.id}>{s.name}</option>
-                      ))}
-                    </select>
+                    <CustomSelect
+                      value={selectedShopId} onChange={setSelectedShopId}
+                      placeholder="Select a shop…"
+                      options={shops.map(s => ({ value: s.id, label: s.name }))}
+                    />
                     <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 8 }}>
                       This customer, and its key code, will be registered under the selected shop's workspace.
                     </p>
@@ -7155,27 +7166,22 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 <div className="form-grid" style={{ marginBottom: 13 }}>
                   <div className="reg-field" style={{ marginBottom: 0 }}>
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Navigation /></div><b>State</b></div>
-                    <select
-                      className="sel" value={stateVal}
-                      onChange={(e) => {
-                        const selected = e.target.value;
+                    <CustomSelect
+                      value={stateVal}
+                      onChange={(selected) => {
                         setStateVal(selected);
                         const list = INDIAN_STATES_DISTRICTS[selected] || [];
                         setDistrict(list[0] || '');
                       }}
-                    >
-                      {Object.keys(INDIAN_STATES_DISTRICTS).map(st => (
-                        <option key={st} value={st}>{st}</option>
-                      ))}
-                    </select>
+                      options={Object.keys(INDIAN_STATES_DISTRICTS)}
+                    />
                   </div>
                   <div className="reg-field" style={{ marginBottom: 0 }}>
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><MapPin /></div><b>District</b></div>
-                    <select className="sel" value={district} onChange={(e) => setDistrict(e.target.value)}>
-                      {(INDIAN_STATES_DISTRICTS[stateVal] || []).map(dt => (
-                        <option key={dt} value={dt}>{dt}</option>
-                      ))}
-                    </select>
+                    <CustomSelect
+                      value={district} onChange={setDistrict}
+                      options={INDIAN_STATES_DISTRICTS[stateVal] || []}
+                    />
                   </div>
                 </div>
                 <div className="reg-field">
@@ -7294,12 +7300,15 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               <div className="reg-section">
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>Document Type</b></div>
-                  <select className="sel" value={idProofType} onChange={(e) => setIdProofType(e.target.value)}>
-                    <option value="Aadhaar Card" disabled={uploadedDocs.some(d => d.type === 'Aadhaar Card')}>Aadhaar Card</option>
-                    <option value="Driving License" disabled={uploadedDocs.some(d => d.type === 'Driving License')}>Driving License</option>
-                    <option value="PAN Card" disabled={uploadedDocs.some(d => d.type === 'PAN Card')}>PAN Card</option>
-                    <option value="Voter ID" disabled={uploadedDocs.some(d => d.type === 'Voter ID')}>Voter ID</option>
-                  </select>
+                  <CustomSelect
+                    value={idProofType} onChange={setIdProofType}
+                    options={[
+                      { value: 'Aadhaar Card', label: 'Aadhaar Card', disabled: uploadedDocs.some(d => d.type === 'Aadhaar Card') },
+                      { value: 'Driving License', label: 'Driving License', disabled: uploadedDocs.some(d => d.type === 'Driving License') },
+                      { value: 'PAN Card', label: 'PAN Card', disabled: uploadedDocs.some(d => d.type === 'PAN Card') },
+                      { value: 'Voter ID', label: 'Voter ID', disabled: uploadedDocs.some(d => d.type === 'Voter ID') },
+                    ]}
+                  />
                 </div>
               </div>
 
@@ -7857,15 +7866,15 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                   <div className="form-grid">
                     <div className="reg-field">
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><ShieldCheck /></div><b>Document ID Type</b></div>
-                      <select
-                        className="sel"
-                        value={editIdProofType} onChange={(e) => setEditIdProofType(e.target.value)}
-                      >
-                        <option value="Aadhaar Card" disabled={selectedCust?.documents?.some(d => d.documentType === 'Aadhaar Card' || d.documentType === 'Aadhaar Card Copy')}>Aadhaar Card</option>
-                        <option value="Driving License" disabled={selectedCust?.documents?.some(d => d.documentType === 'Driving License' || d.documentType === 'Driving License Copy')}>Driving License</option>
-                        <option value="PAN Card" disabled={selectedCust?.documents?.some(d => d.documentType === 'PAN Card' || d.documentType === 'PAN Card Copy')}>PAN Card</option>
-                        <option value="Voter ID" disabled={selectedCust?.documents?.some(d => d.documentType === 'Voter ID' || d.documentType === 'Voter ID Copy')}>Voter ID</option>
-                      </select>
+                      <CustomSelect
+                        value={editIdProofType} onChange={setEditIdProofType}
+                        options={[
+                          { value: 'Aadhaar Card', label: 'Aadhaar Card', disabled: selectedCust?.documents?.some(d => d.documentType === 'Aadhaar Card' || d.documentType === 'Aadhaar Card Copy') },
+                          { value: 'Driving License', label: 'Driving License', disabled: selectedCust?.documents?.some(d => d.documentType === 'Driving License' || d.documentType === 'Driving License Copy') },
+                          { value: 'PAN Card', label: 'PAN Card', disabled: selectedCust?.documents?.some(d => d.documentType === 'PAN Card' || d.documentType === 'PAN Card Copy') },
+                          { value: 'Voter ID', label: 'Voter ID', disabled: selectedCust?.documents?.some(d => d.documentType === 'Voter ID' || d.documentType === 'Voter ID Copy') },
+                        ]}
+                      />
                     </div>
                     <div className="reg-field" style={{ marginBottom: 0 }}>
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><UploadCloud /></div><b>Upload New File Copy</b></div>
@@ -8079,9 +8088,22 @@ export function SupportConfigView({ t, api }) {
   const [editingCatName, setEditingCatName] = useState('');
   const [savingCatId, setSavingCatId] = useState(null);
 
+  // Product Types management - the Super-Admin-curated list of Inventory
+  // "product types" (e.g. Key Cutting Machines) that populates the Product
+  // Type dropdown on the Inventory Product Creation form. Mirrors the Shop
+  // Categories block above: its own fetch, its own save-per-action.
+  const [productTypes, setProductTypes] = useState([]);
+  const [ptLoading, setPtLoading] = useState(true);
+  const [newProductTypeName, setNewProductTypeName] = useState('');
+  const [addingProductType, setAddingProductType] = useState(false);
+  const [editingPtId, setEditingPtId] = useState(null);
+  const [editingPtName, setEditingPtName] = useState('');
+  const [savingPtId, setSavingPtId] = useState(null);
+
   useEffect(() => {
     fetchConfig();
     fetchCategories();
+    fetchProductTypes();
   }, []);
 
   const fetchConfig = async () => {
@@ -8171,6 +8193,71 @@ export function SupportConfigView({ t, api }) {
       alert(`Failed to delete category: ${e.message}`);
     } finally {
       setSavingCatId(null);
+    }
+  };
+
+  const fetchProductTypes = async () => {
+    try {
+      const res = await api.getProductTypes();
+      setProductTypes(res || []);
+    } catch (e) {
+      console.error('Failed to load product types:', e);
+    } finally {
+      setPtLoading(false);
+    }
+  };
+
+  const handleAddProductType = async () => {
+    const name = newProductTypeName.trim();
+    if (!name) {
+      alert('Please enter a product type name.');
+      return;
+    }
+    setAddingProductType(true);
+    try {
+      await api.createProductType(name);
+      setNewProductTypeName('');
+      await fetchProductTypes();
+    } catch (e) {
+      alert(`Failed to add product type: ${e.message}`);
+    } finally {
+      setAddingProductType(false);
+    }
+  };
+
+  const handleStartEditProductType = (pt) => {
+    setEditingPtId(pt.id);
+    setEditingPtName(pt.name);
+  };
+
+  const handleSaveEditProductType = async (id) => {
+    const name = editingPtName.trim();
+    if (!name) {
+      alert('Please enter a product type name.');
+      return;
+    }
+    setSavingPtId(id);
+    try {
+      await api.updateProductType(id, name);
+      setEditingPtId(null);
+      await fetchProductTypes();
+    } catch (e) {
+      alert(`Failed to update product type: ${e.message}`);
+    } finally {
+      setSavingPtId(null);
+    }
+  };
+
+  const handleDeleteProductType = async (pt) => {
+    if (!confirm(`Delete the "${pt.name}" product type? Listings already using it keep it, but it will no longer be offered on the Inventory Product Creation form.`)) return;
+    setSavingPtId(pt.id);
+    try {
+      await api.deleteProductType(pt.id);
+      await fetchProductTypes();
+    } catch (e) {
+      alert(`Failed to delete product type: ${e.message}`);
+    } finally {
+      setSavingPtId(null);
     }
   };
 
@@ -8343,6 +8430,74 @@ export function SupportConfigView({ t, api }) {
                         className="icon-btn" style={{ color: 'var(--red)' }} title="Delete"
                       >
                         {savingCatId === cat.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
+        <div className="reg-section" style={{ marginBottom: 0 }}>
+          <div className="reg-section-head" style={{ justifyContent: 'flex-end' }}>
+            <span className="sub" style={{ marginRight: 10 }}>{productTypes.length} type{productTypes.length === 1 ? '' : 's'}</span>
+          </div>
+          <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
+            Manage the Product Type options offered on the Inventory Product Creation form.
+          </p>
+
+          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+            <input
+              type="text" value={newProductTypeName} onChange={(e) => setNewProductTypeName(e.target.value)}
+              placeholder="e.g. Key Cutting Machines" style={{ flex: 1 }}
+              onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddProductType(); } }}
+            />
+            <button type="button" onClick={handleAddProductType} disabled={addingProductType} className="btn btn-outline btn-sm">
+              {addingProductType ? <RefreshCw className="animate-spin" /> : <Plus />} Add
+            </button>
+          </div>
+
+          {ptLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
+              <RefreshCw className="animate-spin" style={{ width: 22, height: 22, color: 'var(--gold)' }} />
+            </div>
+          ) : productTypes.length === 0 ? (
+            <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
+              No product types yet. Add one above - the Inventory Product Creation dropdown will be empty until you do.
+            </p>
+          ) : (
+            <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
+              {productTypes.map((pt) => (
+                <div key={pt.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
+                  {editingPtId === pt.id ? (
+                    <>
+                      <input
+                        type="text" value={editingPtName} onChange={(e) => setEditingPtName(e.target.value)}
+                        style={{ flex: 1 }} autoFocus
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSaveEditProductType(pt.id); } }}
+                      />
+                      <button type="button" onClick={() => handleSaveEditProductType(pt.id)} disabled={savingPtId === pt.id} className="icon-btn" title="Save" style={{ color: 'var(--jgreen)' }}>
+                        {savingPtId === pt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4" />}
+                      </button>
+                      <button type="button" onClick={() => setEditingPtId(null)} className="icon-btn" title="Cancel">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Layers style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
+                      <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{pt.name}</span>
+                      <button type="button" onClick={() => handleStartEditProductType(pt)} className="icon-btn" title="Edit">
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button" onClick={() => handleDeleteProductType(pt)} disabled={savingPtId === pt.id}
+                        className="icon-btn" style={{ color: 'var(--red)' }} title="Delete"
+                      >
+                        {savingPtId === pt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
                       </button>
                     </>
                   )}
