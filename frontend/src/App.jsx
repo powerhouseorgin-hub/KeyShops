@@ -5,6 +5,7 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { useAuth } from './context/AuthContext';
 import { getAssetUrl, downloadAsset, filenameForAsset, API_BASE } from './apiConfig';
 import PublicSite from './components/PublicSite';
+import CustomSelect from './components/CustomSelect';
 import {
   Key, Users, Shield, Radio, BarChart3, Database, LogOut, Check, X,
   Plus, Settings, FileText, Search, UserCheck, MapPin, Camera, AlertTriangle,
@@ -1189,8 +1190,8 @@ export default function App() {
   // delivery. Disappears automatically once a real provider is configured.
   const [regOtpDevCode, setRegOtpDevCode] = useState('');
 
-  // Self-Registration Payment states (Step 2's final sub-stage)
-  const [regShowPayment, setRegShowPayment] = useState(false);
+  // Self-Registration Payment states - plan selection and payment now live
+  // on the same Step 2 screen (see the combined form below).
   const [regPayMethod, setRegPayMethod] = useState('card');
   const [regCardNumber, setRegCardNumber] = useState('');
   const [regCardExpiry, setRegCardExpiry] = useState('');
@@ -1461,7 +1462,6 @@ export default function App() {
     setRegOtpError('');
     setRegOtpLoading(false);
     setRegOtpDevCode('');
-    setRegShowPayment(false);
     setRegPayMethod('card');
     setRegCardNumber('');
     setRegCardExpiry('');
@@ -2002,16 +2002,13 @@ export default function App() {
                   </div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange, #f59e0b)' }}><Tag /></div><b>Category <span className="req">*</span></b></div>
-                    <select
-                      className="sel"
-                      required value={regCategoryId} onChange={(e) => setRegCategoryId(e.target.value)}
+                    <CustomSelect
+                      value={regCategoryId} onChange={setRegCategoryId}
                       disabled={regCategoriesLoading}
-                    >
-                      <option value="">{regCategoriesLoading ? 'Loading categories…' : 'Select shop category'}</option>
-                      {regCategories.map((cat) => (
-                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                      ))}
-                    </select>
+                      placeholder={regCategoriesLoading ? 'Loading categories…' : 'Select shop category'}
+                      emptyLabel="No shop categories available yet"
+                      options={regCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
+                    />
                   </div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>Email Address <span className="req">*</span></b></div>
@@ -2138,9 +2135,21 @@ export default function App() {
               </div>
             )}
 
-            {/* STEP 2a: Plan selection */}
-            {regStep === 2 && !regShowPayment && (
-              <div>
+            {/* STEP 2: Plan & Payment - combined onto a single screen so the
+                shop owner picks a subscription plan and settles payment
+                without an extra "Continue to payment" click/screen. */}
+            {regStep === 2 && (
+              <form onSubmit={handleRegCheckout} className="animate-fade-in relative overflow-hidden">
+                {regPayProcessing && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: 'rgba(10,9,8,0.92)', zIndex: 20 }}>
+                    <div className="relative w-12 h-12 flex items-center justify-center">
+                      <span className="absolute inset-0 rounded-full" style={{ border: '4px solid var(--gold-dim)' }}></span>
+                      <span className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid transparent', borderTopColor: 'var(--gold)' }}></span>
+                    </div>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.06em' }}>Settling payment&hellip;</h3>
+                  </div>
+                )}
+
                 <div style={{ marginBottom: 20 }}>
                   <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>Choose subscription plan</label>
                   <div className="store-tabs" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
@@ -2173,34 +2182,6 @@ export default function App() {
                     </button>
                   </div>
                 </div>
-
-                <div className="flex justify-between items-center" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 20 }}>
-                  <button type="button" onClick={() => setRegStep(1)} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-3)', fontWeight: 700 }}>
-                    <ArrowLeft className="h-3.5 w-3.5" /> Back
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setRegShowPayment(true)}
-                    className="btn btn-primary"
-                  >
-                    Continue to payment <ArrowRight />
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* STEP 2b: Payment Checkout */}
-            {regStep === 2 && regShowPayment && (
-              <form onSubmit={handleRegCheckout} className="animate-fade-in relative overflow-hidden">
-                {regPayProcessing && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: 'rgba(10,9,8,0.92)', zIndex: 20 }}>
-                    <div className="relative w-12 h-12 flex items-center justify-center">
-                      <span className="absolute inset-0 rounded-full" style={{ border: '4px solid var(--gold-dim)' }}></span>
-                      <span className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid transparent', borderTopColor: 'var(--gold)' }}></span>
-                    </div>
-                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.06em' }}>Settling payment&hellip;</h3>
-                  </div>
-                )}
 
                 <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', padding: 14, borderRadius: 14, border: '1px solid var(--border-2)', marginBottom: 18, fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>
                   <span>Payable amount</span>
@@ -2280,7 +2261,7 @@ export default function App() {
                 )}
 
                 <div className="flex gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
-                  <button type="button" onClick={() => setRegShowPayment(false)} className="btn btn-ghost" style={{ flex: 1 }}>
+                  <button type="button" onClick={() => setRegStep(1)} className="btn btn-ghost" style={{ flex: 1 }}>
                     Back
                   </button>
                   <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>
@@ -2340,22 +2321,22 @@ export default function App() {
             {/* Language Selector Dropdown */}
             <div style={{ padding: '0 20px 16px', borderBottom: '1px solid var(--border)', marginBottom: 8 }}>
               <label className="side-section-label" style={{ padding: 0, marginBottom: 8, display: 'block' }}>Language &middot; भाषा &middot; மொழி</label>
-              <select
+              <CustomSelect
                 value={lang}
-                onChange={(e) => {
-                  setLang(e.target.value);
-                  localStorage.setItem('kee_lang', e.target.value);
+                onChange={(v) => {
+                  setLang(v);
+                  localStorage.setItem('kee_lang', v);
                 }}
-                className="sel"
-                style={{ padding: '9px 32px 9px 12px', fontSize: 12 }}
-              >
-                <option value="en">English</option>
-                <option value="hi">Hindi (हिन्दी)</option>
-                <option value="ta">Tamil (தமிழ்)</option>
-                <option value="te">Telugu (తెలుగు)</option>
-                <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                <option value="ml">Malayalam (മലയാളം)</option>
-              </select>
+                triggerStyle={{ padding: '9px 32px 9px 12px', fontSize: 12 }}
+                options={[
+                  { value: 'en', label: 'English' },
+                  { value: 'hi', label: 'Hindi (हिन्दी)' },
+                  { value: 'ta', label: 'Tamil (தமிழ்)' },
+                  { value: 'te', label: 'Telugu (తెలుగు)' },
+                  { value: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
+                  { value: 'ml', label: 'Malayalam (മലയാളം)' },
+                ]}
+              />
             </div>
 
             <nav style={{ flex: 1, padding: '0 12px', overflowY: 'auto' }} onClick={(e) => { if (e.target.closest('button')) setMobileNavOpen(false); }}>
@@ -3772,14 +3753,14 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 <div className="form-grid">
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>Subscription Plan <span className="req">*</span></b></div>
-                    <select
-                      className="sel"
-                      value={subPlan} onChange={(e) => setSubPlan(e.target.value)}
-                    >
-                      <option value="MONTHLY">Monthly Plan • Rs. {planPrices.MONTHLY}/mo</option>
-                      <option value="HALF_YEARLY">6-Month Plan • Rs. {planPrices.HALF_YEARLY}/6mo</option>
-                      <option value="YEARLY">Yearly Plan • Rs. {planPrices.YEARLY}/yr</option>
-                    </select>
+                    <CustomSelect
+                      value={subPlan} onChange={setSubPlan}
+                      options={[
+                        { value: 'MONTHLY', label: `Monthly Plan • Rs. ${planPrices.MONTHLY}/mo` },
+                        { value: 'HALF_YEARLY', label: `6-Month Plan • Rs. ${planPrices.HALF_YEARLY}/6mo` },
+                        { value: 'YEARLY', label: `Yearly Plan • Rs. ${planPrices.YEARLY}/yr` },
+                      ]}
+                    />
                   </div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Calendar /></div><b>End Date (Validity) <span className="req">*</span></b></div>
@@ -4040,14 +4021,14 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="reg-section">
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>Plan Tier <span className="req">*</span></b></div>
-                  <select
-                    className="sel"
-                    value={newPlan} onChange={(e) => setNewPlan(e.target.value)}
-                  >
-                    <option value="MONTHLY">Monthly Plan • Rs. {planPrices.MONTHLY}/mo</option>
-                    <option value="HALF_YEARLY">6-Month Plan • Rs. {planPrices.HALF_YEARLY}/6mo</option>
-                    <option value="YEARLY">Yearly Plan • Rs. {planPrices.YEARLY}/yr</option>
-                  </select>
+                  <CustomSelect
+                    value={newPlan} onChange={setNewPlan}
+                    options={[
+                      { value: 'MONTHLY', label: `Monthly Plan • Rs. ${planPrices.MONTHLY}/mo` },
+                      { value: 'HALF_YEARLY', label: `6-Month Plan • Rs. ${planPrices.HALF_YEARLY}/6mo` },
+                      { value: 'YEARLY', label: `Yearly Plan • Rs. ${planPrices.YEARLY}/yr` },
+                    ]}
+                  />
                 </div>
 
                 <div className="reg-field">
@@ -5166,14 +5147,14 @@ function AdsManagementView({ api }) {
               <div className="form-grid">
                 <div className="field">
                   <label>Ad Format</label>
-                  <select
-                    className="sel"
-                    value={type} onChange={(e) => setType(e.target.value)}
-                  >
-                    <option value="BANNER">Main Banner Notice</option>
-                    <option value="POPUP">Interactive Login Popup</option>
-                    <option value="NOTICE">Dashboard Text Notice</option>
-                  </select>
+                  <CustomSelect
+                    value={type} onChange={setType}
+                    options={[
+                      { value: 'BANNER', label: 'Main Banner Notice' },
+                      { value: 'POPUP', label: 'Interactive Login Popup' },
+                      { value: 'NOTICE', label: 'Dashboard Text Notice' },
+                    ]}
+                  />
                 </div>
                 <div className="field">
                   <label>Campaign Priority</label>

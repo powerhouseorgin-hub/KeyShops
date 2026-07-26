@@ -13,6 +13,7 @@ import { ReportModule } from './report/report.module';
 import { NotificationModule } from './notification/notification.module';
 import { PromotionModule } from './promotion/promotion.module';
 import { ShopCategoryModule } from './shop-category/shop-category.module';
+import { ProductTypeModule } from './product-type/product-type.module';
 import { TenantInterceptor } from './tenant/tenant.interceptor';
 
 @Module({
@@ -28,6 +29,7 @@ import { TenantInterceptor } from './tenant/tenant.interceptor';
     NotificationModule,
     PromotionModule,
     ShopCategoryModule,
+    ProductTypeModule,
   ],
   controllers: [AppController, GeoController],
   providers: [

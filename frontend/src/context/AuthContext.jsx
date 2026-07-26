@@ -323,6 +323,15 @@ export const AuthProvider = ({ children }) => {
     createShopCategory: async (name) => request('/api/super/shop-categories', 'POST', { name }),
     updateShopCategory: async (id, name) => request(`/api/super/shop-categories/${id}`, 'PUT', { name }),
     deleteShopCategory: async (id) => request(`/api/super/shop-categories/${id}`, 'DELETE'),
+
+    // --- PRODUCT TYPES ---
+    // Requires login (unlike shop categories, this only powers screens that
+    // already sit behind auth: the Inventory Product Creation dropdown and
+    // the Super Admin's Product Types management screen).
+    getProductTypes: async () => request('/api/product-types'),
+    createProductType: async (name) => request('/api/super/product-types', 'POST', { name }),
+    updateProductType: async (id, name) => request(`/api/super/product-types/${id}`, 'PUT', { name }),
+    deleteProductType: async (id) => request(`/api/super/product-types/${id}`, 'DELETE'),
   };
 
   return (
