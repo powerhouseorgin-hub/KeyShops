@@ -141,22 +141,25 @@ describe('PromotionService', () => {
     });
   });
 
-  describe('updatePromotionAsSuperAdmin / deletePromotionAsSuperAdmin (no ownership restriction)', () => {
-    it('throws NotFoundException when the promotion does not exist', async () => {
-      prismaMock.promotion.findUnique.mockResolvedValue(null);
+  describe('updatePromotionAsSuperAdmin / deletePromotionAsSuperAdmin (creator-only restriction)', () => {
+    it('throws NotFoundException when the promotion does not exist or was not created by this Super Admin', async () => {
+      prismaMock.promotion.findFirst.mockResolvedValue(null);
 
-      await expect(service.updatePromotionAsSuperAdmin('missing', { title: 'x' } as any)).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.updatePromotionAsSuperAdmin('missing', 'super-1', { title: 'x' } as any),
+      ).rejects.toThrow(NotFoundException);
       expect(prismaMock.promotion.update).not.toHaveBeenCalled();
     });
 
-    it('updates any promotion regardless of which shop created it', async () => {
-      prismaMock.promotion.findUnique.mockResolvedValue({ id: 'promo-1', shopId: 'shop-B' });
+    it('updates a promotion created by this Super Admin', async () => {
+      prismaMock.promotion.findFirst.mockResolvedValue({ id: 'promo-1', createdById: 'super-1' });
       prismaMock.promotion.update.mockResolvedValue({ id: 'promo-1', title: 'Moderated' });
 
-      const result = await service.updatePromotionAsSuperAdmin('promo-1', { title: 'Moderated' } as any);
+      const result = await service.updatePromotionAsSuperAdmin('promo-1', 'super-1', { title: 'Moderated' } as any);
 
+      expect(prismaMock.promotion.findFirst).toHaveBeenCalledWith({
+        where: { id: 'promo-1', createdById: 'super-1' },
+      });
       expect(prismaMock.promotion.update).toHaveBeenCalledWith({
         where: { id: 'promo-1' },
         data: { title: 'Moderated' },
@@ -165,12 +168,15 @@ describe('PromotionService', () => {
       expect(result).toEqual({ id: 'promo-1', title: 'Moderated' });
     });
 
-    it('deletes any promotion regardless of which shop created it', async () => {
-      prismaMock.promotion.findUnique.mockResolvedValue({ id: 'promo-1', shopId: 'shop-B' });
+    it('deletes a promotion created by this Super Admin', async () => {
+      prismaMock.promotion.findFirst.mockResolvedValue({ id: 'promo-1', createdById: 'super-1' });
       prismaMock.promotion.delete.mockResolvedValue({ id: 'promo-1' });
 
-      const result = await service.deletePromotionAsSuperAdmin('promo-1');
+      const result = await service.deletePromotionAsSuperAdmin('promo-1', 'super-1');
 
+      expect(prismaMock.promotion.findFirst).toHaveBeenCalledWith({
+        where: { id: 'promo-1', createdById: 'super-1' },
+      });
       expect(prismaMock.promotion.delete).toHaveBeenCalledWith({ where: { id: 'promo-1' } });
       expect(result).toEqual({ success: true });
     });

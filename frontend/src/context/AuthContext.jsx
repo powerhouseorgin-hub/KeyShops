@@ -278,7 +278,10 @@ export const AuthProvider = ({ children }) => {
     // GET is a shared feed: every shop admin and the super admin see every shop's listings.
     getPromotions: async (includeExpiredOffers = false) =>
       request(`/api/promotions${includeExpiredOffers ? '?includeExpiredOffers=true' : ''}`),
-    createPromotion: async (dto) => request('/api/shop/promotions', 'POST', dto),
+    createPromotion: async (dto) => {
+      const url = user.role === 'SUPER_ADMIN' ? '/api/super/promotions' : '/api/shop/promotions';
+      return request(url, 'POST', dto);
+    },
     updatePromotion: async (id, dto) => {
       const url = user.role === 'SUPER_ADMIN' ? `/api/super/promotions/${id}` : `/api/shop/promotions/${id}`;
       return request(url, 'PUT', dto);

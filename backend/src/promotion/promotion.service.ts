@@ -38,8 +38,10 @@ export class PromotionService {
     });
   }
 
-  // SHOP ADMIN: create a listing owned by their own shop.
-  async createPromotion(shopId: string, userId: string, dto: CreatePromotionDto) {
+  // Create a listing. shopId is null for a Super-Admin-created product, which
+  // makes it independent of every shop's inventory (see schema comment on
+  // Promotion.shopId); otherwise it's the creating Shop Admin's own shop.
+  async createPromotion(shopId: string | null, userId: string, dto: CreatePromotionDto) {
     return this.tenantService.prisma.promotion.create({
       data: {
         type: dto.type,
@@ -80,9 +82,11 @@ export class PromotionService {
     return { success: true };
   }
 
-  // SUPER ADMIN: update any listing, regardless of the creating shop.
-  async updatePromotionAsSuperAdmin(id: string, dto: UpdatePromotionDto) {
-    const existing = await this.tenantService.prisma.promotion.findUnique({ where: { id } });
+  // SUPER ADMIN: update a listing - only if the Super Admin themselves created it.
+  // Mirrors updatePromotionAsShop's ownership check (createdById instead of shopId):
+  // a Super Admin moderates their own products, not every shop's listings.
+  async updatePromotionAsSuperAdmin(id: string, userId: string, dto: UpdatePromotionDto) {
+    const existing = await this.tenantService.prisma.promotion.findFirst({ where: { id, createdById: userId } });
     if (!existing) throw new NotFoundException('Promotion not found');
 
     return this.tenantService.prisma.promotion.update({
@@ -92,9 +96,9 @@ export class PromotionService {
     });
   }
 
-  // SUPER ADMIN: delete any listing, regardless of the creating shop.
-  async deletePromotionAsSuperAdmin(id: string) {
-    const existing = await this.tenantService.prisma.promotion.findUnique({ where: { id } });
+  // SUPER ADMIN: delete a listing - only if the Super Admin themselves created it.
+  async deletePromotionAsSuperAdmin(id: string, userId: string) {
+    const existing = await this.tenantService.prisma.promotion.findFirst({ where: { id, createdById: userId } });
     if (!existing) throw new NotFoundException('Promotion not found');
 
     await this.tenantService.prisma.promotion.delete({ where: { id } });

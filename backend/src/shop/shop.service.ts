@@ -178,6 +178,8 @@ export class ShopService {
         // (e.g. a city or locality name) since the address value is embedded as
         // plain text within it.
         { companyDetails: { contains: query, mode: 'insensitive' } },
+        // Shop Category/Type (e.g. "Dealers"), matched by category name.
+        { category: { name: { contains: query, mode: 'insensitive' } } },
       ];
     }
 
@@ -189,6 +191,7 @@ export class ShopService {
         themeColor: true,
         companyDetails: true,
         createdAt: true,
+        category: { select: { name: true } },
       },
       orderBy: { createdAt: 'desc' },
       take: 50,
@@ -212,6 +215,7 @@ export class ShopService {
         themeColor: shop.themeColor,
         address,
         phone,
+        category: shop.category?.name || null,
       };
     });
   }

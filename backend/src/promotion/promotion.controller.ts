@@ -46,18 +46,25 @@ export class PromotionController {
   }
 
   // ==========================================
-  // SUPER ADMIN: manage (edit/delete) any listing, across every shop
+  // SUPER ADMIN: create/edit/delete listings owned by the Super Admin only
+  // (shopId null - independent of every shop's inventory)
   // ==========================================
+
+  @Post('super/promotions')
+  @Roles(Role.SUPER_ADMIN)
+  async createPromotionAsSuperAdmin(@Request() req, @Body() dto: CreatePromotionDto) {
+    return this.promotionService.createPromotion(null, req.user.id, dto);
+  }
 
   @Put('super/promotions/:id')
   @Roles(Role.SUPER_ADMIN)
-  async updateAnyPromotion(@Param('id') id: string, @Body() dto: UpdatePromotionDto) {
-    return this.promotionService.updatePromotionAsSuperAdmin(id, dto);
+  async updateAnyPromotion(@Request() req, @Param('id') id: string, @Body() dto: UpdatePromotionDto) {
+    return this.promotionService.updatePromotionAsSuperAdmin(id, req.user.id, dto);
   }
 
   @Delete('super/promotions/:id')
   @Roles(Role.SUPER_ADMIN)
-  async deleteAnyPromotion(@Param('id') id: string) {
-    return this.promotionService.deletePromotionAsSuperAdmin(id);
+  async deleteAnyPromotion(@Request() req, @Param('id') id: string) {
+    return this.promotionService.deletePromotionAsSuperAdmin(id, req.user.id);
   }
 }

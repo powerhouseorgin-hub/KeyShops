@@ -2446,6 +2446,13 @@ export default function App() {
                     <span className="nav-ico" style={{ background: 'var(--pink)' }}><Megaphone /></span>
                     <span>Inventory</span>
                   </button>
+                  <button
+                    onClick={() => setActiveTab('offers-ads-banners')}
+                    className={`side-link ${activeTab === 'offers-ads-banners' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--gold)' }}><Sparkles /></span>
+                    <span>Offers, Ads &amp; Banners</span>
+                  </button>
 
                   <div className="side-section-label">Settings</div>
                   <button
@@ -2717,6 +2724,7 @@ export default function App() {
             {activeTab === 'pricing-offers' && <PricingOffersView t={t} api={api} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
             {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} />}
+            {activeTab === 'offers-ads-banners' && <OffersAdsBannersView api={api} />}
             {activeTab === 'search-keys' && <KeysSearchView t={t} api={api} searchDispatch={activeTab === 'search-keys' ? searchDispatch : null} />}
             {activeTab === 'register' && <CustomerRegistrationWizard t={t} api={api} />}
             {activeTab === 'history' && <CustomerHistoryView t={t} api={api} searchDispatch={activeTab === 'history' ? searchDispatch : null} />}
@@ -2949,7 +2957,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
   const { user, api } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activePopupAd, setActivePopupAd] = useState(null);
+  const [popupAds, setPopupAds] = useState([]);
 
   // Tapping a product-type card jumps to the Inventory screen and
   // auto-filters it to that category - reuses the same searchDispatch
@@ -2959,15 +2967,17 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
     setActiveTab('promotions');
   };
 
+  const dismissPopupAds = () => {
+    popupAds.forEach(ad => sessionStorage.setItem(`dismissed_ad_${ad.id}`, 'true'));
+    setPopupAds([]);
+  };
+
   useEffect(() => {
-    if (activePopupAd) {
-      const timer = setTimeout(() => {
-        sessionStorage.setItem(`dismissed_ad_${activePopupAd.id}`, 'true');
-        setActivePopupAd(null);
-      }, 10000);
+    if (popupAds.length > 0) {
+      const timer = setTimeout(dismissPopupAds, 10000);
       return () => clearTimeout(timer);
     }
-  }, [activePopupAd]);
+  }, [popupAds]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -2979,14 +2989,12 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
   const fetchPopupAds = async () => {
     try {
       const ads = await api.getAdvertisements();
-      const popups = ads.filter(ad => ad.type === 'POPUP');
-      if (popups.length > 0) {
-        const sorted = popups.sort((a, b) => b.priority - a.priority);
-        const dismissed = sessionStorage.getItem(`dismissed_ad_${sorted[0].id}`);
-        if (!dismissed) {
-          setActivePopupAd(sorted[0]);
-        }
-      }
+      const popups = ads
+        .filter(ad => ad.type === 'POPUP')
+        .filter(ad => !sessionStorage.getItem(`dismissed_ad_${ad.id}`))
+        .sort((a, b) => b.priority - a.priority)
+        .slice(0, 3);
+      if (popups.length > 0) setPopupAds(popups);
     } catch (e) {
       console.error('Failed to fetch advertisements for popup', e);
     }
@@ -3096,57 +3104,62 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
         { title: 'Customer Support', description: 'Get help & view support contact details', image: customerSupportIcon, fullWidth: true, compact: true, onClick: () => setActiveTab('customer-care') },
       ]} />
 
-      {/* Active Announcement Popup Modal */}
-      {activePopupAd && createPortal(
+      {/* Active Announcements Popup Modal - shows 2-3 ads/banners/offers together
+          in a colorful mixed grid, each tile the actual uploaded image with no
+          placeholder copy. */}
+      {popupAds.length > 0 && createPortal(
         <div className="fixed inset-0 z-[60] overflow-y-auto bg-black/85 backdrop-blur-md flex justify-center items-center p-4 md:p-10">
-          <div className="card animate-fade-in" style={{ width: 'clamp(320px, 60vw, 680px)', padding: 0, overflow: 'hidden', margin: 'auto', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ position: 'relative' }}>
-              <img src={cleanGoogleImageUrl(activePopupAd.imageUrl)} alt={activePopupAd.title} style={{ width: '100%', height: 240, objectFit: 'cover', opacity: 0.9 }} />
-              <div style={{ position: 'absolute', top: 12, right: 12 }}>
-                <button
-                  onClick={() => {
-                    sessionStorage.setItem(`dismissed_ad_${activePopupAd.id}`, 'true');
-                    setActivePopupAd(null);
-                  }}
-                  className="icon-btn"
-                  style={{ background: 'rgba(10,9,8,0.6)' }}
-                >
-                  <X />
-                </button>
-              </div>
-              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 64, background: 'linear-gradient(to top, var(--card), transparent)' }}></div>
+          <div className="card animate-fade-in" style={{ width: 'clamp(320px, 80vw, 860px)', overflow: 'hidden', margin: 'auto', display: 'flex', flexDirection: 'column' }}>
+            <div className="flex items-center justify-between" style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)' }}>
+              <span className="badge badge-gold">
+                <Sparkles style={{ width: 11, height: 11 }} /> Featured Offers &amp; Banners
+              </span>
+              <button onClick={dismissPopupAds} className="icon-btn">
+                <X />
+              </button>
             </div>
 
-            <div style={{ padding: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <span className="badge badge-gold" style={{ alignSelf: 'flex-start' }}>
-                <Sparkles style={{ width: 11, height: 11 }} /> Featured Announcement
-              </span>
-              <h3 style={{ fontSize: 17 }}>{activePopupAd.title}</h3>
-              <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.5 }}>
-                Special promotion from Key Shop Headquarters for duplicate key shop workspaces. Upgrade inventory stock or log compliance checks to qualify.
-              </p>
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: popupAds.length === 1 ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: 16,
+                padding: 22,
+              }}
+            >
+              {popupAds.map((ad, i) => {
+                const accents = ['var(--gold)', 'var(--teal)', 'var(--rose)', 'var(--purple)', 'var(--skyblue)'];
+                const accent = accents[i % accents.length];
+                return (
+                  <div
+                    key={ad.id}
+                    style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${accent}`, background: 'var(--card-2)', display: 'flex', flexDirection: 'column' }}
+                  >
+                    <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} style={{ width: '100%', height: 160, objectFit: 'cover' }} />
+                    <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                      <span className="badge" style={{ alignSelf: 'flex-start', background: accent, color: 'var(--bg-0, #0a0908)', fontSize: 10 }}>
+                        {ad.type === 'BANNER' ? 'Banner' : ad.type === 'NOTICE' ? 'Notice' : 'Offer'}
+                      </span>
+                      <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 13.5, color: 'var(--text-0)', lineHeight: 1.3 }}>{ad.title}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
 
-              <div style={{ borderTop: '1px solid var(--border)', paddingTop: 16, display: 'flex', gap: 10 }}>
-                <button
-                  onClick={() => {
-                    sessionStorage.setItem(`dismissed_ad_${activePopupAd.id}`, 'true');
-                    setActivePopupAd(null);
-                  }}
-                  className="btn btn-ghost btn-block"
-                >
-                  Dismiss Offer
-                </button>
-                <button
-                  onClick={() => {
-                    sessionStorage.setItem(`dismissed_ad_${activePopupAd.id}`, 'true');
-                    setActivePopupAd(null);
-                    setActiveTab('promotions');
-                  }}
-                  className="btn btn-primary btn-block"
-                >
-                  View Details
-                </button>
-              </div>
+            <div style={{ borderTop: '1px solid var(--border)', padding: '16px 22px', display: 'flex', gap: 10 }}>
+              <button onClick={dismissPopupAds} className="btn btn-ghost btn-block">
+                Dismiss
+              </button>
+              <button
+                onClick={() => {
+                  dismissPopupAds();
+                  setActiveTab('offers-ads-banners');
+                }}
+                className="btn btn-primary btn-block"
+              >
+                View All Offers &amp; Banners
+              </button>
             </div>
           </div>
         </div>,
@@ -5413,7 +5426,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
     setErrorMsg('');
   };
 
-  const canManage = (promo) => isSuperAdmin || promo.shopId === user.shopId;
+  const canManage = (promo) => isSuperAdmin ? promo.createdById === user.id : promo.shopId === user.shopId;
 
   const handleEditClick = (promo) => {
     setEditingId(promo.id);
@@ -5518,16 +5531,14 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
             placeholder="Search inventory by name, product type, shop or seller…"
           />
         </div>
-        {!isSuperAdmin && (
-          <button
-            onClick={() => { resetForm(); setShowAddModal(true); }}
-            className="btn btn-primary"
-            style={{ flexShrink: 0 }}
-          >
-            <Plus />
-            <span>New Listing</span>
-          </button>
-        )}
+        <button
+          onClick={() => { resetForm(); setShowAddModal(true); }}
+          className="btn btn-primary"
+          style={{ flexShrink: 0 }}
+        >
+          <Plus />
+          <span>New Listing</span>
+        </button>
       </div>
 
       {availableCategories.length > 0 && (
@@ -5627,12 +5638,12 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
                   )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 11, color: 'var(--text-2)', background: 'var(--card-2)', border: '1px solid var(--border)', padding: 10, borderRadius: 12, fontWeight: 600 }}>
-                    <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={promo.shop?.name || ''}>
+                    <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={promo.shop?.name || 'Super Admin (independent)'}>
                       <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>Shop</span>
-                      {promo.shop?.name || '—'}
+                      {promo.shop?.name || 'Super Admin (independent)'}
                     </div>
                     <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={promo.createdBy?.name || ''}>
-                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>Posted by</span>
+                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>Owner</span>
                       {promo.createdBy?.name || '—'}
                     </div>
                   </div>
@@ -5848,6 +5859,129 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
           </div>
         </div>,
         document.body
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// SHOP ADMIN: OFFERS, ADS & BANNERS - read-only browse screen for every active
+// advertisement (popup/banner/notice) and every independent (shopId === null)
+// offer the Super Admin has published. Ads are already active+targeted-filtered
+// server-side (AdService.getTargetedAds); offers are filtered here client-side.
+// ============================================================================
+function OffersAdsBannersView({ api }) {
+  const [ads, setAds] = useState([]);
+  const [offers, setOffers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const [adsRes, promosRes] = await Promise.all([api.getAdvertisements(), api.getPromotions()]);
+        setAds(adsRes || []);
+        const now = new Date();
+        setOffers(
+          (promosRes || []).filter(
+            (p) => p.type === 'OFFER' && !p.shopId && (!p.validUntil || new Date(p.validUntil) >= now)
+          )
+        );
+      } catch (e) {
+        console.error('Failed to load offers/ads/banners', e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const typeLabel = { POPUP: 'Popup', BANNER: 'Banner', NOTICE: 'Notice' };
+  const accents = ['var(--gold)', 'var(--teal)', 'var(--rose)', 'var(--purple)', 'var(--skyblue)', 'var(--jgreen)'];
+
+  return (
+    <div className="animate-fade-in">
+      <div className="page-head">
+        <div>
+          <div className="eyebrow"><Sparkles /> From Key Shop Headquarters</div>
+          <h1>Offers, Ads &amp; Banners</h1>
+          <p>Every active advertisement, banner, notice and offer published by the Super Admin.</p>
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
+          <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading&hellip;</span>
+        </div>
+      ) : ads.length === 0 && offers.length === 0 ? (
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
+          <div className="icon-badge teal"><Megaphone /></div>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>Nothing published yet.</span>
+        </div>
+      ) : (
+        <>
+          {ads.length > 0 && (
+            <>
+              <h3 style={{ fontSize: 14, margin: '4px 0 12px' }}>Advertisements &amp; Banners</h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 16, marginBottom: 26 }}>
+                {ads.map((ad, i) => (
+                  <div key={ad.id} style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${accents[i % accents.length]}`, background: 'var(--card-2)' }}>
+                    <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} style={{ width: '100%', height: 150, objectFit: 'cover' }} />
+                    <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                      <span className="badge" style={{ alignSelf: 'flex-start', background: accents[i % accents.length], color: 'var(--bg-0, #0a0908)', fontSize: 10 }}>
+                        {typeLabel[ad.type] || ad.type}
+                      </span>
+                      <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 13.5, color: 'var(--text-0)' }}>{ad.title}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          {offers.length > 0 && (
+            <>
+              <h3 style={{ fontSize: 14, margin: '4px 0 12px' }}>Offers</h3>
+              <div className="product-grid stagger-in">
+                {offers.map((promo) => (
+                  <div key={promo.id} className="product-card">
+                    <div className="product-img" style={{ height: 150, aspectRatio: '1 / 1', maxHeight: 190 }}>
+                      {promo.imageUrl ? (
+                        <img src={cleanGoogleImageUrl(promo.imageUrl)} alt={promo.title} className="w-full h-full object-cover" style={{ opacity: 0.9 }} />
+                      ) : (
+                        <div className="icon-badge rose"><BadgePercent /></div>
+                      )}
+                    </div>
+                    <div className="product-body">
+                      <span className="pname">{promo.title}</span>
+                      {promo.description && <p className="cell-sub" style={{ fontSize: 11.5 }}>{promo.description}</p>}
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {promo.discountPercentage != null && (
+                          <span className="badge badge-active">
+                            <Percent className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
+                            {promo.discountPercentage}% off
+                          </span>
+                        )}
+                        {promo.validUntil && (
+                          <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+                            <Clock className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
+                            Valid till {new Date(promo.validUntil).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                      {promo.phone && (
+                        <a href={`tel:${promo.phone}`} className="btn btn-primary btn-sm btn-block">
+                          <Phone className="h-3.5 w-3.5" />
+                          <span>Call: {promo.phone}</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </>
       )}
     </div>
   );

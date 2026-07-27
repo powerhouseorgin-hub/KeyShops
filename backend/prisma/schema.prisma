@@ -360,8 +360,12 @@ model Promotion {
   linkedPromotion   Promotion?  @relation("PromotionOffers", fields: [linkedPromotionId], references: [id], onDelete: SetNull)
   offers            Promotion[] @relation("PromotionOffers")
 
-  shopId      String
-  shop        Shop   @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  // Nullable: a Super-Admin-created inventory product has shopId = null,
+  // meaning it's independent of every shop's inventory (mirrors
+  // MasterKey.shopId's "null = global catalog entry" pattern). Shop-Admin
+  // listings always have a real shopId.
+  shopId      String?
+  shop        Shop?  @relation(fields: [shopId], references: [id], onDelete: Cascade)
   createdById String
   createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
 

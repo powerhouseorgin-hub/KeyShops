@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Key, ArrowRight, Search, MapPin, Phone, Mail, ShieldCheck, Users,
   Package, BarChart3, Building2, Sparkles, CheckCircle2, Menu, X,
-  RefreshCw, Clock, Store, Star, Send, Download,
+  RefreshCw, Clock, Store, Star, Send, Download, Tag,
 } from 'lucide-react';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 
@@ -311,6 +311,9 @@ function ShopResultCard({ shop, index }) {
           </span>
         </div>
       </div>
+      {shop.category && (
+        <div className="public-shop-meta"><Tag className="h-3.5 w-3.5" /> {shop.category}</div>
+      )}
       {shop.address && (
         <div className="public-shop-meta"><MapPin className="h-3.5 w-3.5" /> {shop.address}</div>
       )}
@@ -341,10 +344,16 @@ function SearchPage({ api }) {
     }
   };
 
+  // Live, dynamic search: every keystroke re-queries (debounced) so any
+  // partial match on shop name, location or category shows up immediately,
+  // with no need to submit the form.
   useEffect(() => {
-    runSearch('');
+    const trimmed = query.trim();
+    setSearched(trimmed.length > 0);
+    const timer = setTimeout(() => runSearch(trimmed), 250);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [query]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -356,8 +365,8 @@ function SearchPage({ api }) {
     <section className="public-section public-search-section">
       <Reveal className="public-section-head">
         <span className="eyebrow"><Search className="h-3.5 w-3.5" /> Find a shop</span>
-        <h2>Search Kee shops by name or location</h2>
-        <p>Looking for a duplicate-key shop that runs on Kee? Search by shop name, city or locality.</p>
+        <h2>Search Kee shops by name, location or category</h2>
+        <p>Looking for a duplicate-key shop that runs on Kee? Search by shop name, city/locality, or shop category/type - results update as you type.</p>
       </Reveal>
 
       <Reveal className="public-search-box-wrap">
@@ -365,7 +374,7 @@ function SearchPage({ api }) {
           <Search />
           <input
             type="text"
-            placeholder="Try a shop name or a city, e.g. 'Connaught Place'"
+            placeholder="Try a shop name, city, or category e.g. 'Dealers'"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
