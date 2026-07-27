@@ -40,10 +40,10 @@ The product ships as:
 | Backend | [NestJS](https://nestjs.com/) (TypeScript), [Prisma ORM](https://www.prisma.io/), PostgreSQL, JWT auth (Passport) |
 | Frontend | React 18 + Vite, Tailwind CSS, [lucide-react](https://lucide.dev/) icons |
 | Mobile | [Capacitor](https://capacitorjs.com/) — wraps the same React app into a native Android APK |
-| File storage | Local disk in dev; Cloudinary or Firebase Storage in production (ephemeral hosts don't persist local disk) |
+| File storage | Local disk in dev; [Supabase Storage](https://supabase.com/storage) in production (ephemeral hosts don't persist local disk) |
 | Email / SMS OTP | SMTP (Nodemailer) and Twilio; both fall back to console-logged dev codes when unset |
-| Local infra | Docker Compose — PostgreSQL + MinIO (S3-compatible storage for local dev) |
-| Hosting | Firebase Hosting (frontend, static) + Render (backend API + Postgres) |
+| Local infra | Docker Compose — PostgreSQL for local dev |
+| Hosting | Firebase Hosting (frontend, static) + Render (backend API) + [Supabase](https://supabase.com/) (Postgres + Storage) |
 
 ## Project structure
 
@@ -77,7 +77,7 @@ kee/
 │   ├── android/                    Capacitor-generated native Android project
 │   └── scripts/                    One-off asset-processing scripts (image background removal, etc.)
 ├── firebase.json / .firebaserc     Firebase Hosting config (SPA rewrite, cache headers, APK content-type)
-├── docker-compose.yml             Postgres + MinIO for local dev
+├── docker-compose.yml             Postgres for local dev
 └── README.md
 ```
 
@@ -101,8 +101,9 @@ who lands on the web login is never stuck.
 ### Prerequisites
 
 - Node.js 18+
-- Docker & Docker Compose (for local Postgres + MinIO)
+- Docker & Docker Compose (for local Postgres)
 - Android Studio + JDK 17 (only needed if building the Android app)
+- A [Supabase](https://supabase.com/) project (production Postgres + Storage — free tier is enough for dev/staging)
 
 ### 1. Start local infrastructure
 
@@ -110,7 +111,8 @@ who lands on the web login is never stuck.
 docker-compose up -d
 ```
 
-Starts PostgreSQL on port `5435` and MinIO on ports `9000` (API) / `9001` (console).
+Starts PostgreSQL on port `5435`. Local dev uses this local Postgres, not Supabase — Supabase is only
+needed for staging/production `DATABASE_URL`/`DIRECT_URL` and file uploads.
 
 ### 2. Backend
 
@@ -145,12 +147,12 @@ Summary:
 
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | Postgres connection string |
+| `DATABASE_URL` | Postgres connection string — pooled connection (port 6543) on Supabase, direct on local Docker Postgres |
+| `DIRECT_URL` | Direct (non-pooled) Postgres connection, used only by `prisma migrate` — required on Supabase, same as `DATABASE_URL` locally |
 | `JWT_SECRET` | Signs auth tokens — use a long random value in production |
 | `ENCRYPTION_KEY` | 64-hex-char AES key for encrypting sensitive PII at rest — **losing/rotating it makes existing encrypted data unreadable** |
 | `PORT`, `NODE_ENV` | Server port / environment |
-| `MINIO_*` | Local dev object storage (Docker Compose) |
-| `CLOUDINARY_*` or `FIREBASE_STORAGE_BUCKET` + `FIREBASE_SERVICE_ACCOUNT_KEY` | Production file storage — required on ephemeral hosts (Render/Railway/Cloud Run); falls back to local disk if unset (dev only) |
+| `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` + `SUPABASE_STORAGE_BUCKET` | Production file storage (Supabase Storage, private bucket + signed URLs) — required on ephemeral hosts (Render/Railway/Cloud Run); falls back to local disk if unset (dev only) |
 | `SEED_SUPER_ADMIN_EMAIL/PASSWORD/NAME` | Auto-seeded on first boot if zero Super Admins exist |
 | `SMTP_*` | Real email OTP delivery (Nodemailer) — falls back to console-logged dev OTP if unset |
 | `TWILIO_*` | Real SMS OTP delivery — falls back to console-logged dev OTP if unset |
@@ -219,10 +221,11 @@ client-side) whenever a new build should be distributed from the web landing pag
   `firebase.json`.
 - **Backend** — Render, auto-deploys on every push to `main` (Docker build via `backend/Dockerfile`,
   which runs `prisma migrate deploy` on boot).
-- **Database** — managed PostgreSQL on Render.
+- **Database & file storage** — [Supabase](https://supabase.com/) (managed Postgres + Storage). Render only
+  hosts the NestJS API itself; it connects out to Supabase via `DATABASE_URL`/`DIRECT_URL`.
 
-Set real production secrets (JWT, encryption key, DB URL, SMTP/Twilio, Cloudinary/Firebase
-Storage) directly in the Render dashboard's environment variables — never commit a real `.env`.
+Set real production secrets (JWT, encryption key, DB URL, SMTP/Twilio, Supabase URL/service role key)
+directly in the Render dashboard's environment variables — never commit a real `.env`.
 
 ## Testing
 

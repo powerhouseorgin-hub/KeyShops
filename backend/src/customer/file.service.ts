@@ -1,9 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
-import { initializeApp, cert, getApps } from 'firebase-admin/app';
-import { getStorage, Storage } from 'firebase-admin/storage';
-import { v2 as cloudinary } from 'cloudinary';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const CONTENT_TYPE_BY_EXT: Record<string, string> = {
   '.png': 'image/png',
@@ -17,61 +15,34 @@ const CONTENT_TYPE_BY_EXT: Record<string, string> = {
 @Injectable()
 export class FileService implements OnModuleInit {
   private readonly uploadDir = path.join(process.cwd(), 'public', 'uploads');
-  private bucket: ReturnType<Storage['bucket']> | null = null;
-  private useFirebase = false;
-  private useCloudinary = false;
+  private supabase: SupabaseClient | null = null;
+  private bucket = '';
 
   onModuleInit() {
     // Local-disk fallback dir. Always created so local dev / tests keep
-    // working out of the box without any Firebase/Cloudinary setup — only
-    // used when neither of the persistent-storage backends below is
-    // configured.
+    // working out of the box without any Supabase setup — only used when
+    // Supabase Storage isn't configured.
     if (!fs.existsSync(this.uploadDir)) {
       fs.mkdirSync(this.uploadDir, { recursive: true });
     }
 
-    // Cloudinary is checked first: unlike Firebase Storage (which now
-    // requires the project to be on the paid "Blaze" plan just to create a
-    // bucket), Cloudinary's free tier (25GB storage/bandwidth) needs no
-    // billing account at all, so it's the easiest zero-cost persistent
-    // backend to stand up on a free-tier Render service.
-    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
-    const apiKey = process.env.CLOUDINARY_API_KEY;
-    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+    const supabaseUrl = process.env.SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const bucket = process.env.SUPABASE_STORAGE_BUCKET;
 
-    if (cloudName && apiKey && apiSecret) {
-      cloudinary.config({ cloud_name: cloudName, api_key: apiKey, api_secret: apiSecret });
-      this.useCloudinary = true;
-      console.log(`FileService: using Cloudinary (cloud "${cloudName}") for uploads.`);
-      return;
-    }
-
-    const bucketName = process.env.FIREBASE_STORAGE_BUCKET;
-    const serviceAccountB64 = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-
-    if (bucketName && serviceAccountB64) {
-      try {
-        const serviceAccount = JSON.parse(
-          Buffer.from(serviceAccountB64, 'base64').toString('utf8'),
-        );
-        if (!getApps().length) {
-          initializeApp({
-            credential: cert(serviceAccount),
-            storageBucket: bucketName,
-          });
-        }
-        this.bucket = getStorage().bucket();
-        this.useFirebase = true;
-        console.log(`FileService: using Firebase Storage bucket "${bucketName}" for uploads.`);
-      } catch (err) {
-        console.error(
-          'FileService: failed to initialize Firebase Storage, falling back to local disk (uploads will NOT survive restarts on ephemeral hosts):',
-          err.message,
-        );
-      }
+    if (supabaseUrl && serviceRoleKey && bucket) {
+      // Service role key is required (not the anon key) because uploads/
+      // deletes happen server-side and must bypass the bucket's RLS
+      // policies — the bucket itself is private, files are only ever
+      // reachable via short-lived signed URLs (see uploadFile below).
+      this.supabase = createClient(supabaseUrl, serviceRoleKey, {
+        auth: { persistSession: false },
+      });
+      this.bucket = bucket;
+      console.log(`FileService: using Supabase Storage bucket "${bucket}" for uploads.`);
     } else {
       console.log(
-        'FileService: no CLOUDINARY_* or FIREBASE_STORAGE_BUCKET/FIREBASE_SERVICE_ACCOUNT_KEY env vars set — using local disk for uploads. ' +
+        'FileService: no SUPABASE_URL/SUPABASE_SERVICE_ROLE_KEY/SUPABASE_STORAGE_BUCKET env vars set — using local disk for uploads. ' +
         'This is fine for local dev, but on ephemeral hosts (Render, Railway, Cloud Run) uploaded files are lost on every restart/redeploy.',
       );
     }
@@ -86,60 +57,27 @@ export class FileService implements OnModuleInit {
     const cleanShopId = shopId.replace(/[^a-zA-Z0-9]/g, '');
     const uniqueName = `${cleanShopId}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}${fileExt}`;
 
-    if (this.useCloudinary) {
-      const safeName = (originalname || uniqueName).replace(/[^a-zA-Z0-9._-]/g, '_');
-      const publicId = uniqueName.slice(0, uniqueName.length - fileExt.length);
-      const result = await new Promise<{ public_id: string; resource_type: string }>(
-        (resolve, reject) => {
-          const stream = cloudinary.uploader.upload_stream(
-            { public_id: publicId, resource_type: 'auto', type: 'upload' },
-            (err, res) => (err || !res ? reject(err || new Error('Cloudinary upload failed')) : resolve(res)),
-          );
-          stream.end(buffer);
-        },
-      );
-      // fl_attachment forces a Content-Disposition: attachment response
-      // header at delivery time (rather than baking it in at upload time,
-      // like Firebase's contentDisposition metadata) — this is what makes
-      // both the web <a download> click and the native Filesystem.download
-      // flow save the file instead of previewing it inline.
-      //
-      // The filename given to fl_attachment:<name> must NOT contain a "."
-      // — Cloudinary's transformation-string parser treats a dot inside this
-      // flag's value as a format suffix on the *transformation segment*
-      // itself, which breaks parsing and returns 400 "Invalid flag in
-      // transformation: <ext>" for every download (e.g.
-      // fl_attachment:photo.jpg fails, fl_attachment:photo succeeds).
-      // Stripping the extension here is safe: Cloudinary auto-appends the
-      // resource's real extension to the Content-Disposition filename
-      // regardless (e.g. still downloads as "photo.jpg" on the device).
-      const safeNameNoExt = safeName.replace(/\.[a-zA-Z0-9]{1,8}$/, '');
-      const fileUrl = cloudinary.url(result.public_id, {
-        resource_type: result.resource_type as 'image' | 'video' | 'raw' | 'auto',
-        secure: true,
-        flags: `attachment:${encodeURIComponent(safeNameNoExt)}`,
-      });
-      return { fileUrl, fileKey: `${result.resource_type}:${result.public_id}` };
-    }
+    if (this.supabase) {
+      const contentType = CONTENT_TYPE_BY_EXT[fileExt.toLowerCase()] || 'application/octet-stream';
+      const { error: uploadError } = await this.supabase.storage
+        .from(this.bucket)
+        .upload(uniqueName, buffer, { contentType, upsert: false });
+      if (uploadError) {
+        throw new Error(`Supabase Storage upload failed: ${uploadError.message}`);
+      }
 
-    if (this.useFirebase && this.bucket) {
-      const file = this.bucket.file(uniqueName);
-      // contentDisposition: 'attachment' is what actually makes mobile
-      // browsers save the file to the device instead of navigating to/
-      // previewing it in a tab. Since these files are served directly from
-      // storage.googleapis.com (not proxied through our API), this header
-      // must be baked in at upload time — it can't be set per-request later.
+      // The bucket is private, so files are only ever served via a signed
+      // URL rather than a public one. 7 days (max allowed lifetime is much
+      // longer, but this keeps stale links from lingering indefinitely) —
+      // callers that need long-lived access re-fetch/regenerate as needed.
       const safeName = (originalname || uniqueName).replace(/[^a-zA-Z0-9._-]/g, '_');
-      await file.save(buffer, {
-        metadata: {
-          contentType: CONTENT_TYPE_BY_EXT[fileExt.toLowerCase()] || 'application/octet-stream',
-          contentDisposition: `attachment; filename="${safeName}"`,
-        },
-        public: true,
-        resumable: false,
-      });
-      const fileUrl = `https://storage.googleapis.com/${this.bucket.name}/${uniqueName}`;
-      return { fileUrl, fileKey: uniqueName };
+      const { data: signedData, error: signError } = await this.supabase.storage
+        .from(this.bucket)
+        .createSignedUrl(uniqueName, 60 * 60 * 24 * 7, { download: safeName });
+      if (signError || !signedData) {
+        throw new Error(`Supabase Storage signing failed: ${signError?.message}`);
+      }
+      return { fileUrl: signedData.signedUrl, fileKey: uniqueName };
     }
 
     const filePath = path.join(this.uploadDir, uniqueName);
@@ -149,29 +87,12 @@ export class FileService implements OnModuleInit {
   }
 
   async deleteFile(fileKey: string): Promise<void> {
-    if (this.useCloudinary) {
-      // Cloudinary fileKeys are stored as "resourceType:publicId" (see
-      // uploadFile above). Older fileKeys created before Cloudinary was
-      // configured are plain local-disk filenames with no ":" — those
-      // point at files that are already gone (ephemeral disk), so this
-      // is a harmless no-op for them rather than a real deletion.
-      const sepIndex = fileKey.indexOf(':');
-      if (sepIndex === -1) return;
-      const resourceType = fileKey.slice(0, sepIndex);
-      const publicId = fileKey.slice(sepIndex + 1);
-      try {
-        await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
-      } catch (err) {
-        console.warn(`FileService: Cloudinary delete failed for "${publicId}":`, err.message);
-      }
-      return;
-    }
-
-    if (this.useFirebase && this.bucket) {
-      try {
-        await this.bucket.file(fileKey).delete();
-      } catch (err) {
-        if (err.code !== 404) throw err;
+    if (this.supabase) {
+      const { error } = await this.supabase.storage.from(this.bucket).remove([fileKey]);
+      // Supabase doesn't error on deleting an already-missing object, so no
+      // not-found special-casing is needed here (unlike the old Firebase path).
+      if (error) {
+        console.warn(`FileService: Supabase Storage delete failed for "${fileKey}":`, error.message);
       }
       return;
     }
