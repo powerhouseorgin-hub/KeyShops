@@ -19,7 +19,7 @@ import {
   Tag, Package, Boxes, Percent, Image as ImageIcon, Megaphone, BadgePercent,
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
   Download, Fingerprint, Palette, Menu, Home, Languages,
-  Wrench, Cpu, Gauge, ScanLine, Headset
+  Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy
 } from 'lucide-react';
 
 // Product photos shown on the Dashboard's product-type cards instead of the
@@ -382,6 +382,731 @@ const LANGUAGES = {
     welcome: 'KEY SHOP WORKSPACE',
     superAdmin: 'Super Admin',
     shopTerminal: 'Shop Terminal',
+    supportConfig: 'Support Configuration',
+    inventory: 'Machines',
+    customerCare: 'Customer Care',
+    offersAdsBanners: 'Offers, Ads & Banners',
+    language: 'Language',
+    btnSave: 'Save',
+    btnSaveChanges: 'Save Changes',
+    btnCancel: 'Cancel',
+    btnDelete: 'Delete',
+    btnEdit: 'Edit',
+    btnSubmit: 'Submit',
+    btnClose: 'Close',
+    btnConfirm: 'Confirm',
+    btnUpdate: 'Update',
+    btnRemove: 'Remove',
+    btnBack: 'Back',
+    btnNext: 'Next',
+    btnRetry: 'Retry',
+    btnDownload: 'Download',
+    btnUpload: 'Upload',
+    btnContinue: 'Continue',
+    btnDone: 'Done',
+    btnOk: 'OK',
+    btnViewAll: 'View All',
+    btnViewDetails: 'View Details',
+    btnDismiss: 'Dismiss',
+    btnAddNew: 'Add New',
+    btnApply: 'Apply',
+    btnClear: 'Clear',
+    btnExport: 'Export',
+    yes: 'Yes',
+    no: 'No',
+    loading: 'Loading...',
+    searching: 'Searching...',
+    searchPlaceholder: 'Search...',
+    active: 'Active',
+    inactive: 'Inactive',
+    suspended: 'Suspended',
+    expired: 'Expired',
+    pending: 'Pending',
+    actions: 'Actions',
+    status: 'Status',
+    optional: 'Optional',
+    required: 'Required',
+    noRecordsFound: 'No records found',
+    noDataAvailable: 'No data available',
+    areYouSure: 'Are you sure?',
+    actionCannotBeUndone: 'This action cannot be undone.',
+    somethingWentWrong: 'Something went wrong. Please try again.',
+    changesSavedSuccessfully: 'Changes saved successfully',
+    fieldName: 'Name',
+    fieldEmail: 'Email',
+    fieldPhone: 'Phone Number',
+    fieldAddress: 'Address',
+    fieldDate: 'Date',
+    fieldAmount: 'Amount',
+    fieldDescription: 'Description',
+    fieldCategory: 'Category',
+    fieldPrice: 'Price',
+    fieldTitle: 'Title',
+    fieldType: 'Type',
+    account: 'Account',
+    customerService: 'Customer Service',
+    chooseLanguage: 'Choose Language',
+    selectLanguageDesc: 'Select your preferred language for the app',
+    pressBackToExit: 'Press Back again to exit',
+    loadingDashboard: 'Loading dashboard…',
+    superAdminControl: 'Super Admin Control',
+    portal: 'Portal',
+    welcomeBack: 'Welcome back',
+    namaste: 'Namaste',
+    platformOverviewDesc: 'platform overview across every tenant shop.',
+    newCustomer: 'New Customer',
+    registerComplianceEntry: 'Register a compliance entry for new customer',
+    shopsCardTitle: 'Shops',
+    viewManageShopsDesc: 'View and manage every registered shop',
+    customerSupport: 'Customer Support',
+    manageCustomerSupportDesc: 'Manage the customer support contact & resources',
+    complianceInventoryTerminal: 'compliance & inventory terminal',
+    workspace: 'Workspace',
+    subscriptionRenewalRequired: 'Subscription Renewal Required!',
+    subscriptionExpiresIn: 'Your shop subscription expires in {days} days. Please coordinate renewal with Key Shop Super Admin.',
+    planSuffix: 'Plan',
+    searchKeysCardTitle: 'Search Keys',
+    findDigitizeKeysDesc: 'Find and digitize key records quickly',
+    addMachinesCardDesc: 'Quickly add a new machine listing',
+    getHelpSupportDesc: 'Get help & view support contact details',
+    featuredOffersBanners: 'Featured Offers & Banners',
+    banner: 'Banner',
+    notice: 'Notice',
+    offer: 'Offer',
+    viewAllOffersBanners: 'View All Offers & Banners',
+    usedMachines: 'Used Machines',
+    ecmService: 'ECM',
+    meterService: 'Meter',
+    scanningService: 'Scanning',
+    usedMachinesDesc: 'View and manage used machines',
+    ecmServiceDesc: 'Manage ECM service records',
+    meterServiceDesc: 'Track and manage meter services',
+    scanningServiceDesc: 'Scan & process compliance entries',
+    platformOperations: 'Platform Operations',
+    provisionShopsDesc: 'Provision, monitor, and manage every key shop workspace on the platform.',
+    allShops: 'All Shops',
+    searchShopsPlaceholder: 'Search shops...',
+    loadingShopRegistry: 'Loading shop registry...',
+    noShopsProvisionedYet: 'No shops provisioned yet',
+    noShopsMatchSearch: 'No shops match your search',
+    shopDetails: 'Shop Details',
+    adminContact: 'Admin Contact',
+    activePlan: 'Active Plan',
+    validUntil: 'Valid Until',
+    diskStorage: 'Disk Storage',
+    editWorkspace: 'Edit Workspace',
+    managePlan: 'Manage Plan',
+    shopOnboarding: 'Shop Onboarding',
+    provisionNewShopWorkspace: 'Provision New Shop Workspace',
+    shopNameLabel: 'Shop Name',
+    shopNamePlaceholder: 'e.g. Sharma Key Center',
+    shopAddressLabel: 'Shop Address',
+    shopAddressPlaceholder: 'Full shop address',
+    adminFullNameLabel: 'Admin Full Name',
+    adminFullNamePlaceholder: 'e.g. Ramesh Sharma',
+    adminEmailLabel: 'Admin Email',
+    adminEmailPlaceholder: 'admin@example.com',
+    initialPasswordLabel: 'Initial Password',
+    initialPasswordPlaceholder: 'Set a temporary password',
+    phonePlaceholder: 'Phone number',
+    whatsappNumberLabel: 'WhatsApp Number',
+    sameAsPhone: 'Same as Phone',
+    subscriptionPlanLabel: 'Subscription Plan',
+    monthlyPlan: 'Monthly',
+    halfYearlyPlan: 'Half-Yearly',
+    yearlyPlan: 'Yearly',
+    endDateValidityLabel: 'End Date / Validity',
+    autoCalculatedTier: 'Auto-calculated based on selected plan tier',
+    failedToCreateShop: 'Failed to create key shop. Try again.',
+    ownerAadhaarMandatory: 'Owner Aadhaar document is mandatory to provision a shop workspace.',
+    failedInitCheckout: 'Failed to initialize subscription checkout. Try again.',
+    paymentFailedPrefix: 'Payment failed: {message}',
+    updateFailedMsg: 'Update failed',
+    billingEyebrow: 'Billing',
+    updateShopSubscriptionTitle: 'Update Shop Subscription',
+    targetShopLabel: 'Target shop:',
+    planTierLabel: 'Plan Tier',
+    monthlyPlanFull: 'Monthly Plan',
+    sixMonthPlanFull: '6-Month Plan',
+    yearlyPlanFull: 'Yearly Plan',
+    newEndDateLabel: 'New End Date',
+    updatePlanBtn: 'Update Plan',
+    planSubscriptionEscrowPay: 'Plan Subscription Escrow Pay',
+    workspaceTerminalProvisioningPayment: 'Workspace Terminal Provisioning Payment',
+    paymentAuthorizedTitle: 'Payment Authorized!',
+    paymentSettledDesc: 'The subscription payment has settled successfully. Workspace {name} is now fully provisioned and activated.',
+    closeAndProceedBtn: 'Close & Proceed',
+    processingTransactionTitle: 'Processing Transaction',
+    finalizingWorkspaceCreation: 'Finalizing workspace creation tunnels.',
+    workspaceProvisionInvoice: 'Workspace Provision Invoice',
+    planColonLabel: 'Plan:',
+    creditCardLabel: 'Credit Card',
+    upiQrCodeLabel: 'UPI QR Code',
+    cardholderFullNameLabel: 'Cardholder Full Name',
+    cardholderNamePlaceholder: 'e.g. Ramesh Kumar',
+    debitCreditCardNumberLabel: 'Debit / Credit Card Number',
+    expiryDateLabel: 'Expiry Date',
+    cvvCodeLabel: 'CVV Code',
+    scanToAuthorizeInvoice: 'Scan to Authorize Setup Invoice',
+    scanQrDesc: 'Scan with GPay, PhonePe, Paytm, or BHIM. Subscription activates automatically post-detection.',
+    secureGatewayPaymentPortal: '256-bit Secure Gateway Payment Portal',
+    cancelSetupBtn: 'Cancel Setup',
+    payAndProvisionPrefix: 'Pay Rs.',
+    payAndProvisionSuffix: '& Provision',
+    logEstablishingTunnel: 'Establishing secure end-to-end sandbox tunnel...',
+    logVerifyingBalance: 'Verifying account balance & credit lines...',
+    logAuthorizingEscrow: 'Authorizing subscription escrow settlement transaction...',
+    logEncryptingCard: 'Encrypting card details via AES-GCM...',
+    logFulfillingProvisioning: 'Fulfilling Key Shop API workspace provisioning...',
+    shopPhotoLabel: 'Shop Photo',
+    shopLicenseLabel: 'Shop License',
+    ownerAadhaarLabel: 'Owner Aadhaar',
+    provisionAccountBtn: 'Provision Account',
+    workspaceSettings: 'Workspace Settings',
+    editShopWorkspaceDetails: 'Edit Shop Workspace Details',
+    workspaceNameLabel: 'Workspace Name',
+    registeredAddressFixed: 'Registered Address (Fixed)',
+    notUploaded: 'Not Uploaded',
+    saveSettings: 'Save Settings',
+    crossTenantCompliance: 'Cross-Tenant Compliance',
+    customerRegistryTitle: 'Customer Registry',
+    superviseComplianceRecordsDesc: 'Supervise compliance records across all tenant workspaces',
+    createCustomerBtn: 'Create Customer',
+    allCustomers: 'All Customers',
+    searchByNamePhoneKeyCode: 'Search by name, phone or key code',
+    loadingCustomerRegistry: 'Loading customer registry...',
+    noCustomerRecordsMatch: 'No customer records match',
+    tenantWorkspaceCol: 'Tenant Workspace',
+    customerCol: 'Customer',
+    phoneCol: 'Phone',
+    keyCodeCol: 'Key Code',
+    registeredCol: 'Registered',
+    shopWorkspaceFallback: 'Unassigned Workspace',
+    photoOnFile: 'Photo on file',
+    photoPending: 'Photo pending',
+    viewComplianceFile: 'View Compliance File',
+    complianceFileEyebrow: 'Compliance File',
+    phoneContactLabel: 'Phone Contact',
+    registryDateLabel: 'Registry Date',
+    addressLabel: 'Address',
+    keyBlankCodeLabel: 'Key Blank Code',
+    idVerificationLabel: 'ID Verification',
+    idNumberDecryptedLabel: 'ID Number (Decrypted)',
+    gpsCoordinatesLabel: 'GPS Coordinates',
+    latLongTemplate: 'Lat: {lat} • Long: {long}',
+    notCapturedLabel: 'Not captured',
+    googleMapsLabel: 'Google Maps',
+    capturedAddressLabel: 'Captured Address',
+    webcamPhotoLabel: 'Camera Photo',
+    attachedIdCopiesLabel: 'Attached ID Copies',
+    uploadedBadge: 'Uploaded',
+    missingBadge: 'Missing',
+    closeFileBtn: 'Close File',
+    operationFailedMsg: 'Operation failed',
+    confirmRemoveKeyBlank: 'Are you sure you want to remove this key blank from the central catalogue?',
+    platformCatalogueLabel: 'Platform Catalogue',
+    masterKeyCatalogueTitle: 'Master Key Catalogue',
+    provisionKeyBlankSpecsDesc: 'Provision key blank specifications available for lookup across every shop terminal.',
+    addKeyBlankBtn: 'Add Key Blank',
+    searchCataloguePlaceholder: 'Search catalogue by code, category, specs reference…',
+    loadingCatalogueMsg: 'Loading catalogue…',
+    noKeyBlanksMatch: 'No key blanks match this search',
+    modifyBtn: 'Modify',
+    deleteBtn: 'Delete',
+    catalogueEntryLabel: 'Catalogue Entry',
+    modifyKeyBlankTitle: 'Modify Key Blank',
+    addNewKeyBlankTitle: 'Add New Key Blank',
+    keyNumberCodeLabel: 'Key Number / Code',
+    connectedShopLabel: 'Connected Shop',
+    globalCatalogueLabel: 'Global Catalogue',
+    connectedCustomersLabel: 'Connected Customer(s)',
+    noCustomerLinkedYet: 'No customer linked yet',
+    keyCodeLabel: 'Key Code',
+    keyCodePlaceholderEg: 'e.g. CY-102',
+    categoryTypeLabel: 'Category Type',
+    categoryPlaceholderEg: 'e.g. Padlock',
+    backImageUrlLabel: 'Back Image URL',
+    saveChangesBtn: 'Save Changes',
+    publishKeyBtn: 'Publish Key',
+    crossShopMarketplaceLabel: 'Cross-Shop Marketplace',
+    inventoryTitle: 'Machines',
+    manageSharedInventoryDesc: 'Manage the shared inventory feed, banner ad campaigns and shop offers across the platform.',
+    browseListProductsDesc: 'Browse and list products shared across every shop on the platform',
+    inventoryFeedTab: 'Machines Feed',
+    bannerManagementTab: 'Banner Management',
+    offerManagementTab: 'Offer Management',
+    failedUpdateCampaign: 'Failed to update campaign',
+    failedScheduleCampaign: 'Failed to schedule campaign',
+    confirmTerminateAdCampaign: 'Are you sure you want to terminate this advertisement campaign?',
+    interactivePopupLabel: 'Interactive Popup',
+    textNoticeLabel: 'Text Notice',
+    mainBannerLabel: 'Main Banner',
+    growthMarketingLabel: 'Growth & Marketing',
+    adCampaignsTitle: 'Advertisement Campaigns',
+    publishBannersPopupsDesc: 'Publish banners and popups targeted to shop dashboard screens.',
+    newAdCampaignBtn: 'New Ad Campaign',
+    loadingCampaignsMsg: 'Loading campaigns…',
+    noAdCampaignsScheduled: 'No ad campaigns scheduled yet.',
+    liveLabel: 'Live',
+    scheduledLabel: 'Scheduled',
+    priorityLabel: 'Priority',
+    startLabel: 'Start',
+    endLabel: 'End',
+    allKeyShopsLabel: 'All Key Shops',
+    targetedShopSingular: '{n} targeted shop',
+    targetedShopsPlural: '{n} targeted shops',
+    editBtn: 'Edit',
+    cancelCampaignBtn: 'Cancel Campaign',
+    adCampaignLabel: 'Ad Campaign',
+    editAdCampaignTitle: 'Edit Ad Campaign',
+    newVisualAdCampaignTitle: 'New Visual Ad Campaign',
+    adTitleAnnouncementLabel: 'Ad Title / Announcement',
+    adTitlePlaceholderEg: 'e.g. 20% Off Godrej key duplicates this Friday',
+    bannerImageSourceLabel: 'Banner Image Source',
+    pasteImageUrlPlaceholder: 'Paste Image URL (or Google Image Link)',
+    uploadBtn: 'Upload',
+    adFormatLabel: 'Ad Format',
+    mainBannerNoticeOption: 'Main Banner Notice',
+    interactiveLoginPopupOption: 'Interactive Login Popup',
+    dashboardTextNoticeOption: 'Dashboard Text Notice',
+    campaignPriorityLabel: 'Campaign Priority',
+    startDateLabel: 'Start Date',
+    endDateLabelShort: 'End Date',
+    targetAudienceLabel: 'Target Audience',
+    broadcastAllKeyShops: 'Broadcast to all key shops',
+    targetSpecificShops: 'Target specific shops',
+    scheduleCampaignBtn: 'Schedule Campaign',
+    searchInventoryPlaceholder: 'Search inventory...',
+    newListingBtn: 'Add Machines',
+    allCategoriesLabel: 'All Categories',
+    loadingListingsMsg: 'Loading listings...',
+    noOffersPublishedYet: 'No offers published yet',
+    noInventoryListedYet: 'No inventory listed yet',
+    expiredLabel: 'Expired',
+    percentOffSuffix: '% off',
+    validTillPrefix: 'Valid till',
+    linkedPrefix: 'Linked:',
+    superAdminIndependentLabel: 'Super Admin (Independent)',
+    shopLabel: 'Shop:',
+    ownerLabel: 'Owner:',
+    callPrefix: 'Call',
+    removeBtn: 'Remove',
+    advertisementLabel: 'Advertisement',
+    offerLabel: 'Offer',
+    promotionalProductLabel: 'Product',
+    failedUpdateListing: 'Failed to update listing',
+    failedPublishListing: 'Failed to publish listing',
+    confirmRemoveListing: 'Remove this listing?',
+    inventoryListingLabel: 'Machine Listing',
+    editListingTitle: 'Edit Listing',
+    newInventoryListingTitle: 'New Inventory Listing',
+    nameLabel: 'Name',
+    listingNamePlaceholderEg: 'e.g. Premium Godrej Key Blanks - Bulk Pack',
+    productTypeLabel: 'Product Type',
+    selectProductTypePlaceholder: 'Select product type',
+    noProductTypesAvailable: 'No product types available yet',
+    descriptionOptionalLabel: 'Description (optional)',
+    shortDescriptionPlaceholder: 'Short description shown on the listing card',
+    productPhotoOptionalLabel: 'Product Photo (optional)',
+    imageMediaOptionalLabel: 'Image / Media (optional)',
+    priceOptionalLabel: 'Price (optional)',
+    priceLeaveBlankPlaceholder: 'Leave blank if not applicable',
+    phoneNumberLabel: 'Phone Number',
+    phoneNumberPlaceholderEg: 'e.g. 9876543210',
+    tapToCallHint: 'Shown on the listing card as a tap-to-call button for buyers.',
+    discountPercentageOptionalLabel: 'Discount Percentage (optional)',
+    discountPercentagePlaceholderEg: 'e.g. 20',
+    validUntilOptionalLabel: 'Valid Until (optional)',
+    validUntilHint: 'Leave blank for an offer with no expiry. Expired offers are hidden from the shared feed.',
+    linkExistingListingLabel: 'Link to one of your existing listings (optional)',
+    noLinkedListingOption: 'No linked listing',
+    productLabel: 'Product',
+    publishListingBtn: 'Publish Listing',
+    fromKeyShopHqLabel: 'From Key Shop Headquarters',
+    offersAdsBannersTitle: 'Offers, Ads & Banners',
+    everyActiveAdOfferDesc: 'Every active advertisement, banner, notice and offer published by the Super Admin.',
+    loadingEllipsis: 'Loading…',
+    nothingPublishedYet: 'Nothing published yet.',
+    advertisementsAndBannersLabel: 'Advertisements & Banners',
+    offersLabel: 'Offers',
+    subscriptionRatesUpdatedMsg: 'Subscription plan prices updated successfully!',
+    updateFailedPrefix: 'Update failed',
+    platformFinanceLabel: 'Platform Finance',
+    subscriptionPricingTitle: 'Subscription Pricing',
+    configureFranchisePricingDesc: 'Configure franchise subscription plan rates for the platform.',
+    monthlyLower: 'monthly',
+    monthlyRecurringPlanLabel: 'Monthly Recurring Plan',
+    sixMonthLower: '6-month',
+    halfYearlyPlanRateLabel: 'Half-Yearly Plan Rate',
+    yearlyLower: 'yearly',
+    yearlyDiscountedRateLabel: 'Yearly Discounted Rate',
+    subscriptionPlanPricingLabel: 'Subscription Plan Pricing',
+    setRatesForKeyShopsDesc: 'Set rates for the key shops. These prices will automatically update the checkout gateway screen during provisioning.',
+    monthlyRecurringPlanRupeeLabel: 'Monthly Recurring Plan (₹)',
+    monthlyRecurringBillHint: 'Monthly recurring rental bill for platform service.',
+    sixMonthPlanRateRupeeLabel: '6-Month Plan Rate (₹)',
+    halfYearlyUpfrontRateHint: 'Discounted half-yearly upfront rate for shops.',
+    yearlyPlanDiscountedRateRupeeLabel: 'Yearly Plan Discounted Rate (₹)',
+    annualUpfrontRateHint: 'Discounted upfront annual rate for shops.',
+    updateSubscriptionRatesBtn: 'Update Subscription Rates',
+    enterValidAmountMsg: 'Please enter a valid amount',
+    monthlyRevenueLogsTitle: 'Monthly Revenue Logs',
+    recordSubscriptionCollectionsDesc: 'Record subscription collections manually for SaaS performance tracking.',
+    allTimeLower: 'all-time',
+    totalRevenueCollectedLabel: 'Total Revenue Collected',
+    collectedThisYearLabel: 'Collected This Year',
+    revenueRecordsAvgLabel: 'Revenue Records — avg',
+    collectionsTrendLabel: 'Collections Trend',
+    lastLoggedEntriesPrefix: 'Last',
+    loggedEntriesSuffix: 'logged entries',
+    noRevenueLogsYet: 'No revenue logs recorded yet.',
+    addRevenueRecordLabel: 'Add Revenue Record',
+    monthLabel: 'Month',
+    yearLabel: 'Year',
+    amountCollectedRupeeLabel: 'Amount Collected (₹)',
+    notesRemarksLabel: 'Notes / Remarks',
+    logRevenuePayoutBtn: 'Log Revenue Payout',
+    platformRevenueHistoryLabel: 'Platform Revenue History',
+    periodCol: 'Period',
+    notesCol: 'Notes',
+    amountCol: 'Amount',
+    duplicateKeyLookupLabel: 'Duplicate Key Lookup',
+    masterKeyCatalogSearchTitle: 'Master Key Catalog Search',
+    lookupBlankSpecDesc: 'Lookup blank specifications, key codes, and customer registry records in seconds.',
+    keyCodeVehicleCategoryLabel: 'Key Code, Vehicle No, or Category',
+    searchByKeyCodePlaceholder: 'Search by key code, vehicle number, customer location, category\u2026',
+    searchingRegistryMsg: 'Searching registry\u2026',
+    noMatchingKeysMsg: 'No matching keys or customer records found',
+    registeredCustomerKeyLabel: 'Registered Customer Key',
+    customerPrefix: 'Customer:',
+    vehicleNoPrefix: 'Vehicle No:',
+    viewFullDetailsLabel: 'View Full Details',
+    keyDetailsLabel: 'Key Details',
+    lockCategoryLabel: 'Lock Category',
+    backProfileLabel: 'Back Profile',
+    customerNameLabel: 'Customer Name',
+    vehicleNumberLabel: 'Vehicle Number',
+    webcamSnapshotLabel: 'Camera Snapshot',
+    registryLocationOverviewLabel: 'Registry Location Overview (Other Workspace)',
+    customerMobileLabel: 'Customer Mobile',
+    registeredShopLabel: 'Registered Shop',
+    keyShopWorkspaceLabel: 'Key Shop Workspace',
+    shopMobileLabel: 'Shop Mobile',
+    sensitiveCoordsHiddenMsg: 'Sensitive coordinates and camera images are hidden since this key registration was created in another duplicate key shop.',
+    closeDetailsBtn: 'Close Details',
+    fileSizeExceeds5MBMsg: 'File size exceeds the 5MB limit',
+    onlyJpegPngPdfMsg: 'Only JPEG, PNG, and PDF document formats are accepted',
+    documentAlreadyStagedTemplate: 'Document for {type} is already staged.',
+    pleaseEnterKeyCodeMsg: 'Please enter a key code first',
+    pleaseEnterValidTestEmailMsg: 'Please enter a valid email address to receive the test OTP.',
+    failedSendOtpMsg: 'Failed to send OTP code.',
+    invalidOtpCodeMsg: 'Invalid OTP code. Please enter the correct code.',
+    complianceRecordLoggedMsg: 'Customer compliance record logged successfully!',
+    submissionFailedTemplate: 'Submission failed: {message}',
+    contactKeyStepLabel: 'Contact & Key',
+    idPhotoStepLabel: 'ID Photo',
+    documentsStepLabel: 'Documents',
+    reviewStepLabel: 'Review',
+    newCustomerEyebrow: 'New Customer',
+    multiStepComplianceDesc: 'Multi-step compliance onboarding — key issuance, identity capture & GPS-stamped address, in five quick steps.',
+    stepLabel: 'Step',
+    ofLabel: 'of',
+    contactKeyCredentialsTitle: 'Contact & Key Credentials',
+    registerContactDetailsDesc: "Register the customer's contact details, vehicle & key code, and residential address.",
+    shopFieldLabel: 'Shop',
+    selectShopPlaceholder: 'Select a shop…',
+    customerRegisteredUnderShopMsg: "This customer, and its key code, will be registered under the selected shop's workspace.",
+    duplicateKeyDetectedLabel: 'Duplicate key detected',
+    duplicateKeyDetectedDescTemplate: 'Key code {code} is already registered to an existing customer. Please verify and enter a unique key code.',
+    fullCustomerNameLabel: 'Full Customer Name',
+    customerNamePlaceholderEg: 'Rohan Malhotra',
+    keyCodeKeyNumberLabel: 'Key Code / Key Number',
+    keyCodeEnterPlaceholderEg: 'Enter key code (e.g. TN09B)',
+    resendBtn: 'Resend',
+    sendOtpBtn: 'Send OTP',
+    smsToPhoneLabel: 'SMS to phone',
+    emailTestingLabel: 'Email (testing)',
+    testEmailPlaceholder: 'test@email.com — for OTP only, not saved',
+    addressLineLabel: 'Address Line',
+    locatingLabel: 'Locating…',
+    currentLocationBtn: 'Current Location',
+    addressLinePlaceholderEg: 'e.g. Flat 101, Park Avenue',
+    openLocationSettingsBtn: 'Open Location Settings',
+    openAppSettingsBtn: 'Open App Settings',
+    stateLabel: 'State',
+    districtLabel: 'District',
+    countryLabel: 'Country',
+    gpsCapturedTemplate: 'GPS captured: {lat}, {long}',
+    enterOtpCodeSentToEmailTemplate: 'Enter the 4-digit code sent to {email}',
+    enterOtpCodeSentToPhoneMsg: "Enter the 4-digit code sent to the customer's phone",
+    testingModeNoProviderTemplate: 'Testing mode — no {provider} provider configured',
+    verifyOtpBtn: 'Verify OTP',
+    otpVerifiedSuccessEmailMsg: 'Customer email OTP verified successfully.',
+    otpVerifiedSuccessPhoneMsg: 'Customer phone number OTP verified successfully.',
+    complianceDocUploadTitle: 'Compliance Document Upload',
+    uploadGovIdDesc: 'Upload a copy of the government ID proof used to verify this customer.',
+    documentTypeLabel: 'Document Type',
+    aadhaarCardLabel: 'Aadhaar Card',
+    drivingLicenseLabel: 'Driving License',
+    panCardLabel: 'PAN Card',
+    voterIdLabel: 'Voter ID',
+    dropOrBrowseCopyTemplate: 'Drop or browse a copy of {type}',
+    jpegPngPdfUpTo5MbLabel: 'JPEG, PNG or PDF — up to 5MB',
+    stagedIdCopiesTemplate: 'Staged ID copies ({count})',
+    verifyDetailsBeforeSubmitDesc: 'Verify every detail entered below before submitting this compliance registration. Nothing is captured or modified automatically on this step.',
+    reviewCustomerLabel: 'Customer',
+    reviewPhoneLabel: 'Phone',
+    keyBlankLabel: 'Key Blank',
+    registeredAddressLabel: 'Registered Address',
+    idProofTypeLabel: 'ID Proof Type',
+    uploadedDocumentsLabel: 'Uploaded Documents',
+    filesAttachedTemplate: '{count} file(s) attached',
+    noneAttachedLabel: 'None attached',
+    reviewLocationLabel: 'Location',
+    gpsCapturedHeadingLabel: 'GPS Captured',
+    latLongMiddotTemplate: 'Lat {lat} · Long {long}',
+    noGpsLocationCapturedDesc: 'No GPS location was captured. Go back to the "Contact & Key" step and use the "Current Location" button if you\'d like to attach coordinates.',
+    submitComplianceRecordBtn: 'Submit Compliance Record',
+    historyPageDesc: 'Search and verify past duplicate-key registrations and compliance submissions.',
+    loadingComplianceRecordsMsg: 'Loading compliance records…',
+    noComplianceRecordsMatchMsg: 'No compliance records match this search.',
+    vehicleCol: 'Vehicle',
+    locationCol: 'Location',
+    loggedCol: 'Logged',
+    actionsCol: 'Actions',
+    editDetailsBtn: 'Edit Details',
+    documentIdTypeLabel: 'Document ID Type',
+    uploadNewFileCopyLabel: 'Upload New File Copy',
+    jpegPngPdfLabel: 'JPEG, PNG or PDF',
+    downloadTitleLabel: 'Download',
+    customerComplianceRecordUpdatedMsg: 'Customer compliance record updated successfully!',
+    failedSaveCustomerEditsMsg: 'Failed to save customer edits.',
+    loadingSupportResourcesMsg: 'Loading support resources…',
+    supportTrainingCenterTitle: 'Support & Training Center',
+    reachSupportTrainingDesc: 'Reach Key Shop technical support and level up with locksmith training resources.',
+    contactLiveAgentTitle: 'Contact Live Agent',
+    supportHoursLabel: 'Mon–Sat, 9 AM–7 PM IST',
+    liveCustomerSupportDesc: 'Live customer support is on hand to help with your key-making machines or duplicate key portal dashboard.',
+    directWhatsappSupportLabel: 'Direct WhatsApp Support',
+    chatOnWhatsappBtn: 'Chat on WhatsApp',
+    locksmithSkillUpgradesTitle: 'Locksmith Skill Upgrades',
+    videoTutorialsFromExpertsDesc: 'Video tutorials from duplicate key experts',
+    trainingMaterialLabel: 'Training Material',
+    watchLinkLabel: 'Watch Link',
+    noSkillUpgradeVideosMsg: 'No skill upgrade videos currently available.',
+    loadingSupportConfigMsg: 'Loading support configuration…',
+    platformSupportEyebrow: 'Platform Support',
+    customerSupportConfigTitle: 'Customer Support Configuration',
+    configureGlobalSupportDesc: 'Configure the global customer care contact and training video links visible to every shop.',
+    customerSupportWhatsappLabel: 'Customer Support WhatsApp Number',
+    whatsappNumberPlaceholderEg: 'e.g. +91 98765 43210',
+    supportContactEyebrow: 'Support Contact',
+    supportContactTitle: 'Support Contact',
+    supportContactDesc: 'Reach out to the Key Shop team directly using the contact details below.',
+    ownerNameLabel: 'Owner Name',
+    ownerPhoneLabel: 'Owner Phone',
+    ownerNamePlaceholderEg: 'e.g. Rajesh Kumar',
+    ownerPhonePlaceholderEg: 'e.g. +91 98765 43210',
+    ownerAddressPlaceholderEg: 'e.g. 12 MG Road, Bengaluru',
+    noContactInfoConfiguredMsg: 'Contact details have not been configured yet.',
+    ownerContactSectionTitle: 'Owner Contact Details',
+    ownerContactSectionDesc: 'These details are shown to every shop on the Support Contact screen.',
+    videoSingularLabel: 'video',
+    videoPluralLabel: 'videos',
+    addVideoBtn: 'Add Video',
+    noVideosConfiguredMsg: 'No videos configured. Click “Add Video” to add locksmith training links.',
+    removeVideoTitle: 'Remove video',
+    videoTitleNameLabel: 'Video Title / Name',
+    videoTitlePlaceholderEg: 'e.g. Locksmith Career Income',
+    youtubeUrlLabel: 'YouTube URL',
+    saveConfigurationBtn: 'Save Configuration',
+    shopCategoriesTitle: 'Shop Categories',
+    categorySingularLabel: 'category',
+    categoryPluralLabel: 'categories',
+    manageShopCategoriesDesc: "Manage the shop \"type\" options offered on the public self-registration wizard's Category dropdown.",
+    enterCategoryNamePlaceholder: 'Enter category name',
+    addBtnLabel: 'Add',
+    noCategoriesYetMsg: "No shop categories yet. Add one above - the registration form's dropdown will be empty until you do.",
+    productTypesTitle: 'Product Types',
+    typeSingularLabel: 'type',
+    typePluralLabel: 'types',
+    manageProductTypesDesc: 'Manage the Product Type options offered on the Inventory Product Creation form.',
+    enterProductTypePlaceholder: 'Enter product type',
+    noProductTypesYetMsg: 'No product types yet. Add one above - the Inventory Product Creation dropdown will be empty until you do.',
+    supportConfigUpdatedMsg: 'Support configuration updated successfully!',
+    saveFailedTemplate: 'Save failed: {msg}',
+    pleaseEnterCategoryNameMsg: 'Please enter a category name.',
+    failedAddCategoryTemplate: 'Failed to add category: {msg}',
+    failedUpdateCategoryTemplate: 'Failed to update category: {msg}',
+    deleteCategoryConfirmTemplate: 'Delete the "{name}" category? Shops already using it keep it, but it will no longer be offered on the registration form.',
+    failedDeleteCategoryTemplate: 'Failed to delete category: {msg}',
+    pleaseEnterProductTypeNameMsg: 'Please enter a product type name.',
+    failedAddProductTypeTemplate: 'Failed to add product type: {msg}',
+    failedUpdateProductTypeTemplate: 'Failed to update product type: {msg}',
+    deleteProductTypeConfirmTemplate: 'Delete the "{name}" product type? Listings already using it keep it, but it will no longer be offered on the Inventory Product Creation form.',
+    failedDeleteProductTypeTemplate: 'Failed to delete product type: {msg}',
+    loadingWorkspaceSettingsMsg: 'Loading workspace settings…',
+    workspaceConfigurationEyebrow: 'Workspace Configuration',
+    manageShopProfileDesc: 'Manage your shop profile, branding, verification documents, and account security.',
+    refreshTitle: 'Refresh',
+    workspaceProfileTitle: 'Workspace Profile',
+    businessIdentityContactDesc: 'Business identity & contact details',
+    workspaceDisplayNameLabel: 'Workspace Display Name',
+    pdfFileLabel: 'PDF File',
+    uploadingEllipsisLabel: 'Uploading…',
+    saveWorkspaceDetailsBtn: 'Save Workspace Details',
+    adminCredentialsTitle: 'Admin Credentials',
+    usernameNameLabel: 'Username / Name',
+    emailAddressLabel: 'Email Address',
+    workspacePasswordLabel: 'Workspace Password',
+    hidePasswordTitle: 'Hide password',
+    revealPasswordTitle: 'Reveal password',
+    forgotPasswordResetOtpBtn: 'Forgot Password? Reset via OTP',
+    confirmYourPasswordTitle: 'Confirm your password',
+    verifyIdentityRevealDesc: 'Verify your identity to reveal saved credentials.',
+    accountPasswordLabel: 'Account Password',
+    enterPasswordPlaceholder: 'Enter password',
+    accountRecoveryEyebrow: 'Account Recovery',
+    resetAccountPasswordTitle: 'Reset Account Password',
+    emailRecoveryTab: 'Email Recovery',
+    phoneRecoveryTab: 'Phone Recovery',
+    registeredPhoneNumberLabel: 'Registered Phone Number',
+    registeredEmailAddressLabel: 'Registered Email Address',
+    sendOtpVerificationCodeBtn: 'Send OTP Verification Code',
+    fourDigitCodeDispatchedTemplate: 'A 4-digit code has been dispatched to {identifier}.',
+    enterOtpLabel: 'Enter OTP',
+    newPasswordLabel: 'New Password',
+    min6CharactersPlaceholder: 'Min 6 characters',
+    confirmPasswordLabel: 'Confirm Password',
+    retypePasswordPlaceholder: 'Retype password',
+    updatePasswordBtn: 'Update Password',
+    failedGenerateReportMsg: 'Failed to generate report.',
+    pleaseGenerateReportFirstMsg: 'Please generate the report first.',
+    complianceAnalyticsEyebrow: 'Compliance & Analytics',
+    reportsPortalDesc: 'Generate dynamic CSV and plain-text customer registration reports for any date range.',
+    reportBuilderTitle: 'Report Builder',
+    selectDateRangeGenerateDesc: 'Select a date range, then generate the report',
+    fromDateLabel: 'From Date',
+    toDateLabel: 'To Date',
+    generatingEllipsisLabel: 'Generating…',
+    referralProgramTitle: 'Referral Program',
+    referralProgramDesc: 'Share your code with other shop owners and earn rewards.',
+    copyTitle: 'Copy',
+    shareReferralCodeBtn: 'Share Referral Code',
+    generateReferralCodeBtn: 'Generate Referral Code',
+    failedGenerateReferralCodeMsg: 'Failed to generate referral code. Please try again.',
+    referralShareMessageTemplate: 'Use my referral code {code} when you register on Key Shop!',
+    verificationDocumentLabel: 'Verification Document',
+    useCameraBtn: 'Use Camera',
+    chooseFromGalleryBtn: 'Choose from Gallery',
+    generateReportBtn: 'Generate Report',
+    recordsInReportLabel: 'Records in Report',
+    allTimeLabel: 'All time',
+    todayLabel: 'Today',
+    dateRangeCoveredLabel: 'Date Range Covered',
+    visualReportSummaryTitle: 'Visual Report Summary',
+    hoverToViewValuesDesc: 'Hover elements to view exact values',
+    registrationsByKeyBlankRefTitle: 'Registrations by Key Blank Reference',
+    registrationTimelineTrendTitle: 'Registration Timeline Trend',
+    noTrendDataMsg: 'No trend data',
+    reportPreviewTitle: 'Report Preview',
+    recordsLabel: 'records',
+    exportCsvBtn: 'Export CSV',
+    exportTxtBtn: 'Export TXT',
+    showingFirstColumnsPreviewDesc: 'Showing up to first 4 columns in browser preview. Export to view all detailed data columns.',
+    aadhaarMustBe12DigitsMsg: 'Aadhaar number must be exactly 12 digits.',
+    aadhaarNumberLabel: 'Aadhaar Number',
+    autoFilledFromGpsPlaceholder: 'Auto-filled from GPS',
+    backToHomeLink: 'Back to home',
+    canLogInWithEitherMsg: 'You can log in with either',
+    cardholderNameLabel: 'Cardholder Name',
+    cardNumberLabel: 'Card Number',
+    choosePaymentChannelLabel: 'Choose payment channel',
+    chooseSubscriptionPlanLabel: 'Choose subscription plan',
+    cityLabel: 'City',
+    createShopAccountBtn: 'Create shop account',
+    customersStatLabel: 'Customers',
+    cvvLabel: 'CVV',
+    digitAadhaarOptionalPlaceholder: '12-digit Aadhaar number (optional)',
+    referralCodeLabel: 'Referral Code (Optional)',
+    referralCodePlaceholder: 'Enter referral code, if you have one',
+    agreeToTermsPrefix: 'I have read and agree to the',
+    termsAndConditionsLinkLabel: 'Terms and Conditions',
+    pleaseAcceptTermsMsg: 'Please read and accept the Terms and Conditions to continue.',
+    digitMobilePlaceholder: '10-digit mobile',
+    digitPinCodePlaceholder: '6-digit PIN code',
+    emailOrMobileLabel: 'Email or Mobile Number',
+    emailOrMobilePlaceholder: 'Email address or mobile number',
+    emailOtpLabel: 'Email OTP',
+    enterRegisteredMethodTemplate: 'Enter the registered {method} associated with your workspace to request a reset code.',
+    expiryLabel: 'Expiry',
+    forgotPasswordLink: 'Forgot password?',
+    keysCutStatLabel: 'Keys Cut',
+    keyShopDashboardLabel: 'Key Shop Dashboard',
+    loadingCategoriesEllipsis: 'Loading categories…',
+    mobileNumberLabel: 'Mobile Number',
+    mobileNumberVerifiedMsg: 'Mobile number verified',
+    noShopCategoriesAvailableMsg: 'No shop categories available yet',
+    otpVerifiedSetNewPasswordMsg: 'OTP verified. Please set a new password below.',
+    passwordLabel: 'Password',
+    passwordResetSuccessMsg: 'Password reset successfully',
+    payableAmountLabel: 'Payable amount',
+    paySettleSetupBtn: 'Pay & settle setup',
+    phoneOtpLabel: 'Phone OTP',
+    pinCodeLabel: 'PIN Code',
+    pinCodeMustBe6DigitsMsg: 'PIN code must be exactly 6 digits.',
+    pleaseEnterValidEmailMsg: 'Please enter a valid email address.',
+    pleaseFillRequiredRegFieldsMsg: 'Please fill out all required registration fields.',
+    pleaseVerifyMobileOtpMsg: 'Please verify your mobile number with the OTP before continuing.',
+    registeredEmailLabel: 'Registered Email',
+    registerYourKeyShopTitle: 'Register your key shop',
+    registrationSubmittedTitle: 'Registration submitted',
+    regPasswordMinLengthMsg: 'Password must be at least 6 characters.',
+    rememberMeLabel: 'Remember me',
+    resendOtpBtn: 'Resend OTP',
+    resetYourPasswordTitle: 'Reset your password',
+    returnToLoginBtn: 'Return to login',
+    runYourShopHeading: 'Run your shop',
+    scanQrCodeAppsDesc: 'Scan QR code using GooglePay, PhonePe, or Paytm',
+    secureRecoveryWorkspaceDesc: 'Secure recovery for your workspace',
+    selectShopCategoryPlaceholder: 'Select shop category',
+    selectVerificationMethodDesc: 'Select your verification method to recover your workspace credentials.',
+    sendOtpCodeBtn: 'Send OTP code',
+    sendOtpToVerifyBtn: 'Send OTP to verify',
+    settlingPaymentEllipsis: 'Settling payment…',
+    shopAdminDownloadAppBtn: 'Shop Admin? Download the app',
+    shopOnboardingEyebrow: 'Shop onboarding',
+    signInLeadDesc: 'Sign in to run your duplicate-key shop — orders, customers and inventory, all in one place.',
+    signInToKeyShopBtn: 'Sign in to Key Shop',
+    signInWithNewCredentialsMsg: 'You can now sign in with your new credentials.',
+    smartGoldStandardWaySpan: 'the smart, gold-standard way.',
+    streetLandmarkPlaceholder: 'Street / landmark',
+    trackDuplicateKeysDesc: 'Track duplicate keys, customers and store orders across every branch — one bold dashboard built for Indian locksmiths.',
+    trustedByShopsBadge: 'Trusted by 500+ key shops across India',
+    upiQrScanLabel: 'UPI / QR scan',
+    verifyBtnLabel: 'Verify',
+    wantToRegisterShopMsg: 'Want to register your shop?',
+    welcomeBackHeading: 'Welcome back',
+    loginFailedCheckCredentialsMsg: 'Login failed. Please check credentials.',
+    failedDispatchVerificationCodeMsg: 'Failed to dispatch verification code',
+    incorrectVerificationCodeMsg: 'Incorrect verification code. Please try again.',
+    passwordsDoNotMatchMsg: 'Passwords do not match',
+    passwordResetFailedMsg: 'Password reset failed',
+    pleaseEnterMobileNumberFirstMsg: 'Please enter your mobile number first.',
+    failedDispatchVerificationOtpMsg: 'Failed to dispatch verification OTP.',
+    incorrectVerificationOtpCodeMsg: 'Incorrect verification OTP code. Please try again.',
+    registrationSuccessfulShopActiveMsg: 'Registration successful! Your shop account is now active - you can log in right away.',
+    selfRegistrationFailedMsg: 'Self-registration failed.',
+    shopWorkspaceSettingsSavedMsg: 'Shop workspace settings saved successfully!',
+    documentUploadFailedMsg: 'Document upload failed',
+    removeThisDocumentConfirm: 'Remove this document?',
+    failedRemoveDocumentMsg: 'Failed to remove document',
+    incorrectPasswordEnteredMsg: 'Incorrect password entered.',
+    pleaseEnterRegisteredEmailPhoneMsg: 'Please enter your registered email or phone number',
+    failedSendOtpCodeMsg: 'Failed to send OTP code.',
+    invalidOtpCodeEnterCorrectMsg: 'Invalid OTP code. Please enter the correct code.',
+    passwordUpdatedSuccessfullyMsg: 'Password updated successfully!',
+    failedUpdatePasswordMsg: 'Failed to update password',
   },
   hi: {
     shopsRegistered: 'पंजीकृत दुकानें',
@@ -407,6 +1132,731 @@ const LANGUAGES = {
     welcome: 'की वर्कस्पेस',
     superAdmin: 'सुपर एडमिन',
     shopTerminal: 'दुकान टर्मिनल',
+    supportConfig: 'सहायता कॉन्फ़िगरेशन',
+    inventory: 'मशीनें',
+    customerCare: 'ग्राहक सेवा',
+    offersAdsBanners: 'ऑफ़र, विज्ञापन और बैनर',
+    language: 'भाषा',
+    btnSave: 'सहेजें',
+    btnSaveChanges: 'परिवर्तन सहेजें',
+    btnCancel: 'रद्द करें',
+    btnDelete: 'हटाएं',
+    btnEdit: 'संपादित करें',
+    btnSubmit: 'सबमिट करें',
+    btnClose: 'बंद करें',
+    btnConfirm: 'पुष्टि करें',
+    btnUpdate: 'अपडेट करें',
+    btnRemove: 'निकालें',
+    btnBack: 'वापस',
+    btnNext: 'अगला',
+    btnRetry: 'पुनः प्रयास करें',
+    btnDownload: 'डाउनलोड करें',
+    btnUpload: 'अपलोड करें',
+    btnContinue: 'जारी रखें',
+    btnDone: 'पूर्ण',
+    btnOk: 'ठीक है',
+    btnViewAll: 'सभी देखें',
+    btnViewDetails: 'विवरण देखें',
+    btnDismiss: 'खारिज करें',
+    btnAddNew: 'नया जोड़ें',
+    btnApply: 'लागू करें',
+    btnClear: 'साफ़ करें',
+    btnExport: 'निर्यात करें',
+    yes: 'हां',
+    no: 'नहीं',
+    loading: 'लोड हो रहा है...',
+    searching: 'खोज रहे हैं...',
+    searchPlaceholder: 'खोजें...',
+    active: 'सक्रिय',
+    inactive: 'निष्क्रिय',
+    suspended: 'निलंबित',
+    expired: 'समाप्त',
+    pending: 'लंबित',
+    actions: 'कार्रवाई',
+    status: 'स्थिति',
+    optional: 'वैकल्पिक',
+    required: 'आवश्यक',
+    noRecordsFound: 'कोई रिकॉर्ड नहीं मिला',
+    noDataAvailable: 'कोई डेटा उपलब्ध नहीं',
+    areYouSure: 'क्या आप सुनिश्चित हैं?',
+    actionCannotBeUndone: 'यह कार्रवाई पूर्ववत नहीं की जा सकती।',
+    somethingWentWrong: 'कुछ गलत हो गया। कृपया पुनः प्रयास करें।',
+    changesSavedSuccessfully: 'परिवर्तन सफलतापूर्वक सहेजे गए',
+    fieldName: 'नाम',
+    fieldEmail: 'ईमेल',
+    fieldPhone: 'फ़ोन नंबर',
+    fieldAddress: 'पता',
+    fieldDate: 'तारीख',
+    fieldAmount: 'राशि',
+    fieldDescription: 'विवरण',
+    fieldCategory: 'श्रेणी',
+    fieldPrice: 'कीमत',
+    fieldTitle: 'शीर्षक',
+    fieldType: 'प्रकार',
+    account: 'खाता',
+    customerService: 'ग्राहक सेवा',
+    chooseLanguage: 'भाषा चुनें',
+    selectLanguageDesc: 'ऐप के लिए अपनी पसंदीदा भाषा चुनें',
+    pressBackToExit: 'बाहर निकलने के लिए फिर से बैक दबाएं',
+    loadingDashboard: 'डैशबोर्ड लोड हो रहा है…',
+    superAdminControl: 'सुपर एडमिन नियंत्रण',
+    portal: 'पोर्टल',
+    welcomeBack: 'वापसी पर स्वागत है',
+    namaste: 'नमस्ते',
+    platformOverviewDesc: 'हर टेनेंट दुकान में प्लेटफ़ॉर्म का अवलोकन।',
+    newCustomer: 'नया ग्राहक',
+    registerComplianceEntry: 'नए ग्राहक के लिए अनुपालन प्रविष्टि पंजीकृत करें',
+    shopsCardTitle: 'दुकानें',
+    viewManageShopsDesc: 'हर पंजीकृत दुकान देखें और प्रबंधित करें',
+    customerSupport: 'ग्राहक सहायता',
+    manageCustomerSupportDesc: 'ग्राहक सहायता संपर्क और संसाधन प्रबंधित करें',
+    complianceInventoryTerminal: 'अनुपालन और इन्वेंटरी टर्मिनल',
+    workspace: 'वर्कस्पेस',
+    subscriptionRenewalRequired: 'सदस्यता नवीनीकरण आवश्यक है!',
+    subscriptionExpiresIn: 'आपकी दुकान की सदस्यता {days} दिनों में समाप्त हो जाएगी। कृपया की शॉप सुपर एडमिन के साथ नवीनीकरण का समन्वय करें।',
+    planSuffix: 'योजना',
+    searchKeysCardTitle: 'कुंजी खोजें',
+    findDigitizeKeysDesc: 'कुंजी रिकॉर्ड को जल्दी खोजें और डिजिटाइज़ करें',
+    addMachinesCardDesc: 'एक नई मशीन लिस्टिंग तुरंत जोड़ें',
+    getHelpSupportDesc: 'सहायता प्राप्त करें और सहायता संपर्क विवरण देखें',
+    featuredOffersBanners: 'विशेष ऑफ़र और बैनर',
+    banner: 'बैनर',
+    notice: 'सूचना',
+    offer: 'ऑफ़र',
+    viewAllOffersBanners: 'सभी ऑफ़र और बैनर देखें',
+    usedMachines: 'पुरानी मशीनें',
+    ecmService: 'ईसीएम',
+    meterService: 'मीटर',
+    scanningService: 'स्कैनिंग',
+    usedMachinesDesc: 'पुरानी मशीनें देखें और प्रबंधित करें',
+    ecmServiceDesc: 'ईसीएम सेवा रिकॉर्ड प्रबंधित करें',
+    meterServiceDesc: 'मीटर सेवाओं को ट्रैक और प्रबंधित करें',
+    scanningServiceDesc: 'अनुपालन प्रविष्टियों को स्कैन और संसाधित करें',
+    platformOperations: 'प्लेटफ़ॉर्म संचालन',
+    provisionShopsDesc: 'प्लेटफ़ॉर्म पर हर की शॉप वर्कस्पेस को प्रावधानित, निगरानी और प्रबंधित करें।',
+    allShops: 'सभी दुकानें',
+    searchShopsPlaceholder: 'दुकानें खोजें...',
+    loadingShopRegistry: 'शॉप रजिस्ट्री लोड हो रही है...',
+    noShopsProvisionedYet: 'अभी तक कोई दुकान प्रावधानित नहीं हुई',
+    noShopsMatchSearch: 'आपकी खोज से कोई दुकान मेल नहीं खाती',
+    shopDetails: 'दुकान विवरण',
+    adminContact: 'एडमिन संपर्क',
+    activePlan: 'सक्रिय योजना',
+    validUntil: 'तक मान्य',
+    diskStorage: 'डिस्क स्टोरेज',
+    editWorkspace: 'वर्कस्पेस संपादित करें',
+    managePlan: 'योजना प्रबंधित करें',
+    shopOnboarding: 'दुकान ऑनबोर्डिंग',
+    provisionNewShopWorkspace: 'नया शॉप वर्कस्पेस प्रावधानित करें',
+    shopNameLabel: 'दुकान का नाम',
+    shopNamePlaceholder: 'जैसे शर्मा की केंद्र',
+    shopAddressLabel: 'दुकान का पता',
+    shopAddressPlaceholder: 'पूरा दुकान पता',
+    adminFullNameLabel: 'एडमिन का पूरा नाम',
+    adminFullNamePlaceholder: 'जैसे रमेश शर्मा',
+    adminEmailLabel: 'एडमिन ईमेल',
+    adminEmailPlaceholder: 'admin@example.com',
+    initialPasswordLabel: 'प्रारंभिक पासवर्ड',
+    initialPasswordPlaceholder: 'एक अस्थायी पासवर्ड सेट करें',
+    phonePlaceholder: 'फोन नंबर',
+    whatsappNumberLabel: 'व्हाट्सएप नंबर',
+    sameAsPhone: 'फोन नंबर जैसा',
+    subscriptionPlanLabel: 'सदस्यता योजना',
+    monthlyPlan: 'मासिक',
+    halfYearlyPlan: 'अर्ध-वार्षिक',
+    yearlyPlan: 'वार्षिक',
+    endDateValidityLabel: 'अंतिम तिथि / वैधता',
+    autoCalculatedTier: 'चयनित योजना स्तर के आधार पर स्वतः गणना की गई',
+    failedToCreateShop: 'की शॉप बनाने में विफल। पुनः प्रयास करें।',
+    ownerAadhaarMandatory: 'शॉप वर्कस्पेस प्रावधानित करने के लिए मालिक का आधार दस्तावेज़ अनिवार्य है।',
+    failedInitCheckout: 'सदस्यता चेकआउट प्रारंभ करने में विफल। पुनः प्रयास करें।',
+    paymentFailedPrefix: 'भुगतान विफल: {message}',
+    updateFailedMsg: 'अपडेट विफल',
+    billingEyebrow: 'बिलिंग',
+    updateShopSubscriptionTitle: 'दुकान सदस्यता अपडेट करें',
+    targetShopLabel: 'लक्ष्य दुकान:',
+    planTierLabel: 'योजना स्तर',
+    monthlyPlanFull: 'मासिक योजना',
+    sixMonthPlanFull: '6-माह योजना',
+    yearlyPlanFull: 'वार्षिक योजना',
+    newEndDateLabel: 'नई अंतिम तिथि',
+    updatePlanBtn: 'योजना अपडेट करें',
+    planSubscriptionEscrowPay: 'योजना सदस्यता एस्क्रो भुगतान',
+    workspaceTerminalProvisioningPayment: 'वर्कस्पेस टर्मिनल प्रावधान भुगतान',
+    paymentAuthorizedTitle: 'भुगतान अधिकृत!',
+    paymentSettledDesc: 'सदस्यता भुगतान सफलतापूर्वक निपटाया गया है। वर्कस्पेस {name} अब पूरी तरह से प्रावधानित और सक्रिय है।',
+    closeAndProceedBtn: 'बंद करें और आगे बढ़ें',
+    processingTransactionTitle: 'लेनदेन संसाधित हो रहा है',
+    finalizingWorkspaceCreation: 'वर्कस्पेस निर्माण टनल को अंतिम रूप दिया जा रहा है।',
+    workspaceProvisionInvoice: 'वर्कस्पेस प्रावधान चालान',
+    planColonLabel: 'योजना:',
+    creditCardLabel: 'क्रेडिट कार्ड',
+    upiQrCodeLabel: 'यूपीआई क्यूआर कोड',
+    cardholderFullNameLabel: 'कार्डधारक का पूरा नाम',
+    cardholderNamePlaceholder: 'जैसे रमेश कुमार',
+    debitCreditCardNumberLabel: 'डेबिट / क्रेडिट कार्ड नंबर',
+    expiryDateLabel: 'समाप्ति तिथि',
+    cvvCodeLabel: 'सीवीवी कोड',
+    scanToAuthorizeInvoice: 'सेटअप चालान अधिकृत करने के लिए स्कैन करें',
+    scanQrDesc: 'GPay, PhonePe, Paytm, या BHIM से स्कैन करें। पहचान के बाद सदस्यता स्वतः सक्रिय हो जाती है।',
+    secureGatewayPaymentPortal: '256-बिट सुरक्षित गेटवे भुगतान पोर्टल',
+    cancelSetupBtn: 'सेटअप रद्द करें',
+    payAndProvisionPrefix: 'रु. भुगतान करें',
+    payAndProvisionSuffix: 'और प्रावधानित करें',
+    logEstablishingTunnel: 'सुरक्षित एंड-टू-एंड सैंडबॉक्स टनल स्थापित किया जा रहा है...',
+    logVerifyingBalance: 'खाता शेष और क्रेडिट लाइनों की पुष्टि की जा रही है...',
+    logAuthorizingEscrow: 'सदस्यता एस्क्रो निपटान लेनदेन को अधिकृत किया जा रहा है...',
+    logEncryptingCard: 'AES-GCM के माध्यम से कार्ड विवरण एन्क्रिप्ट किया जा रहा है...',
+    logFulfillingProvisioning: 'की शॉप एपीआई वर्कस्पेस प्रावधान पूरा किया जा रहा है...',
+    shopPhotoLabel: 'दुकान की फोटो',
+    shopLicenseLabel: 'दुकान लाइसेंस',
+    ownerAadhaarLabel: 'मालिक आधार',
+    provisionAccountBtn: 'खाता प्रावधानित करें',
+    workspaceSettings: 'वर्कस्पेस सेटिंग्स',
+    editShopWorkspaceDetails: 'दुकान वर्कस्पेस विवरण संपादित करें',
+    workspaceNameLabel: 'वर्कस्पेस का नाम',
+    registeredAddressFixed: 'पंजीकृत पता (निश्चित)',
+    notUploaded: 'अपलोड नहीं किया गया',
+    saveSettings: 'सेटिंग्स सहेजें',
+    crossTenantCompliance: 'क्रॉस-टेनेंट अनुपालन',
+    customerRegistryTitle: 'ग्राहक रजिस्ट्री',
+    superviseComplianceRecordsDesc: 'सभी टेनेंट वर्कस्पेस में अनुपालन रिकॉर्ड की निगरानी करें',
+    createCustomerBtn: 'ग्राहक बनाएं',
+    allCustomers: 'सभी ग्राहक',
+    searchByNamePhoneKeyCode: 'नाम, फ़ोन या की कोड से खोजें',
+    loadingCustomerRegistry: 'ग्राहक रजिस्ट्री लोड हो रही है...',
+    noCustomerRecordsMatch: 'कोई ग्राहक रिकॉर्ड मेल नहीं खाता',
+    tenantWorkspaceCol: 'टेनेंट वर्कस्पेस',
+    customerCol: 'ग्राहक',
+    phoneCol: 'फ़ोन',
+    keyCodeCol: 'की कोड',
+    registeredCol: 'पंजीकृत',
+    shopWorkspaceFallback: 'अनसाइन्ड वर्कस्पेस',
+    photoOnFile: 'फ़ोटो उपलब्ध है',
+    photoPending: 'फ़ोटो लंबित',
+    viewComplianceFile: 'अनुपालन फ़ाइल देखें',
+    complianceFileEyebrow: 'अनुपालन फ़ाइल',
+    phoneContactLabel: 'फ़ोन संपर्क',
+    registryDateLabel: 'पंजीकरण तिथि',
+    addressLabel: 'पता',
+    keyBlankCodeLabel: 'की ब्लैंक कोड',
+    idVerificationLabel: 'आईडी सत्यापन',
+    idNumberDecryptedLabel: 'आईडी नंबर (डिक्रिप्टेड)',
+    gpsCoordinatesLabel: 'जीपीएस निर्देशांक',
+    latLongTemplate: 'अक्षांश: {lat} • देशांतर: {long}',
+    notCapturedLabel: 'कैप्चर नहीं किया गया',
+    googleMapsLabel: 'गूगल मैप्स',
+    capturedAddressLabel: 'कैप्चर किया गया पता',
+    webcamPhotoLabel: 'कैमरा फ़ोटो',
+    attachedIdCopiesLabel: 'संलग्न आईडी प्रतियां',
+    uploadedBadge: 'अपलोड किया गया',
+    missingBadge: 'गुम',
+    closeFileBtn: 'फ़ाइल बंद करें',
+    operationFailedMsg: 'कार्रवाई विफल रही',
+    confirmRemoveKeyBlank: 'क्या आप वाकई इस की ब्लैंक को केंद्रीय कैटलॉग से हटाना चाहते हैं?',
+    platformCatalogueLabel: 'प्लेटफ़ॉर्म कैटलॉग',
+    masterKeyCatalogueTitle: 'मास्टर की कैटलॉग',
+    provisionKeyBlankSpecsDesc: 'हर दुकान टर्मिनल पर लुकअप के लिए उपलब्ध की ब्लैंक विनिर्देश प्रावधानित करें।',
+    addKeyBlankBtn: 'की ब्लैंक जोड़ें',
+    searchCataloguePlaceholder: 'कोड, श्रेणी, स्पेक्स संदर्भ द्वारा कैटलॉग खोजें…',
+    loadingCatalogueMsg: 'कैटलॉग लोड हो रहा है…',
+    noKeyBlanksMatch: 'कोई की ब्लैंक इस खोज से मेल नहीं खाती',
+    modifyBtn: 'संशोधित करें',
+    deleteBtn: 'हटाएं',
+    catalogueEntryLabel: 'कैटलॉग प्रविष्टि',
+    modifyKeyBlankTitle: 'की ब्लैंक संशोधित करें',
+    addNewKeyBlankTitle: 'नई की ब्लैंक जोड़ें',
+    keyNumberCodeLabel: 'की नंबर / कोड',
+    connectedShopLabel: 'संबंधित दुकान',
+    globalCatalogueLabel: 'ग्लोबल कैटलॉग',
+    connectedCustomersLabel: 'संबंधित ग्राहक',
+    noCustomerLinkedYet: 'अभी तक कोई ग्राहक लिंक नहीं है',
+    keyCodeLabel: 'की कोड',
+    keyCodePlaceholderEg: 'जैसे CY-102',
+    categoryTypeLabel: 'श्रेणी प्रकार',
+    categoryPlaceholderEg: 'जैसे पैडलॉक',
+    backImageUrlLabel: 'बैक इमेज यूआरएल',
+    saveChangesBtn: 'परिवर्तन सहेजें',
+    publishKeyBtn: 'की प्रकाशित करें',
+    crossShopMarketplaceLabel: 'क्रॉस-शॉप मार्केटप्लेस',
+    inventoryTitle: 'मशीनें',
+    manageSharedInventoryDesc: 'प्लेटफ़ॉर्म भर में साझा इन्वेंटरी फ़ीड, बैनर विज्ञापन अभियान और दुकान ऑफ़र प्रबंधित करें।',
+    browseListProductsDesc: 'प्लेटफ़ॉर्म की हर दुकान में साझा किए गए उत्पाद ब्राउज़ करें और सूचीबद्ध करें',
+    inventoryFeedTab: 'मशीन फ़ीड',
+    bannerManagementTab: 'बैनर प्रबंधन',
+    offerManagementTab: 'ऑफ़र प्रबंधन',
+    failedUpdateCampaign: 'अभियान अपडेट करने में विफल',
+    failedScheduleCampaign: 'अभियान शेड्यूल करने में विफल',
+    confirmTerminateAdCampaign: 'क्या आप वाकई इस विज्ञापन अभियान को समाप्त करना चाहते हैं?',
+    interactivePopupLabel: 'इंटरैक्टिव पॉपअप',
+    textNoticeLabel: 'टेक्स्ट सूचना',
+    mainBannerLabel: 'मुख्य बैनर',
+    growthMarketingLabel: 'ग्रोथ और मार्केटिंग',
+    adCampaignsTitle: 'विज्ञापन अभियान',
+    publishBannersPopupsDesc: 'दुकान डैशबोर्ड स्क्रीन को लक्षित बैनर और पॉपअप प्रकाशित करें।',
+    newAdCampaignBtn: 'नया विज्ञापन अभियान',
+    loadingCampaignsMsg: 'अभियान लोड हो रहे हैं…',
+    noAdCampaignsScheduled: 'अभी तक कोई विज्ञापन अभियान निर्धारित नहीं है।',
+    liveLabel: 'लाइव',
+    scheduledLabel: 'निर्धारित',
+    priorityLabel: 'प्राथमिकता',
+    startLabel: 'प्रारंभ',
+    endLabel: 'समाप्ति',
+    allKeyShopsLabel: 'सभी की शॉप्स',
+    targetedShopSingular: '{n} लक्षित दुकान',
+    targetedShopsPlural: '{n} लक्षित दुकानें',
+    editBtn: 'संपादित करें',
+    cancelCampaignBtn: 'अभियान रद्द करें',
+    adCampaignLabel: 'विज्ञापन अभियान',
+    editAdCampaignTitle: 'विज्ञापन अभियान संपादित करें',
+    newVisualAdCampaignTitle: 'नया विज़ुअल विज्ञापन अभियान',
+    adTitleAnnouncementLabel: 'विज्ञापन शीर्षक / घोषणा',
+    adTitlePlaceholderEg: 'जैसे इस शुक्रवार गोदरेज की डुप्लिकेट पर 20% छूट',
+    bannerImageSourceLabel: 'बैनर छवि स्रोत',
+    pasteImageUrlPlaceholder: 'छवि यूआरएल पेस्ट करें (या गूगल इमेज लिंक)',
+    uploadBtn: 'अपलोड करें',
+    adFormatLabel: 'विज्ञापन प्रारूप',
+    mainBannerNoticeOption: 'मुख्य बैनर सूचना',
+    interactiveLoginPopupOption: 'इंटरैक्टिव लॉगिन पॉपअप',
+    dashboardTextNoticeOption: 'डैशबोर्ड टेक्स्ट सूचना',
+    campaignPriorityLabel: 'अभियान प्राथमिकता',
+    startDateLabel: 'प्रारंभ तिथि',
+    endDateLabelShort: 'समाप्ति तिथि',
+    targetAudienceLabel: 'लक्षित दर्शक',
+    broadcastAllKeyShops: 'सभी की शॉप्स पर प्रसारित करें',
+    targetSpecificShops: 'विशिष्ट दुकानों को लक्षित करें',
+    scheduleCampaignBtn: 'अभियान शेड्यूल करें',
+    searchInventoryPlaceholder: 'इन्वेंटरी खोजें...',
+    newListingBtn: 'मशीन जोड़ें',
+    allCategoriesLabel: 'सभी श्रेणियाँ',
+    loadingListingsMsg: 'लिस्टिंग लोड हो रही हैं...',
+    noOffersPublishedYet: 'अभी तक कोई ऑफर प्रकाशित नहीं हुआ',
+    noInventoryListedYet: 'अभी तक कोई इन्वेंटरी सूचीबद्ध नहीं है',
+    expiredLabel: 'समाप्त',
+    percentOffSuffix: '% छूट',
+    validTillPrefix: 'मान्य तक',
+    linkedPrefix: 'लिंक्ड:',
+    superAdminIndependentLabel: 'सुपर एडमिन (स्वतंत्र)',
+    shopLabel: 'दुकान:',
+    ownerLabel: 'मालिक:',
+    callPrefix: 'कॉल करें',
+    removeBtn: 'हटाएं',
+    advertisementLabel: 'विज्ञापन',
+    offerLabel: 'ऑफर',
+    promotionalProductLabel: 'उत्पाद',
+    failedUpdateListing: 'लिस्टिंग अपडेट करने में विफल',
+    failedPublishListing: 'लिस्टिंग प्रकाशित करने में विफल',
+    confirmRemoveListing: 'इस लिस्टिंग को हटाएं?',
+    inventoryListingLabel: 'मशीन लिस्टिंग',
+    editListingTitle: 'लिस्टिंग संपादित करें',
+    newInventoryListingTitle: 'नई इन्वेंटरी लिस्टिंग',
+    nameLabel: 'नाम',
+    listingNamePlaceholderEg: 'जैसे प्रीमियम गोदरेज की-ब्लैंक्स - बल्क पैक',
+    productTypeLabel: 'उत्पाद प्रकार',
+    selectProductTypePlaceholder: 'उत्पाद प्रकार चुनें',
+    noProductTypesAvailable: 'अभी तक कोई उत्पाद प्रकार उपलब्ध नहीं है',
+    descriptionOptionalLabel: 'विवरण (वैकल्पिक)',
+    shortDescriptionPlaceholder: 'लिस्टिंग कार्ड पर दिखाया गया संक्षिप्त विवरण',
+    productPhotoOptionalLabel: 'उत्पाद फोटो (वैकल्पिक)',
+    imageMediaOptionalLabel: 'छवि / मीडिया (वैकल्पिक)',
+    priceOptionalLabel: 'मूल्य (वैकल्पिक)',
+    priceLeaveBlankPlaceholder: 'लागू न होने पर खाली छोड़ें',
+    phoneNumberLabel: 'फ़ोन नंबर',
+    phoneNumberPlaceholderEg: 'जैसे 9876543210',
+    tapToCallHint: 'खरीदारों के लिए लिस्टिंग कार्ड पर टैप-टू-कॉल बटन के रूप में दिखाया जाता है।',
+    discountPercentageOptionalLabel: 'छूट प्रतिशत (वैकल्पिक)',
+    discountPercentagePlaceholderEg: 'जैसे 20',
+    validUntilOptionalLabel: 'मान्य तिथि तक (वैकल्पिक)',
+    validUntilHint: 'बिना समाप्ति तिथि वाले ऑफर के लिए खाली छोड़ें। समाप्त ऑफर साझा फ़ीड से छिपाए जाते हैं।',
+    linkExistingListingLabel: 'अपनी किसी मौजूदा लिस्टिंग से लिंक करें (वैकल्पिक)',
+    noLinkedListingOption: 'कोई लिंक्ड लिस्टिंग नहीं',
+    productLabel: 'उत्पाद',
+    publishListingBtn: 'लिस्टिंग प्रकाशित करें',
+    fromKeyShopHqLabel: 'की शॉप मुख्यालय से',
+    offersAdsBannersTitle: 'ऑफर, विज्ञापन और बैनर',
+    everyActiveAdOfferDesc: 'सुपर एडमिन द्वारा प्रकाशित हर सक्रिय विज्ञापन, बैनर, सूचना और ऑफर।',
+    loadingEllipsis: 'लोड हो रहा है…',
+    nothingPublishedYet: 'अभी तक कुछ भी प्रकाशित नहीं हुआ है।',
+    advertisementsAndBannersLabel: 'विज्ञापन और बैनर',
+    offersLabel: 'ऑफर',
+    subscriptionRatesUpdatedMsg: 'सदस्यता योजना मूल्य सफलतापूर्वक अपडेट किए गए!',
+    updateFailedPrefix: 'अपडेट विफल',
+    platformFinanceLabel: 'प्लेटफ़ॉर्म वित्त',
+    subscriptionPricingTitle: 'सदस्यता मूल्य निर्धारण',
+    configureFranchisePricingDesc: 'प्लेटफ़ॉर्म के लिए फ्रैंचाइज़ी सदस्यता योजना दरें कॉन्फ़िगर करें।',
+    monthlyLower: 'मासिक',
+    monthlyRecurringPlanLabel: 'मासिक आवर्ती योजना',
+    sixMonthLower: '6-माह',
+    halfYearlyPlanRateLabel: 'अर्ध-वार्षिक योजना दर',
+    yearlyLower: 'वार्षिक',
+    yearlyDiscountedRateLabel: 'वार्षिक छूट दर',
+    subscriptionPlanPricingLabel: 'सदस्यता योजना मूल्य निर्धारण',
+    setRatesForKeyShopsDesc: 'की शॉप्स के लिए दरें निर्धारित करें। ये मूल्य प्रोविजनिंग के दौरान चेकआउट गेटवे स्क्रीन को स्वचालित रूप से अपडेट करेंगे।',
+    monthlyRecurringPlanRupeeLabel: 'मासिक आवर्ती योजना (₹)',
+    monthlyRecurringBillHint: 'प्लेटफ़ॉर्म सेवा के लिए मासिक आवर्ती किराया बिल।',
+    sixMonthPlanRateRupeeLabel: '6-माह योजना दर (₹)',
+    halfYearlyUpfrontRateHint: 'दुकानों के लिए छूट वाली अर्ध-वार्षिक अग्रिम दर।',
+    yearlyPlanDiscountedRateRupeeLabel: 'वार्षिक योजना छूट दर (₹)',
+    annualUpfrontRateHint: 'दुकानों के लिए छूट वाली वार्षिक अग्रिम दर।',
+    updateSubscriptionRatesBtn: 'सदस्यता दरें अपडेट करें',
+    enterValidAmountMsg: 'कृपया एक मान्य राशि दर्ज करें',
+    monthlyRevenueLogsTitle: 'मासिक राजस्व लॉग',
+    recordSubscriptionCollectionsDesc: 'SaaS प्रदर्शन ट्रैकिंग के लिए मैन्युअल रूप से सदस्यता संग्रह रिकॉर्ड करें।',
+    allTimeLower: 'सर्वकालिक',
+    totalRevenueCollectedLabel: 'कुल संग्रहित राजस्व',
+    collectedThisYearLabel: 'इस वर्ष संग्रहित',
+    revenueRecordsAvgLabel: 'राजस्व रिकॉर्ड — औसत',
+    collectionsTrendLabel: 'संग्रह प्रवृत्ति',
+    lastLoggedEntriesPrefix: 'अंतिम',
+    loggedEntriesSuffix: 'लॉग की गई प्रविष्टियाँ',
+    noRevenueLogsYet: 'अभी तक कोई राजस्व लॉग दर्ज नहीं हुआ है।',
+    addRevenueRecordLabel: 'राजस्व रिकॉर्ड जोड़ें',
+    monthLabel: 'माह',
+    yearLabel: 'वर्ष',
+    amountCollectedRupeeLabel: 'एकत्रित राशि (₹)',
+    notesRemarksLabel: 'टिप्पणियाँ / रिमार्क्स',
+    logRevenuePayoutBtn: 'राजस्व भुगतान लॉग करें',
+    platformRevenueHistoryLabel: 'प्लेटफ़ॉर्म राजस्व इतिहास',
+    periodCol: 'अवधि',
+    notesCol: 'टिप्पणियाँ',
+    amountCol: 'राशि',
+    duplicateKeyLookupLabel: 'डुप्लीकेट की लुकअप',
+    masterKeyCatalogSearchTitle: 'मास्टर की कैटलॉग खोज',
+    lookupBlankSpecDesc: 'सेकंडों में ब्लैंक स्पेसिफिकेशन, की कोड और ग्राहक पंजीकरण रिकॉर्ड खोजें।',
+    keyCodeVehicleCategoryLabel: 'की कोड, वाहन नंबर, या श्रेणी',
+    searchByKeyCodePlaceholder: 'की कोड, वाहन नंबर, ग्राहक स्थान, श्रेणी से खोजें\u2026',
+    searchingRegistryMsg: 'रजिस्ट्री खोजी जा रही है\u2026',
+    noMatchingKeysMsg: 'कोई मेल खाती चाबी या ग्राहक रिकॉर्ड नहीं मिला',
+    registeredCustomerKeyLabel: 'पंजीकृत ग्राहक की',
+    customerPrefix: 'ग्राहक:',
+    vehicleNoPrefix: 'वाहन नंबर:',
+    viewFullDetailsLabel: 'पूरा विवरण देखें',
+    keyDetailsLabel: 'की विवरण',
+    lockCategoryLabel: 'लॉक श्रेणी',
+    backProfileLabel: 'बैक प्रोफाइल',
+    customerNameLabel: 'ग्राहक का नाम',
+    vehicleNumberLabel: 'वाहन नंबर',
+    webcamSnapshotLabel: 'कैमरा स्नैपशॉट',
+    registryLocationOverviewLabel: 'रजिस्ट्री स्थान अवलोकन (अन्य कार्यक्षेत्र)',
+    customerMobileLabel: 'ग्राहक मोबाइल',
+    registeredShopLabel: 'पंजीकृत दुकान',
+    keyShopWorkspaceLabel: 'की शॉप कार्यक्षेत्र',
+    shopMobileLabel: 'दुकान मोबाइल',
+    sensitiveCoordsHiddenMsg: 'संवेदनशील निर्देशांक और कैमरा छवियां छिपाई गई हैं क्योंकि यह की पंजीकरण किसी अन्य डुप्लीकेट की दुकान में बनाया गया था।',
+    closeDetailsBtn: 'विवरण बंद करें',
+    fileSizeExceeds5MBMsg: 'फ़ाइल का आकार 5MB की सीमा से अधिक है',
+    onlyJpegPngPdfMsg: 'केवल JPEG, PNG, और PDF दस्तावेज़ प्रारूप स्वीकार किए जाते हैं',
+    documentAlreadyStagedTemplate: '{type} के लिए दस्तावेज़ पहले से ही जोड़ा जा चुका है।',
+    pleaseEnterKeyCodeMsg: 'कृपया पहले की कोड दर्ज करें',
+    pleaseEnterValidTestEmailMsg: 'टेस्ट OTP प्राप्त करने के लिए कृपया एक मान्य ईमेल पता दर्ज करें।',
+    failedSendOtpMsg: 'OTP कोड भेजने में विफल।',
+    invalidOtpCodeMsg: 'अमान्य OTP कोड। कृपया सही कोड दर्ज करें।',
+    complianceRecordLoggedMsg: 'ग्राहक अनुपालन रिकॉर्ड सफलतापूर्वक दर्ज किया गया!',
+    submissionFailedTemplate: 'सबमिशन विफल: {message}',
+    contactKeyStepLabel: 'संपर्क और की',
+    idPhotoStepLabel: 'आईडी फोटो',
+    documentsStepLabel: 'दस्तावेज़',
+    reviewStepLabel: 'समीक्षा',
+    newCustomerEyebrow: 'नया ग्राहक',
+    multiStepComplianceDesc: 'बहु-चरण अनुपालन ऑनबोर्डिंग — की जारी करना, पहचान कैप्चर और जीपीएस-स्टैम्प्ड पता, पांच त्वरित चरणों में।',
+    stepLabel: 'चरण',
+    ofLabel: 'में से',
+    contactKeyCredentialsTitle: 'संपर्क और की क्रेडेंशियल्स',
+    registerContactDetailsDesc: 'ग्राहक का संपर्क विवरण, वाहन और की कोड, और आवासीय पता दर्ज करें।',
+    shopFieldLabel: 'दुकान',
+    selectShopPlaceholder: 'एक दुकान चुनें…',
+    customerRegisteredUnderShopMsg: 'यह ग्राहक, और इसकी की कोड, चयनित दुकान के कार्यक्षेत्र के अंतर्गत पंजीकृत किया जाएगा।',
+    duplicateKeyDetectedLabel: 'डुप्लिकेट की का पता चला',
+    duplicateKeyDetectedDescTemplate: 'की कोड {code} पहले से ही किसी मौजूदा ग्राहक के लिए पंजीकृत है। कृपया सत्यापित करें और एक अद्वितीय की कोड दर्ज करें।',
+    fullCustomerNameLabel: 'ग्राहक का पूरा नाम',
+    customerNamePlaceholderEg: 'रोहन मल्होत्रा',
+    keyCodeKeyNumberLabel: 'की कोड / की नंबर',
+    keyCodeEnterPlaceholderEg: 'की कोड दर्ज करें (जैसे TN09B)',
+    resendBtn: 'पुनः भेजें',
+    sendOtpBtn: 'OTP भेजें',
+    smsToPhoneLabel: 'फ़ोन पर SMS',
+    emailTestingLabel: 'ईमेल (परीक्षण)',
+    testEmailPlaceholder: 'test@email.com — केवल OTP के लिए, सहेजा नहीं जाएगा',
+    addressLineLabel: 'पता पंक्ति',
+    locatingLabel: 'स्थान खोजा जा रहा है…',
+    currentLocationBtn: 'वर्तमान स्थान',
+    addressLinePlaceholderEg: 'जैसे फ्लैट 101, पार्क एवेन्यू',
+    openLocationSettingsBtn: 'स्थान सेटिंग्स खोलें',
+    openAppSettingsBtn: 'ऐप सेटिंग्स खोलें',
+    stateLabel: 'राज्य',
+    districtLabel: 'ज़िला',
+    countryLabel: 'देश',
+    gpsCapturedTemplate: 'जीपीएस कैप्चर किया गया: {lat}, {long}',
+    enterOtpCodeSentToEmailTemplate: '{email} पर भेजा गया 4-अंकीय कोड दर्ज करें',
+    enterOtpCodeSentToPhoneMsg: 'ग्राहक के फ़ोन पर भेजा गया 4-अंकीय कोड दर्ज करें',
+    testingModeNoProviderTemplate: 'परीक्षण मोड — कोई {provider} प्रदाता कॉन्फ़िगर नहीं किया गया',
+    verifyOtpBtn: 'OTP सत्यापित करें',
+    otpVerifiedSuccessEmailMsg: 'ग्राहक का ईमेल OTP सफलतापूर्वक सत्यापित हो गया।',
+    otpVerifiedSuccessPhoneMsg: 'ग्राहक का फ़ोन नंबर OTP सफलतापूर्वक सत्यापित हो गया।',
+    complianceDocUploadTitle: 'अनुपालन दस्तावेज़ अपलोड',
+    uploadGovIdDesc: 'इस ग्राहक को सत्यापित करने के लिए उपयोग किए गए सरकारी आईडी प्रमाण की एक प्रति अपलोड करें।',
+    documentTypeLabel: 'दस्तावेज़ प्रकार',
+    aadhaarCardLabel: 'आधार कार्ड',
+    drivingLicenseLabel: 'ड्राइविंग लाइसेंस',
+    panCardLabel: 'पैन कार्ड',
+    voterIdLabel: 'वोटर आईडी',
+    dropOrBrowseCopyTemplate: '{type} की एक प्रति ड्रॉप करें या ब्राउज़ करें',
+    jpegPngPdfUpTo5MbLabel: 'JPEG, PNG या PDF — 5MB तक',
+    stagedIdCopiesTemplate: 'जोड़ी गई आईडी प्रतियां ({count})',
+    verifyDetailsBeforeSubmitDesc: 'इस अनुपालन पंजीकरण को सबमिट करने से पहले नीचे दर्ज किए गए हर विवरण की पुष्टि करें। इस चरण में कुछ भी स्वचालित रूप से कैप्चर या संशोधित नहीं किया जाता है।',
+    reviewCustomerLabel: 'ग्राहक',
+    reviewPhoneLabel: 'फ़ोन',
+    keyBlankLabel: 'की ब्लैंक',
+    registeredAddressLabel: 'पंजीकृत पता',
+    idProofTypeLabel: 'आईडी प्रमाण प्रकार',
+    uploadedDocumentsLabel: 'अपलोड किए गए दस्तावेज़',
+    filesAttachedTemplate: '{count} फ़ाइल(एं) संलग्न',
+    noneAttachedLabel: 'कोई संलग्न नहीं',
+    reviewLocationLabel: 'स्थान',
+    gpsCapturedHeadingLabel: 'जीपीएस कैप्चर किया गया',
+    latLongMiddotTemplate: 'अक्षांश {lat} · देशांतर {long}',
+    noGpsLocationCapturedDesc: 'कोई जीपीएस स्थान कैप्चर नहीं किया गया। यदि आप निर्देशांक जोड़ना चाहते हैं तो "संपर्क और की" चरण पर वापस जाएं और "वर्तमान स्थान" बटन का उपयोग करें।',
+    submitComplianceRecordBtn: 'अनुपालन रिकॉर्ड सबमिट करें',
+    historyPageDesc: 'पिछले डुप्लीकेट-की पंजीकरण और अनुपालन सबमिशन खोजें और सत्यापित करें।',
+    loadingComplianceRecordsMsg: 'अनुपालन रिकॉर्ड लोड हो रहे हैं…',
+    noComplianceRecordsMatchMsg: 'इस खोज से कोई अनुपालन रिकॉर्ड मेल नहीं खाता।',
+    vehicleCol: 'वाहन',
+    locationCol: 'स्थान',
+    loggedCol: 'दर्ज किया गया',
+    actionsCol: 'कार्रवाई',
+    editDetailsBtn: 'विवरण संपादित करें',
+    documentIdTypeLabel: 'दस्तावेज़ आईडी प्रकार',
+    uploadNewFileCopyLabel: 'नई फ़ाइल कॉपी अपलोड करें',
+    jpegPngPdfLabel: 'JPEG, PNG या PDF',
+    downloadTitleLabel: 'डाउनलोड करें',
+    customerComplianceRecordUpdatedMsg: 'ग्राहक अनुपालन रिकॉर्ड सफलतापूर्वक अपडेट किया गया!',
+    failedSaveCustomerEditsMsg: 'ग्राहक संपादन सहेजने में विफल।',
+    loadingSupportResourcesMsg: 'सहायता संसाधन लोड हो रहे हैं…',
+    supportTrainingCenterTitle: 'सहायता और प्रशिक्षण केंद्र',
+    reachSupportTrainingDesc: 'की शॉप तकनीकी सहायता से संपर्क करें और लॉकस्मिथ प्रशिक्षण संसाधनों के साथ अपने कौशल को उन्नत करें।',
+    contactLiveAgentTitle: 'लाइव एजेंट से संपर्क करें',
+    supportHoursLabel: 'सोम-शनि, सुबह 9 बजे - शाम 7 बजे IST',
+    liveCustomerSupportDesc: 'लाइव ग्राहक सहायता आपकी की-मेकिंग मशीनों या डुप्लिकेट की पोर्टल डैशबोर्ड में मदद के लिए उपलब्ध है।',
+    directWhatsappSupportLabel: 'सीधा व्हाट्सएप सहायता',
+    chatOnWhatsappBtn: 'व्हाट्सएप पर चैट करें',
+    locksmithSkillUpgradesTitle: 'लॉकस्मिथ कौशल उन्नयन',
+    videoTutorialsFromExpertsDesc: 'डुप्लिकेट की विशेषज्ञों के वीडियो ट्यूटोरियल',
+    trainingMaterialLabel: 'प्रशिक्षण सामग्री',
+    watchLinkLabel: 'लिंक देखें',
+    noSkillUpgradeVideosMsg: 'फ़िलहाल कोई कौशल उन्नयन वीडियो उपलब्ध नहीं है।',
+    loadingSupportConfigMsg: 'सहायता कॉन्फ़िगरेशन लोड हो रहा है…',
+    platformSupportEyebrow: 'प्लेटफ़ॉर्म सहायता',
+    customerSupportConfigTitle: 'ग्राहक सहायता कॉन्फ़िगरेशन',
+    configureGlobalSupportDesc: 'हर दुकान को दिखने वाला वैश्विक ग्राहक सेवा संपर्क और प्रशिक्षण वीडियो लिंक कॉन्फ़िगर करें।',
+    customerSupportWhatsappLabel: 'ग्राहक सहायता व्हाट्सएप नंबर',
+    whatsappNumberPlaceholderEg: 'जैसे +91 98765 43210',
+    supportContactEyebrow: 'सहायता संपर्क',
+    supportContactTitle: 'सहायता संपर्क',
+    supportContactDesc: 'नीचे दिए गए संपर्क विवरण का उपयोग करके सीधे की शॉप टीम से संपर्क करें।',
+    ownerNameLabel: 'मालिक का नाम',
+    ownerPhoneLabel: 'मालिक का फोन',
+    ownerNamePlaceholderEg: 'उदा. राजेश कुमार',
+    ownerPhonePlaceholderEg: 'जैसे +91 98765 43210',
+    ownerAddressPlaceholderEg: 'उदा. 12 एमजी रोड, बेंगलुरु',
+    noContactInfoConfiguredMsg: 'संपर्क विवरण अभी तक कॉन्फ़िगर नहीं किया गया है।',
+    ownerContactSectionTitle: 'मालिक संपर्क विवरण',
+    ownerContactSectionDesc: 'ये विवरण हर दुकान को सहायता संपर्क स्क्रीन पर दिखाए जाते हैं।',
+    videoSingularLabel: 'वीडियो',
+    videoPluralLabel: 'वीडियो',
+    addVideoBtn: 'वीडियो जोड़ें',
+    noVideosConfiguredMsg: 'कोई वीडियो कॉन्फ़िगर नहीं किया गया। लॉकस्मिथ प्रशिक्षण लिंक जोड़ने के लिए “वीडियो जोड़ें” पर क्लिक करें।',
+    removeVideoTitle: 'वीडियो हटाएं',
+    videoTitleNameLabel: 'वीडियो शीर्षक / नाम',
+    videoTitlePlaceholderEg: 'जैसे Locksmith Career Income',
+    youtubeUrlLabel: 'यूट्यूब URL',
+    saveConfigurationBtn: 'कॉन्फ़िगरेशन सहेजें',
+    shopCategoriesTitle: 'दुकान श्रेणियाँ',
+    categorySingularLabel: 'श्रेणी',
+    categoryPluralLabel: 'श्रेणियाँ',
+    manageShopCategoriesDesc: 'सार्वजनिक स्व-पंजीकरण विज़ार्ड के श्रेणी ड्रॉपडाउन में दिखाए जाने वाले दुकान "प्रकार" विकल्पों को प्रबंधित करें।',
+    enterCategoryNamePlaceholder: 'श्रेणी का नाम दर्ज करें',
+    addBtnLabel: 'जोड़ें',
+    noCategoriesYetMsg: 'अभी तक कोई दुकान श्रेणी नहीं है। ऊपर एक जोड़ें - जब तक आप ऐसा नहीं करेंगे तब तक पंजीकरण फ़ॉर्म का ड्रॉपडाउन खाली रहेगा।',
+    productTypesTitle: 'उत्पाद प्रकार',
+    typeSingularLabel: 'प्रकार',
+    typePluralLabel: 'प्रकार',
+    manageProductTypesDesc: 'इन्वेंटरी उत्पाद निर्माण फ़ॉर्म पर दिखाए जाने वाले उत्पाद प्रकार विकल्पों को प्रबंधित करें।',
+    enterProductTypePlaceholder: 'उत्पाद प्रकार दर्ज करें',
+    noProductTypesYetMsg: 'अभी तक कोई उत्पाद प्रकार नहीं है। ऊपर एक जोड़ें - जब तक आप ऐसा नहीं करेंगे तब तक इन्वेंटरी उत्पाद निर्माण ड्रॉपडाउन खाली रहेगा।',
+    supportConfigUpdatedMsg: 'सहायता कॉन्फ़िगरेशन सफलतापूर्वक अपडेट किया गया!',
+    saveFailedTemplate: 'सहेजना विफल: {msg}',
+    pleaseEnterCategoryNameMsg: 'कृपया एक श्रेणी नाम दर्ज करें।',
+    failedAddCategoryTemplate: 'श्रेणी जोड़ने में विफल: {msg}',
+    failedUpdateCategoryTemplate: 'श्रेणी अपडेट करने में विफल: {msg}',
+    deleteCategoryConfirmTemplate: '"{name}" श्रेणी हटाएं? पहले से इसका उपयोग करने वाली दुकानें इसे बनाए रखेंगी, लेकिन यह अब पंजीकरण फ़ॉर्म पर उपलब्ध नहीं होगी।',
+    failedDeleteCategoryTemplate: 'श्रेणी हटाने में विफल: {msg}',
+    pleaseEnterProductTypeNameMsg: 'कृपया एक उत्पाद प्रकार नाम दर्ज करें।',
+    failedAddProductTypeTemplate: 'उत्पाद प्रकार जोड़ने में विफल: {msg}',
+    failedUpdateProductTypeTemplate: 'उत्पाद प्रकार अपडेट करने में विफल: {msg}',
+    deleteProductTypeConfirmTemplate: '"{name}" उत्पाद प्रकार हटाएं? पहले से इसका उपयोग करने वाली लिस्टिंग इसे बनाए रखेंगी, लेकिन यह अब इन्वेंटरी उत्पाद निर्माण फ़ॉर्म पर उपलब्ध नहीं होगा।',
+    failedDeleteProductTypeTemplate: 'उत्पाद प्रकार हटाने में विफल: {msg}',
+    loadingWorkspaceSettingsMsg: 'वर्कस्पेस सेटिंग्स लोड हो रही हैं…',
+    workspaceConfigurationEyebrow: 'वर्कस्पेस कॉन्फ़िगरेशन',
+    manageShopProfileDesc: 'अपनी दुकान की प्रोफ़ाइल, ब्रांडिंग, सत्यापन दस्तावेज़ और खाता सुरक्षा प्रबंधित करें।',
+    refreshTitle: 'रीफ्रेश करें',
+    workspaceProfileTitle: 'वर्कस्पेस प्रोफ़ाइल',
+    businessIdentityContactDesc: 'व्यवसाय पहचान और संपर्क विवरण',
+    workspaceDisplayNameLabel: 'वर्कस्पेस प्रदर्शन नाम',
+    pdfFileLabel: 'PDF फ़ाइल',
+    uploadingEllipsisLabel: 'अपलोड हो रहा है…',
+    saveWorkspaceDetailsBtn: 'वर्कस्पेस विवरण सहेजें',
+    adminCredentialsTitle: 'एडमिन क्रेडेंशियल्स',
+    usernameNameLabel: 'उपयोगकर्ता नाम / नाम',
+    emailAddressLabel: 'ईमेल पता',
+    workspacePasswordLabel: 'वर्कस्पेस पासवर्ड',
+    hidePasswordTitle: 'पासवर्ड छिपाएं',
+    revealPasswordTitle: 'पासवर्ड दिखाएं',
+    forgotPasswordResetOtpBtn: 'पासवर्ड भूल गए? OTP से रीसेट करें',
+    confirmYourPasswordTitle: 'अपना पासवर्ड पुष्टि करें',
+    verifyIdentityRevealDesc: 'सहेजे गए क्रेडेंशियल्स देखने के लिए अपनी पहचान सत्यापित करें।',
+    accountPasswordLabel: 'खाता पासवर्ड',
+    enterPasswordPlaceholder: 'पासवर्ड दर्ज करें',
+    accountRecoveryEyebrow: 'खाता पुनर्प्राप्ति',
+    resetAccountPasswordTitle: 'खाता पासवर्ड रीसेट करें',
+    emailRecoveryTab: 'ईमेल पुनर्प्राप्ति',
+    phoneRecoveryTab: 'फ़ोन पुनर्प्राप्ति',
+    registeredPhoneNumberLabel: 'पंजीकृत फ़ोन नंबर',
+    registeredEmailAddressLabel: 'पंजीकृत ईमेल पता',
+    sendOtpVerificationCodeBtn: 'OTP सत्यापन कोड भेजें',
+    fourDigitCodeDispatchedTemplate: 'एक 4-अंकीय कोड {identifier} पर भेजा गया है।',
+    enterOtpLabel: 'OTP दर्ज करें',
+    newPasswordLabel: 'नया पासवर्ड',
+    min6CharactersPlaceholder: 'न्यूनतम 6 वर्ण',
+    confirmPasswordLabel: 'पासवर्ड की पुष्टि करें',
+    retypePasswordPlaceholder: 'पासवर्ड पुनः लिखें',
+    updatePasswordBtn: 'पासवर्ड अपडेट करें',
+    failedGenerateReportMsg: 'रिपोर्ट बनाने में विफल।',
+    pleaseGenerateReportFirstMsg: 'कृपया पहले रिपोर्ट बनाएं।',
+    complianceAnalyticsEyebrow: 'अनुपालन और विश्लेषण',
+    reportsPortalDesc: 'किसी भी दिनांक सीमा के लिए डायनामिक CSV और प्लेन-टेक्स्ट ग्राहक पंजीकरण रिपोर्ट बनाएं।',
+    reportBuilderTitle: 'रिपोर्ट बिल्डर',
+    selectDateRangeGenerateDesc: 'एक दिनांक सीमा चुनें, फिर रिपोर्ट बनाएं',
+    fromDateLabel: 'प्रारंभ तिथि',
+    toDateLabel: 'अंतिम तिथि',
+    generatingEllipsisLabel: 'बनाई जा रही है…',
+    referralProgramTitle: 'रेफ़रल प्रोग्राम',
+    referralProgramDesc: 'अन्य दुकान मालिकों के साथ अपना कोड साझा करें और इनाम पाएं।',
+    copyTitle: 'कॉपी करें',
+    shareReferralCodeBtn: 'रेफ़रल कोड साझा करें',
+    generateReferralCodeBtn: 'रेफ़रल कोड बनाएं',
+    failedGenerateReferralCodeMsg: 'रेफ़रल कोड बनाने में विफल। कृपया पुनः प्रयास करें।',
+    referralShareMessageTemplate: 'Key Shop पर रजिस्टर करते समय मेरा रेफ़रल कोड {code} इस्तेमाल करें!',
+    verificationDocumentLabel: 'सत्यापन दस्तावेज़',
+    useCameraBtn: 'कैमरा उपयोग करें',
+    chooseFromGalleryBtn: 'गैलरी से चुनें',
+    generateReportBtn: 'रिपोर्ट बनाएं',
+    recordsInReportLabel: 'रिपोर्ट में रिकॉर्ड',
+    allTimeLabel: 'सभी समय',
+    todayLabel: 'आज',
+    dateRangeCoveredLabel: 'कवर की गई दिनांक सीमा',
+    visualReportSummaryTitle: 'विज़ुअल रिपोर्ट सारांश',
+    hoverToViewValuesDesc: 'सटीक मान देखने के लिए तत्वों पर होवर करें',
+    registrationsByKeyBlankRefTitle: 'की ब्लैंक संदर्भ के अनुसार पंजीकरण',
+    registrationTimelineTrendTitle: 'पंजीकरण समयरेखा रुझान',
+    noTrendDataMsg: 'कोई रुझान डेटा नहीं',
+    reportPreviewTitle: 'रिपोर्ट पूर्वावलोकन',
+    recordsLabel: 'रिकॉर्ड',
+    exportCsvBtn: 'CSV निर्यात करें',
+    exportTxtBtn: 'TXT निर्यात करें',
+    showingFirstColumnsPreviewDesc: 'ब्राउज़र पूर्वावलोकन में पहले 4 कॉलम तक दिखाए जा रहे हैं। सभी विस्तृत डेटा कॉलम देखने के लिए निर्यात करें।',
+    aadhaarMustBe12DigitsMsg: 'आधार नंबर बिल्कुल 12 अंकों का होना चाहिए।',
+    aadhaarNumberLabel: 'आधार नंबर',
+    autoFilledFromGpsPlaceholder: 'GPS से स्वतः भरा गया',
+    backToHomeLink: 'होम पर वापस जाएं',
+    canLogInWithEitherMsg: 'आप इनमें से किसी से भी लॉग इन कर सकते हैं',
+    cardholderNameLabel: 'कार्डधारक का नाम',
+    cardNumberLabel: 'कार्ड नंबर',
+    choosePaymentChannelLabel: 'भुगतान चैनल चुनें',
+    chooseSubscriptionPlanLabel: 'सदस्यता योजना चुनें',
+    cityLabel: 'शहर',
+    createShopAccountBtn: 'दुकान खाता बनाएं',
+    customersStatLabel: 'ग्राहक',
+    cvvLabel: 'CVV',
+    digitAadhaarOptionalPlaceholder: '12-अंकीय आधार नंबर (वैकल्पिक)',
+    referralCodeLabel: 'रेफ़रल कोड (वैकल्पिक)',
+    referralCodePlaceholder: 'यदि आपके पास है तो रेफ़रल कोड दर्ज करें',
+    agreeToTermsPrefix: 'मैंने नियम और शर्तें पढ़ ली हैं और सहमत हूं',
+    termsAndConditionsLinkLabel: 'नियम और शर्तें',
+    pleaseAcceptTermsMsg: 'कृपया आगे बढ़ने के लिए नियम और शर्तें पढ़ें और स्वीकार करें।',
+    digitMobilePlaceholder: '10-अंकीय मोबाइल',
+    digitPinCodePlaceholder: '6-अंकीय पिन कोड',
+    emailOrMobileLabel: 'ईमेल या मोबाइल नंबर',
+    emailOrMobilePlaceholder: 'ईमेल पता या मोबाइल नंबर',
+    emailOtpLabel: 'ईमेल OTP',
+    enterRegisteredMethodTemplate: 'रीसेट कोड का अनुरोध करने के लिए अपने वर्कस्पेस से जुड़ा पंजीकृत {method} दर्ज करें।',
+    expiryLabel: 'समाप्ति',
+    forgotPasswordLink: 'पासवर्ड भूल गए?',
+    keysCutStatLabel: 'कटी हुई चाबियां',
+    keyShopDashboardLabel: 'की शॉप डैशबोर्ड',
+    loadingCategoriesEllipsis: 'श्रेणियां लोड हो रही हैं…',
+    mobileNumberLabel: 'मोबाइल नंबर',
+    mobileNumberVerifiedMsg: 'मोबाइल नंबर सत्यापित',
+    noShopCategoriesAvailableMsg: 'अभी तक कोई दुकान श्रेणी उपलब्ध नहीं है',
+    otpVerifiedSetNewPasswordMsg: 'OTP सत्यापित। कृपया नीचे एक नया पासवर्ड सेट करें।',
+    passwordLabel: 'पासवर्ड',
+    passwordResetSuccessMsg: 'पासवर्ड सफलतापूर्वक रीसेट किया गया',
+    payableAmountLabel: 'देय राशि',
+    paySettleSetupBtn: 'भुगतान करें और सेटअप पूरा करें',
+    phoneOtpLabel: 'फोन OTP',
+    pinCodeLabel: 'पिन कोड',
+    pinCodeMustBe6DigitsMsg: 'पिन कोड बिल्कुल 6 अंकों का होना चाहिए।',
+    pleaseEnterValidEmailMsg: 'कृपया एक मान्य ईमेल पता दर्ज करें।',
+    pleaseFillRequiredRegFieldsMsg: 'कृपया सभी आवश्यक पंजीकरण फ़ील्ड भरें।',
+    pleaseVerifyMobileOtpMsg: 'जारी रखने से पहले कृपया OTP से अपना मोबाइल नंबर सत्यापित करें।',
+    registeredEmailLabel: 'पंजीकृत ईमेल',
+    registerYourKeyShopTitle: 'अपनी की शॉप पंजीकृत करें',
+    registrationSubmittedTitle: 'पंजीकरण सबमिट किया गया',
+    regPasswordMinLengthMsg: 'पासवर्ड कम से कम 6 वर्णों का होना चाहिए।',
+    rememberMeLabel: 'मुझे याद रखें',
+    resendOtpBtn: 'OTP पुनः भेजें',
+    resetYourPasswordTitle: 'अपना पासवर्ड रीसेट करें',
+    returnToLoginBtn: 'लॉगिन पर वापस जाएं',
+    runYourShopHeading: 'अपनी दुकान चलाएं',
+    scanQrCodeAppsDesc: 'GooglePay, PhonePe, या Paytm का उपयोग करके QR कोड स्कैन करें',
+    secureRecoveryWorkspaceDesc: 'आपके वर्कस्पेस के लिए सुरक्षित पुनर्प्राप्ति',
+    selectShopCategoryPlaceholder: 'दुकान श्रेणी चुनें',
+    selectVerificationMethodDesc: 'अपने वर्कस्पेस क्रेडेंशियल्स को पुनर्प्राप्त करने के लिए अपनी सत्यापन विधि चुनें।',
+    sendOtpCodeBtn: 'OTP कोड भेजें',
+    sendOtpToVerifyBtn: 'सत्यापन के लिए OTP भेजें',
+    settlingPaymentEllipsis: 'भुगतान निपटाया जा रहा है…',
+    shopAdminDownloadAppBtn: 'दुकान व्यवस्थापक? ऐप डाउनलोड करें',
+    shopOnboardingEyebrow: 'दुकान ऑनबोर्डिंग',
+    signInLeadDesc: 'अपनी डुप्लिकेट-की दुकान चलाने के लिए साइन इन करें — ऑर्डर, ग्राहक और इन्वेंट्री, सब एक ही जगह।',
+    signInToKeyShopBtn: 'की शॉप में साइन इन करें',
+    signInWithNewCredentialsMsg: 'अब आप अपने नए क्रेडेंशियल्स के साथ साइन इन कर सकते हैं।',
+    smartGoldStandardWaySpan: 'स्मार्ट, स्वर्ण-मानक तरीके से।',
+    streetLandmarkPlaceholder: 'सड़क / लैंडमार्क',
+    trackDuplicateKeysDesc: 'हर शाखा में डुप्लिकेट चाबियों, ग्राहकों और स्टोर ऑर्डर को ट्रैक करें — भारतीय लॉकस्मिथ के लिए बना एक शानदार डैशबोर्ड।',
+    trustedByShopsBadge: 'भारत भर की 500+ की शॉप्स द्वारा भरोसेमंद',
+    upiQrScanLabel: 'UPI / QR स्कैन',
+    verifyBtnLabel: 'सत्यापित करें',
+    wantToRegisterShopMsg: 'अपनी दुकान पंजीकृत करना चाहते हैं?',
+    welcomeBackHeading: 'वापसी पर स्वागत है',
+    loginFailedCheckCredentialsMsg: 'लॉगिन विफल। कृपया क्रेडेंशियल्स जांचें।',
+    failedDispatchVerificationCodeMsg: 'सत्यापन कोड भेजने में विफल',
+    incorrectVerificationCodeMsg: 'गलत सत्यापन कोड। कृपया पुनः प्रयास करें।',
+    passwordsDoNotMatchMsg: 'पासवर्ड मेल नहीं खाते',
+    passwordResetFailedMsg: 'पासवर्ड रीसेट विफल',
+    pleaseEnterMobileNumberFirstMsg: 'कृपया पहले अपना मोबाइल नंबर दर्ज करें।',
+    failedDispatchVerificationOtpMsg: 'सत्यापन OTP भेजने में विफल।',
+    incorrectVerificationOtpCodeMsg: 'गलत सत्यापन OTP कोड। कृपया पुनः प्रयास करें।',
+    registrationSuccessfulShopActiveMsg: 'पंजीकरण सफल! आपका दुकान खाता अब सक्रिय है - आप तुरंत लॉग इन कर सकते हैं।',
+    selfRegistrationFailedMsg: 'स्व-पंजीकरण विफल।',
+    shopWorkspaceSettingsSavedMsg: 'दुकान वर्कस्पेस सेटिंग्स सफलतापूर्वक सहेजी गईं!',
+    documentUploadFailedMsg: 'दस्तावेज़ अपलोड विफल',
+    removeThisDocumentConfirm: 'यह दस्तावेज़ हटाएं?',
+    failedRemoveDocumentMsg: 'दस्तावेज़ हटाने में विफल',
+    incorrectPasswordEnteredMsg: 'गलत पासवर्ड दर्ज किया गया।',
+    pleaseEnterRegisteredEmailPhoneMsg: 'कृपया अपना पंजीकृत ईमेल या फोन नंबर दर्ज करें',
+    failedSendOtpCodeMsg: 'OTP कोड भेजने में विफल।',
+    invalidOtpCodeEnterCorrectMsg: 'अमान्य OTP कोड। कृपया सही कोड दर्ज करें।',
+    passwordUpdatedSuccessfullyMsg: 'पासवर्ड सफलतापूर्वक अपडेट किया गया!',
+    failedUpdatePasswordMsg: 'पासवर्ड अपडेट करने में विफल',
   },
   ta: {
     shopsRegistered: 'பதிவு செய்யப்பட்ட கடைகள்',
@@ -432,6 +1882,731 @@ const LANGUAGES = {
     welcome: 'கீ ஒர்க்ஸ்பேஸ்',
     superAdmin: 'சூப்பர் அட்மின்',
     shopTerminal: 'கடை முனையம்',
+    supportConfig: 'ஆதரவு உள்ளமைவு',
+    inventory: 'இயந்திரங்கள்',
+    customerCare: 'வாடிக்கையாளர் சேவை',
+    offersAdsBanners: 'சலுகைகள், விளம்பரங்கள் & பேனர்கள்',
+    language: 'மொழி',
+    btnSave: 'சேமி',
+    btnSaveChanges: 'மாற்றங்களை சேமி',
+    btnCancel: 'ரத்து செய்',
+    btnDelete: 'நீக்கு',
+    btnEdit: 'திருத்து',
+    btnSubmit: 'சமர்ப்பி',
+    btnClose: 'மூடு',
+    btnConfirm: 'உறுதிப்படுத்து',
+    btnUpdate: 'புதுப்பி',
+    btnRemove: 'அகற்று',
+    btnBack: 'பின்செல்',
+    btnNext: 'அடுத்து',
+    btnRetry: 'மீண்டும் முயற்சி',
+    btnDownload: 'பதிவிறக்கு',
+    btnUpload: 'பதிவேற்று',
+    btnContinue: 'தொடர்',
+    btnDone: 'முடிந்தது',
+    btnOk: 'சரி',
+    btnViewAll: 'அனைத்தையும் காண்க',
+    btnViewDetails: 'விவரங்களைக் காண்க',
+    btnDismiss: 'நிராகரி',
+    btnAddNew: 'புதிதாக சேர்',
+    btnApply: 'விண்ணப்பி',
+    btnClear: 'அழி',
+    btnExport: 'ஏற்றுமதி',
+    yes: 'ஆம்',
+    no: 'இல்லை',
+    loading: 'ஏற்றுகிறது...',
+    searching: 'தேடுகிறது...',
+    searchPlaceholder: 'தேடு...',
+    active: 'செயலில்',
+    inactive: 'செயலற்ற',
+    suspended: 'இடைநிறுத்தப்பட்டது',
+    expired: 'காலாவதியானது',
+    pending: 'நிலுவையில்',
+    actions: 'செயல்கள்',
+    status: 'நிலை',
+    optional: 'விருப்பமானது',
+    required: 'தேவை',
+    noRecordsFound: 'பதிவுகள் இல்லை',
+    noDataAvailable: 'தரவு இல்லை',
+    areYouSure: 'நீங்கள் உறுதியாக இருக்கிறீர்களா?',
+    actionCannotBeUndone: 'இந்த செயலை மாற்ற முடியாது.',
+    somethingWentWrong: 'ஏதோ தவறு நடந்தது. மீண்டும் முயற்சிக்கவும்.',
+    changesSavedSuccessfully: 'மாற்றங்கள் வெற்றிகரமாக சேமிக்கப்பட்டன',
+    fieldName: 'பெயர்',
+    fieldEmail: 'மின்னஞ்சல்',
+    fieldPhone: 'தொலைபேசி எண்',
+    fieldAddress: 'முகவரி',
+    fieldDate: 'தேதி',
+    fieldAmount: 'தொகை',
+    fieldDescription: 'விளக்கம்',
+    fieldCategory: 'வகை',
+    fieldPrice: 'விலை',
+    fieldTitle: 'தலைப்பு',
+    fieldType: 'வகை',
+    account: 'கணக்கு',
+    customerService: 'வாடிக்கையாளர் சேவை',
+    chooseLanguage: 'மொழியைத் தேர்ந்தெடுக்கவும்',
+    selectLanguageDesc: 'ஆப்பிற்கு உங்களுக்கு விருப்பமான மொழியைத் தேர்ந்தெடுக்கவும்',
+    pressBackToExit: 'வெளியேற மீண்டும் பின் பொத்தானை அழுத்தவும்',
+    loadingDashboard: 'டாஷ்போர்டு ஏற்றப்படுகிறது…',
+    superAdminControl: 'சூப்பர் அட்மின் கட்டுப்பாடு',
+    portal: 'போர்ட்டல்',
+    welcomeBack: 'மீண்டும் வருக',
+    namaste: 'வணக்கம்',
+    platformOverviewDesc: 'ஒவ்வொரு கடையிலும் தளத்தின் மேலோட்டப் பார்வை.',
+    newCustomer: 'புதிய வாடிக்கையாளர்',
+    registerComplianceEntry: 'புதிய வாடிக்கையாளருக்கான இணக்கப் பதிவை பதிவு செய்யவும்',
+    shopsCardTitle: 'கடைகள்',
+    viewManageShopsDesc: 'பதிவு செய்யப்பட்ட ஒவ்வொரு கடையையும் காணவும் நிர்வகிக்கவும்',
+    customerSupport: 'வாடிக்கையாளர் ஆதரவு',
+    manageCustomerSupportDesc: 'வாடிக்கையாளர் ஆதரவு தொடர்பு மற்றும் வளங்களை நிர்வகிக்கவும்',
+    complianceInventoryTerminal: 'இணக்கம் & சரக்கு முனையம்',
+    workspace: 'பணியிடம்',
+    subscriptionRenewalRequired: 'சந்தா புதுப்பித்தல் தேவை!',
+    subscriptionExpiresIn: 'உங்கள் கடை சந்தா {days} நாட்களில் காலாவதியாகும். தயவுசெய்து கீ ஷாப் சூப்பர் அட்மினுடன் புதுப்பித்தலை ஒருங்கிணைக்கவும்.',
+    planSuffix: 'திட்டம்',
+    searchKeysCardTitle: 'சாவிகளைத் தேடு',
+    findDigitizeKeysDesc: 'சாவி பதிவுகளை விரைவாகக் கண்டறிந்து டிஜிட்டல் மயமாக்கவும்',
+    addMachinesCardDesc: 'ஒரு புதிய இயந்திர பட்டியலை விரைவாகச் சேர்க்கவும்',
+    getHelpSupportDesc: 'உதவி பெறவும் ஆதரவு தொடர்பு விவரங்களைக் காணவும்',
+    featuredOffersBanners: 'சிறப்பு சலுகைகள் & பேனர்கள்',
+    banner: 'பேனர்',
+    notice: 'அறிவிப்பு',
+    offer: 'சலுகை',
+    viewAllOffersBanners: 'அனைத்து சலுகைகள் & பேனர்களைக் காண்க',
+    usedMachines: 'பயன்படுத்திய இயந்திரங்கள்',
+    ecmService: 'ஈசிஎம்',
+    meterService: 'மீட்டர்',
+    scanningService: 'ஸ்கேனிங்',
+    usedMachinesDesc: 'பயன்படுத்திய இயந்திரங்களைக் காணவும் நிர்வகிக்கவும்',
+    ecmServiceDesc: 'ஈசிஎம் சேவைப் பதிவுகளை நிர்வகிக்கவும்',
+    meterServiceDesc: 'மீட்டர் சேவைகளைக் கண்காணித்து நிர்வகிக்கவும்',
+    scanningServiceDesc: 'இணக்க பதிவுகளை ஸ்கேன் செய்து செயலாக்கவும்',
+    platformOperations: 'தளச் செயல்பாடுகள்',
+    provisionShopsDesc: 'தளத்தில் உள்ள ஒவ்வொரு கீ ஷாப் பணியிடத்தையும் ஏற்பாடு செய்து, கண்காணித்து, நிர்வகிக்கவும்.',
+    allShops: 'அனைத்து கடைகள்',
+    searchShopsPlaceholder: 'கடைகளைத் தேடுங்கள்...',
+    loadingShopRegistry: 'கடை பதிவேட்டை ஏற்றுகிறது...',
+    noShopsProvisionedYet: 'இதுவரை எந்த கடையும் ஏற்பாடு செய்யப்படவில்லை',
+    noShopsMatchSearch: 'உங்கள் தேடலுக்கு பொருந்தும் கடைகள் இல்லை',
+    shopDetails: 'கடை விவரங்கள்',
+    adminContact: 'நிர்வாக தொடர்பு',
+    activePlan: 'செயலில் உள்ள திட்டம்',
+    validUntil: 'வரை செல்லுபடியாகும்',
+    diskStorage: 'டிஸ்க் சேமிப்பகம்',
+    editWorkspace: 'பணியிடத்தைத் திருத்து',
+    managePlan: 'திட்டத்தை நிர்வகி',
+    shopOnboarding: 'கடை இணைப்பு',
+    provisionNewShopWorkspace: 'புதிய கடை பணியிடத்தை ஏற்பாடு செய்யவும்',
+    shopNameLabel: 'கடை பெயர்',
+    shopNamePlaceholder: 'எ.கா. சர்மா கீ சென்டர்',
+    shopAddressLabel: 'கடை முகவரி',
+    shopAddressPlaceholder: 'முழு கடை முகவரி',
+    adminFullNameLabel: 'நிர்வாகியின் முழுப் பெயர்',
+    adminFullNamePlaceholder: 'எ.கா. ரமேஷ் சர்மா',
+    adminEmailLabel: 'நிர்வாக மின்னஞ்சல்',
+    adminEmailPlaceholder: 'admin@example.com',
+    initialPasswordLabel: 'ஆரம்ப கடவுச்சொல்',
+    initialPasswordPlaceholder: 'தற்காலிக கடவுச்சொல்லை அமைக்கவும்',
+    phonePlaceholder: 'தொலைபேசி எண்',
+    whatsappNumberLabel: 'வாட்ஸ்அப் எண்',
+    sameAsPhone: 'தொலைபேசி எண் போலவே',
+    subscriptionPlanLabel: 'சந்தா திட்டம்',
+    monthlyPlan: 'மாதாந்திரம்',
+    halfYearlyPlan: 'அரையாண்டு',
+    yearlyPlan: 'ஆண்டுதோறும்',
+    endDateValidityLabel: 'முடிவு தேதி / செல்லுபடி',
+    autoCalculatedTier: 'தேர்ந்தெடுக்கப்பட்ட திட்ட நிலையின் அடிப்படையில் தானாக கணக்கிடப்பட்டது',
+    failedToCreateShop: 'கீ ஷாப்பை உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.',
+    ownerAadhaarMandatory: 'கடை பணியிடத்தை ஏற்பாடு செய்ய உரிமையாளரின் ஆதார் ஆவணம் கட்டாயமாகும்.',
+    failedInitCheckout: 'சந்தா செக்அவுட்டைத் தொடங்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.',
+    paymentFailedPrefix: 'கட்டணம் தோல்வியடைந்தது: {message}',
+    updateFailedMsg: 'புதுப்பிப்பு தோல்வியடைந்தது',
+    billingEyebrow: 'பில்லிங்',
+    updateShopSubscriptionTitle: 'கடை சந்தாவைப் புதுப்பிக்கவும்',
+    targetShopLabel: 'இலக்கு கடை:',
+    planTierLabel: 'திட்ட நிலை',
+    monthlyPlanFull: 'மாதாந்திர திட்டம்',
+    sixMonthPlanFull: '6-மாத திட்டம்',
+    yearlyPlanFull: 'ஆண்டு திட்டம்',
+    newEndDateLabel: 'புதிய முடிவு தேதி',
+    updatePlanBtn: 'திட்டத்தைப் புதுப்பிக்கவும்',
+    planSubscriptionEscrowPay: 'திட்ட சந்தா எஸ்க்ரோ கட்டணம்',
+    workspaceTerminalProvisioningPayment: 'பணியிட டெர்மினல் ஏற்பாடு கட்டணம்',
+    paymentAuthorizedTitle: 'கட்டணம் அங்கீகரிக்கப்பட்டது!',
+    paymentSettledDesc: 'சந்தா கட்டணம் வெற்றிகரமாக தீர்க்கப்பட்டது. பணியிடம் {name} இப்போது முழுமையாக ஏற்பாடு செய்யப்பட்டு செயல்படுத்தப்பட்டுள்ளது.',
+    closeAndProceedBtn: 'மூடி தொடரவும்',
+    processingTransactionTitle: 'பரிவர்த்தனை செயலாக்கப்படுகிறது',
+    finalizingWorkspaceCreation: 'பணியிட உருவாக்க சுரங்கப்பாதைகள் இறுதி செய்யப்படுகின்றன.',
+    workspaceProvisionInvoice: 'பணியிட ஏற்பாடு விலைப்பட்டியல்',
+    planColonLabel: 'திட்டம்:',
+    creditCardLabel: 'கிரெடிட் கார்டு',
+    upiQrCodeLabel: 'UPI QR குறியீடு',
+    cardholderFullNameLabel: 'கார்டு வைத்திருப்பவரின் முழுப் பெயர்',
+    cardholderNamePlaceholder: 'எ.கா. ரமேஷ் குமார்',
+    debitCreditCardNumberLabel: 'டெபிட் / கிரெடிட் கார்டு எண்',
+    expiryDateLabel: 'காலாவதி தேதி',
+    cvvCodeLabel: 'CVV குறியீடு',
+    scanToAuthorizeInvoice: 'அமைப்பு விலைப்பட்டியலை அங்கீகரிக்க ஸ்கேன் செய்யவும்',
+    scanQrDesc: 'GPay, PhonePe, Paytm, அல்லது BHIM மூலம் ஸ்கேன் செய்யவும். கண்டறிந்த பிறகு சந்தா தானாக செயல்படுத்தப்படும்.',
+    secureGatewayPaymentPortal: '256-பிட் பாதுகாப்பான கேட்வே கட்டண போர்ட்டல்',
+    cancelSetupBtn: 'அமைப்பை ரத்து செய்',
+    payAndProvisionPrefix: 'ரூ. செலுத்தவும்',
+    payAndProvisionSuffix: 'மற்றும் ஏற்பாடு செய்யவும்',
+    logEstablishingTunnel: 'பாதுகாப்பான எண்ட்-டு-எண்ட் சாண்ட்பாக்ஸ் சுரங்கப்பாதை நிறுவப்படுகிறது...',
+    logVerifyingBalance: 'கணக்கு இருப்பு மற்றும் கிரெடிட் லைன்கள் சரிபார்க்கப்படுகின்றன...',
+    logAuthorizingEscrow: 'சந்தா எஸ்க்ரோ தீர்வு பரிவர்த்தனை அங்கீகரிக்கப்படுகிறது...',
+    logEncryptingCard: 'AES-GCM மூலம் கார்டு விவரங்கள் குறியாக்கம் செய்யப்படுகின்றன...',
+    logFulfillingProvisioning: 'கீ ஷாப் API பணியிட ஏற்பாடு நிறைவேற்றப்படுகிறது...',
+    shopPhotoLabel: 'கடை புகைப்படம்',
+    shopLicenseLabel: 'கடை உரிமம்',
+    ownerAadhaarLabel: 'உரிமையாளர் ஆதார்',
+    provisionAccountBtn: 'கணக்கை ஏற்பாடு செய்யவும்',
+    workspaceSettings: 'பணியிட அமைப்புகள்',
+    editShopWorkspaceDetails: 'கடை பணியிட விவரங்களைத் திருத்து',
+    workspaceNameLabel: 'பணியிடப் பெயர்',
+    registeredAddressFixed: 'பதிவு செய்யப்பட்ட முகவரி (நிலையானது)',
+    notUploaded: 'பதிவேற்றப்படவில்லை',
+    saveSettings: 'அமைப்புகளைச் சேமி',
+    crossTenantCompliance: 'குறுக்கு-குத்தகைதாரர் இணக்கம்',
+    customerRegistryTitle: 'வாடிக்கையாளர் பதிவேடு',
+    superviseComplianceRecordsDesc: 'அனைத்து குத்தகைதாரர் பணிமனைகளிலும் இணக்கப் பதிவுகளை மேற்பார்வையிடவும்',
+    createCustomerBtn: 'வாடிக்கையாளரை உருவாக்கு',
+    allCustomers: 'அனைத்து வாடிக்கையாளர்கள்',
+    searchByNamePhoneKeyCode: 'பெயர், தொலைபேசி அல்லது கீ குறியீட்டால் தேடுக',
+    loadingCustomerRegistry: 'வாடிக்கையாளர் பதிவேடு ஏற்றப்படுகிறது...',
+    noCustomerRecordsMatch: 'வாடிக்கையாளர் பதிவுகள் எதுவும் பொருந்தவில்லை',
+    tenantWorkspaceCol: 'குத்தகைதாரர் பணிமனை',
+    customerCol: 'வாடிக்கையாளர்',
+    phoneCol: 'தொலைபேசி',
+    keyCodeCol: 'கீ குறியீடு',
+    registeredCol: 'பதிவு செய்யப்பட்டது',
+    shopWorkspaceFallback: 'ஒதுக்கப்படாத பணிமனை',
+    photoOnFile: 'புகைப்படம் உள்ளது',
+    photoPending: 'புகைப்படம் நிலுவையில்',
+    viewComplianceFile: 'இணக்கக் கோப்பைப் பார்க்கவும்',
+    complianceFileEyebrow: 'இணக்கக் கோப்பு',
+    phoneContactLabel: 'தொலைபேசி தொடர்பு',
+    registryDateLabel: 'பதிவு தேதி',
+    addressLabel: 'முகவரி',
+    keyBlankCodeLabel: 'கீ பிளாங்க் குறியீடு',
+    idVerificationLabel: 'அடையாள சரிபார்ப்பு',
+    idNumberDecryptedLabel: 'அடையாள எண் (குறியீக்கம் நீக்கப்பட்டது)',
+    gpsCoordinatesLabel: 'ஜிபிஎஸ் ஆயத்தொலைவுகள்',
+    latLongTemplate: 'அட்சரேகை: {lat} • தீர்க்கரேகை: {long}',
+    notCapturedLabel: 'பதிவு செய்யப்படவில்லை',
+    googleMapsLabel: 'கூகிள் மேப்ஸ்',
+    capturedAddressLabel: 'பதிவு செய்யப்பட்ட முகவரி',
+    webcamPhotoLabel: 'கேமரா புகைப்படம்',
+    attachedIdCopiesLabel: 'இணைக்கப்பட்ட அடையாள நகல்கள்',
+    uploadedBadge: 'பதிவேற்றப்பட்டது',
+    missingBadge: 'விடுபட்டது',
+    closeFileBtn: 'கோப்பை மூடு',
+    operationFailedMsg: 'செயல்பாடு தோல்வியடைந்தது',
+    confirmRemoveKeyBlank: 'இந்த கீ பிளாங்கை மைய பட்டியலிலிருந்து அகற்ற விரும்புகிறீர்களா?',
+    platformCatalogueLabel: 'தளப் பட்டியல்',
+    masterKeyCatalogueTitle: 'மாஸ்டர் கீ பட்டியல்',
+    provisionKeyBlankSpecsDesc: 'ஒவ்வொரு கடை முனையத்திலும் தேடலுக்கு கிடைக்கும் கீ பிளாங்க் விவரக்குறிப்புகளை வழங்குக.',
+    addKeyBlankBtn: 'கீ பிளாங்க் சேர்க்க',
+    searchCataloguePlaceholder: 'குறியீடு, வகை, விவரக்குறிப்பு குறிப்பு மூலம் பட்டியலைத் தேடுக…',
+    loadingCatalogueMsg: 'பட்டியல் ஏற்றப்படுகிறது…',
+    noKeyBlanksMatch: 'இந்தத் தேடலுக்கு எந்த கீ பிளாங்கும் பொருந்தவில்லை',
+    modifyBtn: 'மாற்றியமை',
+    deleteBtn: 'நீக்கு',
+    catalogueEntryLabel: 'பட்டியல் உள்ளீடு',
+    modifyKeyBlankTitle: 'கீ பிளாங்கை மாற்றியமை',
+    addNewKeyBlankTitle: 'புதிய கீ பிளாங்க் சேர்க்க',
+    keyNumberCodeLabel: 'கீ எண் / குறியீடு',
+    connectedShopLabel: 'இணைக்கப்பட்ட கடை',
+    globalCatalogueLabel: 'உலகளாவிய பட்டியல்',
+    connectedCustomersLabel: 'இணைக்கப்பட்ட வாடிக்கையாளர்(கள்)',
+    noCustomerLinkedYet: 'இதுவரை வாடிக்கையாளர் எவரும் இணைக்கப்படவில்லை',
+    keyCodeLabel: 'கீ குறியீடு',
+    keyCodePlaceholderEg: 'எ.கா. CY-102',
+    categoryTypeLabel: 'வகை வகைப்பாடு',
+    categoryPlaceholderEg: 'எ.கா. பேட்லாக்',
+    backImageUrlLabel: 'பின் படம் URL',
+    saveChangesBtn: 'மாற்றங்களைச் சேமி',
+    publishKeyBtn: 'கீயை வெளியிடு',
+    crossShopMarketplaceLabel: 'குறுக்கு-கடை சந்தை',
+    inventoryTitle: 'இயந்திரங்கள்',
+    manageSharedInventoryDesc: 'தளம் முழுவதும் பகிரப்பட்ட சரக்கு ஊட்டம், பேனர் விளம்பர பிரச்சாரங்கள் மற்றும் கடை சலுகைகளை நிர்வகிக்கவும்.',
+    browseListProductsDesc: 'தளத்தில் உள்ள ஒவ்வொரு கடையிலும் பகிரப்பட்ட தயாரிப்புகளை உலாவி பட்டியலிடவும்',
+    inventoryFeedTab: 'இயந்திர ஊட்டம்',
+    bannerManagementTab: 'பேனர் மேலாண்மை',
+    offerManagementTab: 'சலுகை மேலாண்மை',
+    failedUpdateCampaign: 'பிரச்சாரத்தைப் புதுப்பிக்க முடியவில்லை',
+    failedScheduleCampaign: 'பிரச்சாரத்தை திட்டமிட முடியவில்லை',
+    confirmTerminateAdCampaign: 'இந்த விளம்பர பிரச்சாரத்தை நிறுத்த விரும்புகிறீர்களா?',
+    interactivePopupLabel: 'ஊடாடும் பாப்அப்',
+    textNoticeLabel: 'உரை அறிவிப்பு',
+    mainBannerLabel: 'முதன்மை பேனர்',
+    growthMarketingLabel: 'வளர்ச்சி & சந்தைப்படுத்தல்',
+    adCampaignsTitle: 'விளம்பர பிரச்சாரங்கள்',
+    publishBannersPopupsDesc: 'கடை டாஷ்போர்டு திரைகளுக்கு இலக்கு வைக்கப்பட்ட பேனர்கள் மற்றும் பாப்அப்களை வெளியிடவும்.',
+    newAdCampaignBtn: 'புதிய விளம்பர பிரச்சாரம்',
+    loadingCampaignsMsg: 'பிரச்சாரங்கள் ஏற்றப்படுகின்றன…',
+    noAdCampaignsScheduled: 'இதுவரை எந்த விளம்பர பிரச்சாரமும் திட்டமிடப்படவில்லை.',
+    liveLabel: 'நேரலை',
+    scheduledLabel: 'திட்டமிடப்பட்டது',
+    priorityLabel: 'முன்னுரிமை',
+    startLabel: 'தொடக்கம்',
+    endLabel: 'முடிவு',
+    allKeyShopsLabel: 'அனைத்து கீ கடைகளும்',
+    targetedShopSingular: '{n} இலக்கு கடை',
+    targetedShopsPlural: '{n} இலக்கு கடைகள்',
+    editBtn: 'திருத்து',
+    cancelCampaignBtn: 'பிரச்சாரத்தை ரத்து செய்',
+    adCampaignLabel: 'விளம்பர பிரச்சாரம்',
+    editAdCampaignTitle: 'விளம்பர பிரச்சாரத்தைத் திருத்து',
+    newVisualAdCampaignTitle: 'புதிய காட்சி விளம்பர பிரச்சாரம்',
+    adTitleAnnouncementLabel: 'விளம்பர தலைப்பு / அறிவிப்பு',
+    adTitlePlaceholderEg: 'எ.கா. இந்த வெள்ளிக்கிழமை காட்ரெஜ் கீ நகல்களில் 20% தள்ளுபடி',
+    bannerImageSourceLabel: 'பேனர் பட மூலம்',
+    pasteImageUrlPlaceholder: 'பட URL ஒட்டவும் (அல்லது கூகிள் பட இணைப்பு)',
+    uploadBtn: 'பதிவேற்று',
+    adFormatLabel: 'விளம்பர வடிவம்',
+    mainBannerNoticeOption: 'முதன்மை பேனர் அறிவிப்பு',
+    interactiveLoginPopupOption: 'ஊடாடும் உள்நுழைவு பாப்அப்',
+    dashboardTextNoticeOption: 'டாஷ்போர்டு உரை அறிவிப்பு',
+    campaignPriorityLabel: 'பிரச்சார முன்னுரிமை',
+    startDateLabel: 'தொடக்க தேதி',
+    endDateLabelShort: 'முடிவு தேதி',
+    targetAudienceLabel: 'இலக்கு பார்வையாளர்கள்',
+    broadcastAllKeyShops: 'அனைத்து கீ கடைகளுக்கும் ஒளிபரப்பு',
+    targetSpecificShops: 'குறிப்பிட்ட கடைகளை இலக்காகக் கொள்ளுங்கள்',
+    scheduleCampaignBtn: 'பிரச்சாரத்தை திட்டமிடு',
+    searchInventoryPlaceholder: 'சரக்கு தேடு...',
+    newListingBtn: 'இயந்திரம் சேர்',
+    allCategoriesLabel: 'அனைத்து வகைகள்',
+    loadingListingsMsg: 'பட்டியல்கள் ஏற்றப்படுகின்றன...',
+    noOffersPublishedYet: 'இதுவரை சலுகைகள் வெளியிடப்படவில்லை',
+    noInventoryListedYet: 'இதுவரை சரக்கு பட்டியலிடப்படவில்லை',
+    expiredLabel: 'காலாவதியானது',
+    percentOffSuffix: '% தள்ளுபடி',
+    validTillPrefix: 'வரை செல்லுபடியாகும்',
+    linkedPrefix: 'இணைக்கப்பட்டது:',
+    superAdminIndependentLabel: 'சூப்பர் அட்மின் (சுயாதீனம்)',
+    shopLabel: 'கடை:',
+    ownerLabel: 'உரிமையாளர்:',
+    callPrefix: 'அழைக்கவும்',
+    removeBtn: 'அகற்று',
+    advertisementLabel: 'விளம்பரம்',
+    offerLabel: 'சலுகை',
+    promotionalProductLabel: 'பொருள்',
+    failedUpdateListing: 'பட்டியலைப் புதுப்பிக்க முடியவில்லை',
+    failedPublishListing: 'பட்டியலை வெளியிட முடியவில்லை',
+    confirmRemoveListing: 'இந்த பட்டியலை அகற்றவா?',
+    inventoryListingLabel: 'இயந்திர பட்டியல்',
+    editListingTitle: 'பட்டியலைத் திருத்து',
+    newInventoryListingTitle: 'புதிய சரக்கு பட்டியல்',
+    nameLabel: 'பெயர்',
+    listingNamePlaceholderEg: 'எ.கா. பிரீமியம் காட்ரெஜ் கீ-பிளாங்க்ஸ் - மொத்த பேக்',
+    productTypeLabel: 'பொருள் வகை',
+    selectProductTypePlaceholder: 'பொருள் வகையைத் தேர்ந்தெடு',
+    noProductTypesAvailable: 'இதுவரை பொருள் வகைகள் இல்லை',
+    descriptionOptionalLabel: 'விளக்கம் (விருப்பத்தேர்வு)',
+    shortDescriptionPlaceholder: 'பட்டியல் அட்டையில் காட்டப்படும் சுருக்கமான விளக்கம்',
+    productPhotoOptionalLabel: 'பொருள் புகைப்படம் (விருப்பத்தேர்வு)',
+    imageMediaOptionalLabel: 'படம் / மீடியா (விருப்பத்தேர்வு)',
+    priceOptionalLabel: 'விலை (விருப்பத்தேர்வு)',
+    priceLeaveBlankPlaceholder: 'பொருந்தவில்லை எனில் காலியாக விடவும்',
+    phoneNumberLabel: 'தொலைபேசி எண்',
+    phoneNumberPlaceholderEg: 'எ.கா. 9876543210',
+    tapToCallHint: 'வாங்குபவர்களுக்கு பட்டியல் அட்டையில் தட்டி-அழைக்கும் பொத்தானாக காட்டப்படும்.',
+    discountPercentageOptionalLabel: 'தள்ளுபடி சதவீதம் (விருப்பத்தேர்வு)',
+    discountPercentagePlaceholderEg: 'எ.கா. 20',
+    validUntilOptionalLabel: 'செல்லுபடியாகும் தேதி வரை (விருப்பத்தேர்வு)',
+    validUntilHint: 'காலாவதி இல்லாத சலுகைக்கு காலியாக விடவும். காலாவதியான சலுகைகள் பகிரப்பட்ட ஊட்டத்தில் மறைக்கப்படும்.',
+    linkExistingListingLabel: 'உங்கள் தற்போதைய பட்டியல்களில் ஒன்றுடன் இணைக்கவும் (விருப்பத்தேர்வு)',
+    noLinkedListingOption: 'இணைக்கப்பட்ட பட்டியல் இல்லை',
+    productLabel: 'பொருள்',
+    publishListingBtn: 'பட்டியலை வெளியிடு',
+    fromKeyShopHqLabel: 'கீ ஷாப் தலைமையகத்திலிருந்து',
+    offersAdsBannersTitle: 'சலுகைகள், விளம்பரங்கள் & பேனர்கள்',
+    everyActiveAdOfferDesc: 'சூப்பர் அட்மின் வெளியிட்ட ஒவ்வொரு செயலில் உள்ள விளம்பரம், பேனர், அறிவிப்பு மற்றும் சலுகை.',
+    loadingEllipsis: 'ஏற்றுகிறது…',
+    nothingPublishedYet: 'இதுவரை எதுவும் வெளியிடப்படவில்லை.',
+    advertisementsAndBannersLabel: 'விளம்பரங்கள் & பேனர்கள்',
+    offersLabel: 'சலுகைகள்',
+    subscriptionRatesUpdatedMsg: 'சந்தா திட்ட விலைகள் வெற்றிகரமாக புதுப்பிக்கப்பட்டன!',
+    updateFailedPrefix: 'புதுப்பிப்பு தோல்வியடைந்தது',
+    platformFinanceLabel: 'தளம் நிதி',
+    subscriptionPricingTitle: 'சந்தா விலை நிர்ணயம்',
+    configureFranchisePricingDesc: 'தளத்திற்கான உரிமையாளர் சந்தா திட்ட விகிதங்களை உள்ளமைக்கவும்.',
+    monthlyLower: 'மாதாந்திரம்',
+    monthlyRecurringPlanLabel: 'மாதாந்திர தொடர் திட்டம்',
+    sixMonthLower: '6-மாதம்',
+    halfYearlyPlanRateLabel: 'அரையாண்டு திட்ட விகிதம்',
+    yearlyLower: 'வருடாந்திரம்',
+    yearlyDiscountedRateLabel: 'வருடாந்திர தள்ளுபடி விகிதம்',
+    subscriptionPlanPricingLabel: 'சந்தா திட்ட விலை நிர்ணயம்',
+    setRatesForKeyShopsDesc: 'கீ கடைகளுக்கான விகிதங்களை அமைக்கவும். இந்த விலைகள் ஏற்பாட்டின் போது செக்அவுட் நுழைவாயில் திரையை தானாகவே புதுப்பிக்கும்.',
+    monthlyRecurringPlanRupeeLabel: 'மாதாந்திர தொடர் திட்டம் (₹)',
+    monthlyRecurringBillHint: 'தள சேவைக்கான மாதாந்திர தொடர் வாடகை பில்.',
+    sixMonthPlanRateRupeeLabel: '6-மாத திட்ட விகிதம் (₹)',
+    halfYearlyUpfrontRateHint: 'கடைகளுக்கான தள்ளுபடி அரையாண்டு முன்பணவு விகிதம்.',
+    yearlyPlanDiscountedRateRupeeLabel: 'வருடாந்திர திட்ட தள்ளுபடி விகிதம் (₹)',
+    annualUpfrontRateHint: 'கடைகளுக்கான தள்ளுபடி வருடாந்திர முன்பணவு விகிதம்.',
+    updateSubscriptionRatesBtn: 'சந்தா விகிதங்களை புதுப்பிக்கவும்',
+    enterValidAmountMsg: 'சரியான தொகையை உள்ளிடவும்',
+    monthlyRevenueLogsTitle: 'மாதாந்திர வருவாய் பதிவுகள்',
+    recordSubscriptionCollectionsDesc: 'SaaS செயல்திறன் கண்காணிப்புக்காக சந்தா வசூல்களை கைமுறையாக பதிவு செய்யவும்.',
+    allTimeLower: 'எல்லா காலமும்',
+    totalRevenueCollectedLabel: 'மொத்த வசூலிக்கப்பட்ட வருவாய்',
+    collectedThisYearLabel: 'இந்த ஆண்டு வசூலிக்கப்பட்டது',
+    revenueRecordsAvgLabel: 'வருவாய் பதிவுகள் — சராசரி',
+    collectionsTrendLabel: 'வசூல் போக்கு',
+    lastLoggedEntriesPrefix: 'கடைசி',
+    loggedEntriesSuffix: 'பதிவு செய்யப்பட்ட உள்ளீடுகள்',
+    noRevenueLogsYet: 'இதுவரை வருவாய் பதிவுகள் இல்லை.',
+    addRevenueRecordLabel: 'வருவாய் பதிவைச் சேர்க்கவும்',
+    monthLabel: 'மாதம்',
+    yearLabel: 'ஆண்டு',
+    amountCollectedRupeeLabel: 'வசூலிக்கப்பட்ட தொகை (₹)',
+    notesRemarksLabel: 'குறிப்புகள் / கருத்துகள்',
+    logRevenuePayoutBtn: 'வருவாய் கொடுப்பனவை பதிவு செய்யவும்',
+    platformRevenueHistoryLabel: 'தள வருவாய் வரலாறு',
+    periodCol: 'காலம்',
+    notesCol: 'குறிப்புகள்',
+    amountCol: 'தொகை',
+    duplicateKeyLookupLabel: 'நகல் சாவி தேடல்',
+    masterKeyCatalogSearchTitle: 'மாஸ்டர் சாவி பட்டியல் தேடல்',
+    lookupBlankSpecDesc: 'வெற்று விவரக்குறிப்புகள், சாவி குறியீடுகள் மற்றும் வாடிக்கையாளர் பதிவு ரெக்கார்டுகளை நொடிகளில் தேடுங்கள்.',
+    keyCodeVehicleCategoryLabel: 'சாவி குறியீடு, வாகன எண், அல்லது வகை',
+    searchByKeyCodePlaceholder: 'சாவி குறியீடு, வாகன எண், வாடிக்கையாளர் இடம், வகை மூலம் தேடுங்கள்\u2026',
+    searchingRegistryMsg: 'பதிவேட்டைத் தேடுகிறது\u2026',
+    noMatchingKeysMsg: 'பொருந்தும் சாவிகள் அல்லது வாடிக்கையாளர் ரெக்கார்டுகள் இல்லை',
+    registeredCustomerKeyLabel: 'பதிவுசெய்யப்பட்ட வாடிக்கையாளர் சாவி',
+    customerPrefix: 'வாடிக்கையாளர்:',
+    vehicleNoPrefix: 'வாகன எண்:',
+    viewFullDetailsLabel: 'முழு விவரங்களைக் காண்க',
+    keyDetailsLabel: 'சாவி விவரங்கள்',
+    lockCategoryLabel: 'பூட்டு வகை',
+    backProfileLabel: 'பின் சுயவிவரம்',
+    customerNameLabel: 'வாடிக்கையாளர் பெயர்',
+    vehicleNumberLabel: 'வாகன எண்',
+    webcamSnapshotLabel: 'கேமரா ஸ்னாப்ஷாட்',
+    registryLocationOverviewLabel: 'பதிவு இருப்பிட மேலோட்டம் (மற்ற பணியிடம்)',
+    customerMobileLabel: 'வாடிக்கையாளர் மொபைல்',
+    registeredShopLabel: 'பதிவுசெய்யப்பட்ட கடை',
+    keyShopWorkspaceLabel: 'சாவி கடை பணியிடம்',
+    shopMobileLabel: 'கடை மொபைல்',
+    sensitiveCoordsHiddenMsg: 'இந்த சாவி பதிவு வேறு நகல் சாவி கடையில் உருவாக்கப்பட்டதால் முக்கியமான ஆயத்தொலைவுகள் மற்றும் கேமரா படங்கள் மறைக்கப்பட்டுள்ளன.',
+    closeDetailsBtn: 'விவரங்களை மூடு',
+    fileSizeExceeds5MBMsg: 'கோப்பு அளவு 5MB வரம்பை மீறுகிறது',
+    onlyJpegPngPdfMsg: 'JPEG, PNG, மற்றும் PDF ஆவண வடிவங்கள் மட்டுமே ஏற்கப்படும்',
+    documentAlreadyStagedTemplate: '{type} க்கான ஆவணம் ஏற்கனவே சேர்க்கப்பட்டுள்ளது.',
+    pleaseEnterKeyCodeMsg: 'முதலில் சாவி குறியீட்டை உள்ளிடவும்',
+    pleaseEnterValidTestEmailMsg: 'சோதனை OTP பெற சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்.',
+    failedSendOtpMsg: 'OTP குறியீட்டை அனுப்பத் தவறிவிட்டது.',
+    invalidOtpCodeMsg: 'தவறான OTP குறியீடு. சரியான குறியீட்டை உள்ளிடவும்.',
+    complianceRecordLoggedMsg: 'வாடிக்கையாளர் இணக்க பதிவு வெற்றிகரமாக பதிவு செய்யப்பட்டது!',
+    submissionFailedTemplate: 'சமர்ப்பிப்பு தோல்வியடைந்தது: {message}',
+    contactKeyStepLabel: 'தொடர்பு & சாவி',
+    idPhotoStepLabel: 'அடையாள புகைப்படம்',
+    documentsStepLabel: 'ஆவணங்கள்',
+    reviewStepLabel: 'மதிப்பாய்வு',
+    newCustomerEyebrow: 'புதிய வாடிக்கையாளர்',
+    multiStepComplianceDesc: 'பல-படி இணக்க ஆன்போர்டிங் — சாவி வழங்குதல், அடையாள சேகரிப்பு & ஜிபிஎஸ்-முத்திரையிடப்பட்ட முகவரி, ஐந்து விரைவான படிகளில்.',
+    stepLabel: 'படி',
+    ofLabel: 'இல்',
+    contactKeyCredentialsTitle: 'தொடர்பு & சாவி நற்சான்றுகள்',
+    registerContactDetailsDesc: 'வாடிக்கையாளரின் தொடர்பு விவரங்கள், வாகனம் & சாவி குறியீடு, மற்றும் குடியிருப்பு முகவரியை பதிவு செய்யுங்கள்.',
+    shopFieldLabel: 'கடை',
+    selectShopPlaceholder: 'ஒரு கடையைத் தேர்ந்தெடுக்கவும்…',
+    customerRegisteredUnderShopMsg: 'இந்த வாடிக்கையாளரும், அதன் சாவி குறியீடும், தேர்ந்தெடுக்கப்பட்ட கடையின் பணியிடத்தின் கீழ் பதிவு செய்யப்படும்.',
+    duplicateKeyDetectedLabel: 'நகல் சாவி கண்டறியப்பட்டது',
+    duplicateKeyDetectedDescTemplate: 'சாவி குறியீடு {code} ஏற்கனவே ஒரு தற்போதைய வாடிக்கையாளருக்கு பதிவு செய்யப்பட்டுள்ளது. சரிபார்த்து தனிப்பட்ட சாவி குறியீட்டை உள்ளிடவும்.',
+    fullCustomerNameLabel: 'வாடிக்கையாளரின் முழு பெயர்',
+    customerNamePlaceholderEg: 'ரோஹன் மல்ஹோத்ரா',
+    keyCodeKeyNumberLabel: 'சாவி குறியீடு / சாவி எண்',
+    keyCodeEnterPlaceholderEg: 'சாவி குறியீட்டை உள்ளிடவும் (எ.கா. TN09B)',
+    resendBtn: 'மீண்டும் அனுப்பு',
+    sendOtpBtn: 'OTP அனுப்பு',
+    smsToPhoneLabel: 'ஃபோனுக்கு SMS',
+    emailTestingLabel: 'மின்னஞ்சல் (சோதனை)',
+    testEmailPlaceholder: 'test@email.com — OTP மட்டும், சேமிக்கப்படாது',
+    addressLineLabel: 'முகவரி வரி',
+    locatingLabel: 'இருப்பிடம் கண்டறியப்படுகிறது…',
+    currentLocationBtn: 'தற்போதைய இருப்பிடம்',
+    addressLinePlaceholderEg: 'எ.கா. ஃபிளாட் 101, பார்க் அவென்யூ',
+    openLocationSettingsBtn: 'இருப்பிட அமைப்புகளைத் திறக்கவும்',
+    openAppSettingsBtn: 'ஆப் அமைப்புகளைத் திறக்கவும்',
+    stateLabel: 'மாநிலம்',
+    districtLabel: 'மாவட்டம்',
+    countryLabel: 'நாடு',
+    gpsCapturedTemplate: 'ஜிபிஎஸ் பிடிக்கப்பட்டது: {lat}, {long}',
+    enterOtpCodeSentToEmailTemplate: '{email} க்கு அனுப்பப்பட்ட 4-இலக்க குறியீட்டை உள்ளிடவும்',
+    enterOtpCodeSentToPhoneMsg: 'வாடிக்கையாளரின் தொலைபேசிக்கு அனுப்பப்பட்ட 4-இலக்க குறியீட்டை உள்ளிடவும்',
+    testingModeNoProviderTemplate: 'சோதனை பயன்முறை — {provider} வழங்குநர் கட்டமைக்கப்படவில்லை',
+    verifyOtpBtn: 'OTP சரிபார்க்கவும்',
+    otpVerifiedSuccessEmailMsg: 'வாடிக்கையாளரின் மின்னஞ்சல் OTP வெற்றிகரமாக சரிபார்க்கப்பட்டது.',
+    otpVerifiedSuccessPhoneMsg: 'வாடிக்கையாளரின் தொலைபேசி எண் OTP வெற்றிகரமாக சரிபார்க்கப்பட்டது.',
+    complianceDocUploadTitle: 'இணக்க ஆவண பதிவேற்றம்',
+    uploadGovIdDesc: 'இந்த வாடிக்கையாளரை சரிபார்க்க பயன்படுத்தப்பட்ட அரசு அடையாள சான்றின் நகலை பதிவேற்றவும்.',
+    documentTypeLabel: 'ஆவண வகை',
+    aadhaarCardLabel: 'ஆதார் அட்டை',
+    drivingLicenseLabel: 'ஓட்டுநர் உரிமம்',
+    panCardLabel: 'பான் அட்டை',
+    voterIdLabel: 'வாக்காளர் அடையாள அட்டை',
+    dropOrBrowseCopyTemplate: '{type} இன் நகலை இழுத்துவிடவும் அல்லது உலாவவும்',
+    jpegPngPdfUpTo5MbLabel: 'JPEG, PNG அல்லது PDF — 5MB வரை',
+    stagedIdCopiesTemplate: 'சேர்க்கப்பட்ட அடையாள நகல்கள் ({count})',
+    verifyDetailsBeforeSubmitDesc: 'இந்த இணக்க பதிவை சமர்ப்பிக்கும் முன் கீழே உள்ளிடப்பட்ட ஒவ்வொரு விவரத்தையும் சரிபார்க்கவும். இந்த படியில் எதுவும் தானாக பிடிக்கப்படவோ மாற்றப்படவோ மாட்டாது.',
+    reviewCustomerLabel: 'வாடிக்கையாளர்',
+    reviewPhoneLabel: 'தொலைபேசி',
+    keyBlankLabel: 'சாவி வெற்று',
+    registeredAddressLabel: 'பதிவுசெய்யப்பட்ட முகவரி',
+    idProofTypeLabel: 'அடையாள சான்று வகை',
+    uploadedDocumentsLabel: 'பதிவேற்றப்பட்ட ஆவணங்கள்',
+    filesAttachedTemplate: '{count} கோப்பு(கள்) இணைக்கப்பட்டுள்ளன',
+    noneAttachedLabel: 'எதுவும் இணைக்கப்படவில்லை',
+    reviewLocationLabel: 'இருப்பிடம்',
+    gpsCapturedHeadingLabel: 'ஜிபிஎஸ் பிடிக்கப்பட்டது',
+    latLongMiddotTemplate: 'அட்சரேகை {lat} · தீர்க்கரேகை {long}',
+    noGpsLocationCapturedDesc: 'எந்த ஜிபிஎஸ் இருப்பிடமும் பிடிக்கப்படவில்லை. ஆயத்தொலைவுகளை இணைக்க விரும்பினால் "தொடர்பு & சாவி" படிக்குச் சென்று "தற்போதைய இருப்பிடம்" பொத்தானைப் பயன்படுத்தவும்.',
+    submitComplianceRecordBtn: 'இணக்க பதிவை சமர்ப்பிக்கவும்',
+    historyPageDesc: 'கடந்த நகல்-சாவி பதிவுகள் மற்றும் இணக்க சமர்ப்பிப்புகளைத் தேடி சரிபார்க்கவும்.',
+    loadingComplianceRecordsMsg: 'இணக்க பதிவுகள் ஏற்றப்படுகின்றன…',
+    noComplianceRecordsMatchMsg: 'இந்தத் தேடலுடன் பொருந்தும் இணக்க பதிவுகள் எதுவும் இல்லை.',
+    vehicleCol: 'வாகனம்',
+    locationCol: 'இடம்',
+    loggedCol: 'பதிவு செய்யப்பட்டது',
+    actionsCol: 'செயல்கள்',
+    editDetailsBtn: 'விவரங்களைத் திருத்து',
+    documentIdTypeLabel: 'ஆவண ஐடி வகை',
+    uploadNewFileCopyLabel: 'புதிய கோப்பு நகலைப் பதிவேற்றவும்',
+    jpegPngPdfLabel: 'JPEG, PNG அல்லது PDF',
+    downloadTitleLabel: 'பதிவிறக்கவும்',
+    customerComplianceRecordUpdatedMsg: 'வாடிக்கையாளர் இணக்கப் பதிவு வெற்றிகரமாகப் புதுப்பிக்கப்பட்டது!',
+    failedSaveCustomerEditsMsg: 'வாடிக்கையாளர் திருத்தங்களைச் சேமிக்க முடியவில்லை.',
+    loadingSupportResourcesMsg: 'ஆதரவு வளங்கள் ஏற்றப்படுகின்றன…',
+    supportTrainingCenterTitle: 'ஆதரவு & பயிற்சி மையம்',
+    reachSupportTrainingDesc: 'கீ ஷாப் தொழில்நுட்ப ஆதரவைத் தொடர்பு கொள்ளுங்கள் மற்றும் லாக்ஸ்மித் பயிற்சி வளங்களுடன் உங்கள் திறமையை மேம்படுத்துங்கள்.',
+    contactLiveAgentTitle: 'நேரடி முகவரைத் தொடர்பு கொள்ளுங்கள்',
+    supportHoursLabel: 'திங்கள்-சனி, காலை 9 - மாலை 7 IST',
+    liveCustomerSupportDesc: 'உங்கள் சாவி தயாரிக்கும் இயந்திரங்கள் அல்லது நகல் சாவி போர்ட்டல் டாஷ்போர்டுக்கு உதவ நேரடி வாடிக்கையாளர் ஆதரவு தயாராக உள்ளது.',
+    directWhatsappSupportLabel: 'நேரடி வாட்ஸ்அப் ஆதரவு',
+    chatOnWhatsappBtn: 'வாட்ஸ்அப்பில் அரட்டையடிக்கவும்',
+    locksmithSkillUpgradesTitle: 'லாக்ஸ்மித் திறன் மேம்பாடுகள்',
+    videoTutorialsFromExpertsDesc: 'நகல் சாவி நிபுணர்களின் வீடியோ பயிற்சிகள்',
+    trainingMaterialLabel: 'பயிற்சி பொருள்',
+    watchLinkLabel: 'இணைப்பைப் பார்க்கவும்',
+    noSkillUpgradeVideosMsg: 'தற்போது திறன் மேம்பாட்டு வீடியோக்கள் எதுவும் இல்லை.',
+    loadingSupportConfigMsg: 'ஆதரவு கட்டமைப்பு ஏற்றப்படுகிறது…',
+    platformSupportEyebrow: 'தளம் ஆதரவு',
+    customerSupportConfigTitle: 'வாடிக்கையாளர் ஆதரவு கட்டமைப்பு',
+    configureGlobalSupportDesc: 'ஒவ்வொரு கடைக்கும் தெரியும் உலகளாவிய வாடிக்கையாளர் சேவை தொடர்பு மற்றும் பயிற்சி வீடியோ இணைப்புகளை கட்டமைக்கவும்.',
+    customerSupportWhatsappLabel: 'வாடிக்கையாளர் ஆதரவு வாட்ஸ்அப் எண்',
+    whatsappNumberPlaceholderEg: 'உதா. +91 98765 43210',
+    supportContactEyebrow: 'ஆதரவு தொடர்பு',
+    supportContactTitle: 'ஆதரவு தொடர்பு',
+    supportContactDesc: 'கீழே உள்ள தொடர்பு விவரங்களைப் பயன்படுத்தி கீ ஷாப் குழுவை நேரடியாக தொடர்பு கொள்ளுங்கள்.',
+    ownerNameLabel: 'உரிமையாளர் பெயர்',
+    ownerPhoneLabel: 'உரிமையாளர் தொலைபேசி',
+    ownerNamePlaceholderEg: 'எ.கா. ராஜேஷ் குமார்',
+    ownerPhonePlaceholderEg: 'எ.கா. +91 98765 43210',
+    ownerAddressPlaceholderEg: 'எ.கா. 12 எம்ஜி ரோடு, பெங்களூரு',
+    noContactInfoConfiguredMsg: 'தொடர்பு விவரங்கள் இன்னும் கட்டமைக்கப்படவில்லை.',
+    ownerContactSectionTitle: 'உரிமையாளர் தொடர்பு விவரங்கள்',
+    ownerContactSectionDesc: 'இந்த விவரங்கள் ஒவ்வொரு கடைக்கும் ஆதரவு தொடர்பு திரையில் காட்டப்படும்.',
+    videoSingularLabel: 'வீடியோ',
+    videoPluralLabel: 'வீடியோக்கள்',
+    addVideoBtn: 'வீடியோ சேர்க்கவும்',
+    noVideosConfiguredMsg: 'வீடியோக்கள் எதுவும் கட்டமைக்கப்படவில்லை. பூட்டாளர் பயிற்சி இணைப்புகளைச் சேர்க்க “வீடியோ சேர்க்கவும்” என்பதைக் கிளிக் செய்யவும்.',
+    removeVideoTitle: 'வீடியோவை அகற்று',
+    videoTitleNameLabel: 'வீடியோ தலைப்பு / பெயர்',
+    videoTitlePlaceholderEg: 'உதா. Locksmith Career Income',
+    youtubeUrlLabel: 'யூடியூப் URL',
+    saveConfigurationBtn: 'கட்டமைப்பைச் சேமி',
+    shopCategoriesTitle: 'கடை வகைகள்',
+    categorySingularLabel: 'வகை',
+    categoryPluralLabel: 'வகைகள்',
+    manageShopCategoriesDesc: 'பொது சுய-பதிவு வழிகாட்டியின் வகை கீழ்தோன்றலில் வழங்கப்படும் கடை "வகை" விருப்பங்களை நிர்வகிக்கவும்.',
+    enterCategoryNamePlaceholder: 'வகை பெயரை உள்ளிடவும்',
+    addBtnLabel: 'சேர்க்கவும்',
+    noCategoriesYetMsg: 'இதுவரை கடை வகைகள் இல்லை. மேலே ஒன்றைச் சேர்க்கவும் - நீங்கள் அவ்வாறு செய்யும் வரை பதிவு படிவத்தின் கீழ்தோன்றல் காலியாக இருக்கும்.',
+    productTypesTitle: 'தயாரிப்பு வகைகள்',
+    typeSingularLabel: 'வகை',
+    typePluralLabel: 'வகைகள்',
+    manageProductTypesDesc: 'இருப்பு தயாரிப்பு உருவாக்க படிவத்தில் வழங்கப்படும் தயாரிப்பு வகை விருப்பங்களை நிர்வகிக்கவும்.',
+    enterProductTypePlaceholder: 'தயாரிப்பு வகையை உள்ளிடவும்',
+    noProductTypesYetMsg: 'இதுவரை தயாரிப்பு வகைகள் இல்லை. மேலே ஒன்றைச் சேர்க்கவும் - நீங்கள் அவ்வாறு செய்யும் வரை இருப்பு தயாரிப்பு உருவாக்க கீழ்தோன்றல் காலியாக இருக்கும்.',
+    supportConfigUpdatedMsg: 'ஆதரவு கட்டமைப்பு வெற்றிகரமாக புதுப்பிக்கப்பட்டது!',
+    saveFailedTemplate: 'சேமிப்பு தோல்வியடைந்தது: {msg}',
+    pleaseEnterCategoryNameMsg: 'தயவுசெய்து ஒரு வகை பெயரை உள்ளிடவும்.',
+    failedAddCategoryTemplate: 'வகையைச் சேர்க்க முடியவில்லை: {msg}',
+    failedUpdateCategoryTemplate: 'வகையைப் புதுப்பிக்க முடியவில்லை: {msg}',
+    deleteCategoryConfirmTemplate: '"{name}" வகையை நீக்கவா? ஏற்கனவே இதைப் பயன்படுத்தும் கடைகள் அதை வைத்திருக்கும், ஆனால் அது இனி பதிவு படிவத்தில் வழங்கப்படாது.',
+    failedDeleteCategoryTemplate: 'வகையை நீக்க முடியவில்லை: {msg}',
+    pleaseEnterProductTypeNameMsg: 'தயவுசெய்து ஒரு தயாரிப்பு வகை பெயரை உள்ளிடவும்.',
+    failedAddProductTypeTemplate: 'தயாரிப்பு வகையைச் சேர்க்க முடியவில்லை: {msg}',
+    failedUpdateProductTypeTemplate: 'தயாரிப்பு வகையைப் புதுப்பிக்க முடியவில்லை: {msg}',
+    deleteProductTypeConfirmTemplate: '"{name}" தயாரிப்பு வகையை நீக்கவா? ஏற்கனவே இதைப் பயன்படுத்தும் பட்டியல்கள் அதை வைத்திருக்கும், ஆனால் அது இனி இருப்பு தயாரிப்பு உருவாக்க படிவத்தில் வழங்கப்படாது.',
+    failedDeleteProductTypeTemplate: 'தயாரிப்பு வகையை நீக்க முடியவில்லை: {msg}',
+    loadingWorkspaceSettingsMsg: 'பணிமனை அமைப்புகள் ஏற்றப்படுகின்றன…',
+    workspaceConfigurationEyebrow: 'பணிமனை உள்ளமைவு',
+    manageShopProfileDesc: 'உங்கள் கடையின் சுயவிவரம், பிராண்டிங், சரிபார்ப்பு ஆவணங்கள் மற்றும் கணக்கு பாதுகாப்பை நிர்வகிக்கவும்.',
+    refreshTitle: 'புதுப்பிக்கவும்',
+    workspaceProfileTitle: 'பணிமனை சுயவிவரம்',
+    businessIdentityContactDesc: 'வணிக அடையாளம் & தொடர்பு விவரங்கள்',
+    workspaceDisplayNameLabel: 'பணிமனை காட்சி பெயர்',
+    pdfFileLabel: 'PDF கோப்பு',
+    uploadingEllipsisLabel: 'பதிவேற்றப்படுகிறது…',
+    saveWorkspaceDetailsBtn: 'பணிமனை விவரங்களை சேமிக்கவும்',
+    adminCredentialsTitle: 'நிர்வாக சான்றுகள்',
+    usernameNameLabel: 'பயனர்பெயர் / பெயர்',
+    emailAddressLabel: 'மின்னஞ்சல் முகவரி',
+    workspacePasswordLabel: 'பணிமனை கடவுச்சொல்',
+    hidePasswordTitle: 'கடவுச்சொல்லை மறை',
+    revealPasswordTitle: 'கடவுச்சொல்லை காட்டு',
+    forgotPasswordResetOtpBtn: 'கடவுச்சொல் மறந்துவிட்டீர்களா? OTP மூலம் மீட்டமைக்கவும்',
+    confirmYourPasswordTitle: 'உங்கள் கடவுச்சொல்லை உறுதிப்படுத்தவும்',
+    verifyIdentityRevealDesc: 'சேமிக்கப்பட்ட சான்றுகளைக் காண உங்கள் அடையாளத்தை சரிபார்க்கவும்.',
+    accountPasswordLabel: 'கணக்கு கடவுச்சொல்',
+    enterPasswordPlaceholder: 'கடவுச்சொல்லை உள்ளிடவும்',
+    accountRecoveryEyebrow: 'கணக்கு மீட்பு',
+    resetAccountPasswordTitle: 'கணக்கு கடவுச்சொல்லை மீட்டமைக்கவும்',
+    emailRecoveryTab: 'மின்னஞ்சல் மீட்பு',
+    phoneRecoveryTab: 'தொலைபேசி மீட்பு',
+    registeredPhoneNumberLabel: 'பதிவு செய்யப்பட்ட தொலைபேசி எண்',
+    registeredEmailAddressLabel: 'பதிவு செய்யப்பட்ட மின்னஞ்சல் முகவரி',
+    sendOtpVerificationCodeBtn: 'OTP சரிபார்ப்பு குறியீட்டை அனுப்பவும்',
+    fourDigitCodeDispatchedTemplate: 'ஒரு 4-இலக்க குறியீடு {identifier} க்கு அனுப்பப்பட்டுள்ளது.',
+    enterOtpLabel: 'OTP ஐ உள்ளிடவும்',
+    newPasswordLabel: 'புதிய கடவுச்சொல்',
+    min6CharactersPlaceholder: 'குறைந்தபட்சம் 6 எழுத்துகள்',
+    confirmPasswordLabel: 'கடவுச்சொல்லை உறுதிப்படுத்தவும்',
+    retypePasswordPlaceholder: 'கடவுச்சொல்லை மீண்டும் தட்டச்சு செய்யவும்',
+    updatePasswordBtn: 'கடவுச்சொல்லை புதுப்பிக்கவும்',
+    failedGenerateReportMsg: 'அறிக்கையை உருவாக்க முடியவில்லை.',
+    pleaseGenerateReportFirstMsg: 'முதலில் அறிக்கையை உருவாக்கவும்.',
+    complianceAnalyticsEyebrow: 'இணக்கம் & பகுப்பாய்வு',
+    reportsPortalDesc: 'எந்த தேதி வரம்பிற்கும் டைனமிக் CSV மற்றும் எளிய-உரை வாடிக்கையாளர் பதிவு அறிக்கைகளை உருவாக்கவும்.',
+    reportBuilderTitle: 'அறிக்கை உருவாக்கி',
+    selectDateRangeGenerateDesc: 'ஒரு தேதி வரம்பைத் தேர்ந்தெடுத்து, பின்னர் அறிக்கையை உருவாக்கவும்',
+    fromDateLabel: 'தொடக்க தேதி',
+    toDateLabel: 'முடிவு தேதி',
+    generatingEllipsisLabel: 'உருவாக்கப்படுகிறது…',
+    referralProgramTitle: 'பரிந்துரை திட்டம்',
+    referralProgramDesc: 'உங்கள் குறியீட்டை மற்ற கடை உரிமையாளர்களுடன் பகிர்ந்து வெகுமதிகளைப் பெறுங்கள்.',
+    copyTitle: 'நகலெடு',
+    shareReferralCodeBtn: 'பரிந்துரை குறியீட்டைப் பகிரவும்',
+    generateReferralCodeBtn: 'பரிந்துரை குறியீட்டை உருவாக்கு',
+    failedGenerateReferralCodeMsg: 'பரிந்துரை குறியீட்டை உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.',
+    referralShareMessageTemplate: 'Key Shop-ல் பதிவு செய்யும்போது எனது பரிந்துரை குறியீடு {code} ஐப் பயன்படுத்தவும்!',
+    verificationDocumentLabel: 'சரிபார்ப்பு ஆவணம்',
+    useCameraBtn: 'கேமராவைப் பயன்படுத்து',
+    chooseFromGalleryBtn: 'கேலரியில் இருந்து தேர்ந்தெடு',
+    generateReportBtn: 'அறிக்கையை உருவாக்கு',
+    recordsInReportLabel: 'அறிக்கையில் உள்ள பதிவுகள்',
+    allTimeLabel: 'எல்லா காலமும்',
+    todayLabel: 'இன்று',
+    dateRangeCoveredLabel: 'உள்ளடக்கிய தேதி வரம்பு',
+    visualReportSummaryTitle: 'காட்சி அறிக்கை சுருக்கம்',
+    hoverToViewValuesDesc: 'சரியான மதிப்புகளைக் காண கூறுகள் மீது ஹோவர் செய்யவும்',
+    registrationsByKeyBlankRefTitle: 'சாவி பிளாங்க் குறிப்பின்படி பதிவுகள்',
+    registrationTimelineTrendTitle: 'பதிவு காலவரிசை போக்கு',
+    noTrendDataMsg: 'போக்கு தரவு இல்லை',
+    reportPreviewTitle: 'அறிக்கை முன்னோட்டம்',
+    recordsLabel: 'பதிவுகள்',
+    exportCsvBtn: 'CSV ஏற்றுமதி செய்யவும்',
+    exportTxtBtn: 'TXT ஏற்றுமதி செய்யவும்',
+    showingFirstColumnsPreviewDesc: 'உலாவி முன்னோட்டத்தில் முதல் 4 நெடுவரிசைகள் வரை காட்டப்படுகின்றன. அனைத்து விரிவான தரவு நெடுவரிசைகளையும் காண ஏற்றுமதி செய்யவும்.',
+    aadhaarMustBe12DigitsMsg: 'ஆதார் எண் சரியாக 12 இலக்கங்களாக இருக்க வேண்டும்.',
+    aadhaarNumberLabel: 'ஆதார் எண்',
+    autoFilledFromGpsPlaceholder: 'GPS இலிருந்து தானாக நிரப்பப்பட்டது',
+    backToHomeLink: 'முகப்புக்குத் திரும்பு',
+    canLogInWithEitherMsg: 'நீங்கள் இவற்றில் ஏதேனும் ஒன்றைப் பயன்படுத்தி உள்நுழையலாம்',
+    cardholderNameLabel: 'கார்டுதாரர் பெயர்',
+    cardNumberLabel: 'கார்டு எண்',
+    choosePaymentChannelLabel: 'கட்டண முறையைத் தேர்ந்தெடுக்கவும்',
+    chooseSubscriptionPlanLabel: 'சந்தா திட்டத்தைத் தேர்ந்தெடுக்கவும்',
+    cityLabel: 'நகரம்',
+    createShopAccountBtn: 'கடை கணக்கை உருவாக்கவும்',
+    customersStatLabel: 'வாடிக்கையாளர்கள்',
+    cvvLabel: 'CVV',
+    digitAadhaarOptionalPlaceholder: '12-இலக்க ஆதார் எண் (விருப்பமானது)',
+    referralCodeLabel: 'பரிந்துரை குறியீடு (விருப்பமானது)',
+    referralCodePlaceholder: 'உங்களிடம் இருந்தால் பரிந்துரை குறியீட்டை உள்ளிடவும்',
+    agreeToTermsPrefix: 'நான் விதிமுறைகள் மற்றும் நிபந்தனைகளைப் படித்து ஒப்புக்கொள்கிறேன்',
+    termsAndConditionsLinkLabel: 'விதிமுறைகள் மற்றும் நிபந்தனைகள்',
+    pleaseAcceptTermsMsg: 'தொடர விதிமுறைகள் மற்றும் நிபந்தனைகளைப் படித்து ஏற்கவும்.',
+    digitMobilePlaceholder: '10-இலக்க மொபைல்',
+    digitPinCodePlaceholder: '6-இலக்க பின் கோட்',
+    emailOrMobileLabel: 'மின்னஞ்சல் அல்லது மொபைல் எண்',
+    emailOrMobilePlaceholder: 'மின்னஞ்சல் முகவரி அல்லது மொபைல் எண்',
+    emailOtpLabel: 'மின்னஞ்சல் OTP',
+    enterRegisteredMethodTemplate: 'மீட்டமைப்பு குறியீட்டைக் கோர உங்கள் பணிமனையுடன் இணைக்கப்பட்ட பதிவு செய்யப்பட்ட {method} ஐ உள்ளிடவும்.',
+    expiryLabel: 'காலாவதி',
+    forgotPasswordLink: 'கடவுச்சொல்லை மறந்துவிட்டீர்களா?',
+    keysCutStatLabel: 'வெட்டப்பட்ட சாவிகள்',
+    keyShopDashboardLabel: 'கீ ஷாப் டாஷ்போர்டு',
+    loadingCategoriesEllipsis: 'வகைகள் ஏற்றப்படுகின்றன…',
+    mobileNumberLabel: 'மொபைல் எண்',
+    mobileNumberVerifiedMsg: 'மொபைல் எண் சரிபார்க்கப்பட்டது',
+    noShopCategoriesAvailableMsg: 'இதுவரை கடை வகைகள் எதுவும் இல்லை',
+    otpVerifiedSetNewPasswordMsg: 'OTP சரிபார்க்கப்பட்டது. கீழே ஒரு புதிய கடவுச்சொல்லை அமைக்கவும்.',
+    passwordLabel: 'கடவுச்சொல்',
+    passwordResetSuccessMsg: 'கடவுச்சொல் வெற்றிகரமாக மீட்டமைக்கப்பட்டது',
+    payableAmountLabel: 'செலுத்த வேண்டிய தொகை',
+    paySettleSetupBtn: 'செலுத்தி அமைப்பை முடிக்கவும்',
+    phoneOtpLabel: 'தொலைபேசி OTP',
+    pinCodeLabel: 'பின் கோட்',
+    pinCodeMustBe6DigitsMsg: 'பின் கோட் சரியாக 6 இலக்கங்களாக இருக்க வேண்டும்.',
+    pleaseEnterValidEmailMsg: 'சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்.',
+    pleaseFillRequiredRegFieldsMsg: 'தேவையான அனைத்து பதிவு புலங்களையும் நிரப்பவும்.',
+    pleaseVerifyMobileOtpMsg: 'தொடர்வதற்கு முன் OTP மூலம் உங்கள் மொபைல் எண்ணைச் சரிபார்க்கவும்.',
+    registeredEmailLabel: 'பதிவு செய்யப்பட்ட மின்னஞ்சல்',
+    registerYourKeyShopTitle: 'உங்கள் கீ ஷாப்பைப் பதிவு செய்யவும்',
+    registrationSubmittedTitle: 'பதிவு சமர்ப்பிக்கப்பட்டது',
+    regPasswordMinLengthMsg: 'கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்.',
+    rememberMeLabel: 'என்னை நினைவில் கொள்ளவும்',
+    resendOtpBtn: 'OTP ஐ மீண்டும் அனுப்பு',
+    resetYourPasswordTitle: 'உங்கள் கடவுச்சொல்லை மீட்டமைக்கவும்',
+    returnToLoginBtn: 'உள்நுழைவுக்குத் திரும்பு',
+    runYourShopHeading: 'உங்கள் கடையை நடத்துங்கள்',
+    scanQrCodeAppsDesc: 'GooglePay, PhonePe, அல்லது Paytm ஐப் பயன்படுத்தி QR குறியீட்டை ஸ்கேன் செய்யவும்',
+    secureRecoveryWorkspaceDesc: 'உங்கள் பணிமனைக்கான பாதுகாப்பான மீட்பு',
+    selectShopCategoryPlaceholder: 'கடை வகையைத் தேர்ந்தெடுக்கவும்',
+    selectVerificationMethodDesc: 'உங்கள் பணிமனை நற்சான்றிதழ்களை மீட்டெடுக்க உங்கள் சரிபார்ப்பு முறையைத் தேர்ந்தெடுக்கவும்.',
+    sendOtpCodeBtn: 'OTP குறியீட்டை அனுப்பவும்',
+    sendOtpToVerifyBtn: 'சரிபார்க்க OTP அனுப்பவும்',
+    settlingPaymentEllipsis: 'கட்டணம் தீர்க்கப்படுகிறது…',
+    shopAdminDownloadAppBtn: 'கடை நிர்வாகியா? ஆப்பைப் பதிவிறக்கவும்',
+    shopOnboardingEyebrow: 'கடை இணைப்பு',
+    signInLeadDesc: 'உங்கள் நகல்-சாவி கடையை நடத்த உள்நுழையவும் — ஆர்டர்கள், வாடிக்கையாளர்கள் மற்றும் சரக்கு, அனைத்தும் ஒரே இடத்தில்.',
+    signInToKeyShopBtn: 'கீ ஷாப்பில் உள்நுழையவும்',
+    signInWithNewCredentialsMsg: 'இப்போது உங்கள் புதிய நற்சான்றிதழ்களுடன் உள்நுழையலாம்.',
+    smartGoldStandardWaySpan: 'ஸ்மார்ட், தங்க-தரமான வழியில்.',
+    streetLandmarkPlaceholder: 'தெரு / அடையாளம்',
+    trackDuplicateKeysDesc: 'ஒவ்வொரு கிளையிலும் நகல் சாவிகள், வாடிக்கையாளர்கள் மற்றும் ஸ்டோர் ஆர்டர்களைக் கண்காணிக்கவும் — இந்திய பூட்டு தொழிலாளர்களுக்காக உருவாக்கப்பட்ட ஒரு சிறந்த டாஷ்போர்டு.',
+    trustedByShopsBadge: 'இந்தியா முழுவதும் 500+ கீ ஷாப்களால் நம்பப்படுகிறது',
+    upiQrScanLabel: 'UPI / QR ஸ்கேன்',
+    verifyBtnLabel: 'சரிபார்க்கவும்',
+    wantToRegisterShopMsg: 'உங்கள் கடையைப் பதிவு செய்ய விரும்புகிறீர்களா?',
+    welcomeBackHeading: 'மீண்டும் வரவேற்கிறோம்',
+    loginFailedCheckCredentialsMsg: 'உள்நுழைவு தோல்வியடைந்தது. நற்சான்றிதழ்களைச் சரிபார்க்கவும்.',
+    failedDispatchVerificationCodeMsg: 'சரிபார்ப்பு குறியீட்டை அனுப்ப முடியவில்லை',
+    incorrectVerificationCodeMsg: 'தவறான சரிபார்ப்பு குறியீடு. மீண்டும் முயற்சிக்கவும்.',
+    passwordsDoNotMatchMsg: 'கடவுச்சொற்கள் பொருந்தவில்லை',
+    passwordResetFailedMsg: 'கடவுச்சொல் மீட்டமைப்பு தோல்வியடைந்தது',
+    pleaseEnterMobileNumberFirstMsg: 'முதலில் உங்கள் மொபைல் எண்ணை உள்ளிடவும்.',
+    failedDispatchVerificationOtpMsg: 'சரிபார்ப்பு OTP ஐ அனுப்ப முடியவில்லை.',
+    incorrectVerificationOtpCodeMsg: 'தவறான சரிபார்ப்பு OTP குறியீடு. மீண்டும் முயற்சிக்கவும்.',
+    registrationSuccessfulShopActiveMsg: 'பதிவு வெற்றிகரமாக முடிந்தது! உங்கள் கடை கணக்கு இப்போது செயலில் உள்ளது - நீங்கள் உடனடியாக உள்நுழையலாம்.',
+    selfRegistrationFailedMsg: 'சுய-பதிவு தோல்வியடைந்தது.',
+    shopWorkspaceSettingsSavedMsg: 'கடை பணிமனை அமைப்புகள் வெற்றிகரமாக சேமிக்கப்பட்டன!',
+    documentUploadFailedMsg: 'ஆவணப் பதிவேற்றம் தோல்வியடைந்தது',
+    removeThisDocumentConfirm: 'இந்த ஆவணத்தை அகற்றவா?',
+    failedRemoveDocumentMsg: 'ஆவணத்தை அகற்ற முடியவில்லை',
+    incorrectPasswordEnteredMsg: 'தவறான கடவுச்சொல் உள்ளிடப்பட்டது.',
+    pleaseEnterRegisteredEmailPhoneMsg: 'உங்கள் பதிவு செய்யப்பட்ட மின்னஞ்சல் அல்லது தொலைபேசி எண்ணை உள்ளிடவும்',
+    failedSendOtpCodeMsg: 'OTP குறியீட்டை அனுப்ப முடியவில்லை.',
+    invalidOtpCodeEnterCorrectMsg: 'தவறான OTP குறியீடு. சரியான குறியீட்டை உள்ளிடவும்.',
+    passwordUpdatedSuccessfullyMsg: 'கடவுச்சொல் வெற்றிகரமாக புதுப்பிக்கப்பட்டது!',
+    failedUpdatePasswordMsg: 'கடவுச்சொல்லைப் புதுப்பிக்க முடியவில்லை',
   },
   te: {
     shopsRegistered: 'నమోదిత దుకాణాలు',
@@ -457,6 +2632,731 @@ const LANGUAGES = {
     welcome: 'కీ వర్క్‌స్పేస్',
     superAdmin: 'సూపర్ అడ్మిన్',
     shopTerminal: 'షాప్ టెర్మినల్',
+    supportConfig: 'మద్దతు కాన్ఫిగరేషన్',
+    inventory: 'మెషీన్లు',
+    customerCare: 'కస్టమర్ కేర్',
+    offersAdsBanners: 'ఆఫర్లు, ప్రకటనలు & బ్యానర్లు',
+    language: 'భాష',
+    btnSave: 'సేవ్ చేయండి',
+    btnSaveChanges: 'మార్పులను సేవ్ చేయండి',
+    btnCancel: 'రద్దు చేయండి',
+    btnDelete: 'తొలగించండి',
+    btnEdit: 'సవరించండి',
+    btnSubmit: 'సమర్పించండి',
+    btnClose: 'మూసివేయండి',
+    btnConfirm: 'నిర్ధారించండి',
+    btnUpdate: 'నవీకరించండి',
+    btnRemove: 'తీసివేయండి',
+    btnBack: 'వెనుకకు',
+    btnNext: 'తదుపరి',
+    btnRetry: 'మళ్ళీ ప్రయత్నించండి',
+    btnDownload: 'డౌన్‌లోడ్ చేయండి',
+    btnUpload: 'అప్‌లోడ్ చేయండి',
+    btnContinue: 'కొనసాగించండి',
+    btnDone: 'పూర్తయింది',
+    btnOk: 'సరే',
+    btnViewAll: 'అన్నీ చూడండి',
+    btnViewDetails: 'వివరాలు చూడండి',
+    btnDismiss: 'తీసివేయండి',
+    btnAddNew: 'కొత్తది జోడించండి',
+    btnApply: 'వర్తింపజేయండి',
+    btnClear: 'క్లియర్ చేయండి',
+    btnExport: 'ఎగుమతి చేయండి',
+    yes: 'అవును',
+    no: 'కాదు',
+    loading: 'లోడ్ అవుతోంది...',
+    searching: 'శోధిస్తోంది...',
+    searchPlaceholder: 'శోధించండి...',
+    active: 'యాక్టివ్',
+    inactive: 'నిష్క్రియ',
+    suspended: 'నిలిపివేయబడింది',
+    expired: 'గడువు ముగిసింది',
+    pending: 'పెండింగ్‌లో',
+    actions: 'చర్యలు',
+    status: 'స్థితి',
+    optional: 'ఐచ్ఛికం',
+    required: 'అవసరం',
+    noRecordsFound: 'రికార్డులు కనుగొనబడలేదు',
+    noDataAvailable: 'డేటా అందుబాటులో లేదు',
+    areYouSure: 'మీరు ఖచ్చితంగా ఉన్నారా?',
+    actionCannotBeUndone: 'ఈ చర్యను రద్దు చేయడం సాధ్యం కాదు.',
+    somethingWentWrong: 'ఏదో తప్పు జరిగింది. దయచేసి మళ్ళీ ప్రయత్నించండి.',
+    changesSavedSuccessfully: 'మార్పులు విజయవంతంగా సేవ్ చేయబడ్డాయి',
+    fieldName: 'పేరు',
+    fieldEmail: 'ఇమెయిల్',
+    fieldPhone: 'ఫోన్ నంబర్',
+    fieldAddress: 'చిరునామా',
+    fieldDate: 'తేదీ',
+    fieldAmount: 'మొత్తం',
+    fieldDescription: 'వివరణ',
+    fieldCategory: 'వర్గం',
+    fieldPrice: 'ధర',
+    fieldTitle: 'శీర్షిక',
+    fieldType: 'రకం',
+    account: 'ఖాతా',
+    customerService: 'కస్టమర్ సేవ',
+    chooseLanguage: 'భాషను ఎంచుకోండి',
+    selectLanguageDesc: 'యాప్ కోసం మీకు నచ్చిన భాషను ఎంచుకోండి',
+    pressBackToExit: 'నిష్క్రమించడానికి మళ్ళీ బ్యాక్ నొక్కండి',
+    loadingDashboard: 'డాష్‌బోర్డ్ లోడ్ అవుతోంది…',
+    superAdminControl: 'సూపర్ అడ్మిన్ నియంత్రణ',
+    portal: 'పోర్టల్',
+    welcomeBack: 'తిరిగి స్వాగతం',
+    namaste: 'నమస్తే',
+    platformOverviewDesc: 'ప్రతి షాప్‌లో ప్లాట్‌ఫారమ్ అవలోకనం.',
+    newCustomer: 'కొత్త కస్టమర్',
+    registerComplianceEntry: 'కొత్త కస్టమర్ కోసం వర్తింపు ఎంట్రీని నమోదు చేయండి',
+    shopsCardTitle: 'దుకాణాలు',
+    viewManageShopsDesc: 'నమోదైన ప్రతి దుకాణాన్ని చూడండి మరియు నిర్వహించండి',
+    customerSupport: 'కస్టమర్ మద్దతు',
+    manageCustomerSupportDesc: 'కస్టమర్ మద్దతు సంప్రదింపు & వనరులను నిర్వహించండి',
+    complianceInventoryTerminal: 'వర్తింపు & ఇన్వెంటరీ టెర్మినల్',
+    workspace: 'వర్క్‌స్పేస్',
+    subscriptionRenewalRequired: 'సబ్‌స్క్రిప్షన్ పునరుద్ధరణ అవసరం!',
+    subscriptionExpiresIn: 'మీ దుకాణం సబ్‌స్క్రిప్షన్ {days} రోజుల్లో ముగుస్తుంది. దయచేసి కీ షాప్ సూపర్ అడ్మిన్‌తో పునరుద్ధరణను సమన్వయం చేయండి.',
+    planSuffix: 'ప్లాన్',
+    searchKeysCardTitle: 'కీలను శోధించండి',
+    findDigitizeKeysDesc: 'కీ రికార్డులను త్వరగా కనుగొని డిజిటలైజ్ చేయండి',
+    addMachinesCardDesc: 'కొత్త మెషిన్ లిస్టింగ్‌ను త్వరగా జోడించండి',
+    getHelpSupportDesc: 'సహాయం పొందండి & మద్దతు సంప్రదింపు వివరాలను చూడండి',
+    featuredOffersBanners: 'ఫీచర్డ్ ఆఫర్లు & బ్యానర్లు',
+    banner: 'బ్యానర్',
+    notice: 'నోటీసు',
+    offer: 'ఆఫర్',
+    viewAllOffersBanners: 'అన్ని ఆఫర్లు & బ్యానర్లను చూడండి',
+    usedMachines: 'వాడిన యంత్రాలు',
+    ecmService: 'ఈసీఎం',
+    meterService: 'మీటర్',
+    scanningService: 'స్కానింగ్',
+    usedMachinesDesc: 'వాడిన యంత్రాలను చూడండి మరియు నిర్వహించండి',
+    ecmServiceDesc: 'ఈసీఎం సేవా రికార్డులను నిర్వహించండి',
+    meterServiceDesc: 'మీటర్ సేవలను ట్రాక్ చేసి నిర్వహించండి',
+    scanningServiceDesc: 'వర్తింపు ఎంట్రీలను స్కాన్ చేసి ప్రాసెస్ చేయండి',
+    platformOperations: 'ప్లాట్‌ఫారమ్ కార్యకలాపాలు',
+    provisionShopsDesc: 'ప్లాట్‌ఫారమ్‌లోని ప్రతి కీ షాప్ వర్క్‌స్పేస్‌ను ప్రొవిజన్ చేసి, పర్యవేక్షించి, నిర్వహించండి.',
+    allShops: 'అన్ని దుకాణాలు',
+    searchShopsPlaceholder: 'దుకాణాలను శోధించండి...',
+    loadingShopRegistry: 'షాప్ రిజిస్ట్రీ లోడ్ అవుతోంది...',
+    noShopsProvisionedYet: 'ఇంకా ఏ దుకాణం ప్రొవిజన్ చేయబడలేదు',
+    noShopsMatchSearch: 'మీ శోధనకు సరిపోలే దుకాణాలు లేవు',
+    shopDetails: 'దుకాణ వివరాలు',
+    adminContact: 'అడ్మిన్ సంప్రదింపు',
+    activePlan: 'యాక్టివ్ ప్లాన్',
+    validUntil: 'వరకు చెల్లుబాటు',
+    diskStorage: 'డిస్క్ నిల్వ',
+    editWorkspace: 'వర్క్‌స్పేస్‌ను సవరించండి',
+    managePlan: 'ప్లాన్‌ను నిర్వహించండి',
+    shopOnboarding: 'షాప్ ఆన్‌బోర్డింగ్',
+    provisionNewShopWorkspace: 'కొత్త షాప్ వర్క్‌స్పేస్‌ను ప్రొవిజన్ చేయండి',
+    shopNameLabel: 'దుకాణం పేరు',
+    shopNamePlaceholder: 'ఉదా. శర్మ కీ సెంటర్',
+    shopAddressLabel: 'దుకాణం చిరునామా',
+    shopAddressPlaceholder: 'పూర్తి దుకాణం చిరునామా',
+    adminFullNameLabel: 'అడ్మిన్ పూర్తి పేరు',
+    adminFullNamePlaceholder: 'ఉదా. రమేష్ శర్మ',
+    adminEmailLabel: 'అడ్మిన్ ఇమెయిల్',
+    adminEmailPlaceholder: 'admin@example.com',
+    initialPasswordLabel: 'ప్రారంభ పాస్‌వర్డ్',
+    initialPasswordPlaceholder: 'తాత్కాలిక పాస్‌వర్డ్‌ను సెట్ చేయండి',
+    phonePlaceholder: 'ఫోన్ నంబర్',
+    whatsappNumberLabel: 'వాట్సాప్ నంబర్',
+    sameAsPhone: 'ఫోన్ నంబర్ లాగానే',
+    subscriptionPlanLabel: 'సబ్‌స్క్రిప్షన్ ప్లాన్',
+    monthlyPlan: 'నెలవారీ',
+    halfYearlyPlan: 'అర్ధ-వార్షిక',
+    yearlyPlan: 'వార్షిక',
+    endDateValidityLabel: 'ముగింపు తేదీ / చెల్లుబాటు',
+    autoCalculatedTier: 'ఎంచుకున్న ప్లాన్ టైర్ ఆధారంగా స్వయంచాలకంగా లెక్కించబడింది',
+    failedToCreateShop: 'కీ షాప్‌ను సృష్టించడంలో విఫలమైంది. మళ్ళీ ప్రయత్నించండి.',
+    ownerAadhaarMandatory: 'షాప్ వర్క్‌స్పేస్‌ను ప్రొవిజన్ చేయడానికి యజమాని ఆధార్ పత్రం తప్పనిసరి.',
+    failedInitCheckout: 'సబ్‌స్క్రిప్షన్ చెక్అవుట్‌ను ప్రారంభించడంలో విఫలమైంది. మళ్ళీ ప్రయత్నించండి.',
+    paymentFailedPrefix: 'చెల్లింపు విఫలమైంది: {message}',
+    updateFailedMsg: 'నవీకరణ విఫలమైంది',
+    billingEyebrow: 'బిల్లింగ్',
+    updateShopSubscriptionTitle: 'షాప్ సబ్‌స్క్రిప్షన్‌ను నవీకరించండి',
+    targetShopLabel: 'లక్ష్య దుకాణం:',
+    planTierLabel: 'ప్లాన్ టైర్',
+    monthlyPlanFull: 'నెలవారీ ప్లాన్',
+    sixMonthPlanFull: '6-నెలల ప్లాన్',
+    yearlyPlanFull: 'వార్షిక ప్లాన్',
+    newEndDateLabel: 'కొత్త ముగింపు తేదీ',
+    updatePlanBtn: 'ప్లాన్‌ను నవీకరించండి',
+    planSubscriptionEscrowPay: 'ప్లాన్ సబ్‌స్క్రిప్షన్ ఎస్క్రో చెల్లింపు',
+    workspaceTerminalProvisioningPayment: 'వర్క్‌స్పేస్ టెర్మినల్ ప్రొవిజనింగ్ చెల్లింపు',
+    paymentAuthorizedTitle: 'చెల్లింపు అధీకృతం చేయబడింది!',
+    paymentSettledDesc: 'సబ్‌స్క్రిప్షన్ చెల్లింపు విజయవంతంగా పరిష్కరించబడింది. వర్క్‌స్పేస్ {name} ఇప్పుడు పూర్తిగా ప్రొవిజన్ చేయబడి యాక్టివేట్ చేయబడింది.',
+    closeAndProceedBtn: 'మూసివేసి కొనసాగించండి',
+    processingTransactionTitle: 'లావాదేవీ ప్రాసెస్ అవుతోంది',
+    finalizingWorkspaceCreation: 'వర్క్‌స్పేస్ సృష్టి టన్నెల్స్ ఖరారు చేయబడుతున్నాయి.',
+    workspaceProvisionInvoice: 'వర్క్‌స్పేస్ ప్రొవిజన్ ఇన్వాయిస్',
+    planColonLabel: 'ప్లాన్:',
+    creditCardLabel: 'క్రెడిట్ కార్డ్',
+    upiQrCodeLabel: 'UPI QR కోడ్',
+    cardholderFullNameLabel: 'కార్డుదారుని పూర్తి పేరు',
+    cardholderNamePlaceholder: 'ఉదా. రమేష్ కుమార్',
+    debitCreditCardNumberLabel: 'డెబిట్ / క్రెడిట్ కార్డ్ నంబర్',
+    expiryDateLabel: 'గడువు తేదీ',
+    cvvCodeLabel: 'CVV కోడ్',
+    scanToAuthorizeInvoice: 'సెటప్ ఇన్వాయిస్‌ను అధీకృతం చేయడానికి స్కాన్ చేయండి',
+    scanQrDesc: 'GPay, PhonePe, Paytm, లేదా BHIM తో స్కాన్ చేయండి. గుర్తించిన తర్వాత సబ్‌స్క్రిప్షన్ స్వయంచాలకంగా యాక్టివేట్ అవుతుంది.',
+    secureGatewayPaymentPortal: '256-బిట్ సురక్షిత గేట్‌వే చెల్లింపు పోర్టల్',
+    cancelSetupBtn: 'సెటప్‌ను రద్దు చేయండి',
+    payAndProvisionPrefix: 'రూ. చెల్లించండి',
+    payAndProvisionSuffix: '& ప్రొవిజన్ చేయండి',
+    logEstablishingTunnel: 'సురక్షిత ఎండ్-టు-ఎండ్ శాండ్‌బాక్స్ టన్నెల్ ఏర్పాటు చేయబడుతోంది...',
+    logVerifyingBalance: 'ఖాతా బ్యాలెన్స్ & క్రెడిట్ లైన్‌లు ధృవీకరించబడుతున్నాయి...',
+    logAuthorizingEscrow: 'సబ్‌స్క్రిప్షన్ ఎస్క్రో సెటిల్‌మెంట్ లావాదేవీ అధీకృతం చేయబడుతోంది...',
+    logEncryptingCard: 'AES-GCM ద్వారా కార్డ్ వివరాలు గుప్తీకరించబడుతున్నాయి...',
+    logFulfillingProvisioning: 'కీ షాప్ API వర్క్‌స్పేస్ ప్రొవిజనింగ్ నెరవేర్చబడుతోంది...',
+    shopPhotoLabel: 'షాప్ ఫోటో',
+    shopLicenseLabel: 'షాప్ లైసెన్స్',
+    ownerAadhaarLabel: 'యజమాని ఆధార్',
+    provisionAccountBtn: 'ఖాతాను ప్రొవిజన్ చేయండి',
+    workspaceSettings: 'వర్క్‌స్పేస్ సెట్టింగ్‌లు',
+    editShopWorkspaceDetails: 'షాప్ వర్క్‌స్పేస్ వివరాలను సవరించండి',
+    workspaceNameLabel: 'వర్క్‌స్పేస్ పేరు',
+    registeredAddressFixed: 'నమోదిత చిరునామా (స్థిరం)',
+    notUploaded: 'అప్‌లోడ్ చేయబడలేదు',
+    saveSettings: 'సెట్టింగ్‌లను సేవ్ చేయండి',
+    crossTenantCompliance: 'క్రాస్-టెనెంట్ కంప్లయన్స్',
+    customerRegistryTitle: 'కస్టమర్ రిజిస్ట్రీ',
+    superviseComplianceRecordsDesc: 'అన్ని టెనెంట్ వర్క్‌స్పేస్‌లలో కంప్లయన్స్ రికార్డులను పర్యవేక్షించండి',
+    createCustomerBtn: 'కస్టమర్‌ను సృష్టించండి',
+    allCustomers: 'అన్ని కస్టమర్లు',
+    searchByNamePhoneKeyCode: 'పేరు, ఫోన్ లేదా కీ కోడ్ ద్వారా శోధించండి',
+    loadingCustomerRegistry: 'కస్టమర్ రిజిస్ట్రీ లోడ్ అవుతోంది...',
+    noCustomerRecordsMatch: 'ఏ కస్టమర్ రికార్డులు సరిపోలడం లేదు',
+    tenantWorkspaceCol: 'టెనెంట్ వర్క్‌స్పేస్',
+    customerCol: 'కస్టమర్',
+    phoneCol: 'ఫోన్',
+    keyCodeCol: 'కీ కోడ్',
+    registeredCol: 'నమోదు చేయబడింది',
+    shopWorkspaceFallback: 'కేటాయించని వర్క్‌స్పేస్',
+    photoOnFile: 'ఫోటో ఫైల్‌లో ఉంది',
+    photoPending: 'ఫోటో పెండింగ్‌లో ఉంది',
+    viewComplianceFile: 'కంప్లయన్స్ ఫైల్‌ను వీక్షించండి',
+    complianceFileEyebrow: 'కంప్లయన్స్ ఫైల్',
+    phoneContactLabel: 'ఫోన్ సంప్రదింపు',
+    registryDateLabel: 'నమోదు తేదీ',
+    addressLabel: 'చిరునామా',
+    keyBlankCodeLabel: 'కీ బ్లాంక్ కోడ్',
+    idVerificationLabel: 'ఐడీ ధృవీకరణ',
+    idNumberDecryptedLabel: 'ఐడీ నంబర్ (డిక్రిప్ట్ చేయబడింది)',
+    gpsCoordinatesLabel: 'జీపీఎస్ కోఆర్డినేట్‌లు',
+    latLongTemplate: 'అక్షాంశం: {lat} • రేఖాంశం: {long}',
+    notCapturedLabel: 'క్యాప్చర్ చేయబడలేదు',
+    googleMapsLabel: 'గూగుల్ మ్యాప్స్',
+    capturedAddressLabel: 'క్యాప్చర్ చేసిన చిరునామా',
+    webcamPhotoLabel: 'కెమెరా ఫోటో',
+    attachedIdCopiesLabel: 'జోడించిన ఐడీ కాపీలు',
+    uploadedBadge: 'అప్‌లోడ్ చేయబడింది',
+    missingBadge: 'తప్పిపోయింది',
+    closeFileBtn: 'ఫైల్‌ను మూసివేయండి',
+    operationFailedMsg: 'ఆపరేషన్ విఫలమైంది',
+    confirmRemoveKeyBlank: 'ఈ కీ బ్లాంక్‌ను కేంద్ర కేటలాగ్ నుండి తీసివేయాలనుకుంటున్నారా?',
+    platformCatalogueLabel: 'ప్లాట్‌ఫారమ్ కేటలాగ్',
+    masterKeyCatalogueTitle: 'మాస్టర్ కీ కేటలాగ్',
+    provisionKeyBlankSpecsDesc: 'ప్రతి షాప్ టెర్మినల్‌లో శోధనకు అందుబాటులో ఉన్న కీ బ్లాంక్ స్పెసిఫికేషన్‌లను ప్రొవిజన్ చేయండి.',
+    addKeyBlankBtn: 'కీ బ్లాంక్ జోడించండి',
+    searchCataloguePlaceholder: 'కోడ్, వర్గం, స్పెక్స్ రిఫరెన్స్ ద్వారా కేటలాగ్‌ను శోధించండి…',
+    loadingCatalogueMsg: 'కేటలాగ్ లోడ్ అవుతోంది…',
+    noKeyBlanksMatch: 'ఈ శోధనకు ఏ కీ బ్లాంక్‌లు సరిపోలడం లేదు',
+    modifyBtn: 'మార్చండి',
+    deleteBtn: 'తొలగించండి',
+    catalogueEntryLabel: 'కేటలాగ్ ఎంట్రీ',
+    modifyKeyBlankTitle: 'కీ బ్లాంక్‌ను మార్చండి',
+    addNewKeyBlankTitle: 'కొత్త కీ బ్లాంక్ జోడించండి',
+    keyNumberCodeLabel: 'కీ నంబర్ / కోడ్',
+    connectedShopLabel: 'కనెక్ట్ చేయబడిన షాప్',
+    globalCatalogueLabel: 'గ్లోబల్ కేటలాగ్',
+    connectedCustomersLabel: 'కనెక్ట్ చేయబడిన కస్టమర్(లు)',
+    noCustomerLinkedYet: 'ఇంకా ఏ కస్టమర్ లింక్ చేయబడలేదు',
+    keyCodeLabel: 'కీ కోడ్',
+    keyCodePlaceholderEg: 'ఉదా. CY-102',
+    categoryTypeLabel: 'వర్గం రకం',
+    categoryPlaceholderEg: 'ఉదా. ప్యాడ్‌లాక్',
+    backImageUrlLabel: 'బ్యాక్ ఇమేజ్ URL',
+    saveChangesBtn: 'మార్పులను సేవ్ చేయండి',
+    publishKeyBtn: 'కీని ప్రచురించండి',
+    crossShopMarketplaceLabel: 'క్రాస్-షాప్ మార్కెట్‌ప్లేస్',
+    inventoryTitle: 'మెషీన్లు',
+    manageSharedInventoryDesc: 'ప్లాట్‌ఫారమ్ అంతటా భాగస్వామ్య ఇన్వెంటరీ ఫీడ్, బ్యానర్ యాడ్ క్యాంపెయిన్‌లు మరియు షాప్ ఆఫర్‌లను నిర్వహించండి.',
+    browseListProductsDesc: 'ప్లాట్‌ఫారమ్‌లోని ప్రతి షాప్‌లో భాగస్వామ్యం చేయబడిన ఉత్పత్తులను బ్రౌజ్ చేసి జాబితా చేయండి',
+    inventoryFeedTab: 'మెషీన్ ఫీడ్',
+    bannerManagementTab: 'బ్యానర్ నిర్వహణ',
+    offerManagementTab: 'ఆఫర్ నిర్వహణ',
+    failedUpdateCampaign: 'క్యాంపెయిన్‌ను అప్‌డేట్ చేయడంలో విఫలమైంది',
+    failedScheduleCampaign: 'క్యాంపెయిన్‌ను షెడ్యూల్ చేయడంలో విఫలమైంది',
+    confirmTerminateAdCampaign: 'ఈ ప్రకటన ప్రచారాన్ని ముగించాలనుకుంటున్నారా?',
+    interactivePopupLabel: 'ఇంటరాక్టివ్ పాప్అప్',
+    textNoticeLabel: 'టెక్స్ట్ నోటీసు',
+    mainBannerLabel: 'ప్రధాన బ్యానర్',
+    growthMarketingLabel: 'వృద్ధి & మార్కెటింగ్',
+    adCampaignsTitle: 'ప్రకటన ప్రచారాలు',
+    publishBannersPopupsDesc: 'షాప్ డాష్‌బోర్డ్ స్క్రీన్‌లకు లక్ష్యంగా చేసుకున్న బ్యానర్‌లు మరియు పాప్అప్‌లను ప్రచురించండి.',
+    newAdCampaignBtn: 'కొత్త ప్రకటన ప్రచారం',
+    loadingCampaignsMsg: 'ప్రచారాలు లోడ్ అవుతున్నాయి…',
+    noAdCampaignsScheduled: 'ఇంకా ఏ ప్రకటన ప్రచారం షెడ్యూల్ చేయబడలేదు.',
+    liveLabel: 'లైవ్',
+    scheduledLabel: 'షెడ్యూల్ చేయబడింది',
+    priorityLabel: 'ప్రాధాన్యత',
+    startLabel: 'ప్రారంభం',
+    endLabel: 'ముగింపు',
+    allKeyShopsLabel: 'అన్ని కీ షాప్‌లు',
+    targetedShopSingular: '{n} లక్ష్య షాప్',
+    targetedShopsPlural: '{n} లక్ష్య షాప్‌లు',
+    editBtn: 'సవరించండి',
+    cancelCampaignBtn: 'ప్రచారాన్ని రద్దు చేయండి',
+    adCampaignLabel: 'ప్రకటన ప్రచారం',
+    editAdCampaignTitle: 'ప్రకటన ప్రచారాన్ని సవరించండి',
+    newVisualAdCampaignTitle: 'కొత్త విజువల్ ప్రకటన ప్రచారం',
+    adTitleAnnouncementLabel: 'ప్రకటన శీర్షిక / ప్రకటన',
+    adTitlePlaceholderEg: 'ఉదా. ఈ శుక్రవారం గోద్రెజ్ కీ నకిళ్లపై 20% తగ్గింపు',
+    bannerImageSourceLabel: 'బ్యానర్ ఇమేజ్ మూలం',
+    pasteImageUrlPlaceholder: 'ఇమేజ్ URL పేస్ట్ చేయండి (లేదా గూగుల్ ఇమేజ్ లింక్)',
+    uploadBtn: 'అప్‌లోడ్ చేయండి',
+    adFormatLabel: 'ప్రకటన ఫార్మాట్',
+    mainBannerNoticeOption: 'ప్రధాన బ్యానర్ నోటీసు',
+    interactiveLoginPopupOption: 'ఇంటరాక్టివ్ లాగిన్ పాప్అప్',
+    dashboardTextNoticeOption: 'డాష్‌బోర్డ్ టెక్స్ట్ నోటీసు',
+    campaignPriorityLabel: 'ప్రచార ప్రాధాన్యత',
+    startDateLabel: 'ప్రారంభ తేదీ',
+    endDateLabelShort: 'ముగింపు తేదీ',
+    targetAudienceLabel: 'లక్ష్య ప్రేక్షకులు',
+    broadcastAllKeyShops: 'అన్ని కీ షాప్‌లకు ప్రసారం చేయండి',
+    targetSpecificShops: 'నిర్దిష్ట షాప్‌లను లక్ష్యంగా చేసుకోండి',
+    scheduleCampaignBtn: 'ప్రచారాన్ని షెడ్యూల్ చేయండి',
+    searchInventoryPlaceholder: 'ఇన్వెంటరీని శోధించండి...',
+    newListingBtn: 'మెషీన్ జోడించండి',
+    allCategoriesLabel: 'అన్ని వర్గాలు',
+    loadingListingsMsg: 'లిస్టింగ్‌లు లోడ్ అవుతున్నాయి...',
+    noOffersPublishedYet: 'ఇంకా ఆఫర్‌లు ప్రచురించబడలేదు',
+    noInventoryListedYet: 'ఇంకా ఇన్వెంటరీ జాబితా చేయబడలేదు',
+    expiredLabel: 'గడువు ముగిసింది',
+    percentOffSuffix: '% తగ్గింపు',
+    validTillPrefix: 'వరకు చెల్లుతుంది',
+    linkedPrefix: 'లింక్ చేయబడింది:',
+    superAdminIndependentLabel: 'సూపర్ అడ్మిన్ (స్వతంత్ర)',
+    shopLabel: 'దుకాణం:',
+    ownerLabel: 'యజమాని:',
+    callPrefix: 'కాల్ చేయండి',
+    removeBtn: 'తొలగించు',
+    advertisementLabel: 'ప్రకటన',
+    offerLabel: 'ఆఫర్',
+    promotionalProductLabel: 'ఉత్పత్తి',
+    failedUpdateListing: 'లిస్టింగ్ నవీకరించడంలో విఫలమైంది',
+    failedPublishListing: 'లిస్టింగ్ ప్రచురించడంలో విఫలమైంది',
+    confirmRemoveListing: 'ఈ లిస్టింగ్‌ను తొలగించాలా?',
+    inventoryListingLabel: 'మెషీన్ లిస్టింగ్',
+    editListingTitle: 'లిస్టింగ్‌ను సవరించండి',
+    newInventoryListingTitle: 'కొత్త ఇన్వెంటరీ లిస్టింగ్',
+    nameLabel: 'పేరు',
+    listingNamePlaceholderEg: 'ఉదా. ప్రీమియం గోద్రెజ్ కీ-బ్లాంక్స్ - బల్క్ ప్యాక్',
+    productTypeLabel: 'ఉత్పత్తి రకం',
+    selectProductTypePlaceholder: 'ఉత్పత్తి రకాన్ని ఎంచుకోండి',
+    noProductTypesAvailable: 'ఇంకా ఉత్పత్తి రకాలు అందుబాటులో లేవు',
+    descriptionOptionalLabel: 'వివరణ (ఐచ్ఛికం)',
+    shortDescriptionPlaceholder: 'లిస్టింగ్ కార్డ్‌పై చూపబడే సంక్షిప్త వివరణ',
+    productPhotoOptionalLabel: 'ఉత్పత్తి ఫోటో (ఐచ్ఛికం)',
+    imageMediaOptionalLabel: 'చిత్రం / మీడియా (ఐచ్ఛికం)',
+    priceOptionalLabel: 'ధర (ఐచ్ఛికం)',
+    priceLeaveBlankPlaceholder: 'వర్తించకపోతే ఖాళీగా ఉంచండి',
+    phoneNumberLabel: 'ఫోన్ నంబర్',
+    phoneNumberPlaceholderEg: 'ఉదా. 9876543210',
+    tapToCallHint: 'కొనుగోలుదారుల కోసం లిస్టింగ్ కార్డ్‌పై టాప్-టు-కాల్ బటన్‌గా చూపబడుతుంది.',
+    discountPercentageOptionalLabel: 'తగ్గింపు శాతం (ఐచ్ఛికం)',
+    discountPercentagePlaceholderEg: 'ఉదా. 20',
+    validUntilOptionalLabel: 'చెల్లుబాటు తేదీ వరకు (ఐచ్ఛికం)',
+    validUntilHint: 'గడువు లేని ఆఫర్ కోసం ఖాళీగా ఉంచండి. గడువు ముగిసిన ఆఫర్‌లు షేర్డ్ ఫీడ్ నుండి దాచబడతాయి.',
+    linkExistingListingLabel: 'మీ ఇప్పటికే ఉన్న లిస్టింగ్‌లలో ఒకదానికి లింక్ చేయండి (ఐచ్ఛికం)',
+    noLinkedListingOption: 'లింక్ చేయబడిన లిస్టింగ్ లేదు',
+    productLabel: 'ఉత్పత్తి',
+    publishListingBtn: 'లిస్టింగ్‌ను ప్రచురించండి',
+    fromKeyShopHqLabel: 'కీ షాప్ ప్రధాన కార్యాలయం నుండి',
+    offersAdsBannersTitle: 'ఆఫర్‌లు, ప్రకటనలు & బ్యానర్‌లు',
+    everyActiveAdOfferDesc: 'సూపర్ అడ్మిన్ ప్రచురించిన ప్రతి క్రియాశీల ప్రకటన, బ్యానర్, నోటీసు మరియు ఆఫర్.',
+    loadingEllipsis: 'లోడ్ అవుతోంది…',
+    nothingPublishedYet: 'ఇంకా ఏమీ ప్రచురించబడలేదు.',
+    advertisementsAndBannersLabel: 'ప్రకటనలు & బ్యానర్‌లు',
+    offersLabel: 'ఆఫర్‌లు',
+    subscriptionRatesUpdatedMsg: 'సభ్యత్వ ప్రణాళిక ధరలు విజయవంతంగా నవీకరించబడ్డాయి!',
+    updateFailedPrefix: 'నవీకరణ విఫలమైంది',
+    platformFinanceLabel: 'ప్లాట్‌ఫారమ్ ఆర్థిక వ్యవహారాలు',
+    subscriptionPricingTitle: 'సభ్యత్వ ధర నిర్ణయం',
+    configureFranchisePricingDesc: 'ప్లాట్‌ఫారమ్ కోసం ఫ్రాంచైజీ సభ్యత్వ ప్రణాళిక రేట్లను కాన్ఫిగర్ చేయండి.',
+    monthlyLower: 'నెలవారీ',
+    monthlyRecurringPlanLabel: 'నెలవారీ పునరావృత ప్రణాళిక',
+    sixMonthLower: '6-నెలలు',
+    halfYearlyPlanRateLabel: 'అర్ధ-వార్షిక ప్రణాళిక రేటు',
+    yearlyLower: 'వార్షిక',
+    yearlyDiscountedRateLabel: 'వార్షిక తగ్గింపు రేటు',
+    subscriptionPlanPricingLabel: 'సభ్యత్వ ప్రణాళిక ధర నిర్ణయం',
+    setRatesForKeyShopsDesc: 'కీ షాప్‌ల కోసం రేట్లను సెట్ చేయండి. ఈ ధరలు ప్రొవిజనింగ్ సమయంలో చెక్అవుట్ గేట్‌వే స్క్రీన్‌ను స్వయంచాలకంగా నవీకరిస్తాయి.',
+    monthlyRecurringPlanRupeeLabel: 'నెలవారీ పునరావృత ప్రణాళిక (₹)',
+    monthlyRecurringBillHint: 'ప్లాట్‌ఫారమ్ సేవ కోసం నెలవారీ పునరావృత అద్దె బిల్లు.',
+    sixMonthPlanRateRupeeLabel: '6-నెలల ప్రణాళిక రేటు (₹)',
+    halfYearlyUpfrontRateHint: 'దుకాణాల కోసం తగ్గింపు అర్ధ-వార్షిక ముందస్తు రేటు.',
+    yearlyPlanDiscountedRateRupeeLabel: 'వార్షిక ప్రణాళిక తగ్గింపు రేటు (₹)',
+    annualUpfrontRateHint: 'దుకాణాల కోసం తగ్గింపు వార్షిక ముందస్తు రేటు.',
+    updateSubscriptionRatesBtn: 'సభ్యత్వ రేట్లను నవీకరించండి',
+    enterValidAmountMsg: 'దయచేసి చెల్లుబాటు అయ్యే మొత్తాన్ని నమోదు చేయండి',
+    monthlyRevenueLogsTitle: 'నెలవారీ ఆదాయ లాగ్‌లు',
+    recordSubscriptionCollectionsDesc: 'SaaS పనితీరు ట్రాకింగ్ కోసం సభ్యత్వ వసూళ్లను మాన్యువల్‌గా నమోదు చేయండి.',
+    allTimeLower: 'అన్ని కాలాలు',
+    totalRevenueCollectedLabel: 'మొత్తం వసూలైన ఆదాయం',
+    collectedThisYearLabel: 'ఈ సంవత్సరం వసూలు చేయబడింది',
+    revenueRecordsAvgLabel: 'ఆదాయ రికార్డులు — సగటు',
+    collectionsTrendLabel: 'వసూళ్ల ధోరణి',
+    lastLoggedEntriesPrefix: 'చివరి',
+    loggedEntriesSuffix: 'నమోదు చేసిన ఎంట్రీలు',
+    noRevenueLogsYet: 'ఇంకా ఆదాయ లాగ్‌లు నమోదు కాలేదు.',
+    addRevenueRecordLabel: 'ఆదాయ రికార్డును జోడించండి',
+    monthLabel: 'నెల',
+    yearLabel: 'సంవత్సరం',
+    amountCollectedRupeeLabel: 'వసూలు చేసిన మొత్తం (₹)',
+    notesRemarksLabel: 'గమనికలు / వ్యాఖ్యలు',
+    logRevenuePayoutBtn: 'ఆదాయ చెల్లింపును నమోదు చేయండి',
+    platformRevenueHistoryLabel: 'ప్లాట్‌ఫారమ్ ఆదాయ చరిత్ర',
+    periodCol: 'కాలం',
+    notesCol: 'గమనికలు',
+    amountCol: 'మొత్తం',
+    duplicateKeyLookupLabel: 'నకిలీ కీ శోధన',
+    masterKeyCatalogSearchTitle: 'మాస్టర్ కీ కేటలాగ్ శోధన',
+    lookupBlankSpecDesc: 'బ్లాంక్ స్పెసిఫికేషన్‌లు, కీ కోడ్‌లు మరియు కస్టమర్ రిజిస్ట్రీ రికార్డులను సెకన్లలో వెతకండి.',
+    keyCodeVehicleCategoryLabel: 'కీ కోడ్, వాహన నంబర్, లేదా వర్గం',
+    searchByKeyCodePlaceholder: 'కీ కోడ్, వాహన నంబర్, కస్టమర్ లొకేషన్, వర్గం ద్వారా శోధించండి\u2026',
+    searchingRegistryMsg: 'రిజిస్ట్రీని శోధిస్తోంది\u2026',
+    noMatchingKeysMsg: 'సరిపోలే కీలు లేదా కస్టమర్ రికార్డులు కనుగొనబడలేదు',
+    registeredCustomerKeyLabel: 'నమోదైన కస్టమర్ కీ',
+    customerPrefix: 'కస్టమర్:',
+    vehicleNoPrefix: 'వాహన నంబర్:',
+    viewFullDetailsLabel: 'పూర్తి వివరాలు చూడండి',
+    keyDetailsLabel: 'కీ వివరాలు',
+    lockCategoryLabel: 'లాక్ వర్గం',
+    backProfileLabel: 'బ్యాక్ ప్రొఫైల్',
+    customerNameLabel: 'కస్టమర్ పేరు',
+    vehicleNumberLabel: 'వాహన నంబర్',
+    webcamSnapshotLabel: 'కెమెరా స్నాప్‌షాట్',
+    registryLocationOverviewLabel: 'రిజిస్ట్రీ లొకేషన్ అవలోకనం (ఇతర వర్క్‌స్పేస్)',
+    customerMobileLabel: 'కస్టమర్ మొబైల్',
+    registeredShopLabel: 'నమోదైన షాప్',
+    keyShopWorkspaceLabel: 'కీ షాప్ వర్క్‌స్పేస్',
+    shopMobileLabel: 'షాప్ మొబైల్',
+    sensitiveCoordsHiddenMsg: 'ఈ కీ నమోదు మరొక నకిలీ కీ షాప్‌లో సృష్టించబడినందున సున్నితమైన కోఆర్డినేట్‌లు మరియు కెమెరా చిత్రాలు దాచబడ్డాయి.',
+    closeDetailsBtn: 'వివరాలు మూసివేయండి',
+    fileSizeExceeds5MBMsg: 'ఫైల్ పరిమాణం 5MB పరిమితిని మించిపోయింది',
+    onlyJpegPngPdfMsg: 'JPEG, PNG మరియు PDF పత్రం ఫార్మాట్‌లు మాత్రమే ఆమోదించబడతాయి',
+    documentAlreadyStagedTemplate: '{type} కోసం పత్రం ఇప్పటికే సిద్ధం చేయబడింది.',
+    pleaseEnterKeyCodeMsg: 'దయచేసి ముందుగా కీ కోడ్‌ను నమోదు చేయండి',
+    pleaseEnterValidTestEmailMsg: 'పరీక్షా OTP అందుకోవడానికి దయచేసి చెల్లుబాటు అయ్యే ఇమెయిల్ చిరునామాను నమోదు చేయండి.',
+    failedSendOtpMsg: 'OTP కోడ్ పంపడంలో విఫలమైంది.',
+    invalidOtpCodeMsg: 'చెల్లని OTP కోడ్. దయచేసి సరైన కోడ్‌ను నమోదు చేయండి.',
+    complianceRecordLoggedMsg: 'కస్టమర్ కంప్లయన్స్ రికార్డ్ విజయవంతంగా నమోదు చేయబడింది!',
+    submissionFailedTemplate: 'సమర్పణ విఫలమైంది: {message}',
+    contactKeyStepLabel: 'సంప్రదింపు & కీ',
+    idPhotoStepLabel: 'ID ఫోటో',
+    documentsStepLabel: 'పత్రాలు',
+    reviewStepLabel: 'సమీక్ష',
+    newCustomerEyebrow: 'కొత్త కస్టమర్',
+    multiStepComplianceDesc: 'బహుళ-దశల కంప్లయన్స్ ఆన్‌బోర్డింగ్ — కీ జారీ, గుర్తింపు క్యాప్చర్ & GPS-స్టాంప్డ్ చిరునామా, ఐదు శీఘ్ర దశల్లో.',
+    stepLabel: 'దశ',
+    ofLabel: 'లో',
+    contactKeyCredentialsTitle: 'సంప్రదింపు & కీ ఆధారాలు',
+    registerContactDetailsDesc: 'కస్టమర్ యొక్క సంప్రదింపు వివరాలు, వాహనం & కీ కోడ్, మరియు నివాస చిరునామాను నమోదు చేయండి.',
+    shopFieldLabel: 'షాప్',
+    selectShopPlaceholder: 'ఒక షాప్‌ను ఎంచుకోండి…',
+    customerRegisteredUnderShopMsg: 'ఈ కస్టమర్, మరియు దాని కీ కోడ్, ఎంచుకున్న షాప్ యొక్క వర్క్‌స్పేస్ కింద నమోదు చేయబడతాయి.',
+    duplicateKeyDetectedLabel: 'నకిలీ కీ కనుగొనబడింది',
+    duplicateKeyDetectedDescTemplate: 'కీ కోడ్ {code} ఇప్పటికే ఇప్పటికే ఉన్న కస్టమర్‌కు నమోదు చేయబడింది. దయచేసి ధృవీకరించి ప్రత్యేకమైన కీ కోడ్‌ను నమోదు చేయండి.',
+    fullCustomerNameLabel: 'పూర్తి కస్టమర్ పేరు',
+    customerNamePlaceholderEg: 'రోహన్ మల్హోత్రా',
+    keyCodeKeyNumberLabel: 'కీ కోడ్ / కీ నంబర్',
+    keyCodeEnterPlaceholderEg: 'కీ కోడ్‌ను నమోదు చేయండి (ఉదా. TN09B)',
+    resendBtn: 'మళ్లీ పంపండి',
+    sendOtpBtn: 'OTP పంపండి',
+    smsToPhoneLabel: 'ఫోన్‌కు SMS',
+    emailTestingLabel: 'ఇమెయిల్ (పరీక్ష)',
+    testEmailPlaceholder: 'test@email.com — OTP కోసం మాత్రమే, సేవ్ చేయబడదు',
+    addressLineLabel: 'చిరునామా లైన్',
+    locatingLabel: 'గుర్తిస్తోంది…',
+    currentLocationBtn: 'ప్రస్తుత స్థానం',
+    addressLinePlaceholderEg: 'ఉదా. ఫ్లాట్ 101, పార్క్ అవెన్యూ',
+    openLocationSettingsBtn: 'లొకేషన్ సెట్టింగ్‌లను తెరవండి',
+    openAppSettingsBtn: 'యాప్ సెట్టింగ్‌లను తెరవండి',
+    stateLabel: 'రాష్ట్రం',
+    districtLabel: 'జిల్లా',
+    countryLabel: 'దేశం',
+    gpsCapturedTemplate: 'GPS క్యాప్చర్ చేయబడింది: {lat}, {long}',
+    enterOtpCodeSentToEmailTemplate: '{email}కు పంపిన 4-అంకెల కోడ్‌ను నమోదు చేయండి',
+    enterOtpCodeSentToPhoneMsg: 'కస్టమర్ ఫోన్‌కు పంపిన 4-అంకెల కోడ్‌ను నమోదు చేయండి',
+    testingModeNoProviderTemplate: 'పరీక్షా మోడ్ — {provider} ప్రొవైడర్ కాన్ఫిగర్ చేయబడలేదు',
+    verifyOtpBtn: 'OTPని ధృవీకరించండి',
+    otpVerifiedSuccessEmailMsg: 'కస్టమర్ ఇమెయిల్ OTP విజయవంతంగా ధృవీకరించబడింది.',
+    otpVerifiedSuccessPhoneMsg: 'కస్టమర్ ఫోన్ నంబర్ OTP విజయవంతంగా ధృవీకరించబడింది.',
+    complianceDocUploadTitle: 'కంప్లయన్స్ పత్రం అప్‌లోడ్',
+    uploadGovIdDesc: 'ఈ కస్టమర్‌ను ధృవీకరించడానికి ఉపయోగించే ప్రభుత్వ ID రుజువు కాపీని అప్‌లోడ్ చేయండి.',
+    documentTypeLabel: 'పత్రం రకం',
+    aadhaarCardLabel: 'ఆధార్ కార్డ్',
+    drivingLicenseLabel: 'డ్రైవింగ్ లైసెన్స్',
+    panCardLabel: 'పాన్ కార్డ్',
+    voterIdLabel: 'ఓటర్ ID',
+    dropOrBrowseCopyTemplate: '{type} యొక్క కాపీని డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయండి',
+    jpegPngPdfUpTo5MbLabel: 'JPEG, PNG లేదా PDF — 5MB వరకు',
+    stagedIdCopiesTemplate: 'సిద్ధం చేసిన ID కాపీలు ({count})',
+    verifyDetailsBeforeSubmitDesc: 'ఈ కంప్లయన్స్ నమోదును సమర్పించే ముందు దిగువ నమోదు చేసిన ప్రతి వివరాన్ని ధృవీకరించండి. ఈ దశలో ఏదీ స్వయంచాలకంగా క్యాప్చర్ చేయబడదు లేదా సవరించబడదు.',
+    reviewCustomerLabel: 'కస్టమర్',
+    reviewPhoneLabel: 'ఫోన్',
+    keyBlankLabel: 'కీ బ్లాంక్',
+    registeredAddressLabel: 'నమోదు చేసిన చిరునామా',
+    idProofTypeLabel: 'ID రుజువు రకం',
+    uploadedDocumentsLabel: 'అప్‌లోడ్ చేసిన పత్రాలు',
+    filesAttachedTemplate: '{count} ఫైల్(లు) జతచేయబడ్డాయి',
+    noneAttachedLabel: 'ఏదీ జతచేయబడలేదు',
+    reviewLocationLabel: 'స్థానం',
+    gpsCapturedHeadingLabel: 'GPS క్యాప్చర్ చేయబడింది',
+    latLongMiddotTemplate: 'లాట్ {lat} · లాంగ్ {long}',
+    noGpsLocationCapturedDesc: 'ఏ GPS స్థానం క్యాప్చర్ చేయబడలేదు. కోఆర్డినేట్‌లను జోడించాలనుకుంటే "సంప్రదింపు & కీ" దశకు తిరిగి వెళ్లి "ప్రస్తుత స్థానం" బటన్‌ను ఉపయోగించండి.',
+    submitComplianceRecordBtn: 'కంప్లయన్స్ రికార్డ్‌ను సమర్పించండి',
+    historyPageDesc: 'గత నకిలీ-కీ నమోదులు మరియు కంప్లయన్స్ సమర్పణలను శోధించి ధృవీకరించండి.',
+    loadingComplianceRecordsMsg: 'కంప్లయన్స్ రికార్డులు లోడ్ అవుతున్నాయి…',
+    noComplianceRecordsMatchMsg: 'ఈ శోధనకు సరిపోలే కంప్లయన్స్ రికార్డులు లేవు.',
+    vehicleCol: 'వాహనం',
+    locationCol: 'స్థానం',
+    loggedCol: 'నమోదు చేయబడింది',
+    actionsCol: 'చర్యలు',
+    editDetailsBtn: 'వివరాలను సవరించండి',
+    documentIdTypeLabel: 'పత్రం ID రకం',
+    uploadNewFileCopyLabel: 'కొత్త ఫైల్ కాపీని అప్‌లోడ్ చేయండి',
+    jpegPngPdfLabel: 'JPEG, PNG లేదా PDF',
+    downloadTitleLabel: 'డౌన్‌లోడ్ చేయండి',
+    customerComplianceRecordUpdatedMsg: 'కస్టమర్ కంప్లయన్స్ రికార్డ్ విజయవంతంగా అప్‌డేట్ చేయబడింది!',
+    failedSaveCustomerEditsMsg: 'కస్టమర్ సవరణలను సేవ్ చేయడంలో విఫలమైంది.',
+    loadingSupportResourcesMsg: 'మద్దతు వనరులు లోడ్ అవుతున్నాయి…',
+    supportTrainingCenterTitle: 'మద్దతు & శిక్షణా కేంద్రం',
+    reachSupportTrainingDesc: 'కీ షాప్ సాంకేతిక మద్దతును సంప్రదించండి మరియు లాక్‌స్మిత్ శిక్షణా వనరులతో మీ నైపుణ్యాలను మెరుగుపరచుకోండి.',
+    contactLiveAgentTitle: 'లైవ్ ఏజెంట్‌ను సంప్రదించండి',
+    supportHoursLabel: 'సోమ-శని, ఉదయం 9 - సాయంత్రం 7 IST',
+    liveCustomerSupportDesc: 'మీ కీ-మేకింగ్ మెషీన్‌లు లేదా నకిలీ కీ పోర్టల్ డాష్‌బోర్డ్‌కు సహాయం చేయడానికి లైవ్ కస్టమర్ మద్దతు అందుబాటులో ఉంది.',
+    directWhatsappSupportLabel: 'ప్రత్యక్ష వాట్సాప్ మద్దతు',
+    chatOnWhatsappBtn: 'వాట్సాప్‌లో చాట్ చేయండి',
+    locksmithSkillUpgradesTitle: 'లాక్‌స్మిత్ నైపుణ్య అప్‌గ్రేడ్‌లు',
+    videoTutorialsFromExpertsDesc: 'నకిలీ కీ నిపుణుల వీడియో ట్యుటోరియల్స్',
+    trainingMaterialLabel: 'శిక్షణా సామగ్రి',
+    watchLinkLabel: 'లింక్‌ను చూడండి',
+    noSkillUpgradeVideosMsg: 'ప్రస్తుతం నైపుణ్య అప్‌గ్రేడ్ వీడియోలు ఏవీ అందుబాటులో లేవు.',
+    loadingSupportConfigMsg: 'మద్దతు కాన్ఫిగరేషన్ లోడ్ అవుతోంది…',
+    platformSupportEyebrow: 'ప్లాట్‌ఫారమ్ మద్దతు',
+    customerSupportConfigTitle: 'కస్టమర్ మద్దతు కాన్ఫిగరేషన్',
+    configureGlobalSupportDesc: 'ప్రతి షాప్‌కు కనిపించే గ్లోబల్ కస్టమర్ కేర్ కాంటాక్ట్ మరియు శిక్షణ వీడియో లింక్‌లను కాన్ఫిగర్ చేయండి.',
+    customerSupportWhatsappLabel: 'కస్టమర్ మద్దతు వాట్సాప్ నంబర్',
+    whatsappNumberPlaceholderEg: 'ఉదా. +91 98765 43210',
+    supportContactEyebrow: 'మద్దతు సంప్రదింపు',
+    supportContactTitle: 'మద్దతు సంప్రదింపు',
+    supportContactDesc: 'దిగువ సంప్రదింపు వివరాలను ఉపయోగించి నేరుగా కీ షాప్ బృందాన్ని సంప్రదించండి.',
+    ownerNameLabel: 'యజమాని పేరు',
+    ownerPhoneLabel: 'యజమాని ఫోన్',
+    ownerNamePlaceholderEg: 'ఉదా. రాజేష్ కుమార్',
+    ownerPhonePlaceholderEg: 'ఉదా. +91 98765 43210',
+    ownerAddressPlaceholderEg: 'ఉదా. 12 ఎంజీ రోడ్, బెంగళూరు',
+    noContactInfoConfiguredMsg: 'సంప్రదింపు వివరాలు ఇంకా కాన్ఫిగర్ చేయలేదు.',
+    ownerContactSectionTitle: 'యజమాని సంప్రదింపు వివరాలు',
+    ownerContactSectionDesc: 'ఈ వివరాలు ప్రతి దుకాణానికి సపోర్ట్ కాంటాక్ట్ స్క్రీన్‌లో చూపబడతాయి.',
+    videoSingularLabel: 'వీడియో',
+    videoPluralLabel: 'వీడియోలు',
+    addVideoBtn: 'వీడియో జోడించండి',
+    noVideosConfiguredMsg: 'వీడియోలు ఏవీ కాన్ఫిగర్ చేయలేదు. లాక్‌స్మిత్ శిక్షణ లింక్‌లను జోడించడానికి “వీడియో జోడించండి” క్లిక్ చేయండి.',
+    removeVideoTitle: 'వీడియోను తీసివేయండి',
+    videoTitleNameLabel: 'వీడియో శీర్షిక / పేరు',
+    videoTitlePlaceholderEg: 'ఉదా. Locksmith Career Income',
+    youtubeUrlLabel: 'యూట్యూబ్ URL',
+    saveConfigurationBtn: 'కాన్ఫిగరేషన్ సేవ్ చేయండి',
+    shopCategoriesTitle: 'షాప్ వర్గాలు',
+    categorySingularLabel: 'వర్గం',
+    categoryPluralLabel: 'వర్గాలు',
+    manageShopCategoriesDesc: 'పబ్లిక్ స్వీయ-నమోదు విజార్డ్ యొక్క వర్గం డ్రాప్‌డౌన్‌లో అందించే షాప్ "రకం" ఎంపికలను నిర్వహించండి.',
+    enterCategoryNamePlaceholder: 'వర్గం పేరును నమోదు చేయండి',
+    addBtnLabel: 'జోడించండి',
+    noCategoriesYetMsg: 'ఇంకా షాప్ వర్గాలు లేవు. పైన ఒకటి జోడించండి - మీరు అలా చేసే వరకు నమోదు ఫారమ్ డ్రాప్‌డౌన్ ఖాళీగా ఉంటుంది.',
+    productTypesTitle: 'ఉత్పత్తి రకాలు',
+    typeSingularLabel: 'రకం',
+    typePluralLabel: 'రకాలు',
+    manageProductTypesDesc: 'ఇన్వెంటరీ ఉత్పత్తి సృష్టి ఫారమ్‌లో అందించే ఉత్పత్తి రకం ఎంపికలను నిర్వహించండి.',
+    enterProductTypePlaceholder: 'ఉత్పత్తి రకాన్ని నమోదు చేయండి',
+    noProductTypesYetMsg: 'ఇంకా ఉత్పత్తి రకాలు లేవు. పైన ఒకటి జోడించండి - మీరు అలా చేసే వరకు ఇన్వెంటరీ ఉత్పత్తి సృష్టి డ్రాప్‌డౌన్ ఖాళీగా ఉంటుంది.',
+    supportConfigUpdatedMsg: 'మద్దతు కాన్ఫిగరేషన్ విజయవంతంగా నవీకరించబడింది!',
+    saveFailedTemplate: 'సేవ్ విఫలమైంది: {msg}',
+    pleaseEnterCategoryNameMsg: 'దయచేసి వర్గం పేరును నమోదు చేయండి.',
+    failedAddCategoryTemplate: 'వర్గాన్ని జోడించడంలో విఫలమైంది: {msg}',
+    failedUpdateCategoryTemplate: 'వర్గాన్ని నవీకరించడంలో విఫలమైంది: {msg}',
+    deleteCategoryConfirmTemplate: '"{name}" వర్గాన్ని తొలగించాలా? దీన్ని ఇప్పటికే ఉపయోగిస్తున్న షాపులు దాన్ని కలిగి ఉంటాయి, కానీ ఇది ఇకపై నమోదు ఫారమ్‌లో అందించబడదు.',
+    failedDeleteCategoryTemplate: 'వర్గాన్ని తొలగించడంలో విఫలమైంది: {msg}',
+    pleaseEnterProductTypeNameMsg: 'దయచేసి ఉత్పత్తి రకం పేరును నమోదు చేయండి.',
+    failedAddProductTypeTemplate: 'ఉత్పత్తి రకాన్ని జోడించడంలో విఫలమైంది: {msg}',
+    failedUpdateProductTypeTemplate: 'ఉత్పత్తి రకాన్ని నవీకరించడంలో విఫలమైంది: {msg}',
+    deleteProductTypeConfirmTemplate: '"{name}" ఉత్పత్తి రకాన్ని తొలగించాలా? దీన్ని ఇప్పటికే ఉపయోగిస్తున్న లిస్టింగ్‌లు దాన్ని కలిగి ఉంటాయి, కానీ ఇది ఇకపై ఇన్వెంటరీ ఉత్పత్తి సృష్టి ఫారమ్‌లో అందించబడదు.',
+    failedDeleteProductTypeTemplate: 'ఉత్పత్తి రకాన్ని తొలగించడంలో విఫలమైంది: {msg}',
+    loadingWorkspaceSettingsMsg: 'వర్క్‌స్పేస్ సెట్టింగ్‌లు లోడ్ అవుతున్నాయి…',
+    workspaceConfigurationEyebrow: 'వర్క్‌స్పేస్ కాన్ఫిగరేషన్',
+    manageShopProfileDesc: 'మీ షాప్ ప్రొఫైల్, బ్రాండింగ్, ధృవీకరణ పత్రాలు మరియు ఖాతా భద్రతను నిర్వహించండి.',
+    refreshTitle: 'రిఫ్రెష్ చేయండి',
+    workspaceProfileTitle: 'వర్క్‌స్పేస్ ప్రొఫైల్',
+    businessIdentityContactDesc: 'వ్యాపార గుర్తింపు & సంప్రదింపు వివరాలు',
+    workspaceDisplayNameLabel: 'వర్క్‌స్పేస్ డిస్‌ప్లే పేరు',
+    pdfFileLabel: 'PDF ఫైల్',
+    uploadingEllipsisLabel: 'అప్‌లోడ్ అవుతోంది…',
+    saveWorkspaceDetailsBtn: 'వర్క్‌స్పేస్ వివరాలను సేవ్ చేయండి',
+    adminCredentialsTitle: 'అడ్మిన్ క్రెడెన్షియల్స్',
+    usernameNameLabel: 'యూజర్‌నేమ్ / పేరు',
+    emailAddressLabel: 'ఇమెయిల్ చిరునామా',
+    workspacePasswordLabel: 'వర్క్‌స్పేస్ పాస్‌వర్డ్',
+    hidePasswordTitle: 'పాస్‌వర్డ్ దాచండి',
+    revealPasswordTitle: 'పాస్‌వర్డ్ చూపించండి',
+    forgotPasswordResetOtpBtn: 'పాస్‌వర్డ్ మర్చిపోయారా? OTP ద్వారా రీసెట్ చేయండి',
+    confirmYourPasswordTitle: 'మీ పాస్‌వర్డ్‌ను నిర్ధారించండి',
+    verifyIdentityRevealDesc: 'సేవ్ చేసిన క్రెడెన్షియల్స్ చూడటానికి మీ గుర్తింపును ధృవీకరించండి.',
+    accountPasswordLabel: 'ఖాతా పాస్‌వర్డ్',
+    enterPasswordPlaceholder: 'పాస్‌వర్డ్ నమోదు చేయండి',
+    accountRecoveryEyebrow: 'ఖాతా రికవరీ',
+    resetAccountPasswordTitle: 'ఖాతా పాస్‌వర్డ్‌ను రీసెట్ చేయండి',
+    emailRecoveryTab: 'ఇమెయిల్ రికవరీ',
+    phoneRecoveryTab: 'ఫోన్ రికవరీ',
+    registeredPhoneNumberLabel: 'నమోదిత ఫోన్ నంబర్',
+    registeredEmailAddressLabel: 'నమోదిత ఇమెయిల్ చిరునామా',
+    sendOtpVerificationCodeBtn: 'OTP ధృవీకరణ కోడ్ పంపండి',
+    fourDigitCodeDispatchedTemplate: 'ఒక 4-అంకెల కోడ్ {identifier}కి పంపబడింది.',
+    enterOtpLabel: 'OTP నమోదు చేయండి',
+    newPasswordLabel: 'కొత్త పాస్‌వర్డ్',
+    min6CharactersPlaceholder: 'కనీసం 6 అక్షరాలు',
+    confirmPasswordLabel: 'పాస్‌వర్డ్‌ను నిర్ధారించండి',
+    retypePasswordPlaceholder: 'పాస్‌వర్డ్‌ను మళ్లీ టైప్ చేయండి',
+    updatePasswordBtn: 'పాస్‌వర్డ్‌ను నవీకరించండి',
+    failedGenerateReportMsg: 'నివేదికను రూపొందించడంలో విఫలమైంది.',
+    pleaseGenerateReportFirstMsg: 'దయచేసి ముందుగా నివేదికను రూపొందించండి.',
+    complianceAnalyticsEyebrow: 'కంప్లయన్స్ & అనలిటిక్స్',
+    reportsPortalDesc: 'ఏదైనా తేదీ పరిధి కోసం డైనమిక్ CSV మరియు ప్లెయిన్-టెక్స్ట్ కస్టమర్ నమోదు నివేదికలను రూపొందించండి.',
+    reportBuilderTitle: 'రిపోర్ట్ బిల్డర్',
+    selectDateRangeGenerateDesc: 'తేదీ పరిధిని ఎంచుకుని, ఆపై నివేదికను రూపొందించండి',
+    fromDateLabel: 'ప్రారంభ తేదీ',
+    toDateLabel: 'ముగింపు తేదీ',
+    generatingEllipsisLabel: 'రూపొందిస్తోంది…',
+    referralProgramTitle: 'రెఫరల్ ప్రోగ్రామ్',
+    referralProgramDesc: 'మీ కోడ్‌ను ఇతర దుకాణ యజమానులతో పంచుకుని రివార్డులు పొందండి.',
+    copyTitle: 'కాపీ చేయండి',
+    shareReferralCodeBtn: 'రెఫరల్ కోడ్ షేర్ చేయండి',
+    generateReferralCodeBtn: 'రెఫరల్ కోడ్ సృష్టించండి',
+    failedGenerateReferralCodeMsg: 'రెఫరల్ కోడ్ సృష్టించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.',
+    referralShareMessageTemplate: 'Key Shop‌లో నమోదు చేసేటప్పుడు నా రెఫరల్ కోడ్ {code} ఉపయోగించండి!',
+    verificationDocumentLabel: 'ధృవీకరణ పత్రం',
+    useCameraBtn: 'కెమెరా వాడండి',
+    chooseFromGalleryBtn: 'గ్యాలరీ నుండి ఎంచుకోండి',
+    generateReportBtn: 'నివేదికను రూపొందించండి',
+    recordsInReportLabel: 'నివేదికలో రికార్డులు',
+    allTimeLabel: 'అన్ని సమయాలు',
+    todayLabel: 'ఈరోజు',
+    dateRangeCoveredLabel: 'కవర్ చేయబడిన తేదీ పరిధి',
+    visualReportSummaryTitle: 'విజువల్ రిపోర్ట్ సారాంశం',
+    hoverToViewValuesDesc: 'ఖచ్చితమైన విలువలను చూడటానికి మూలకాలపై హోవర్ చేయండి',
+    registrationsByKeyBlankRefTitle: 'కీ బ్లాంక్ రిఫరెన్స్ ప్రకారం నమోదులు',
+    registrationTimelineTrendTitle: 'నమోదు కాలక్రమ ధోరణి',
+    noTrendDataMsg: 'ధోరణి డేటా లేదు',
+    reportPreviewTitle: 'నివేదిక ప్రివ్యూ',
+    recordsLabel: 'రికార్డులు',
+    exportCsvBtn: 'CSV ఎగుమతి చేయండి',
+    exportTxtBtn: 'TXT ఎగుమతి చేయండి',
+    showingFirstColumnsPreviewDesc: 'బ్రౌజర్ ప్రివ్యూలో మొదటి 4 కాలమ్‌ల వరకు చూపబడుతున్నాయి. అన్ని వివరణాత్మక డేటా కాలమ్‌లను చూడటానికి ఎగుమతి చేయండి.',
+    aadhaarMustBe12DigitsMsg: 'ఆధార్ నంబర్ ఖచ్చితంగా 12 అంకెలు ఉండాలి.',
+    aadhaarNumberLabel: 'ఆధార్ నంబర్',
+    autoFilledFromGpsPlaceholder: 'GPS నుండి స్వయంచాలకంగా నింపబడింది',
+    backToHomeLink: 'హోమ్‌కు తిరిగి వెళ్ళండి',
+    canLogInWithEitherMsg: 'మీరు వీటిలో దేనితోనైనా లాగిన్ కావచ్చు',
+    cardholderNameLabel: 'కార్డుదారు పేరు',
+    cardNumberLabel: 'కార్డు నంబర్',
+    choosePaymentChannelLabel: 'చెల్లింపు మార్గాన్ని ఎంచుకోండి',
+    chooseSubscriptionPlanLabel: 'సబ్‌స్క్రిప్షన్ ప్లాన్‌ను ఎంచుకోండి',
+    cityLabel: 'నగరం',
+    createShopAccountBtn: 'దుకాణం ఖాతాను సృష్టించండి',
+    customersStatLabel: 'కస్టమర్లు',
+    cvvLabel: 'CVV',
+    digitAadhaarOptionalPlaceholder: '12-అంకెల ఆధార్ నంబర్ (ఐచ్ఛికం)',
+    referralCodeLabel: 'రెఫరల్ కోడ్ (ఐచ్ఛికం)',
+    referralCodePlaceholder: 'మీ వద్ద ఉంటే రెఫరల్ కోడ్‌ను నమోదు చేయండి',
+    agreeToTermsPrefix: 'నేను నిబంధనలు మరియు షరతులను చదివి అంగీకరిస్తున్నాను',
+    termsAndConditionsLinkLabel: 'నిబంధనలు మరియు షరతులు',
+    pleaseAcceptTermsMsg: 'కొనసాగించడానికి దయచేసి నిబంధనలు మరియు షరతులను చదివి అంగీకరించండి.',
+    digitMobilePlaceholder: '10-అంకెల మొబైల్',
+    digitPinCodePlaceholder: '6-అంకెల పిన్ కోడ్',
+    emailOrMobileLabel: 'ఇమెయిల్ లేదా మొబైల్ నంబర్',
+    emailOrMobilePlaceholder: 'ఇమెయిల్ చిరునామా లేదా మొబైల్ నంబర్',
+    emailOtpLabel: 'ఇమెయిల్ OTP',
+    enterRegisteredMethodTemplate: 'రీసెట్ కోడ్‌ను అభ్యర్థించడానికి మీ వర్క్‌స్పేస్‌తో అనుబంధించబడిన నమోదిత {method} ను నమోదు చేయండి.',
+    expiryLabel: 'గడువు',
+    forgotPasswordLink: 'పాస్‌వర్డ్ మర్చిపోయారా?',
+    keysCutStatLabel: 'కట్ చేసిన తాళాలు',
+    keyShopDashboardLabel: 'కీ షాప్ డాష్‌బోర్డ్',
+    loadingCategoriesEllipsis: 'వర్గాలు లోడ్ అవుతున్నాయి…',
+    mobileNumberLabel: 'మొబైల్ నంబర్',
+    mobileNumberVerifiedMsg: 'మొబైల్ నంబర్ ధృవీకరించబడింది',
+    noShopCategoriesAvailableMsg: 'ఇంకా దుకాణం వర్గాలు అందుబాటులో లేవు',
+    otpVerifiedSetNewPasswordMsg: 'OTP ధృవీకరించబడింది. దయచేసి క్రింద కొత్త పాస్‌వర్డ్‌ను సెట్ చేయండి.',
+    passwordLabel: 'పాస్‌వర్డ్',
+    passwordResetSuccessMsg: 'పాస్‌వర్డ్ విజయవంతంగా రీసెట్ చేయబడింది',
+    payableAmountLabel: 'చెల్లించవలసిన మొత్తం',
+    paySettleSetupBtn: 'చెల్లించి సెటప్ పూర్తి చేయండి',
+    phoneOtpLabel: 'ఫోన్ OTP',
+    pinCodeLabel: 'పిన్ కోడ్',
+    pinCodeMustBe6DigitsMsg: 'పిన్ కోడ్ ఖచ్చితంగా 6 అంకెలు ఉండాలి.',
+    pleaseEnterValidEmailMsg: 'దయచేసి చెల్లుబాటు అయ్యే ఇమెయిల్ చిరునామాను నమోదు చేయండి.',
+    pleaseFillRequiredRegFieldsMsg: 'దయచేసి అవసరమైన అన్ని నమోదు ఫీల్డ్‌లను పూరించండి.',
+    pleaseVerifyMobileOtpMsg: 'కొనసాగించే ముందు దయచేసి OTPతో మీ మొబైల్ నంబర్‌ను ధృవీకరించండి.',
+    registeredEmailLabel: 'నమోదిత ఇమెయిల్',
+    registerYourKeyShopTitle: 'మీ కీ షాప్‌ను నమోదు చేయండి',
+    registrationSubmittedTitle: 'నమోదు సమర్పించబడింది',
+    regPasswordMinLengthMsg: 'పాస్‌వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి.',
+    rememberMeLabel: 'నన్ను గుర్తుంచుకో',
+    resendOtpBtn: 'OTPని మళ్లీ పంపండి',
+    resetYourPasswordTitle: 'మీ పాస్‌వర్డ్‌ను రీసెట్ చేయండి',
+    returnToLoginBtn: 'లాగిన్‌కు తిరిగి వెళ్ళండి',
+    runYourShopHeading: 'మీ దుకాణాన్ని నడపండి',
+    scanQrCodeAppsDesc: 'GooglePay, PhonePe, లేదా Paytm ఉపయోగించి QR కోడ్‌ను స్కాన్ చేయండి',
+    secureRecoveryWorkspaceDesc: 'మీ వర్క్‌స్పేస్ కోసం సురక్షిత రికవరీ',
+    selectShopCategoryPlaceholder: 'దుకాణం వర్గాన్ని ఎంచుకోండి',
+    selectVerificationMethodDesc: 'మీ వర్క్‌స్పేస్ ఆధారాలను తిరిగి పొందడానికి మీ ధృవీకరణ పద్ధతిని ఎంచుకోండి.',
+    sendOtpCodeBtn: 'OTP కోడ్ పంపండి',
+    sendOtpToVerifyBtn: 'ధృవీకరించడానికి OTP పంపండి',
+    settlingPaymentEllipsis: 'చెల్లింపు పరిష్కరించబడుతోంది…',
+    shopAdminDownloadAppBtn: 'దుకాణం అడ్మినా? యాప్‌ను డౌన్‌లోడ్ చేయండి',
+    shopOnboardingEyebrow: 'దుకాణం ఆన్‌బోర్డింగ్',
+    signInLeadDesc: 'మీ డూప్లికేట్-కీ దుకాణాన్ని నడపడానికి సైన్ ఇన్ చేయండి — ఆర్డర్లు, కస్టమర్లు మరియు ఇన్వెంటరీ, అన్నీ ఒకే చోట.',
+    signInToKeyShopBtn: 'కీ షాప్‌లో సైన్ ఇన్ చేయండి',
+    signInWithNewCredentialsMsg: 'ఇప్పుడు మీరు మీ కొత్త ఆధారాలతో సైన్ ఇన్ కావచ్చు.',
+    smartGoldStandardWaySpan: 'స్మార్ట్, గోల్డ్-స్టాండర్డ్ మార్గంలో.',
+    streetLandmarkPlaceholder: 'వీధి / ల్యాండ్‌మార్క్',
+    trackDuplicateKeysDesc: 'ప్రతి శాఖలో డూప్లికేట్ కీలు, కస్టమర్లు మరియు స్టోర్ ఆర్డర్లను ట్రాక్ చేయండి — భారతీయ లాక్‌స్మిత్‌ల కోసం రూపొందించిన ఒక అద్భుతమైన డాష్‌బోర్డ్.',
+    trustedByShopsBadge: 'భారతదేశం అంతటా 500+ కీ షాప్‌ల విశ్వాసం పొందింది',
+    upiQrScanLabel: 'UPI / QR స్కాన్',
+    verifyBtnLabel: 'ధృవీకరించండి',
+    wantToRegisterShopMsg: 'మీ దుకాణాన్ని నమోదు చేయాలనుకుంటున్నారా?',
+    welcomeBackHeading: 'తిరిగి స్వాగతం',
+    loginFailedCheckCredentialsMsg: 'లాగిన్ విఫలమైంది. దయచేసి ఆధారాలను తనిఖీ చేయండి.',
+    failedDispatchVerificationCodeMsg: 'ధృవీకరణ కోడ్‌ను పంపడంలో విఫలమైంది',
+    incorrectVerificationCodeMsg: 'తప్పు ధృవీకరణ కోడ్. దయచేసి మళ్లీ ప్రయత్నించండి.',
+    passwordsDoNotMatchMsg: 'పాస్‌వర్డ్‌లు సరిపోలలేదు',
+    passwordResetFailedMsg: 'పాస్‌వర్డ్ రీసెట్ విఫలమైంది',
+    pleaseEnterMobileNumberFirstMsg: 'దయచేసి ముందుగా మీ మొబైల్ నంబర్‌ను నమోదు చేయండి.',
+    failedDispatchVerificationOtpMsg: 'ధృవీకరణ OTPని పంపడంలో విఫలమైంది.',
+    incorrectVerificationOtpCodeMsg: 'తప్పు ధృవీకరణ OTP కోడ్. దయచేసి మళ్లీ ప్రయత్నించండి.',
+    registrationSuccessfulShopActiveMsg: 'నమోదు విజయవంతమైంది! మీ దుకాణం ఖాతా ఇప్పుడు యాక్టివ్‌గా ఉంది - మీరు వెంటనే లాగిన్ కావచ్చు.',
+    selfRegistrationFailedMsg: 'స్వీయ-నమోదు విఫలమైంది.',
+    shopWorkspaceSettingsSavedMsg: 'దుకాణం వర్క్‌స్పేస్ సెట్టింగ్‌లు విజయవంతంగా సేవ్ చేయబడ్డాయి!',
+    documentUploadFailedMsg: 'డాక్యుమెంట్ అప్‌లోడ్ విఫలమైంది',
+    removeThisDocumentConfirm: 'ఈ డాక్యుమెంట్‌ను తీసివేయాలా?',
+    failedRemoveDocumentMsg: 'డాక్యుమెంట్‌ను తీసివేయడంలో విఫలమైంది',
+    incorrectPasswordEnteredMsg: 'తప్పు పాస్‌వర్డ్ నమోదు చేయబడింది.',
+    pleaseEnterRegisteredEmailPhoneMsg: 'దయచేసి మీ నమోదిత ఇమెయిల్ లేదా ఫోన్ నంబర్‌ను నమోదు చేయండి',
+    failedSendOtpCodeMsg: 'OTP కోడ్‌ను పంపడంలో విఫలమైంది.',
+    invalidOtpCodeEnterCorrectMsg: 'చెల్లని OTP కోడ్. దయచేసి సరైన కోడ్‌ను నమోదు చేయండి.',
+    passwordUpdatedSuccessfullyMsg: 'పాస్‌వర్డ్ విజయవంతంగా నవీకరించబడింది!',
+    failedUpdatePasswordMsg: 'పాస్‌వర్డ్‌ను నవీకరించడంలో విఫలమైంది',
   },
   kn: {
     shopsRegistered: 'ನೋಂದಾಯಿತ ಅಂಗಡಿಗಳು',
@@ -482,6 +3382,731 @@ const LANGUAGES = {
     welcome: 'ಕೀ ವರ್ಕ್‌ಸ್ಪೇಸ್',
     superAdmin: 'ಸೂಪರ್ ಅಡ್ಮಿನ್',
     shopTerminal: 'ಅಂಗಡಿ ಟರ್ಮಿನಲ್',
+    supportConfig: 'ಬೆಂಬಲ ಸಂರಚನೆ',
+    inventory: 'ಯಂತ್ರಗಳು',
+    customerCare: 'ಗ್ರಾಹಕ ಸೇವೆ',
+    offersAdsBanners: 'ಆಫರ್‌ಗಳು, ಜಾಹೀರಾತುಗಳು & ಬ್ಯಾನರ್‌ಗಳು',
+    language: 'ಭಾಷೆ',
+    btnSave: 'ಉಳಿಸಿ',
+    btnSaveChanges: 'ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ',
+    btnCancel: 'ರದ್ದುಮಾಡಿ',
+    btnDelete: 'ಅಳಿಸಿ',
+    btnEdit: 'ಸಂಪಾದಿಸಿ',
+    btnSubmit: 'ಸಲ್ಲಿಸಿ',
+    btnClose: 'ಮುಚ್ಚಿ',
+    btnConfirm: 'ದೃಢೀಕರಿಸಿ',
+    btnUpdate: 'ನವೀಕರಿಸಿ',
+    btnRemove: 'ತೆಗೆದುಹಾಕಿ',
+    btnBack: 'ಹಿಂದೆ',
+    btnNext: 'ಮುಂದೆ',
+    btnRetry: 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
+    btnDownload: 'ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+    btnUpload: 'ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+    btnContinue: 'ಮುಂದುವರಿಸಿ',
+    btnDone: 'ಮುಗಿದಿದೆ',
+    btnOk: 'ಸರಿ',
+    btnViewAll: 'ಎಲ್ಲಾ ವೀಕ್ಷಿಸಿ',
+    btnViewDetails: 'ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
+    btnDismiss: 'ವಜಾಗೊಳಿಸಿ',
+    btnAddNew: 'ಹೊಸದನ್ನು ಸೇರಿಸಿ',
+    btnApply: 'ಅನ್ವಯಿಸಿ',
+    btnClear: 'ತೆರವುಗೊಳಿಸಿ',
+    btnExport: 'ರಫ್ತು ಮಾಡಿ',
+    yes: 'ಹೌದು',
+    no: 'ಇಲ್ಲ',
+    loading: 'ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
+    searching: 'ಹುಡುಕುತ್ತಿದೆ...',
+    searchPlaceholder: 'ಹುಡುಕಿ...',
+    active: 'ಸಕ್ರಿಯ',
+    inactive: 'ನಿಷ್ಕ್ರಿಯ',
+    suspended: 'ಅಮಾನತುಗೊಳಿಸಲಾಗಿದೆ',
+    expired: 'ಅವಧಿ ಮುಗಿದಿದೆ',
+    pending: 'ಬಾಕಿ ಇದೆ',
+    actions: 'ಕ್ರಿಯೆಗಳು',
+    status: 'ಸ್ಥಿತಿ',
+    optional: 'ಐಚ್ಛಿಕ',
+    required: 'ಅಗತ್ಯವಿದೆ',
+    noRecordsFound: 'ಯಾವುದೇ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
+    noDataAvailable: 'ಯಾವುದೇ ಡೇಟಾ ಲಭ್ಯವಿಲ್ಲ',
+    areYouSure: 'ನೀವು ಖಚಿತವಾಗಿದ್ದೀರಾ?',
+    actionCannotBeUndone: 'ಈ ಕ್ರಿಯೆಯನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗುವುದಿಲ್ಲ.',
+    somethingWentWrong: 'ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+    changesSavedSuccessfully: 'ಬದಲಾವಣೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ',
+    fieldName: 'ಹೆಸರು',
+    fieldEmail: 'ಇಮೇಲ್',
+    fieldPhone: 'ಫೋನ್ ಸಂಖ್ಯೆ',
+    fieldAddress: 'ವಿಳಾಸ',
+    fieldDate: 'ದಿನಾಂಕ',
+    fieldAmount: 'ಮೊತ್ತ',
+    fieldDescription: 'ವಿವರಣೆ',
+    fieldCategory: 'ವರ್ಗ',
+    fieldPrice: 'ಬೆಲೆ',
+    fieldTitle: 'ಶೀರ್ಷಿಕೆ',
+    fieldType: 'ಪ್ರಕಾರ',
+    account: 'ಖಾತೆ',
+    customerService: 'ಗ್ರಾಹಕ ಸೇವೆ',
+    chooseLanguage: 'ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+    selectLanguageDesc: 'ಅಪ್ಲಿಕೇಶನ್‌ಗಾಗಿ ನಿಮ್ಮ ಆದ್ಯತೆಯ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+    pressBackToExit: 'ನಿರ್ಗಮಿಸಲು ಮತ್ತೆ ಬ್ಯಾಕ್ ಒತ್ತಿರಿ',
+    loadingDashboard: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…',
+    superAdminControl: 'ಸೂಪರ್ ಅಡ್ಮಿನ್ ನಿಯಂತ್ರಣ',
+    portal: 'ಪೋರ್ಟಲ್',
+    welcomeBack: 'ಮತ್ತೆ ಸ್ವಾಗತ',
+    namaste: 'ನಮಸ್ತೆ',
+    platformOverviewDesc: 'ಪ್ರತಿ ಅಂಗಡಿಯಲ್ಲಿ ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಅವಲೋಕನ.',
+    newCustomer: 'ಹೊಸ ಗ್ರಾಹಕ',
+    registerComplianceEntry: 'ಹೊಸ ಗ್ರಾಹಕರಿಗಾಗಿ ಅನುಸರಣೆ ನಮೂದನ್ನು ನೋಂದಾಯಿಸಿ',
+    shopsCardTitle: 'ಅಂಗಡಿಗಳು',
+    viewManageShopsDesc: 'ಪ್ರತಿ ನೋಂದಾಯಿತ ಅಂಗಡಿಯನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ',
+    customerSupport: 'ಗ್ರಾಹಕ ಬೆಂಬಲ',
+    manageCustomerSupportDesc: 'ಗ್ರಾಹಕ ಬೆಂಬಲ ಸಂಪರ್ಕ ಮತ್ತು ಸಂಪನ್ಮೂಲಗಳನ್ನು ನಿರ್ವಹಿಸಿ',
+    complianceInventoryTerminal: 'ಅನುಸರಣೆ & ದಾಸ್ತಾನು ಟರ್ಮಿನಲ್',
+    workspace: 'ಕಾರ್ಯಕ್ಷೇತ್ರ',
+    subscriptionRenewalRequired: 'ಚಂದಾದಾರಿಕೆ ನವೀಕರಣ ಅಗತ್ಯವಿದೆ!',
+    subscriptionExpiresIn: 'ನಿಮ್ಮ ಅಂಗಡಿ ಚಂದಾದಾರಿಕೆ {days} ದಿನಗಳಲ್ಲಿ ಮುಗಿಯುತ್ತದೆ. ದಯವಿಟ್ಟು ಕೀ ಶಾಪ್ ಸೂಪರ್ ಅಡ್ಮಿನ್ ಜೊತೆ ನವೀಕರಣವನ್ನು ಸಂಯೋಜಿಸಿ.',
+    planSuffix: 'ಯೋಜನೆ',
+    searchKeysCardTitle: 'ಕೀಗಳನ್ನು ಹುಡುಕಿ',
+    findDigitizeKeysDesc: 'ಕೀ ದಾಖಲೆಗಳನ್ನು ತ್ವರಿತವಾಗಿ ಹುಡುಕಿ ಮತ್ತು ಡಿಜಿಟಲೀಕರಣಗೊಳಿಸಿ',
+    addMachinesCardDesc: 'ಹೊಸ ಯಂತ್ರ ಪಟ್ಟಿಯನ್ನು ತ್ವರಿತವಾಗಿ ಸೇರಿಸಿ',
+    getHelpSupportDesc: 'ಸಹಾಯ ಪಡೆಯಿರಿ ಮತ್ತು ಬೆಂಬಲ ಸಂಪರ್ಕ ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
+    featuredOffersBanners: 'ವಿಶೇಷ ಆಫರ್‌ಗಳು & ಬ್ಯಾನರ್‌ಗಳು',
+    banner: 'ಬ್ಯಾನರ್',
+    notice: 'ಸೂಚನೆ',
+    offer: 'ಆಫರ್',
+    viewAllOffersBanners: 'ಎಲ್ಲಾ ಆಫರ್‌ಗಳು & ಬ್ಯಾನರ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
+    usedMachines: 'ಬಳಸಿದ ಯಂತ್ರಗಳು',
+    ecmService: 'ಇಸಿಎಂ',
+    meterService: 'ಮೀಟರ್',
+    scanningService: 'ಸ್ಕ್ಯಾನಿಂಗ್',
+    usedMachinesDesc: 'ಬಳಸಿದ ಯಂತ್ರಗಳನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ',
+    ecmServiceDesc: 'ಇಸಿಎಂ ಸೇವಾ ದಾಖಲೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ',
+    meterServiceDesc: 'ಮೀಟರ್ ಸೇವೆಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ',
+    scanningServiceDesc: 'ಅನುಸರಣೆ ನಮೂದುಗಳನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ ಮತ್ತು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಿ',
+    platformOperations: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಕಾರ್ಯಾಚರಣೆಗಳು',
+    provisionShopsDesc: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್‌ನಲ್ಲಿರುವ ಪ್ರತಿ ಕೀ ಶಾಪ್ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಅನ್ನು ಒದಗಿಸಿ, ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ.',
+    allShops: 'ಎಲ್ಲಾ ಅಂಗಡಿಗಳು',
+    searchShopsPlaceholder: 'ಅಂಗಡಿಗಳನ್ನು ಹುಡುಕಿ...',
+    loadingShopRegistry: 'ಶಾಪ್ ರಿಜಿಸ್ಟ್ರಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
+    noShopsProvisionedYet: 'ಇನ್ನೂ ಯಾವುದೇ ಅಂಗಡಿಯನ್ನು ಒದಗಿಸಿಲ್ಲ',
+    noShopsMatchSearch: 'ನಿಮ್ಮ ಹುಡುಕಾಟಕ್ಕೆ ಹೊಂದುವ ಅಂಗಡಿಗಳಿಲ್ಲ',
+    shopDetails: 'ಅಂಗಡಿ ವಿವರಗಳು',
+    adminContact: 'ಅಡ್ಮಿನ್ ಸಂಪರ್ಕ',
+    activePlan: 'ಸಕ್ರಿಯ ಯೋಜನೆ',
+    validUntil: 'ವರೆಗೆ ಮಾನ್ಯ',
+    diskStorage: 'ಡಿಸ್ಕ್ ಸಂಗ್ರಹಣೆ',
+    editWorkspace: 'ವರ್ಕ್‌ಸ್ಪೇಸ್ ಸಂಪಾದಿಸಿ',
+    managePlan: 'ಯೋಜನೆ ನಿರ್ವಹಿಸಿ',
+    shopOnboarding: 'ಶಾಪ್ ಆನ್‌ಬೋರ್ಡಿಂಗ್',
+    provisionNewShopWorkspace: 'ಹೊಸ ಶಾಪ್ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಅನ್ನು ಒದಗಿಸಿ',
+    shopNameLabel: 'ಅಂಗಡಿ ಹೆಸರು',
+    shopNamePlaceholder: 'ಉದಾ. ಶರ್ಮಾ ಕೀ ಸೆಂಟರ್',
+    shopAddressLabel: 'ಅಂಗಡಿ ವಿಳಾಸ',
+    shopAddressPlaceholder: 'ಪೂರ್ಣ ಅಂಗಡಿ ವಿಳಾಸ',
+    adminFullNameLabel: 'ಅಡ್ಮಿನ್ ಪೂರ್ಣ ಹೆಸರು',
+    adminFullNamePlaceholder: 'ಉದಾ. ರಮೇಶ್ ಶರ್ಮಾ',
+    adminEmailLabel: 'ಅಡ್ಮಿನ್ ಇಮೇಲ್',
+    adminEmailPlaceholder: 'admin@example.com',
+    initialPasswordLabel: 'ಆರಂಭಿಕ ಪಾಸ್‌ವರ್ಡ್',
+    initialPasswordPlaceholder: 'ತಾತ್ಕಾಲಿಕ ಪಾಸ್‌ವರ್ಡ್ ಹೊಂದಿಸಿ',
+    phonePlaceholder: 'ಫೋನ್ ಸಂಖ್ಯೆ',
+    whatsappNumberLabel: 'ವಾಟ್ಸ್ಆ್ಯಪ್ ಸಂಖ್ಯೆ',
+    sameAsPhone: 'ಫೋನ್ ಸಂಖ್ಯೆಯಂತೆಯೇ',
+    subscriptionPlanLabel: 'ಚಂದಾದಾರಿಕೆ ಯೋಜನೆ',
+    monthlyPlan: 'ಮಾಸಿಕ',
+    halfYearlyPlan: 'ಅರ್ಧ-ವಾರ್ಷಿಕ',
+    yearlyPlan: 'ವಾರ್ಷಿಕ',
+    endDateValidityLabel: 'ಅಂತಿಮ ದಿನಾಂಕ / ಮಾನ್ಯತೆ',
+    autoCalculatedTier: 'ಆಯ್ಕೆಮಾಡಿದ ಯೋಜನೆ ಹಂತದ ಆಧಾರದ ಮೇಲೆ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಲೆಕ್ಕಹಾಕಲಾಗಿದೆ',
+    failedToCreateShop: 'ಕೀ ಶಾಪ್ ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+    ownerAadhaarMandatory: 'ಶಾಪ್ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಒದಗಿಸಲು ಮಾಲೀಕರ ಆಧಾರ್ ದಾಖಲೆ ಕಡ್ಡಾಯವಾಗಿದೆ.',
+    failedInitCheckout: 'ಚಂದಾದಾರಿಕೆ ಚೆಕ್‌ಔಟ್ ಪ್ರಾರಂಭಿಸಲು ವಿಫಲವಾಗಿದೆ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+    paymentFailedPrefix: 'ಪಾವತಿ ವಿಫಲವಾಗಿದೆ: {message}',
+    updateFailedMsg: 'ನವೀಕರಣ ವಿಫಲವಾಗಿದೆ',
+    billingEyebrow: 'ಬಿಲ್ಲಿಂಗ್',
+    updateShopSubscriptionTitle: 'ಅಂಗಡಿ ಚಂದಾದಾರಿಕೆಯನ್ನು ನವೀಕರಿಸಿ',
+    targetShopLabel: 'ಗುರಿ ಅಂಗಡಿ:',
+    planTierLabel: 'ಯೋಜನೆ ಹಂತ',
+    monthlyPlanFull: 'ಮಾಸಿಕ ಯೋಜನೆ',
+    sixMonthPlanFull: '6-ತಿಂಗಳ ಯೋಜನೆ',
+    yearlyPlanFull: 'ವಾರ್ಷಿಕ ಯೋಜನೆ',
+    newEndDateLabel: 'ಹೊಸ ಅಂತಿಮ ದಿನಾಂಕ',
+    updatePlanBtn: 'ಯೋಜನೆಯನ್ನು ನವೀಕರಿಸಿ',
+    planSubscriptionEscrowPay: 'ಯೋಜನೆ ಚಂದಾದಾರಿಕೆ ಎಸ್ಕ್ರೋ ಪಾವತಿ',
+    workspaceTerminalProvisioningPayment: 'ವರ್ಕ್‌ಸ್ಪೇಸ್ ಟರ್ಮಿನಲ್ ಪ್ರೊವಿಷನಿಂಗ್ ಪಾವತಿ',
+    paymentAuthorizedTitle: 'ಪಾವತಿ ಅಧಿಕೃತಗೊಂಡಿದೆ!',
+    paymentSettledDesc: 'ಚಂದಾದಾರಿಕೆ ಪಾವತಿ ಯಶಸ್ವಿಯಾಗಿ ಇತ್ಯರ್ಥಗೊಂಡಿದೆ. ವರ್ಕ್‌ಸ್ಪೇಸ್ {name} ಈಗ ಸಂಪೂರ್ಣವಾಗಿ ಒದಗಿಸಲ್ಪಟ್ಟು ಸಕ್ರಿಯಗೊಂಡಿದೆ.',
+    closeAndProceedBtn: 'ಮುಚ್ಚಿ ಮುಂದುವರಿಸಿ',
+    processingTransactionTitle: 'ವಹಿವಾಟು ಪ್ರಕ್ರಿಯೆಗೊಳ್ಳುತ್ತಿದೆ',
+    finalizingWorkspaceCreation: 'ವರ್ಕ್‌ಸ್ಪೇಸ್ ರಚನೆ ಟನಲ್‌ಗಳನ್ನು ಅಂತಿಮಗೊಳಿಸಲಾಗುತ್ತಿದೆ.',
+    workspaceProvisionInvoice: 'ವರ್ಕ್‌ಸ್ಪೇಸ್ ಪ್ರೊವಿಷನ್ ಇನ್ವಾಯ್ಸ್',
+    planColonLabel: 'ಯೋಜನೆ:',
+    creditCardLabel: 'ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್',
+    upiQrCodeLabel: 'UPI QR ಕೋಡ್',
+    cardholderFullNameLabel: 'ಕಾರ್ಡುದಾರರ ಪೂರ್ಣ ಹೆಸರು',
+    cardholderNamePlaceholder: 'ಉದಾ. ರಮೇಶ್ ಕುಮಾರ್',
+    debitCreditCardNumberLabel: 'ಡೆಬಿಟ್ / ಕ್ರೆಡಿಟ್ ಕಾರ್ಡ್ ಸಂಖ್ಯೆ',
+    expiryDateLabel: 'ಅವಧಿ ಮುಗಿಯುವ ದಿನಾಂಕ',
+    cvvCodeLabel: 'CVV ಕೋಡ್',
+    scanToAuthorizeInvoice: 'ಸೆಟಪ್ ಇನ್ವಾಯ್ಸ್ ಅಧಿಕೃತಗೊಳಿಸಲು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ',
+    scanQrDesc: 'GPay, PhonePe, Paytm, ಅಥವಾ BHIM ಮೂಲಕ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ. ಪತ್ತೆಯಾದ ನಂತರ ಚಂದಾದಾರಿಕೆ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸಕ್ರಿಯಗೊಳ್ಳುತ್ತದೆ.',
+    secureGatewayPaymentPortal: '256-ಬಿಟ್ ಸುರಕ್ಷಿತ ಗೇಟ್‌ವೇ ಪಾವತಿ ಪೋರ್ಟಲ್',
+    cancelSetupBtn: 'ಸೆಟಪ್ ರದ್ದುಮಾಡಿ',
+    payAndProvisionPrefix: 'ರೂ. ಪಾವತಿಸಿ',
+    payAndProvisionSuffix: '& ಒದಗಿಸಿ',
+    logEstablishingTunnel: 'ಸುರಕ್ಷಿತ ಎಂಡ್-ಟು-ಎಂಡ್ ಸ್ಯಾಂಡ್‌ಬಾಕ್ಸ್ ಟನಲ್ ಸ್ಥಾಪಿಸಲಾಗುತ್ತಿದೆ...',
+    logVerifyingBalance: 'ಖಾತೆ ಬ್ಯಾಲೆನ್ಸ್ ಮತ್ತು ಕ್ರೆಡಿಟ್ ಲೈನ್‌ಗಳನ್ನು ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ...',
+    logAuthorizingEscrow: 'ಚಂದಾದಾರಿಕೆ ಎಸ್ಕ್ರೋ ಇತ್ಯರ್ಥ ವಹಿವಾಟನ್ನು ಅಧಿಕೃತಗೊಳಿಸಲಾಗುತ್ತಿದೆ...',
+    logEncryptingCard: 'AES-GCM ಮೂಲಕ ಕಾರ್ಡ್ ವಿವರಗಳನ್ನು ಎನ್‌ಕ್ರಿಪ್ಟ್ ಮಾಡಲಾಗುತ್ತಿದೆ...',
+    logFulfillingProvisioning: 'ಕೀ ಶಾಪ್ API ವರ್ಕ್‌ಸ್ಪೇಸ್ ಪ್ರೊವಿಷನಿಂಗ್ ಅನ್ನು ಪೂರೈಸಲಾಗುತ್ತಿದೆ...',
+    shopPhotoLabel: 'ಅಂಗಡಿ ಫೋಟೋ',
+    shopLicenseLabel: 'ಅಂಗಡಿ ಪರವಾನಗಿ',
+    ownerAadhaarLabel: 'ಮಾಲೀಕರ ಆಧಾರ್',
+    provisionAccountBtn: 'ಖಾತೆಯನ್ನು ಒದಗಿಸಿ',
+    workspaceSettings: 'ವರ್ಕ್‌ಸ್ಪೇಸ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
+    editShopWorkspaceDetails: 'ಅಂಗಡಿ ವರ್ಕ್‌ಸ್ಪೇಸ್ ವಿವರಗಳನ್ನು ಸಂಪಾದಿಸಿ',
+    workspaceNameLabel: 'ವರ್ಕ್‌ಸ್ಪೇಸ್ ಹೆಸರು',
+    registeredAddressFixed: 'ನೋಂದಾಯಿತ ವಿಳಾಸ (ಸ್ಥಿರ)',
+    notUploaded: 'ಅಪ್‌ಲೋಡ್ ಮಾಡಿಲ್ಲ',
+    saveSettings: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಉಳಿಸಿ',
+    crossTenantCompliance: 'ಕ್ರಾಸ್-ಟೆನೆಂಟ್ ಅನುಸರಣೆ',
+    customerRegistryTitle: 'ಗ್ರಾಹಕ ರಿಜಿಸ್ಟ್ರಿ',
+    superviseComplianceRecordsDesc: 'ಎಲ್ಲಾ ಟೆನೆಂಟ್ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳಲ್ಲಿ ಅನುಸರಣೆ ದಾಖಲೆಗಳನ್ನು ಮೇಲ್ವಿಚಾರಣೆ ಮಾಡಿ',
+    createCustomerBtn: 'ಗ್ರಾಹಕರನ್ನು ರಚಿಸಿ',
+    allCustomers: 'ಎಲ್ಲಾ ಗ್ರಾಹಕರು',
+    searchByNamePhoneKeyCode: 'ಹೆಸರು, ಫೋನ್ ಅಥವಾ ಕೀ ಕೋಡ್ ಮೂಲಕ ಹುಡುಕಿ',
+    loadingCustomerRegistry: 'ಗ್ರಾಹಕ ರಿಜಿಸ್ಟ್ರಿ ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
+    noCustomerRecordsMatch: 'ಯಾವುದೇ ಗ್ರಾಹಕ ದಾಖಲೆಗಳು ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ',
+    tenantWorkspaceCol: 'ಟೆನೆಂಟ್ ವರ್ಕ್‌ಸ್ಪೇಸ್',
+    customerCol: 'ಗ್ರಾಹಕ',
+    phoneCol: 'ಫೋನ್',
+    keyCodeCol: 'ಕೀ ಕೋಡ್',
+    registeredCol: 'ನೋಂದಾಯಿಸಲಾಗಿದೆ',
+    shopWorkspaceFallback: 'ನಿಯೋಜಿಸದ ವರ್ಕ್‌ಸ್ಪೇಸ್',
+    photoOnFile: 'ಫೋಟೋ ಫೈಲ್‌ನಲ್ಲಿದೆ',
+    photoPending: 'ಫೋಟೋ ಬಾಕಿ ಇದೆ',
+    viewComplianceFile: 'ಅನುಸರಣೆ ಫೈಲ್ ವೀಕ್ಷಿಸಿ',
+    complianceFileEyebrow: 'ಅನುಸರಣೆ ಫೈಲ್',
+    phoneContactLabel: 'ಫೋನ್ ಸಂಪರ್ಕ',
+    registryDateLabel: 'ನೋಂದಣಿ ದಿನಾಂಕ',
+    addressLabel: 'ವಿಳಾಸ',
+    keyBlankCodeLabel: 'ಕೀ ಬ್ಲಾಂಕ್ ಕೋಡ್',
+    idVerificationLabel: 'ಐಡಿ ಪರಿಶೀಲನೆ',
+    idNumberDecryptedLabel: 'ಐಡಿ ಸಂಖ್ಯೆ (ಡಿಕ್ರಿಪ್ಟ್ ಮಾಡಲಾಗಿದೆ)',
+    gpsCoordinatesLabel: 'ಜಿಪಿಎಸ್ ನಿರ್ದೇಶಾಂಕಗಳು',
+    latLongTemplate: 'ಅಕ್ಷಾಂಶ: {lat} • ರೇಖಾಂಶ: {long}',
+    notCapturedLabel: 'ಸೆರೆಹಿಡಿಯಲಾಗಿಲ್ಲ',
+    googleMapsLabel: 'ಗೂಗಲ್ ಮ್ಯಾಪ್ಸ್',
+    capturedAddressLabel: 'ಸೆರೆಹಿಡಿದ ವಿಳಾಸ',
+    webcamPhotoLabel: 'ಕ್ಯಾಮೆರಾ ಫೋಟೋ',
+    attachedIdCopiesLabel: 'ಲಗತ್ತಿಸಲಾದ ಐಡಿ ಪ್ರತಿಗಳು',
+    uploadedBadge: 'ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ',
+    missingBadge: 'ಕಾಣೆಯಾಗಿದೆ',
+    closeFileBtn: 'ಫೈಲ್ ಮುಚ್ಚಿ',
+    operationFailedMsg: 'ಕಾರ್ಯಾಚರಣೆ ವಿಫಲವಾಗಿದೆ',
+    confirmRemoveKeyBlank: 'ಈ ಕೀ ಬ್ಲಾಂಕ್ ಅನ್ನು ಕೇಂದ್ರ ಕ್ಯಾಟಲಾಗ್‌ನಿಂದ ತೆಗೆದುಹಾಕಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?',
+    platformCatalogueLabel: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಕ್ಯಾಟಲಾಗ್',
+    masterKeyCatalogueTitle: 'ಮಾಸ್ಟರ್ ಕೀ ಕ್ಯಾಟಲಾಗ್',
+    provisionKeyBlankSpecsDesc: 'ಪ್ರತಿ ಅಂಗಡಿ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಹುಡುಕಾಟಕ್ಕೆ ಲಭ್ಯವಿರುವ ಕೀ ಬ್ಲಾಂಕ್ ವಿವರಣೆಗಳನ್ನು ಒದಗಿಸಿ.',
+    addKeyBlankBtn: 'ಕೀ ಬ್ಲಾಂಕ್ ಸೇರಿಸಿ',
+    searchCataloguePlaceholder: 'ಕೋಡ್, ವರ್ಗ, ಸ್ಪೆಕ್ಸ್ ಉಲ್ಲೇಖದ ಮೂಲಕ ಕ್ಯಾಟಲಾಗ್ ಹುಡುಕಿ…',
+    loadingCatalogueMsg: 'ಕ್ಯಾಟಲಾಗ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…',
+    noKeyBlanksMatch: 'ಈ ಹುಡುಕಾಟಕ್ಕೆ ಯಾವುದೇ ಕೀ ಬ್ಲಾಂಕ್‌ಗಳು ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ',
+    modifyBtn: 'ಮಾರ್ಪಡಿಸಿ',
+    deleteBtn: 'ಅಳಿಸಿ',
+    catalogueEntryLabel: 'ಕ್ಯಾಟಲಾಗ್ ಎಂಟ್ರಿ',
+    modifyKeyBlankTitle: 'ಕೀ ಬ್ಲಾಂಕ್ ಮಾರ್ಪಡಿಸಿ',
+    addNewKeyBlankTitle: 'ಹೊಸ ಕೀ ಬ್ಲಾಂಕ್ ಸೇರಿಸಿ',
+    keyNumberCodeLabel: 'ಕೀ ಸಂಖ್ಯೆ / ಕೋಡ್',
+    connectedShopLabel: 'ಸಂಪರ್ಕಿತ ಅಂಗಡಿ',
+    globalCatalogueLabel: 'ಜಾಗತಿಕ ಕ್ಯಾಟಲಾಗ್',
+    connectedCustomersLabel: 'ಸಂಪರ್ಕಿತ ಗ್ರಾಹಕ(ರು)',
+    noCustomerLinkedYet: 'ಇನ್ನೂ ಯಾವುದೇ ಗ್ರಾಹಕರನ್ನು ಲಿಂಕ್ ಮಾಡಲಾಗಿಲ್ಲ',
+    keyCodeLabel: 'ಕೀ ಕೋಡ್',
+    keyCodePlaceholderEg: 'ಉದಾ. CY-102',
+    categoryTypeLabel: 'ವರ್ಗ ಪ್ರಕಾರ',
+    categoryPlaceholderEg: 'ಉದಾ. ಪ್ಯಾಡ್‌ಲಾಕ್',
+    backImageUrlLabel: 'ಬ್ಯಾಕ್ ಇಮೇಜ್ URL',
+    saveChangesBtn: 'ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ',
+    publishKeyBtn: 'ಕೀ ಪ್ರಕಟಿಸಿ',
+    crossShopMarketplaceLabel: 'ಕ್ರಾಸ್-ಶಾಪ್ ಮಾರುಕಟ್ಟೆ',
+    inventoryTitle: 'ಯಂತ್ರಗಳು',
+    manageSharedInventoryDesc: 'ವೇದಿಕೆಯಾದ್ಯಂತ ಹಂಚಿಕೊಂಡ ದಾಸ್ತಾನು ಫೀಡ್, ಬ್ಯಾನರ್ ಜಾಹೀರಾತು ಅಭಿಯಾನಗಳು ಮತ್ತು ಅಂಗಡಿ ಆಫರ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ.',
+    browseListProductsDesc: 'ವೇದಿಕೆಯ ಪ್ರತಿ ಅಂಗಡಿಯಲ್ಲಿ ಹಂಚಿಕೊಂಡ ಉತ್ಪನ್ನಗಳನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ ಪಟ್ಟಿ ಮಾಡಿ',
+    inventoryFeedTab: 'ಯಂತ್ರ ಫೀಡ್',
+    bannerManagementTab: 'ಬ್ಯಾನರ್ ನಿರ್ವಹಣೆ',
+    offerManagementTab: 'ಆಫರ್ ನಿರ್ವಹಣೆ',
+    failedUpdateCampaign: 'ಅಭಿಯಾನವನ್ನು ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ',
+    failedScheduleCampaign: 'ಅಭಿಯಾನವನ್ನು ನಿಗದಿಪಡಿಸಲು ವಿಫಲವಾಗಿದೆ',
+    confirmTerminateAdCampaign: 'ಈ ಜಾಹೀರಾತು ಅಭಿಯಾನವನ್ನು ಕೊನೆಗೊಳಿಸಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?',
+    interactivePopupLabel: 'ಇಂಟರಾಕ್ಟಿವ್ ಪಾಪ್‌ಅಪ್',
+    textNoticeLabel: 'ಪಠ್ಯ ಸೂಚನೆ',
+    mainBannerLabel: 'ಮುಖ್ಯ ಬ್ಯಾನರ್',
+    growthMarketingLabel: 'ಬೆಳವಣಿಗೆ & ಮಾರ್ಕೆಟಿಂಗ್',
+    adCampaignsTitle: 'ಜಾಹೀರಾತು ಅಭಿಯಾನಗಳು',
+    publishBannersPopupsDesc: 'ಅಂಗಡಿ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪರದೆಗಳಿಗೆ ಗುರಿಯಾಗಿಸಿದ ಬ್ಯಾನರ್‌ಗಳು ಮತ್ತು ಪಾಪ್‌ಅಪ್‌ಗಳನ್ನು ಪ್ರಕಟಿಸಿ.',
+    newAdCampaignBtn: 'ಹೊಸ ಜಾಹೀರಾತು ಅಭಿಯಾನ',
+    loadingCampaignsMsg: 'ಅಭಿಯಾನಗಳು ಲೋಡ್ ಆಗುತ್ತಿವೆ…',
+    noAdCampaignsScheduled: 'ಇನ್ನೂ ಯಾವುದೇ ಜಾಹೀರಾತು ಅಭಿಯಾನ ನಿಗದಿಪಡಿಸಲಾಗಿಲ್ಲ.',
+    liveLabel: 'ಲೈವ್',
+    scheduledLabel: 'ನಿಗದಿಪಡಿಸಲಾಗಿದೆ',
+    priorityLabel: 'ಆದ್ಯತೆ',
+    startLabel: 'ಪ್ರಾರಂಭ',
+    endLabel: 'ಅಂತ್ಯ',
+    allKeyShopsLabel: 'ಎಲ್ಲಾ ಕೀ ಅಂಗಡಿಗಳು',
+    targetedShopSingular: '{n} ಗುರಿ ಅಂಗಡಿ',
+    targetedShopsPlural: '{n} ಗುರಿ ಅಂಗಡಿಗಳು',
+    editBtn: 'ಸಂಪಾದಿಸಿ',
+    cancelCampaignBtn: 'ಅಭಿಯಾನ ರದ್ದುಗೊಳಿಸಿ',
+    adCampaignLabel: 'ಜಾಹೀರಾತು ಅಭಿಯಾನ',
+    editAdCampaignTitle: 'ಜಾಹೀರಾತು ಅಭಿಯಾನ ಸಂಪಾದಿಸಿ',
+    newVisualAdCampaignTitle: 'ಹೊಸ ದೃಶ್ಯ ಜಾಹೀರಾತು ಅಭಿಯಾನ',
+    adTitleAnnouncementLabel: 'ಜಾಹೀರಾತು ಶೀರ್ಷಿಕೆ / ಪ್ರಕಟಣೆ',
+    adTitlePlaceholderEg: 'ಉದಾ. ಈ ಶುಕ್ರವಾರ ಗೋದ್ರೆಜ್ ಕೀ ನಕಲುಗಳ ಮೇಲೆ 20% ರಿಯಾಯಿತಿ',
+    bannerImageSourceLabel: 'ಬ್ಯಾನರ್ ಚಿತ್ರ ಮೂಲ',
+    pasteImageUrlPlaceholder: 'ಚಿತ್ರ URL ಅಂಟಿಸಿ (ಅಥವಾ ಗೂಗಲ್ ಚಿತ್ರ ಲಿಂಕ್)',
+    uploadBtn: 'ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+    adFormatLabel: 'ಜಾಹೀರಾತು ಸ್ವರೂಪ',
+    mainBannerNoticeOption: 'ಮುಖ್ಯ ಬ್ಯಾನರ್ ಸೂಚನೆ',
+    interactiveLoginPopupOption: 'ಇಂಟರಾಕ್ಟಿವ್ ಲಾಗಿನ್ ಪಾಪ್‌ಅಪ್',
+    dashboardTextNoticeOption: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪಠ್ಯ ಸೂಚನೆ',
+    campaignPriorityLabel: 'ಅಭಿಯಾನ ಆದ್ಯತೆ',
+    startDateLabel: 'ಪ್ರಾರಂಭ ದಿನಾಂಕ',
+    endDateLabelShort: 'ಅಂತ್ಯ ದಿನಾಂಕ',
+    targetAudienceLabel: 'ಗುರಿ ಪ್ರೇಕ್ಷಕರು',
+    broadcastAllKeyShops: 'ಎಲ್ಲಾ ಕೀ ಅಂಗಡಿಗಳಿಗೆ ಪ್ರಸಾರ ಮಾಡಿ',
+    targetSpecificShops: 'ನಿರ್ದಿಷ್ಟ ಅಂಗಡಿಗಳನ್ನು ಗುರಿಯಾಗಿಸಿ',
+    scheduleCampaignBtn: 'ಅಭಿಯಾನವನ್ನು ನಿಗದಿಪಡಿಸಿ',
+    searchInventoryPlaceholder: 'ದಾಸ್ತಾನು ಹುಡುಕಿ...',
+    newListingBtn: 'ಯಂತ್ರ ಸೇರಿಸಿ',
+    allCategoriesLabel: 'ಎಲ್ಲಾ ವರ್ಗಗಳು',
+    loadingListingsMsg: 'ಪಟ್ಟಿಗಳು ಲೋಡ್ ಆಗುತ್ತಿವೆ...',
+    noOffersPublishedYet: 'ಇನ್ನೂ ಯಾವುದೇ ಕೊಡುಗೆಗಳನ್ನು ಪ್ರಕಟಿಸಲಾಗಿಲ್ಲ',
+    noInventoryListedYet: 'ಇನ್ನೂ ಯಾವುದೇ ದಾಸ್ತಾನು ಪಟ್ಟಿ ಮಾಡಿಲ್ಲ',
+    expiredLabel: 'ಅವಧಿ ಮುಗಿದಿದೆ',
+    percentOffSuffix: '% ರಿಯಾಯಿತಿ',
+    validTillPrefix: 'ಇಲ್ಲಿಯವರೆಗೆ ಮಾನ್ಯ',
+    linkedPrefix: 'ಲಿಂಕ್ ಮಾಡಲಾಗಿದೆ:',
+    superAdminIndependentLabel: 'ಸೂಪರ್ ಅಡ್ಮಿನ್ (ಸ್ವತಂತ್ರ)',
+    shopLabel: 'ಅಂಗಡಿ:',
+    ownerLabel: 'ಮಾಲೀಕರು:',
+    callPrefix: 'ಕರೆ ಮಾಡಿ',
+    removeBtn: 'ತೆಗೆದುಹಾಕಿ',
+    advertisementLabel: 'ಜಾಹೀರಾತು',
+    offerLabel: 'ಕೊಡುಗೆ',
+    promotionalProductLabel: 'ಉತ್ಪನ್ನ',
+    failedUpdateListing: 'ಪಟ್ಟಿ ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ',
+    failedPublishListing: 'ಪಟ್ಟಿ ಪ್ರಕಟಿಸಲು ವಿಫಲವಾಗಿದೆ',
+    confirmRemoveListing: 'ಈ ಪಟ್ಟಿಯನ್ನು ತೆಗೆದುಹಾಕುವುದೇ?',
+    inventoryListingLabel: 'ಯಂತ್ರ ಪಟ್ಟಿ',
+    editListingTitle: 'ಪಟ್ಟಿಯನ್ನು ಸಂಪಾದಿಸಿ',
+    newInventoryListingTitle: 'ಹೊಸ ದಾಸ್ತಾನು ಪಟ್ಟಿ',
+    nameLabel: 'ಹೆಸರು',
+    listingNamePlaceholderEg: 'ಉದಾ. ಪ್ರೀಮಿಯಂ ಗೋದ್ರೆಜ್ ಕೀ-ಬ್ಲಾಂಕ್ಸ್ - ಬಲ್ಕ್ ಪ್ಯಾಕ್',
+    productTypeLabel: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರ',
+    selectProductTypePlaceholder: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ',
+    noProductTypesAvailable: 'ಇನ್ನೂ ಯಾವುದೇ ಉತ್ಪನ್ನ ಪ್ರಕಾರಗಳು ಲಭ್ಯವಿಲ್ಲ',
+    descriptionOptionalLabel: 'ವಿವರಣೆ (ಐಚ್ಛಿಕ)',
+    shortDescriptionPlaceholder: 'ಪಟ್ಟಿ ಕಾರ್ಡ್‌ನಲ್ಲಿ ತೋರಿಸಲಾದ ಸಂಕ್ಷಿಪ್ತ ವಿವರಣೆ',
+    productPhotoOptionalLabel: 'ಉತ್ಪನ್ನ ಫೋಟೋ (ಐಚ್ಛಿಕ)',
+    imageMediaOptionalLabel: 'ಚಿತ್ರ / ಮಾಧ್ಯಮ (ಐಚ್ಛಿಕ)',
+    priceOptionalLabel: 'ಬೆಲೆ (ಐಚ್ಛಿಕ)',
+    priceLeaveBlankPlaceholder: 'ಅನ್ವಯಿಸದಿದ್ದರೆ ಖಾಲಿ ಬಿಡಿ',
+    phoneNumberLabel: 'ಫೋನ್ ಸಂಖ್ಯೆ',
+    phoneNumberPlaceholderEg: 'ಉದಾ. 9876543210',
+    tapToCallHint: 'ಖರೀದಿದಾರರಿಗಾಗಿ ಪಟ್ಟಿ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಟ್ಯಾಪ್-ಟು-ಕಾಲ್ ಬಟನ್ ಆಗಿ ತೋರಿಸಲಾಗುತ್ತದೆ.',
+    discountPercentageOptionalLabel: 'ರಿಯಾಯಿತಿ ಶೇಕಡಾವಾರು (ಐಚ್ಛಿಕ)',
+    discountPercentagePlaceholderEg: 'ಉದಾ. 20',
+    validUntilOptionalLabel: 'ಮಾನ್ಯತೆ ದಿನಾಂಕದವರೆಗೆ (ಐಚ್ಛಿಕ)',
+    validUntilHint: 'ಅವಧಿ ಇಲ್ಲದ ಕೊಡುಗೆಗಾಗಿ ಖಾಲಿ ಬಿಡಿ. ಅವಧಿ ಮುಗಿದ ಕೊಡುಗೆಗಳನ್ನು ಹಂಚಿದ ಫೀಡ್‌ನಿಂದ ಮರೆಮಾಡಲಾಗುತ್ತದೆ.',
+    linkExistingListingLabel: 'ನಿಮ್ಮ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಪಟ್ಟಿಗಳಲ್ಲಿ ಒಂದಕ್ಕೆ ಲಿಂಕ್ ಮಾಡಿ (ಐಚ್ಛಿಕ)',
+    noLinkedListingOption: 'ಲಿಂಕ್ ಮಾಡಿದ ಪಟ್ಟಿ ಇಲ್ಲ',
+    productLabel: 'ಉತ್ಪನ್ನ',
+    publishListingBtn: 'ಪಟ್ಟಿಯನ್ನು ಪ್ರಕಟಿಸಿ',
+    fromKeyShopHqLabel: 'ಕೀ ಶಾಪ್ ಪ್ರಧಾನ ಕಚೇರಿಯಿಂದ',
+    offersAdsBannersTitle: 'ಆಫರ್‌ಗಳು, ಜಾಹೀರಾತುಗಳು & ಬ್ಯಾನರ್‌ಗಳು',
+    everyActiveAdOfferDesc: 'ಸೂಪರ್ ಅಡ್ಮಿನ್ ಪ್ರಕಟಿಸಿದ ಪ್ರತಿಯೊಂದು ಸಕ್ರಿಯ ಜಾಹೀರಾತು, ಬ್ಯಾನರ್, ಸೂಚನೆ ಮತ್ತು ಆಫರ್.',
+    loadingEllipsis: 'ಲೋಡ್ ಆಗುತ್ತಿದೆ…',
+    nothingPublishedYet: 'ಇನ್ನೂ ಏನನ್ನೂ ಪ್ರಕಟಿಸಲಾಗಿಲ್ಲ.',
+    advertisementsAndBannersLabel: 'ಜಾಹೀರಾತುಗಳು & ಬ್ಯಾನರ್‌ಗಳು',
+    offersLabel: 'ಆಫರ್‌ಗಳು',
+    subscriptionRatesUpdatedMsg: 'ಚಂದಾದಾರಿಕೆ ಯೋಜನೆ ಬೆಲೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ!',
+    updateFailedPrefix: 'ನವೀಕರಣ ವಿಫಲವಾಗಿದೆ',
+    platformFinanceLabel: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಹಣಕಾಸು',
+    subscriptionPricingTitle: 'ಚಂದಾದಾರಿಕೆ ಬೆಲೆ ನಿಗದಿ',
+    configureFranchisePricingDesc: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್‌ಗಾಗಿ ಫ್ರ್ಯಾಂಚೈಸಿ ಚಂದಾದಾರಿಕೆ ಯೋಜನೆ ದರಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ.',
+    monthlyLower: 'ಮಾಸಿಕ',
+    monthlyRecurringPlanLabel: 'ಮಾಸಿಕ ಪುನರಾವರ್ತಿತ ಯೋಜನೆ',
+    sixMonthLower: '6-ತಿಂಗಳು',
+    halfYearlyPlanRateLabel: 'ಅರ್ಧ-ವಾರ್ಷಿಕ ಯೋಜನೆ ದರ',
+    yearlyLower: 'ವಾರ್ಷಿಕ',
+    yearlyDiscountedRateLabel: 'ವಾರ್ಷಿಕ ರಿಯಾಯಿತಿ ದರ',
+    subscriptionPlanPricingLabel: 'ಚಂದಾದಾರಿಕೆ ಯೋಜನೆ ಬೆಲೆ ನಿಗದಿ',
+    setRatesForKeyShopsDesc: 'ಕೀ ಶಾಪ್‌ಗಳಿಗೆ ದರಗಳನ್ನು ಹೊಂದಿಸಿ. ಈ ಬೆಲೆಗಳು ಪ್ರೊವಿಷನಿಂಗ್ ಸಮಯದಲ್ಲಿ ಚೆಕ್‌ಔಟ್ ಗೇಟ್‌ವೇ ಪರದೆಯನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ನವೀಕರಿಸುತ್ತವೆ.',
+    monthlyRecurringPlanRupeeLabel: 'ಮಾಸಿಕ ಪುನರಾವರ್ತಿತ ಯೋಜನೆ (₹)',
+    monthlyRecurringBillHint: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಸೇವೆಗಾಗಿ ಮಾಸಿಕ ಪುನರಾವರ್ತಿತ ಬಾಡಿಗೆ ಬಿಲ್.',
+    sixMonthPlanRateRupeeLabel: '6-ತಿಂಗಳ ಯೋಜನೆ ದರ (₹)',
+    halfYearlyUpfrontRateHint: 'ಅಂಗಡಿಗಳಿಗೆ ರಿಯಾಯಿತಿ ಅರ್ಧ-ವಾರ್ಷಿಕ ಮುಂಗಡ ದರ.',
+    yearlyPlanDiscountedRateRupeeLabel: 'ವಾರ್ಷಿಕ ಯೋಜನೆ ರಿಯಾಯಿತಿ ದರ (₹)',
+    annualUpfrontRateHint: 'ಅಂಗಡಿಗಳಿಗೆ ರಿಯಾಯಿತಿ ವಾರ್ಷಿಕ ಮುಂಗಡ ದರ.',
+    updateSubscriptionRatesBtn: 'ಚಂದಾದಾರಿಕೆ ದರಗಳನ್ನು ನವೀಕರಿಸಿ',
+    enterValidAmountMsg: 'ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಮೊತ್ತವನ್ನು ನಮೂದಿಸಿ',
+    monthlyRevenueLogsTitle: 'ಮಾಸಿಕ ಆದಾಯ ದಾಖಲೆಗಳು',
+    recordSubscriptionCollectionsDesc: 'SaaS ಕಾರ್ಯಕ್ಷಮತೆ ಟ್ರ್ಯಾಕಿಂಗ್‌ಗಾಗಿ ಚಂದಾದಾರಿಕೆ ಸಂಗ್ರಹಗಳನ್ನು ಹಸ್ತಚಾಲಿತವಾಗಿ ದಾಖಲಿಸಿ.',
+    allTimeLower: 'ಎಲ್ಲಾ ಕಾಲ',
+    totalRevenueCollectedLabel: 'ಒಟ್ಟು ಸಂಗ್ರಹಿಸಿದ ಆದಾಯ',
+    collectedThisYearLabel: 'ಈ ವರ್ಷ ಸಂಗ್ರಹಿಸಲಾಗಿದೆ',
+    revenueRecordsAvgLabel: 'ಆದಾಯ ದಾಖಲೆಗಳು — ಸರಾಸರಿ',
+    collectionsTrendLabel: 'ಸಂಗ್ರಹ ಪ್ರವೃತ್ತಿ',
+    lastLoggedEntriesPrefix: 'ಕೊನೆಯ',
+    loggedEntriesSuffix: 'ದಾಖಲಿಸಿದ ನಮೂದುಗಳು',
+    noRevenueLogsYet: 'ಇನ್ನೂ ಆದಾಯ ದಾಖಲೆಗಳನ್ನು ದಾಖಲಿಸಲಾಗಿಲ್ಲ.',
+    addRevenueRecordLabel: 'ಆದಾಯ ದಾಖಲೆ ಸೇರಿಸಿ',
+    monthLabel: 'ತಿಂಗಳು',
+    yearLabel: 'ವರ್ಷ',
+    amountCollectedRupeeLabel: 'ಸಂಗ್ರಹಿಸಿದ ಮೊತ್ತ (₹)',
+    notesRemarksLabel: 'ಟಿಪ್ಪಣಿಗಳು / ಅಭಿಪ್ರಾಯಗಳು',
+    logRevenuePayoutBtn: 'ಆದಾಯ ಪಾವತಿಯನ್ನು ದಾಖಲಿಸಿ',
+    platformRevenueHistoryLabel: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಆದಾಯ ಇತಿಹಾಸ',
+    periodCol: 'ಅವಧಿ',
+    notesCol: 'ಟಿಪ್ಪಣಿಗಳು',
+    amountCol: 'ಮೊತ್ತ',
+    duplicateKeyLookupLabel: 'ನಕಲಿ ಕೀ ಹುಡುಕಾಟ',
+    masterKeyCatalogSearchTitle: 'ಮಾಸ್ಟರ್ ಕೀ ಕ್ಯಾಟಲಾಗ್ ಹುಡುಕಾಟ',
+    lookupBlankSpecDesc: 'ಕ್ಷಣಗಳಲ್ಲಿ ಖಾಲಿ ವಿವರಣೆಗಳು, ಕೀ ಕೋಡ್‌ಗಳು ಮತ್ತು ಗ್ರಾಹಕ ನೋಂದಣಿ ದಾಖಲೆಗಳನ್ನು ಹುಡುಕಿ.',
+    keyCodeVehicleCategoryLabel: 'ಕೀ ಕೋಡ್, ವಾಹನ ಸಂಖ್ಯೆ, ಅಥವಾ ವರ್ಗ',
+    searchByKeyCodePlaceholder: 'ಕೀ ಕೋಡ್, ವಾಹನ ಸಂಖ್ಯೆ, ಗ್ರಾಹಕ ಸ್ಥಳ, ವರ್ಗದ ಮೂಲಕ ಹುಡುಕಿ\u2026',
+    searchingRegistryMsg: 'ನೋಂದಣಿಯನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ\u2026',
+    noMatchingKeysMsg: 'ಹೊಂದಾಣಿಕೆಯಾಗುವ ಕೀಗಳು ಅಥವಾ ಗ್ರಾಹಕ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
+    registeredCustomerKeyLabel: 'ನೋಂದಾಯಿತ ಗ್ರಾಹಕ ಕೀ',
+    customerPrefix: 'ಗ್ರಾಹಕ:',
+    vehicleNoPrefix: 'ವಾಹನ ಸಂಖ್ಯೆ:',
+    viewFullDetailsLabel: 'ಪೂರ್ಣ ವಿವರಗಳನ್ನು ವೀಕ್ಷಿಸಿ',
+    keyDetailsLabel: 'ಕೀ ವಿವರಗಳು',
+    lockCategoryLabel: 'ಲಾಕ್ ವರ್ಗ',
+    backProfileLabel: 'ಬ್ಯಾಕ್ ಪ್ರೊಫೈಲ್',
+    customerNameLabel: 'ಗ್ರಾಹಕರ ಹೆಸರು',
+    vehicleNumberLabel: 'ವಾಹನ ಸಂಖ್ಯೆ',
+    webcamSnapshotLabel: 'ಕ್ಯಾಮೆರಾ ಸ್ನ್ಯಾಪ್‌ಶಾಟ್',
+    registryLocationOverviewLabel: 'ನೋಂದಣಿ ಸ್ಥಳ ಅವಲೋಕನ (ಇತರ ಕಾರ್ಯಸ್ಥಳ)',
+    customerMobileLabel: 'ಗ್ರಾಹಕ ಮೊಬೈಲ್',
+    registeredShopLabel: 'ನೋಂದಾಯಿತ ಅಂಗಡಿ',
+    keyShopWorkspaceLabel: 'ಕೀ ಶಾಪ್ ಕಾರ್ಯಸ್ಥಳ',
+    shopMobileLabel: 'ಅಂಗಡಿ ಮೊಬೈಲ್',
+    sensitiveCoordsHiddenMsg: 'ಈ ಕೀ ನೋಂದಣಿಯನ್ನು ಮತ್ತೊಂದು ನಕಲಿ ಕೀ ಅಂಗಡಿಯಲ್ಲಿ ರಚಿಸಲಾಗಿರುವುದರಿಂದ ಸೂಕ್ಷ್ಮ ನಿರ್ದೇಶಾಂಕಗಳು ಮತ್ತು ಕ್ಯಾಮೆರಾ ಚಿತ್ರಗಳನ್ನು ಮರೆಮಾಡಲಾಗಿದೆ.',
+    closeDetailsBtn: 'ವಿವರಗಳನ್ನು ಮುಚ್ಚಿ',
+    fileSizeExceeds5MBMsg: 'ಫೈಲ್ ಗಾತ್ರ 5MB ಮಿತಿಯನ್ನು ಮೀರಿದೆ',
+    onlyJpegPngPdfMsg: 'JPEG, PNG ಮತ್ತು PDF ಡಾಕ್ಯುಮೆಂಟ್ ಫಾರ್ಮ್ಯಾಟ್‌ಗಳು ಮಾತ್ರ ಅಂಗೀಕರಿಸಲ್ಪಡುತ್ತವೆ',
+    documentAlreadyStagedTemplate: '{type} ಗಾಗಿ ಡಾಕ್ಯುಮೆಂಟ್ ಈಗಾಗಲೇ ಸಿದ್ಧಪಡಿಸಲಾಗಿದೆ.',
+    pleaseEnterKeyCodeMsg: 'ದಯವಿಟ್ಟು ಮೊದಲು ಕೀ ಕೋಡ್ ನಮೂದಿಸಿ',
+    pleaseEnterValidTestEmailMsg: 'ಪರೀಕ್ಷಾ OTP ಸ್ವೀಕರಿಸಲು ದಯವಿಟ್ಟು ಮಾನ್ಯ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ.',
+    failedSendOtpMsg: 'OTP ಕೋಡ್ ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ.',
+    invalidOtpCodeMsg: 'ಅಮಾನ್ಯ OTP ಕೋಡ್. ದಯವಿಟ್ಟು ಸರಿಯಾದ ಕೋಡ್ ನಮೂದಿಸಿ.',
+    complianceRecordLoggedMsg: 'ಗ್ರಾಹಕ ಅನುಸರಣೆ ದಾಖಲೆ ಯಶಸ್ವಿಯಾಗಿ ದಾಖಲಾಗಿದೆ!',
+    submissionFailedTemplate: 'ಸಲ್ಲಿಕೆ ವಿಫಲವಾಗಿದೆ: {message}',
+    contactKeyStepLabel: 'ಸಂಪರ್ಕ & ಕೀ',
+    idPhotoStepLabel: 'ID ಫೋಟೋ',
+    documentsStepLabel: 'ದಾಖಲೆಗಳು',
+    reviewStepLabel: 'ಪರಿಶೀಲನೆ',
+    newCustomerEyebrow: 'ಹೊಸ ಗ್ರಾಹಕ',
+    multiStepComplianceDesc: 'ಬಹು-ಹಂತದ ಅನುಸರಣೆ ಆನ್‌ಬೋರ್ಡಿಂಗ್ — ಕೀ ವಿತರಣೆ, ಗುರುತಿನ ಸೆರೆಹಿಡಿಯುವಿಕೆ & GPS-ಸ್ಟ್ಯಾಂಪ್ ಮಾಡಿದ ವಿಳಾಸ, ಐದು ತ್ವರಿತ ಹಂತಗಳಲ್ಲಿ.',
+    stepLabel: 'ಹಂತ',
+    ofLabel: 'ರಲ್ಲಿ',
+    contactKeyCredentialsTitle: 'ಸಂಪರ್ಕ & ಕೀ ರುಜುವಾತುಗಳು',
+    registerContactDetailsDesc: 'ಗ್ರಾಹಕರ ಸಂಪರ್ಕ ವಿವರಗಳು, ವಾಹನ & ಕೀ ಕೋಡ್, ಮತ್ತು ವಸತಿ ವಿಳಾಸವನ್ನು ನೋಂದಾಯಿಸಿ.',
+    shopFieldLabel: 'ಅಂಗಡಿ',
+    selectShopPlaceholder: 'ಒಂದು ಅಂಗಡಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ…',
+    customerRegisteredUnderShopMsg: 'ಈ ಗ್ರಾಹಕ, ಮತ್ತು ಅದರ ಕೀ ಕೋಡ್, ಆಯ್ಕೆ ಮಾಡಿದ ಅಂಗಡಿಯ ಕಾರ್ಯಕ್ಷೇತ್ರದ ಅಡಿಯಲ್ಲಿ ನೋಂದಾಯಿಸಲ್ಪಡುತ್ತದೆ.',
+    duplicateKeyDetectedLabel: 'ನಕಲಿ ಕೀ ಪತ್ತೆಯಾಗಿದೆ',
+    duplicateKeyDetectedDescTemplate: 'ಕೀ ಕೋಡ್ {code} ಈಗಾಗಲೇ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಗ್ರಾಹಕರಿಗೆ ನೋಂದಾಯಿಸಲಾಗಿದೆ. ದಯವಿಟ್ಟು ಪರಿಶೀಲಿಸಿ ಮತ್ತು ಅನನ್ಯ ಕೀ ಕೋಡ್ ನಮೂದಿಸಿ.',
+    fullCustomerNameLabel: 'ಪೂರ್ಣ ಗ್ರಾಹಕ ಹೆಸರು',
+    customerNamePlaceholderEg: 'ರೋಹನ್ ಮಲ್ಹೋತ್ರಾ',
+    keyCodeKeyNumberLabel: 'ಕೀ ಕೋಡ್ / ಕೀ ಸಂಖ್ಯೆ',
+    keyCodeEnterPlaceholderEg: 'ಕೀ ಕೋಡ್ ನಮೂದಿಸಿ (ಉದಾ. TN09B)',
+    resendBtn: 'ಮರುಕಳುಹಿಸಿ',
+    sendOtpBtn: 'OTP ಕಳುಹಿಸಿ',
+    smsToPhoneLabel: 'ಫೋನ್‌ಗೆ SMS',
+    emailTestingLabel: 'ಇಮೇಲ್ (ಪರೀಕ್ಷೆ)',
+    testEmailPlaceholder: 'test@email.com — OTP ಗಾಗಿ ಮಾತ್ರ, ಉಳಿಸಲಾಗುವುದಿಲ್ಲ',
+    addressLineLabel: 'ವಿಳಾಸ ಸಾಲು',
+    locatingLabel: 'ಪತ್ತೆ ಹಚ್ಚಲಾಗುತ್ತಿದೆ…',
+    currentLocationBtn: 'ಪ್ರಸ್ತುತ ಸ್ಥಳ',
+    addressLinePlaceholderEg: 'ಉದಾ. ಫ್ಲಾಟ್ 101, ಪಾರ್ಕ್ ಅವೆನ್ಯೂ',
+    openLocationSettingsBtn: 'ಸ್ಥಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ',
+    openAppSettingsBtn: 'ಅಪ್ಲಿಕೇಶನ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ',
+    stateLabel: 'ರಾಜ್ಯ',
+    districtLabel: 'ಜಿಲ್ಲೆ',
+    countryLabel: 'ದೇಶ',
+    gpsCapturedTemplate: 'GPS ಸೆರೆಹಿಡಿಯಲಾಗಿದೆ: {lat}, {long}',
+    enterOtpCodeSentToEmailTemplate: '{email} ಗೆ ಕಳುಹಿಸಿದ 4-ಅಂಕಿಯ ಕೋಡ್ ನಮೂದಿಸಿ',
+    enterOtpCodeSentToPhoneMsg: 'ಗ್ರಾಹಕರ ಫೋನ್‌ಗೆ ಕಳುಹಿಸಿದ 4-ಅಂಕಿಯ ಕೋಡ್ ನಮೂದಿಸಿ',
+    testingModeNoProviderTemplate: 'ಪರೀಕ್ಷಾ ಮೋಡ್ — {provider} ಪೂರೈಕೆದಾರರನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿಲ್ಲ',
+    verifyOtpBtn: 'OTP ಪರಿಶೀಲಿಸಿ',
+    otpVerifiedSuccessEmailMsg: 'ಗ್ರಾಹಕರ ಇಮೇಲ್ OTP ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ.',
+    otpVerifiedSuccessPhoneMsg: 'ಗ್ರಾಹಕರ ಫೋನ್ ಸಂಖ್ಯೆ OTP ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ.',
+    complianceDocUploadTitle: 'ಅನುಸರಣೆ ದಾಖಲೆ ಅಪ್‌ಲೋಡ್',
+    uploadGovIdDesc: 'ಈ ಗ್ರಾಹಕರನ್ನು ಪರಿಶೀಲಿಸಲು ಬಳಸುವ ಸರ್ಕಾರಿ ID ಪುರಾವೆಯ ಪ್ರತಿಯನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ.',
+    documentTypeLabel: 'ದಾಖಲೆ ಪ್ರಕಾರ',
+    aadhaarCardLabel: 'ಆಧಾರ್ ಕಾರ್ಡ್',
+    drivingLicenseLabel: 'ಡ್ರೈವಿಂಗ್ ಲೈಸೆನ್ಸ್',
+    panCardLabel: 'ಪಾನ್ ಕಾರ್ಡ್',
+    voterIdLabel: 'ಮತದಾರ ID',
+    dropOrBrowseCopyTemplate: '{type} ನ ಪ್ರತಿಯನ್ನು ಡ್ರಾಪ್ ಮಾಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಿ',
+    jpegPngPdfUpTo5MbLabel: 'JPEG, PNG ಅಥವಾ PDF — 5MB ವರೆಗೆ',
+    stagedIdCopiesTemplate: 'ಸಿದ್ಧಪಡಿಸಿದ ID ಪ್ರತಿಗಳು ({count})',
+    verifyDetailsBeforeSubmitDesc: 'ಈ ಅನುಸರಣೆ ನೋಂದಣಿಯನ್ನು ಸಲ್ಲಿಸುವ ಮೊದಲು ಕೆಳಗೆ ನಮೂದಿಸಿದ ಪ್ರತಿಯೊಂದು ವಿವರವನ್ನು ಪರಿಶೀಲಿಸಿ. ಈ ಹಂತದಲ್ಲಿ ಯಾವುದನ್ನೂ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸೆರೆಹಿಡಿಯಲಾಗುವುದಿಲ್ಲ ಅಥವಾ ಮಾರ್ಪಡಿಸಲಾಗುವುದಿಲ್ಲ.',
+    reviewCustomerLabel: 'ಗ್ರಾಹಕ',
+    reviewPhoneLabel: 'ಫೋನ್',
+    keyBlankLabel: 'ಕೀ ಬ್ಲಾಂಕ್',
+    registeredAddressLabel: 'ನೋಂದಾಯಿತ ವಿಳಾಸ',
+    idProofTypeLabel: 'ID ಪುರಾವೆ ಪ್ರಕಾರ',
+    uploadedDocumentsLabel: 'ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ದಾಖಲೆಗಳು',
+    filesAttachedTemplate: '{count} ಫೈಲ್(ಗಳು) ಲಗತ್ತಿಸಲಾಗಿದೆ',
+    noneAttachedLabel: 'ಯಾವುದೂ ಲಗತ್ತಿಸಲಾಗಿಲ್ಲ',
+    reviewLocationLabel: 'ಸ್ಥಳ',
+    gpsCapturedHeadingLabel: 'GPS ಸೆರೆಹಿಡಿಯಲಾಗಿದೆ',
+    latLongMiddotTemplate: 'ಅಕ್ಷಾಂಶ {lat} · ರೇಖಾಂಶ {long}',
+    noGpsLocationCapturedDesc: 'ಯಾವುದೇ GPS ಸ್ಥಳವನ್ನು ಸೆರೆಹಿಡಿಯಲಾಗಿಲ್ಲ. ನಿರ್ದೇಶಾಂಕಗಳನ್ನು ಲಗತ್ತಿಸಲು ಬಯಸಿದರೆ "ಸಂಪರ್ಕ & ಕೀ" ಹಂತಕ್ಕೆ ಹಿಂತಿರುಗಿ ಮತ್ತು "ಪ್ರಸ್ತುತ ಸ್ಥಳ" ಬಟನ್ ಬಳಸಿ.',
+    submitComplianceRecordBtn: 'ಅನುಸರಣೆ ದಾಖಲೆಯನ್ನು ಸಲ್ಲಿಸಿ',
+    historyPageDesc: 'ಹಿಂದಿನ ನಕಲಿ-ಕೀ ನೋಂದಣಿಗಳು ಮತ್ತು ಅನುಸರಣೆ ಸಲ್ಲಿಕೆಗಳನ್ನು ಹುಡುಕಿ ಮತ್ತು ಪರಿಶೀಲಿಸಿ.',
+    loadingComplianceRecordsMsg: 'ಅನುಸರಣೆ ದಾಖಲೆಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…',
+    noComplianceRecordsMatchMsg: 'ಈ ಹುಡುಕಾಟಕ್ಕೆ ಯಾವುದೇ ಅನುಸರಣೆ ದಾಖಲೆಗಳು ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ.',
+    vehicleCol: 'ವಾಹನ',
+    locationCol: 'ಸ್ಥಳ',
+    loggedCol: 'ದಾಖಲಿಸಲಾಗಿದೆ',
+    actionsCol: 'ಕ್ರಿಯೆಗಳು',
+    editDetailsBtn: 'ವಿವರಗಳನ್ನು ಸಂಪಾದಿಸಿ',
+    documentIdTypeLabel: 'ದಾಖಲೆ ID ಪ್ರಕಾರ',
+    uploadNewFileCopyLabel: 'ಹೊಸ ಫೈಲ್ ಪ್ರತಿಯನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+    jpegPngPdfLabel: 'JPEG, PNG ಅಥವಾ PDF',
+    downloadTitleLabel: 'ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+    customerComplianceRecordUpdatedMsg: 'ಗ್ರಾಹಕ ಅನುಸರಣೆ ದಾಖಲೆ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ!',
+    failedSaveCustomerEditsMsg: 'ಗ್ರಾಹಕ ಸಂಪಾದನೆಗಳನ್ನು ಉಳಿಸಲು ವಿಫಲವಾಗಿದೆ.',
+    loadingSupportResourcesMsg: 'ಬೆಂಬಲ ಸಂಪನ್ಮೂಲಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…',
+    supportTrainingCenterTitle: 'ಬೆಂಬಲ ಮತ್ತು ತರಬೇತಿ ಕೇಂದ್ರ',
+    reachSupportTrainingDesc: 'ಕೀ ಶಾಪ್ ತಾಂತ್ರಿಕ ಬೆಂಬಲವನ್ನು ಸಂಪರ್ಕಿಸಿ ಮತ್ತು ಲಾಕ್‌ಸ್ಮಿತ್ ತರಬೇತಿ ಸಂಪನ್ಮೂಲಗಳೊಂದಿಗೆ ನಿಮ್ಮ ಕೌಶಲ್ಯಗಳನ್ನು ಹೆಚ್ಚಿಸಿಕೊಳ್ಳಿ.',
+    contactLiveAgentTitle: 'ಲೈವ್ ಏಜೆಂಟ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ',
+    supportHoursLabel: 'ಸೋಮ-ಶನಿ, ಬೆಳಿಗ್ಗೆ 9 - ಸಂಜೆ 7 IST',
+    liveCustomerSupportDesc: 'ನಿಮ್ಮ ಕೀ-ಮೇಕಿಂಗ್ ಯಂತ್ರಗಳು ಅಥವಾ ನಕಲಿ ಕೀ ಪೋರ್ಟಲ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಸಹಾಯ ಮಾಡಲು ಲೈವ್ ಗ್ರಾಹಕ ಬೆಂಬಲ ಸಿದ್ಧವಾಗಿದೆ.',
+    directWhatsappSupportLabel: 'ನೇರ ವಾಟ್ಸಾಪ್ ಬೆಂಬಲ',
+    chatOnWhatsappBtn: 'ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಚಾಟ್ ಮಾಡಿ',
+    locksmithSkillUpgradesTitle: 'ಲಾಕ್‌ಸ್ಮಿತ್ ಕೌಶಲ್ಯ ಅಪ್‌ಗ್ರೇಡ್‌ಗಳು',
+    videoTutorialsFromExpertsDesc: 'ನಕಲಿ ಕೀ ತಜ್ಞರ ವೀಡಿಯೊ ಟ್ಯುಟೋರಿಯಲ್‌ಗಳು',
+    trainingMaterialLabel: 'ತರಬೇತಿ ಸಾಮಗ್ರಿ',
+    watchLinkLabel: 'ಲಿಂಕ್ ವೀಕ್ಷಿಸಿ',
+    noSkillUpgradeVideosMsg: 'ಪ್ರಸ್ತುತ ಯಾವುದೇ ಕೌಶಲ್ಯ ಅಪ್‌ಗ್ರೇಡ್ ವೀಡಿಯೊಗಳು ಲಭ್ಯವಿಲ್ಲ.',
+    loadingSupportConfigMsg: 'ಬೆಂಬಲ ಕಾನ್ಫಿಗರೇಶನ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…',
+    platformSupportEyebrow: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಬೆಂಬಲ',
+    customerSupportConfigTitle: 'ಗ್ರಾಹಕ ಬೆಂಬಲ ಕಾನ್ಫಿಗರೇಶನ್',
+    configureGlobalSupportDesc: 'ಪ್ರತಿ ಅಂಗಡಿಗೆ ಗೋಚರಿಸುವ ಜಾಗತಿಕ ಗ್ರಾಹಕ ಸೇವಾ ಸಂಪರ್ಕ ಮತ್ತು ತರಬೇತಿ ವೀಡಿಯೊ ಲಿಂಕ್‌ಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ.',
+    customerSupportWhatsappLabel: 'ಗ್ರಾಹಕ ಬೆಂಬಲ ವಾಟ್ಸಾಪ್ ಸಂಖ್ಯೆ',
+    whatsappNumberPlaceholderEg: 'ಉದಾ. +91 98765 43210',
+    supportContactEyebrow: 'ಬೆಂಬಲ ಸಂಪರ್ಕ',
+    supportContactTitle: 'ಬೆಂಬಲ ಸಂಪರ್ಕ',
+    supportContactDesc: 'ಕೆಳಗಿನ ಸಂಪರ್ಕ ವಿವರಗಳನ್ನು ಬಳಸಿಕೊಂಡು ನೇರವಾಗಿ ಕೀ ಶಾಪ್ ತಂಡವನ್ನು ಸಂಪರ್ಕಿಸಿ.',
+    ownerNameLabel: 'ಮಾಲೀಕರ ಹೆಸರು',
+    ownerPhoneLabel: 'ಮಾಲೀಕರ ಫೋನ್',
+    ownerNamePlaceholderEg: 'ಉದಾ. ರಾಜೇಶ್ ಕುಮಾರ್',
+    ownerPhonePlaceholderEg: 'ಉದಾ. +91 98765 43210',
+    ownerAddressPlaceholderEg: 'ಉದಾ. 12 ಎಂಜಿ ರೋಡ್, ಬೆಂಗಳೂರು',
+    noContactInfoConfiguredMsg: 'ಸಂಪರ್ಕ ವಿವರಗಳನ್ನು ಇನ್ನೂ ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿಲ್ಲ.',
+    ownerContactSectionTitle: 'ಮಾಲೀಕರ ಸಂಪರ್ಕ ವಿವರಗಳು',
+    ownerContactSectionDesc: 'ಈ ವಿವರಗಳನ್ನು ಪ್ರತಿ ಅಂಗಡಿಗೆ ಬೆಂಬಲ ಸಂಪರ್ಕ ಪರದೆಯಲ್ಲಿ ತೋರಿಸಲಾಗುತ್ತದೆ.',
+    videoSingularLabel: 'ವೀಡಿಯೊ',
+    videoPluralLabel: 'ವೀಡಿಯೊಗಳು',
+    addVideoBtn: 'ವೀಡಿಯೊ ಸೇರಿಸಿ',
+    noVideosConfiguredMsg: 'ಯಾವುದೇ ವೀಡಿಯೊಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿಲ್ಲ. ಲಾಕ್‌ಸ್ಮಿತ್ ತರಬೇತಿ ಲಿಂಕ್‌ಗಳನ್ನು ಸೇರಿಸಲು “ವೀಡಿಯೊ ಸೇರಿಸಿ” ಕ್ಲಿಕ್ ಮಾಡಿ.',
+    removeVideoTitle: 'ವೀಡಿಯೊ ತೆಗೆದುಹಾಕಿ',
+    videoTitleNameLabel: 'ವೀಡಿಯೊ ಶೀರ್ಷಿಕೆ / ಹೆಸರು',
+    videoTitlePlaceholderEg: 'ಉದಾ. Locksmith Career Income',
+    youtubeUrlLabel: 'ಯೂಟ್ಯೂಬ್ URL',
+    saveConfigurationBtn: 'ಕಾನ್ಫಿಗರೇಶನ್ ಉಳಿಸಿ',
+    shopCategoriesTitle: 'ಅಂಗಡಿ ವರ್ಗಗಳು',
+    categorySingularLabel: 'ವರ್ಗ',
+    categoryPluralLabel: 'ವರ್ಗಗಳು',
+    manageShopCategoriesDesc: 'ಸಾರ್ವಜನಿಕ ಸ್ವಯಂ-ನೋಂದಣಿ ವಿಝಾರ್ಡ್‌ನ ವರ್ಗ ಡ್ರಾಪ್‌ಡೌನ್‌ನಲ್ಲಿ ನೀಡಲಾಗುವ ಅಂಗಡಿ "ಪ್ರಕಾರ" ಆಯ್ಕೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ.',
+    enterCategoryNamePlaceholder: 'ವರ್ಗದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ',
+    addBtnLabel: 'ಸೇರಿಸಿ',
+    noCategoriesYetMsg: 'ಇನ್ನೂ ಯಾವುದೇ ಅಂಗಡಿ ವರ್ಗಗಳಿಲ್ಲ. ಮೇಲೆ ಒಂದನ್ನು ಸೇರಿಸಿ - ನೀವು ಹಾಗೆ ಮಾಡುವವರೆಗೆ ನೋಂದಣಿ ಫಾರ್ಮ್‌ನ ಡ್ರಾಪ್‌ಡೌನ್ ಖಾಲಿ ಇರುತ್ತದೆ.',
+    productTypesTitle: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರಗಳು',
+    typeSingularLabel: 'ಪ್ರಕಾರ',
+    typePluralLabel: 'ಪ್ರಕಾರಗಳು',
+    manageProductTypesDesc: 'ಇನ್ವೆಂಟರಿ ಉತ್ಪನ್ನ ರಚನೆ ಫಾರ್ಮ್‌ನಲ್ಲಿ ನೀಡಲಾಗುವ ಉತ್ಪನ್ನ ಪ್ರಕಾರ ಆಯ್ಕೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ.',
+    enterProductTypePlaceholder: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ನಮೂದಿಸಿ',
+    noProductTypesYetMsg: 'ಇನ್ನೂ ಯಾವುದೇ ಉತ್ಪನ್ನ ಪ್ರಕಾರಗಳಿಲ್ಲ. ಮೇಲೆ ಒಂದನ್ನು ಸೇರಿಸಿ - ನೀವು ಹಾಗೆ ಮಾಡುವವರೆಗೆ ಇನ್ವೆಂಟರಿ ಉತ್ಪನ್ನ ರಚನೆ ಡ್ರಾಪ್‌ಡೌನ್ ಖಾಲಿ ಇರುತ್ತದೆ.',
+    supportConfigUpdatedMsg: 'ಬೆಂಬಲ ಕಾನ್ಫಿಗರೇಶನ್ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ!',
+    saveFailedTemplate: 'ಉಳಿಸುವಿಕೆ ವಿಫಲವಾಗಿದೆ: {msg}',
+    pleaseEnterCategoryNameMsg: 'ದಯವಿಟ್ಟು ವರ್ಗದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ.',
+    failedAddCategoryTemplate: 'ವರ್ಗವನ್ನು ಸೇರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    failedUpdateCategoryTemplate: 'ವರ್ಗವನ್ನು ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    deleteCategoryConfirmTemplate: '"{name}" ವರ್ಗವನ್ನು ಅಳಿಸುವುದೇ? ಇದನ್ನು ಈಗಾಗಲೇ ಬಳಸುತ್ತಿರುವ ಅಂಗಡಿಗಳು ಅದನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತವೆ, ಆದರೆ ಅದು ಇನ್ನು ಮುಂದೆ ನೋಂದಣಿ ಫಾರ್ಮ್‌ನಲ್ಲಿ ನೀಡಲಾಗುವುದಿಲ್ಲ.',
+    failedDeleteCategoryTemplate: 'ವರ್ಗವನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    pleaseEnterProductTypeNameMsg: 'ದಯವಿಟ್ಟು ಉತ್ಪನ್ನ ಪ್ರಕಾರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ.',
+    failedAddProductTypeTemplate: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ಸೇರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    failedUpdateProductTypeTemplate: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    deleteProductTypeConfirmTemplate: '"{name}" ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ಅಳಿಸುವುದೇ? ಇದನ್ನು ಈಗಾಗಲೇ ಬಳಸುತ್ತಿರುವ ಪಟ್ಟಿಗಳು ಅದನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತವೆ, ಆದರೆ ಅದು ಇನ್ನು ಮುಂದೆ ಇನ್ವೆಂಟರಿ ಉತ್ಪನ್ನ ರಚನೆ ಫಾರ್ಮ್‌ನಲ್ಲಿ ನೀಡಲಾಗುವುದಿಲ್ಲ.',
+    failedDeleteProductTypeTemplate: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    loadingWorkspaceSettingsMsg: 'ಕಾರ್ಯಸ್ಥಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…',
+    workspaceConfigurationEyebrow: 'ಕಾರ್ಯಸ್ಥಳ ಕಾನ್ಫಿಗರೇಶನ್',
+    manageShopProfileDesc: 'ನಿಮ್ಮ ಅಂಗಡಿಯ ಪ್ರೊಫೈಲ್, ಬ್ರಾಂಡಿಂಗ್, ಪರಿಶೀಲನಾ ದಾಖಲೆಗಳು ಮತ್ತು ಖಾತೆ ಭದ್ರತೆಯನ್ನು ನಿರ್ವಹಿಸಿ.',
+    refreshTitle: 'ರಿಫ್ರೆಶ್ ಮಾಡಿ',
+    workspaceProfileTitle: 'ಕಾರ್ಯಸ್ಥಳ ಪ್ರೊಫೈಲ್',
+    businessIdentityContactDesc: 'ವ್ಯಾಪಾರ ಗುರುತು & ಸಂಪರ್ಕ ವಿವರಗಳು',
+    workspaceDisplayNameLabel: 'ಕಾರ್ಯಸ್ಥಳ ಪ್ರದರ್ಶನ ಹೆಸರು',
+    pdfFileLabel: 'PDF ಫೈಲ್',
+    uploadingEllipsisLabel: 'ಅಪ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ…',
+    saveWorkspaceDetailsBtn: 'ಕಾರ್ಯಸ್ಥಳ ವಿವರಗಳನ್ನು ಉಳಿಸಿ',
+    adminCredentialsTitle: 'ಅಡ್ಮಿನ್ ಕ್ರೆಡೆನ್ಷಿಯಲ್‌ಗಳು',
+    usernameNameLabel: 'ಬಳಕೆದಾರ ಹೆಸರು / ಹೆಸರು',
+    emailAddressLabel: 'ಇಮೇಲ್ ವಿಳಾಸ',
+    workspacePasswordLabel: 'ಕಾರ್ಯಸ್ಥಳ ಪಾಸ್‌ವರ್ಡ್',
+    hidePasswordTitle: 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆಮಾಡಿ',
+    revealPasswordTitle: 'ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸಿ',
+    forgotPasswordResetOtpBtn: 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ? OTP ಮೂಲಕ ಮರುಹೊಂದಿಸಿ',
+    confirmYourPasswordTitle: 'ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ದೃಢೀಕರಿಸಿ',
+    verifyIdentityRevealDesc: 'ಉಳಿಸಿದ ಕ್ರೆಡೆನ್ಷಿಯಲ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಲು ನಿಮ್ಮ ಗುರುತನ್ನು ಪರಿಶೀಲಿಸಿ.',
+    accountPasswordLabel: 'ಖಾತೆ ಪಾಸ್‌ವರ್ಡ್',
+    enterPasswordPlaceholder: 'ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಿ',
+    accountRecoveryEyebrow: 'ಖಾತೆ ಮರುಪಡೆಯುವಿಕೆ',
+    resetAccountPasswordTitle: 'ಖಾತೆ ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಮರುಹೊಂದಿಸಿ',
+    emailRecoveryTab: 'ಇಮೇಲ್ ಮರುಪಡೆಯುವಿಕೆ',
+    phoneRecoveryTab: 'ಫೋನ್ ಮರುಪಡೆಯುವಿಕೆ',
+    registeredPhoneNumberLabel: 'ನೋಂದಾಯಿತ ಫೋನ್ ಸಂಖ್ಯೆ',
+    registeredEmailAddressLabel: 'ನೋಂದಾಯಿತ ಇಮೇಲ್ ವಿಳಾಸ',
+    sendOtpVerificationCodeBtn: 'OTP ಪರಿಶೀಲನಾ ಕೋಡ್ ಕಳುಹಿಸಿ',
+    fourDigitCodeDispatchedTemplate: 'ಒಂದು 4-ಅಂಕಿಯ ಕೋಡ್ ಅನ್ನು {identifier} ಗೆ ಕಳುಹಿಸಲಾಗಿದೆ.',
+    enterOtpLabel: 'OTP ನಮೂದಿಸಿ',
+    newPasswordLabel: 'ಹೊಸ ಪಾಸ್‌ವರ್ಡ್',
+    min6CharactersPlaceholder: 'ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳು',
+    confirmPasswordLabel: 'ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ದೃಢೀಕರಿಸಿ',
+    retypePasswordPlaceholder: 'ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ಮತ್ತೆ ಟೈಪ್ ಮಾಡಿ',
+    updatePasswordBtn: 'ಪಾಸ್‌ವರ್ಡ್ ಅನ್ನು ನವೀಕರಿಸಿ',
+    failedGenerateReportMsg: 'ವರದಿಯನ್ನು ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ.',
+    pleaseGenerateReportFirstMsg: 'ದಯವಿಟ್ಟು ಮೊದಲು ವರದಿಯನ್ನು ರಚಿಸಿ.',
+    complianceAnalyticsEyebrow: 'ಅನುಸರಣೆ & ವಿಶ್ಲೇಷಣೆ',
+    reportsPortalDesc: 'ಯಾವುದೇ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಗೆ ಡೈನಾಮಿಕ್ CSV ಮತ್ತು ಸರಳ-ಪಠ್ಯ ಗ್ರಾಹಕ ನೋಂದಣಿ ವರದಿಗಳನ್ನು ರಚಿಸಿ.',
+    reportBuilderTitle: 'ವರದಿ ಬಿಲ್ಡರ್',
+    selectDateRangeGenerateDesc: 'ದಿನಾಂಕ ವ್ಯಾಪ್ತಿಯನ್ನು ಆಯ್ಕೆಮಾಡಿ, ನಂತರ ವರದಿಯನ್ನು ರಚಿಸಿ',
+    fromDateLabel: 'ಆರಂಭ ದಿನಾಂಕ',
+    toDateLabel: 'ಅಂತಿಮ ದಿನಾಂಕ',
+    generatingEllipsisLabel: 'ರಚಿಸಲಾಗುತ್ತಿದೆ…',
+    referralProgramTitle: 'ರೆಫರಲ್ ಪ್ರೋಗ್ರಾಂ',
+    referralProgramDesc: 'ನಿಮ್ಮ ಕೋಡ್ ಅನ್ನು ಇತರ ಅಂಗಡಿ ಮಾಲೀಕರೊಂದಿಗೆ ಹಂಚಿಕೊಂಡು ಬಹುಮಾನಗಳನ್ನು ಗಳಿಸಿ.',
+    copyTitle: 'ನಕಲಿಸಿ',
+    shareReferralCodeBtn: 'ರೆಫರಲ್ ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಿ',
+    generateReferralCodeBtn: 'ರೆಫರಲ್ ಕೋಡ್ ರಚಿಸಿ',
+    failedGenerateReferralCodeMsg: 'ರೆಫರಲ್ ಕೋಡ್ ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+    referralShareMessageTemplate: 'Key Shop ನಲ್ಲಿ ನೋಂದಾಯಿಸುವಾಗ ನನ್ನ ರೆಫರಲ್ ಕೋಡ್ {code} ಬಳಸಿ!',
+    verificationDocumentLabel: 'ಪರಿಶೀಲನಾ ದಾಖಲೆ',
+    useCameraBtn: 'ಕ್ಯಾಮರಾ ಬಳಸಿ',
+    chooseFromGalleryBtn: 'ಗ್ಯಾಲರಿಯಿಂದ ಆಯ್ಕೆಮಾಡಿ',
+    generateReportBtn: 'ವರದಿಯನ್ನು ರಚಿಸಿ',
+    recordsInReportLabel: 'ವರದಿಯಲ್ಲಿನ ದಾಖಲೆಗಳು',
+    allTimeLabel: 'ಎಲ್ಲಾ ಸಮಯ',
+    todayLabel: 'ಇಂದು',
+    dateRangeCoveredLabel: 'ಒಳಗೊಂಡ ದಿನಾಂಕ ವ್ಯಾಪ್ತಿ',
+    visualReportSummaryTitle: 'ದೃಶ್ಯ ವರದಿ ಸಾರಾಂಶ',
+    hoverToViewValuesDesc: 'ನಿಖರವಾದ ಮೌಲ್ಯಗಳನ್ನು ವೀಕ್ಷಿಸಲು ಅಂಶಗಳ ಮೇಲೆ ಹೋವರ್ ಮಾಡಿ',
+    registrationsByKeyBlankRefTitle: 'ಕೀ ಬ್ಲ್ಯಾಂಕ್ ಉಲ್ಲೇಖದ ಪ್ರಕಾರ ನೋಂದಣಿಗಳು',
+    registrationTimelineTrendTitle: 'ನೋಂದಣಿ ಟೈಮ್‌ಲೈನ್ ಪ್ರವೃತ್ತಿ',
+    noTrendDataMsg: 'ಯಾವುದೇ ಪ್ರವೃತ್ತಿ ಡೇಟಾ ಇಲ್ಲ',
+    reportPreviewTitle: 'ವರದಿ ಪೂರ್ವವೀಕ್ಷಣೆ',
+    recordsLabel: 'ದಾಖಲೆಗಳು',
+    exportCsvBtn: 'CSV ರಫ್ತು ಮಾಡಿ',
+    exportTxtBtn: 'TXT ರಫ್ತು ಮಾಡಿ',
+    showingFirstColumnsPreviewDesc: 'ಬ್ರೌಸರ್ ಪೂರ್ವವೀಕ್ಷಣೆಯಲ್ಲಿ ಮೊದಲ 4 ಕಾಲಮ್‌ಗಳವರೆಗೆ ತೋರಿಸಲಾಗುತ್ತಿದೆ. ಎಲ್ಲಾ ವಿವರವಾದ ಡೇಟಾ ಕಾಲಮ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಲು ರಫ್ತು ಮಾಡಿ.',
+    aadhaarMustBe12DigitsMsg: 'ಆಧಾರ್ ಸಂಖ್ಯೆ ನಿಖರವಾಗಿ 12 ಅಂಕೆಗಳಾಗಿರಬೇಕು.',
+    aadhaarNumberLabel: 'ಆಧಾರ್ ಸಂಖ್ಯೆ',
+    autoFilledFromGpsPlaceholder: 'GPS ನಿಂದ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಭರ್ತಿಯಾಗಿದೆ',
+    backToHomeLink: 'ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ',
+    canLogInWithEitherMsg: 'ನೀವು ಇವುಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಬಳಸಿ ಲಾಗಿನ್ ಆಗಬಹುದು',
+    cardholderNameLabel: 'ಕಾರ್ಡ್‌ದಾರರ ಹೆಸರು',
+    cardNumberLabel: 'ಕಾರ್ಡ್ ಸಂಖ್ಯೆ',
+    choosePaymentChannelLabel: 'ಪಾವತಿ ಚಾನೆಲ್ ಆಯ್ಕೆಮಾಡಿ',
+    chooseSubscriptionPlanLabel: 'ಚಂದಾದಾರಿಕೆ ಯೋಜನೆ ಆಯ್ಕೆಮಾಡಿ',
+    cityLabel: 'ನಗರ',
+    createShopAccountBtn: 'ಅಂಗಡಿ ಖಾತೆ ರಚಿಸಿ',
+    customersStatLabel: 'ಗ್ರಾಹಕರು',
+    cvvLabel: 'CVV',
+    digitAadhaarOptionalPlaceholder: '12-ಅಂಕಿಯ ಆಧಾರ್ ಸಂಖ್ಯೆ (ಐಚ್ಛಿಕ)',
+    referralCodeLabel: 'ರೆಫರಲ್ ಕೋಡ್ (ಐಚ್ಛಿಕ)',
+    referralCodePlaceholder: 'ನಿಮ್ಮ ಬಳಿ ಇದ್ದರೆ ರೆಫರಲ್ ಕೋಡ್ ನಮೂದಿಸಿ',
+    agreeToTermsPrefix: 'ನಾನು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿದ್ದೇನೆ ಮತ್ತು ಒಪ್ಪುತ್ತೇನೆ',
+    termsAndConditionsLinkLabel: 'ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳು',
+    pleaseAcceptTermsMsg: 'ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿ ಒಪ್ಪಿಕೊಳ್ಳಿ.',
+    digitMobilePlaceholder: '10-ಅಂಕಿಯ ಮೊಬೈಲ್',
+    digitPinCodePlaceholder: '6-ಅಂಕಿಯ ಪಿನ್ ಕೋಡ್',
+    emailOrMobileLabel: 'ಇಮೇಲ್ ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ',
+    emailOrMobilePlaceholder: 'ಇಮೇಲ್ ವಿಳಾಸ ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ',
+    emailOtpLabel: 'ಇಮೇಲ್ OTP',
+    enterRegisteredMethodTemplate: 'ಮರುಹೊಂದಿಸುವ ಕೋಡ್ ವಿನಂತಿಸಲು ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಸಂಬಂಧಿಸಿದ ನೋಂದಾಯಿತ {method} ಅನ್ನು ನಮೂದಿಸಿ.',
+    expiryLabel: 'ಅವಧಿ ಮುಗಿಯುವಿಕೆ',
+    forgotPasswordLink: 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ?',
+    keysCutStatLabel: 'ಕತ್ತರಿಸಿದ ಕೀಗಳು',
+    keyShopDashboardLabel: 'ಕೀ ಶಾಪ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+    loadingCategoriesEllipsis: 'ವರ್ಗಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…',
+    mobileNumberLabel: 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆ',
+    mobileNumberVerifiedMsg: 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಪರಿಶೀಲಿಸಲಾಗಿದೆ',
+    noShopCategoriesAvailableMsg: 'ಇನ್ನೂ ಯಾವುದೇ ಅಂಗಡಿ ವರ್ಗಗಳು ಲಭ್ಯವಿಲ್ಲ',
+    otpVerifiedSetNewPasswordMsg: 'OTP ಪರಿಶೀಲಿಸಲಾಗಿದೆ. ದಯವಿಟ್ಟು ಕೆಳಗೆ ಹೊಸ ಪಾಸ್‌ವರ್ಡ್ ಹೊಂದಿಸಿ.',
+    passwordLabel: 'ಪಾಸ್‌ವರ್ಡ್',
+    passwordResetSuccessMsg: 'ಪಾಸ್‌ವರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ಮರುಹೊಂದಿಸಲಾಗಿದೆ',
+    payableAmountLabel: 'ಪಾವತಿಸಬೇಕಾದ ಮೊತ್ತ',
+    paySettleSetupBtn: 'ಪಾವತಿಸಿ ಮತ್ತು ಸೆಟಪ್ ಮುಗಿಸಿ',
+    phoneOtpLabel: 'ಫೋನ್ OTP',
+    pinCodeLabel: 'ಪಿನ್ ಕೋಡ್',
+    pinCodeMustBe6DigitsMsg: 'ಪಿನ್ ಕೋಡ್ ನಿಖರವಾಗಿ 6 ಅಂಕೆಗಳಾಗಿರಬೇಕು.',
+    pleaseEnterValidEmailMsg: 'ದಯವಿಟ್ಟು ಮಾನ್ಯ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ.',
+    pleaseFillRequiredRegFieldsMsg: 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ನೋಂದಣಿ ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ.',
+    pleaseVerifyMobileOtpMsg: 'ಮುಂದುವರಿಸುವ ಮೊದಲು ದಯವಿಟ್ಟು OTP ಮೂಲಕ ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.',
+    registeredEmailLabel: 'ನೋಂದಾಯಿತ ಇಮೇಲ್',
+    registerYourKeyShopTitle: 'ನಿಮ್ಮ ಕೀ ಶಾಪ್ ನೋಂದಾಯಿಸಿ',
+    registrationSubmittedTitle: 'ನೋಂದಣಿ ಸಲ್ಲಿಸಲಾಗಿದೆ',
+    regPasswordMinLengthMsg: 'ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು.',
+    rememberMeLabel: 'ನನ್ನನ್ನು ನೆನಪಿಡಿ',
+    resendOtpBtn: 'OTP ಅನ್ನು ಮರುಕಳುಹಿಸಿ',
+    resetYourPasswordTitle: 'ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ',
+    returnToLoginBtn: 'ಲಾಗಿನ್‌ಗೆ ಹಿಂತಿರುಗಿ',
+    runYourShopHeading: 'ನಿಮ್ಮ ಅಂಗಡಿಯನ್ನು ನಡೆಸಿ',
+    scanQrCodeAppsDesc: 'GooglePay, PhonePe, ಅಥವಾ Paytm ಬಳಸಿ QR ಕೋಡ್ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ',
+    secureRecoveryWorkspaceDesc: 'ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಾಗಿ ಸುರಕ್ಷಿತ ಮರುಪಡೆಯುವಿಕೆ',
+    selectShopCategoryPlaceholder: 'ಅಂಗಡಿ ವರ್ಗ ಆಯ್ಕೆಮಾಡಿ',
+    selectVerificationMethodDesc: 'ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ರುಜುವಾತುಗಳನ್ನು ಮರುಪಡೆಯಲು ನಿಮ್ಮ ಪರಿಶೀಲನಾ ವಿಧಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
+    sendOtpCodeBtn: 'OTP ಕೋಡ್ ಕಳುಹಿಸಿ',
+    sendOtpToVerifyBtn: 'ಪರಿಶೀಲಿಸಲು OTP ಕಳುಹಿಸಿ',
+    settlingPaymentEllipsis: 'ಪಾವತಿ ಇತ್ಯರ್ಥಗೊಳಿಸಲಾಗುತ್ತಿದೆ…',
+    shopAdminDownloadAppBtn: 'ಅಂಗಡಿ ನಿರ್ವಾಹಕರೇ? ಅಪ್ಲಿಕೇಶನ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+    shopOnboardingEyebrow: 'ಅಂಗಡಿ ಆನ್‌ಬೋರ್ಡಿಂಗ್',
+    signInLeadDesc: 'ನಿಮ್ಮ ಡುಪ್ಲಿಕೇಟ್-ಕೀ ಅಂಗಡಿಯನ್ನು ನಡೆಸಲು ಸೈನ್ ಇನ್ ಮಾಡಿ — ಆರ್ಡರ್‌ಗಳು, ಗ್ರಾಹಕರು ಮತ್ತು ದಾಸ್ತಾನು, ಎಲ್ಲವೂ ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ.',
+    signInToKeyShopBtn: 'ಕೀ ಶಾಪ್‌ಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ',
+    signInWithNewCredentialsMsg: 'ಈಗ ನೀವು ನಿಮ್ಮ ಹೊಸ ರುಜುವಾತುಗಳೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಮಾಡಬಹುದು.',
+    smartGoldStandardWaySpan: 'ಸ್ಮಾರ್ಟ್, ಚಿನ್ನದ-ಗುಣಮಟ್ಟದ ರೀತಿಯಲ್ಲಿ.',
+    streetLandmarkPlaceholder: 'ರಸ್ತೆ / ಹೆಗ್ಗುರುತು',
+    trackDuplicateKeysDesc: 'ಪ್ರತಿ ಶಾಖೆಯಲ್ಲಿ ನಕಲಿ ಕೀಗಳು, ಗ್ರಾಹಕರು ಮತ್ತು ಸ್ಟೋರ್ ಆರ್ಡರ್‌ಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ — ಭಾರತೀಯ ಲಾಕ್‌ಸ್ಮಿತ್‌ಗಳಿಗಾಗಿ ನಿರ್ಮಿಸಲಾದ ಒಂದು ಅದ್ಭುತ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್.',
+    trustedByShopsBadge: 'ಭಾರತದಾದ್ಯಂತ 500+ ಕೀ ಶಾಪ್‌ಗಳ ವಿಶ್ವಾಸ ಗಳಿಸಿದೆ',
+    upiQrScanLabel: 'UPI / QR ಸ್ಕ್ಯಾನ್',
+    verifyBtnLabel: 'ಪರಿಶೀಲಿಸಿ',
+    wantToRegisterShopMsg: 'ನಿಮ್ಮ ಅಂಗಡಿಯನ್ನು ನೋಂದಾಯಿಸಲು ಬಯಸುವಿರಾ?',
+    welcomeBackHeading: 'ಮತ್ತೆ ಸ್ವಾಗತ',
+    loginFailedCheckCredentialsMsg: 'ಲಾಗಿನ್ ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ರುಜುವಾತುಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.',
+    failedDispatchVerificationCodeMsg: 'ಪರಿಶೀಲನಾ ಕೋಡ್ ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ',
+    incorrectVerificationCodeMsg: 'ತಪ್ಪಾದ ಪರಿಶೀಲನಾ ಕೋಡ್. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+    passwordsDoNotMatchMsg: 'ಪಾಸ್‌ವರ್ಡ್‌ಗಳು ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ',
+    passwordResetFailedMsg: 'ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಲು ವಿಫಲವಾಗಿದೆ',
+    pleaseEnterMobileNumberFirstMsg: 'ದಯವಿಟ್ಟು ಮೊದಲು ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ.',
+    failedDispatchVerificationOtpMsg: 'ಪರಿಶೀಲನಾ OTP ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ.',
+    incorrectVerificationOtpCodeMsg: 'ತಪ್ಪಾದ ಪರಿಶೀಲನಾ OTP ಕೋಡ್. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
+    registrationSuccessfulShopActiveMsg: 'ನೋಂದಣಿ ಯಶಸ್ವಿಯಾಗಿದೆ! ನಿಮ್ಮ ಅಂಗಡಿ ಖಾತೆ ಈಗ ಸಕ್ರಿಯವಾಗಿದೆ - ನೀವು ತಕ್ಷಣ ಲಾಗಿನ್ ಆಗಬಹುದು.',
+    selfRegistrationFailedMsg: 'ಸ್ವಯಂ-ನೋಂದಣಿ ವಿಫಲವಾಗಿದೆ.',
+    shopWorkspaceSettingsSavedMsg: 'ಅಂಗಡಿ ಕಾರ್ಯಸ್ಥಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಉಳಿಸಲಾಗಿದೆ!',
+    documentUploadFailedMsg: 'ದಾಖಲೆ ಅಪ್‌ಲೋಡ್ ವಿಫಲವಾಗಿದೆ',
+    removeThisDocumentConfirm: 'ಈ ದಾಖಲೆಯನ್ನು ತೆಗೆದುಹಾಕಬೇಕೇ?',
+    failedRemoveDocumentMsg: 'ದಾಖಲೆಯನ್ನು ತೆಗೆದುಹಾಕಲು ವಿಫಲವಾಗಿದೆ',
+    incorrectPasswordEnteredMsg: 'ತಪ್ಪಾದ ಪಾಸ್‌ವರ್ಡ್ ನಮೂದಿಸಲಾಗಿದೆ.',
+    pleaseEnterRegisteredEmailPhoneMsg: 'ದಯವಿಟ್ಟು ನಿಮ್ಮ ನೋಂದಾಯಿತ ಇಮೇಲ್ ಅಥವಾ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ',
+    failedSendOtpCodeMsg: 'OTP ಕೋಡ್ ಕಳುಹಿಸಲು ವಿಫಲವಾಗಿದೆ.',
+    invalidOtpCodeEnterCorrectMsg: 'ಅಮಾನ್ಯ OTP ಕೋಡ್. ದಯವಿಟ್ಟು ಸರಿಯಾದ ಕೋಡ್ ನಮೂದಿಸಿ.',
+    passwordUpdatedSuccessfullyMsg: 'ಪಾಸ್‌ವರ್ಡ್ ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ!',
+    failedUpdatePasswordMsg: 'ಪಾಸ್‌ವರ್ಡ್ ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ',
   },
   ml: {
     shopsRegistered: 'രജിസ്റ്റർ ചെയ്ത കടകൾ',
@@ -507,6 +4132,731 @@ const LANGUAGES = {
     welcome: 'കീ വർക്ക്സ്പേസ്',
     superAdmin: 'സൂപ്പർ അഡ്മിൻ',
     shopTerminal: 'ഷോപ്പ് ടെർമിനൽ',
+    supportConfig: 'സപ്പോർട്ട് കോൺഫിഗറേഷൻ',
+    inventory: 'മെഷീനുകൾ',
+    customerCare: 'കസ്റ്റമർ കെയർ',
+    offersAdsBanners: 'ഓഫറുകൾ, പരസ്യങ്ങൾ & ബാനറുകൾ',
+    language: 'ഭാഷ',
+    btnSave: 'സേവ് ചെയ്യുക',
+    btnSaveChanges: 'മാറ്റങ്ങൾ സേവ് ചെയ്യുക',
+    btnCancel: 'റദ്ദാക്കുക',
+    btnDelete: 'ഇല്ലാതാക്കുക',
+    btnEdit: 'എഡിറ്റ് ചെയ്യുക',
+    btnSubmit: 'സമർപ്പിക്കുക',
+    btnClose: 'അടയ്ക്കുക',
+    btnConfirm: 'സ്ഥിരീകരിക്കുക',
+    btnUpdate: 'അപ്ഡേറ്റ് ചെയ്യുക',
+    btnRemove: 'നീക്കം ചെയ്യുക',
+    btnBack: 'തിരികെ',
+    btnNext: 'അടുത്തത്',
+    btnRetry: 'വീണ്ടും ശ്രമിക്കുക',
+    btnDownload: 'ഡൗൺലോഡ് ചെയ്യുക',
+    btnUpload: 'അപ്‌ലോഡ് ചെയ്യുക',
+    btnContinue: 'തുടരുക',
+    btnDone: 'പൂർത്തിയായി',
+    btnOk: 'ശരി',
+    btnViewAll: 'എല്ലാം കാണുക',
+    btnViewDetails: 'വിശദാംശങ്ങൾ കാണുക',
+    btnDismiss: 'തള്ളിക്കളയുക',
+    btnAddNew: 'പുതിയത് ചേർക്കുക',
+    btnApply: 'അപേക്ഷിക്കുക',
+    btnClear: 'മായ്ക്കുക',
+    btnExport: 'എക്സ്പോർട്ട് ചെയ്യുക',
+    yes: 'അതെ',
+    no: 'ഇല്ല',
+    loading: 'ലോഡ് ചെയ്യുന്നു...',
+    searching: 'തിരയുന്നു...',
+    searchPlaceholder: 'തിരയുക...',
+    active: 'സജീവം',
+    inactive: 'നിഷ്ക്രിയം',
+    suspended: 'താൽക്കാലികമായി നിർത്തി',
+    expired: 'കാലഹരണപ്പെട്ടു',
+    pending: 'തീർപ്പുകൽപ്പിക്കാത്തത്',
+    actions: 'പ്രവർത്തനങ്ങൾ',
+    status: 'നില',
+    optional: 'ഓപ്ഷണൽ',
+    required: 'ആവശ്യമാണ്',
+    noRecordsFound: 'രേഖകളൊന്നും കണ്ടെത്തിയില്ല',
+    noDataAvailable: 'ഡാറ്റ ലഭ്യമല്ല',
+    areYouSure: 'നിങ്ങൾക്ക് ഉറപ്പാണോ?',
+    actionCannotBeUndone: 'ഈ പ്രവർത്തനം പഴയപടിയാക്കാൻ കഴിയില്ല.',
+    somethingWentWrong: 'എന്തോ കുഴപ്പം സംഭവിച്ചു. വീണ്ടും ശ്രമിക്കുക.',
+    changesSavedSuccessfully: 'മാറ്റങ്ങൾ വിജയകരമായി സേവ് ചെയ്തു',
+    fieldName: 'പേര്',
+    fieldEmail: 'ഇമെയിൽ',
+    fieldPhone: 'ഫോൺ നമ്പർ',
+    fieldAddress: 'വിലാസം',
+    fieldDate: 'തീയതി',
+    fieldAmount: 'തുക',
+    fieldDescription: 'വിവരണം',
+    fieldCategory: 'വിഭാഗം',
+    fieldPrice: 'വില',
+    fieldTitle: 'തലക്കെട്ട്',
+    fieldType: 'തരം',
+    account: 'അക്കൗണ്ട്',
+    customerService: 'കസ്റ്റമർ സർവീസ്',
+    chooseLanguage: 'ഭാഷ തിരഞ്ഞെടുക്കുക',
+    selectLanguageDesc: 'ആപ്പിനായി നിങ്ങളുടെ ഇഷ്ട ഭാഷ തിരഞ്ഞെടുക്കുക',
+    pressBackToExit: 'പുറത്തുകടക്കാൻ വീണ്ടും ബാക്ക് അമർത്തുക',
+    loadingDashboard: 'ഡാഷ്‌ബോർഡ് ലോഡ് ചെയ്യുന്നു…',
+    superAdminControl: 'സൂപ്പർ അഡ്മിൻ നിയന്ത്രണം',
+    portal: 'പോർട്ടൽ',
+    welcomeBack: 'തിരികെ സ്വാഗതം',
+    namaste: 'നമസ്തേ',
+    platformOverviewDesc: 'എല്ലാ ഷോപ്പിലും പ്ലാറ്റ്‌ഫോം അവലോകനം.',
+    newCustomer: 'പുതിയ കസ്റ്റമർ',
+    registerComplianceEntry: 'പുതിയ കസ്റ്റമറിനായി കംപ്ലയൻസ് എൻട്രി രജിസ്റ്റർ ചെയ്യുക',
+    shopsCardTitle: 'ഷോപ്പുകൾ',
+    viewManageShopsDesc: 'രജിസ്റ്റർ ചെയ്ത എല്ലാ ഷോപ്പും കാണുകയും നിയന്ത്രിക്കുകയും ചെയ്യുക',
+    customerSupport: 'കസ്റ്റമർ സപ്പോർട്ട്',
+    manageCustomerSupportDesc: 'കസ്റ്റമർ സപ്പോർട്ട് കോൺടാക്റ്റും വിഭവങ്ങളും നിയന്ത്രിക്കുക',
+    complianceInventoryTerminal: 'കംപ്ലയൻസ് & ഇൻവെന്ററി ടെർമിനൽ',
+    workspace: 'വർക്ക്സ്പേസ്',
+    subscriptionRenewalRequired: 'സബ്‌സ്ക്രിപ്ഷൻ പുതുക്കൽ ആവശ്യമാണ്!',
+    subscriptionExpiresIn: 'നിങ്ങളുടെ ഷോപ്പ് സബ്‌സ്ക്രിപ്ഷൻ {days} ദിവസത്തിനുള്ളിൽ കാലഹരണപ്പെടും. ദയവായി കീ ഷോപ്പ് സൂപ്പർ അഡ്മിനുമായി പുതുക്കൽ ഏകോപിപ്പിക്കുക.',
+    planSuffix: 'പ്ലാൻ',
+    searchKeysCardTitle: 'കീകൾ തിരയുക',
+    findDigitizeKeysDesc: 'കീ രേഖകൾ വേഗത്തിൽ കണ്ടെത്തി ഡിജിറ്റൈസ് ചെയ്യുക',
+    addMachinesCardDesc: 'ഒരു പുതിയ മെഷീൻ ലിസ്റ്റിംഗ് വേഗത്തിൽ ചേർക്കുക',
+    getHelpSupportDesc: 'സഹായം നേടുകയും സപ്പോർട്ട് കോൺടാക്റ്റ് വിവരങ്ങൾ കാണുകയും ചെയ്യുക',
+    featuredOffersBanners: 'സവിശേഷ ഓഫറുകൾ & ബാനറുകൾ',
+    banner: 'ബാനർ',
+    notice: 'അറിയിപ്പ്',
+    offer: 'ഓഫർ',
+    viewAllOffersBanners: 'എല്ലാ ഓഫറുകളും & ബാനറുകളും കാണുക',
+    usedMachines: 'ഉപയോഗിച്ച മെഷീനുകൾ',
+    ecmService: 'ഇസിഎം',
+    meterService: 'മീറ്റർ',
+    scanningService: 'സ്കാനിംഗ്',
+    usedMachinesDesc: 'ഉപയോഗിച്ച മെഷീനുകൾ കാണുകയും നിയന്ത്രിക്കുകയും ചെയ്യുക',
+    ecmServiceDesc: 'ഇസിഎം സേവന രേഖകൾ നിയന്ത്രിക്കുക',
+    meterServiceDesc: 'മീറ്റർ സേവനങ്ങൾ ട്രാക്ക് ചെയ്ത് നിയന്ത്രിക്കുക',
+    scanningServiceDesc: 'കംപ്ലയൻസ് എൻട്രികൾ സ്കാൻ ചെയ്ത് പ്രോസസ്സ് ചെയ്യുക',
+    platformOperations: 'പ്ലാറ്റ്‌ഫോം പ്രവർത്തനങ്ങൾ',
+    provisionShopsDesc: 'പ്ലാറ്റ്‌ഫോമിലെ എല്ലാ കീ ഷോപ്പ് വർക്ക്‌സ്‌പേസും പ്രൊവിഷൻ ചെയ്യുകയും നിരീക്ഷിക്കുകയും നിയന്ത്രിക്കുകയും ചെയ്യുക.',
+    allShops: 'എല്ലാ ഷോപ്പുകളും',
+    searchShopsPlaceholder: 'ഷോപ്പുകൾ തിരയുക...',
+    loadingShopRegistry: 'ഷോപ്പ് രജിസ്ട്രി ലോഡ് ചെയ്യുന്നു...',
+    noShopsProvisionedYet: 'ഇതുവരെ ഒരു ഷോപ്പും പ്രൊവിഷൻ ചെയ്തിട്ടില്ല',
+    noShopsMatchSearch: 'നിങ്ങളുടെ തിരയലുമായി പൊരുത്തപ്പെടുന്ന ഷോപ്പുകളൊന്നുമില്ല',
+    shopDetails: 'ഷോപ്പ് വിവരങ്ങൾ',
+    adminContact: 'അഡ്മിൻ ബന്ധപ്പെടൽ',
+    activePlan: 'സജീവ പ്ലാൻ',
+    validUntil: 'വരെ സാധുവാണ്',
+    diskStorage: 'ഡിസ്ക് സ്റ്റോറേജ്',
+    editWorkspace: 'വർക്ക്‌സ്‌പേസ് എഡിറ്റ് ചെയ്യുക',
+    managePlan: 'പ്ലാൻ നിയന്ത്രിക്കുക',
+    shopOnboarding: 'ഷോപ്പ് ഓൺബോർഡിംഗ്',
+    provisionNewShopWorkspace: 'പുതിയ ഷോപ്പ് വർക്ക്‌സ്‌പേസ് പ്രൊവിഷൻ ചെയ്യുക',
+    shopNameLabel: 'ഷോപ്പിന്റെ പേര്',
+    shopNamePlaceholder: 'ഉദാ. ശർമ്മ കീ സെന്റർ',
+    shopAddressLabel: 'ഷോപ്പ് വിലാസം',
+    shopAddressPlaceholder: 'പൂർണ്ണ ഷോപ്പ് വിലാസം',
+    adminFullNameLabel: 'അഡ്മിന്റെ പൂർണ്ണ നാമം',
+    adminFullNamePlaceholder: 'ഉദാ. രമേഷ് ശർമ്മ',
+    adminEmailLabel: 'അഡ്മിൻ ഇമെയിൽ',
+    adminEmailPlaceholder: 'admin@example.com',
+    initialPasswordLabel: 'പ്രാരംഭ പാസ്‌വേഡ്',
+    initialPasswordPlaceholder: 'ഒരു താൽക്കാലിക പാസ്‌വേഡ് സജ്ജമാക്കുക',
+    phonePlaceholder: 'ഫോൺ നമ്പർ',
+    whatsappNumberLabel: 'വാട്ട്‌സ്ആപ്പ് നമ്പർ',
+    sameAsPhone: 'ഫോൺ നമ്പർ പോലെ തന്നെ',
+    subscriptionPlanLabel: 'സബ്‌സ്‌ക്രിപ്ഷൻ പ്ലാൻ',
+    monthlyPlan: 'മാസംതോറും',
+    halfYearlyPlan: 'അർദ്ധ-വാർഷികം',
+    yearlyPlan: 'വാർഷികം',
+    endDateValidityLabel: 'അവസാന തീയതി / സാധുത',
+    autoCalculatedTier: 'തിരഞ്ഞെടുത്ത പ്ലാൻ ടയർ അടിസ്ഥാനമാക്കി സ്വയമേവ കണക്കാക്കിയത്',
+    failedToCreateShop: 'കീ ഷോപ്പ് സൃഷ്ടിക്കുന്നതിൽ പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.',
+    ownerAadhaarMandatory: 'ഷോപ്പ് വർക്ക്‌സ്‌പേസ് പ്രൊവിഷൻ ചെയ്യാൻ ഉടമയുടെ ആധാർ രേഖ നിർബന്ധമാണ്.',
+    failedInitCheckout: 'സബ്‌സ്ക്രിപ്ഷൻ ചെക്ക്ഔട്ട് ആരംഭിക്കുന്നതിൽ പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.',
+    paymentFailedPrefix: 'പേയ്‌മെന്റ് പരാജയപ്പെട്ടു: {message}',
+    updateFailedMsg: 'അപ്ഡേറ്റ് പരാജയപ്പെട്ടു',
+    billingEyebrow: 'ബില്ലിംഗ്',
+    updateShopSubscriptionTitle: 'ഷോപ്പ് സബ്‌സ്ക്രിപ്ഷൻ അപ്ഡേറ്റ് ചെയ്യുക',
+    targetShopLabel: 'ലക്ഷ്യ ഷോപ്പ്:',
+    planTierLabel: 'പ്ലാൻ ടയർ',
+    monthlyPlanFull: 'മാസ പ്ലാൻ',
+    sixMonthPlanFull: '6-മാസ പ്ലാൻ',
+    yearlyPlanFull: 'വാർഷിക പ്ലാൻ',
+    newEndDateLabel: 'പുതിയ അവസാന തീയതി',
+    updatePlanBtn: 'പ്ലാൻ അപ്ഡേറ്റ് ചെയ്യുക',
+    planSubscriptionEscrowPay: 'പ്ലാൻ സബ്‌സ്ക്രിപ്ഷൻ എസ്ക്രോ പേയ്‌മെന്റ്',
+    workspaceTerminalProvisioningPayment: 'വർക്ക്‌സ്‌പേസ് ടെർമിനൽ പ്രൊവിഷനിംഗ് പേയ്‌മെന്റ്',
+    paymentAuthorizedTitle: 'പേയ്‌മെന്റ് അംഗീകരിച്ചു!',
+    paymentSettledDesc: 'സബ്‌സ്ക്രിപ്ഷൻ പേയ്‌മെന്റ് വിജയകരമായി തീർപ്പാക്കി. വർക്ക്‌സ്‌പേസ് {name} ഇപ്പോൾ പൂർണ്ണമായി പ്രൊവിഷൻ ചെയ്ത് സജീവമാക്കിയിരിക്കുന്നു.',
+    closeAndProceedBtn: 'അടച്ച് തുടരുക',
+    processingTransactionTitle: 'ഇടപാട് പ്രോസസ്സ് ചെയ്യുന്നു',
+    finalizingWorkspaceCreation: 'വർക്ക്‌സ്‌പേസ് സൃഷ്ടി ടണലുകൾ അന്തിമമാക്കുന്നു.',
+    workspaceProvisionInvoice: 'വർക്ക്‌സ്‌പേസ് പ്രൊവിഷൻ ഇൻവോയ്സ്',
+    planColonLabel: 'പ്ലാൻ:',
+    creditCardLabel: 'ക്രെഡിറ്റ് കാർഡ്',
+    upiQrCodeLabel: 'UPI QR കോഡ്',
+    cardholderFullNameLabel: 'കാർഡ് ഉടമയുടെ പൂർണ്ണ നാമം',
+    cardholderNamePlaceholder: 'ഉദാ. രമേഷ് കുമാർ',
+    debitCreditCardNumberLabel: 'ഡെബിറ്റ് / ക്രെഡിറ്റ് കാർഡ് നമ്പർ',
+    expiryDateLabel: 'കാലാവധി തീയതി',
+    cvvCodeLabel: 'CVV കോഡ്',
+    scanToAuthorizeInvoice: 'സെറ്റപ്പ് ഇൻവോയ്സ് അംഗീകരിക്കാൻ സ്കാൻ ചെയ്യുക',
+    scanQrDesc: 'GPay, PhonePe, Paytm, അല്ലെങ്കിൽ BHIM ഉപയോഗിച്ച് സ്കാൻ ചെയ്യുക. കണ്ടെത്തിയ ശേഷം സബ്‌സ്ക്രിപ്ഷൻ സ്വയമേവ സജീവമാകും.',
+    secureGatewayPaymentPortal: '256-ബിറ്റ് സുരക്ഷിത ഗേറ്റ്‌വേ പേയ്‌മെന്റ് പോർട്ടൽ',
+    cancelSetupBtn: 'സെറ്റപ്പ് റദ്ദാക്കുക',
+    payAndProvisionPrefix: 'രൂ. അടയ്ക്കുക',
+    payAndProvisionSuffix: '& പ്രൊവിഷൻ ചെയ്യുക',
+    logEstablishingTunnel: 'സുരക്ഷിത എൻഡ്-ടു-എൻഡ് സാൻഡ്‌ബോക്സ് ടണൽ സ്ഥാപിക്കുന്നു...',
+    logVerifyingBalance: 'അക്കൗണ്ട് ബാലൻസും ക്രെഡിറ്റ് ലൈനുകളും പരിശോധിക്കുന്നു...',
+    logAuthorizingEscrow: 'സബ്‌സ്ക്രിപ്ഷൻ എസ്ക്രോ സെറ്റിൽമെന്റ് ഇടപാട് അംഗീകരിക്കുന്നു...',
+    logEncryptingCard: 'AES-GCM വഴി കാർഡ് വിവരങ്ങൾ എൻക്രിപ്റ്റ് ചെയ്യുന്നു...',
+    logFulfillingProvisioning: 'കീ ഷോപ്പ് API വർക്ക്‌സ്‌പേസ് പ്രൊവിഷനിംഗ് പൂർത്തിയാക്കുന്നു...',
+    shopPhotoLabel: 'ഷോപ്പ് ഫോട്ടോ',
+    shopLicenseLabel: 'ഷോപ്പ് ലൈസൻസ്',
+    ownerAadhaarLabel: 'ഉടമയുടെ ആധാർ',
+    provisionAccountBtn: 'അക്കൗണ്ട് പ്രൊവിഷൻ ചെയ്യുക',
+    workspaceSettings: 'വർക്ക്‌സ്‌പേസ് ക്രമീകരണങ്ങൾ',
+    editShopWorkspaceDetails: 'ഷോപ്പ് വർക്ക്‌സ്‌പേസ് വിവരങ്ങൾ എഡിറ്റ് ചെയ്യുക',
+    workspaceNameLabel: 'വർക്ക്‌സ്‌പേസ് നാമം',
+    registeredAddressFixed: 'രജിസ്റ്റർ ചെയ്ത വിലാസം (നിശ്ചിതം)',
+    notUploaded: 'അപ്‌ലോഡ് ചെയ്തിട്ടില്ല',
+    saveSettings: 'ക്രമീകരണങ്ങൾ സേവ് ചെയ്യുക',
+    crossTenantCompliance: 'ക്രോസ്-ടെനന്റ് കംപ്ലയൻസ്',
+    customerRegistryTitle: 'കസ്റ്റമർ രജിസ്ട്രി',
+    superviseComplianceRecordsDesc: 'എല്ലാ ടെനന്റ് വർക്ക്‌സ്‌പേസുകളിലും കംപ്ലയൻസ് രേഖകൾ മേൽനോട്ടം വഹിക്കുക',
+    createCustomerBtn: 'കസ്റ്റമറെ സൃഷ്ടിക്കുക',
+    allCustomers: 'എല്ലാ കസ്റ്റമേഴ്‌സും',
+    searchByNamePhoneKeyCode: 'പേര്, ഫോൺ അല്ലെങ്കിൽ കീ കോഡ് പ്രകാരം തിരയുക',
+    loadingCustomerRegistry: 'കസ്റ്റമർ രജിസ്ട്രി ലോഡ് ചെയ്യുന്നു...',
+    noCustomerRecordsMatch: 'കസ്റ്റമർ രേഖകളൊന്നും പൊരുത്തപ്പെടുന്നില്ല',
+    tenantWorkspaceCol: 'ടെനന്റ് വർക്ക്‌സ്‌പേസ്',
+    customerCol: 'കസ്റ്റമർ',
+    phoneCol: 'ഫോൺ',
+    keyCodeCol: 'കീ കോഡ്',
+    registeredCol: 'രജിസ്റ്റർ ചെയ്തത്',
+    shopWorkspaceFallback: 'നിയോഗിക്കാത്ത വർക്ക്‌സ്‌പേസ്',
+    photoOnFile: 'ഫോട്ടോ ലഭ്യമാണ്',
+    photoPending: 'ഫോട്ടോ തീർപ്പുകൽപ്പിക്കാത്തത്',
+    viewComplianceFile: 'കംപ്ലയൻസ് ഫയൽ കാണുക',
+    complianceFileEyebrow: 'കംപ്ലയൻസ് ഫയൽ',
+    phoneContactLabel: 'ഫോൺ ബന്ധപ്പെടൽ',
+    registryDateLabel: 'രജിസ്ട്രി തീയതി',
+    addressLabel: 'വിലാസം',
+    keyBlankCodeLabel: 'കീ ബ്ലാങ്ക് കോഡ്',
+    idVerificationLabel: 'ഐഡി പരിശോധന',
+    idNumberDecryptedLabel: 'ഐഡി നമ്പർ (ഡീക്രിപ്റ്റ് ചെയ്തത്)',
+    gpsCoordinatesLabel: 'ജിപിഎസ് കോർഡിനേറ്റുകൾ',
+    latLongTemplate: 'അക്ഷാംശം: {lat} • രേഖാംശം: {long}',
+    notCapturedLabel: 'ക്യാപ്ചർ ചെയ്തിട്ടില്ല',
+    googleMapsLabel: 'ഗൂഗിൾ മാപ്സ്',
+    capturedAddressLabel: 'ക്യാപ്ചർ ചെയ്ത വിലാസം',
+    webcamPhotoLabel: 'ക്യാമറ ഫോട്ടോ',
+    attachedIdCopiesLabel: 'അറ്റാച്ച് ചെയ്ത ഐഡി പകർപ്പുകൾ',
+    uploadedBadge: 'അപ്‌ലോഡ് ചെയ്തു',
+    missingBadge: 'കാണുന്നില്ല',
+    closeFileBtn: 'ഫയൽ അടയ്ക്കുക',
+    operationFailedMsg: 'പ്രവർത്തനം പരാജയപ്പെട്ടു',
+    confirmRemoveKeyBlank: 'ഈ കീ ബ്ലാങ്ക് കേന്ദ്ര കാറ്റലോഗിൽ നിന്ന് നീക്കം ചെയ്യണമെന്ന് തീർച്ചയാണോ?',
+    platformCatalogueLabel: 'പ്ലാറ്റ്‌ഫോം കാറ്റലോഗ്',
+    masterKeyCatalogueTitle: 'മാസ്റ്റർ കീ കാറ്റലോഗ്',
+    provisionKeyBlankSpecsDesc: 'എല്ലാ ഷോപ്പ് ടെർമിനലിലും തിരയാൻ ലഭ്യമായ കീ ബ്ലാങ്ക് സ്പെസിഫിക്കേഷനുകൾ പ്രൊവിഷൻ ചെയ്യുക.',
+    addKeyBlankBtn: 'കീ ബ്ലാങ്ക് ചേർക്കുക',
+    searchCataloguePlaceholder: 'കോഡ്, വിഭാഗം, സ്പെക്‌സ് റഫറൻസ് പ്രകാരം കാറ്റലോഗ് തിരയുക…',
+    loadingCatalogueMsg: 'കാറ്റലോഗ് ലോഡ് ചെയ്യുന്നു…',
+    noKeyBlanksMatch: 'ഈ തിരയലിന് കീ ബ്ലാങ്കുകളൊന്നും പൊരുത്തപ്പെടുന്നില്ല',
+    modifyBtn: 'പരിഷ്‌ക്കരിക്കുക',
+    deleteBtn: 'ഇല്ലാതാക്കുക',
+    catalogueEntryLabel: 'കാറ്റലോഗ് എൻട്രി',
+    modifyKeyBlankTitle: 'കീ ബ്ലാങ്ക് പരിഷ്‌ക്കരിക്കുക',
+    addNewKeyBlankTitle: 'പുതിയ കീ ബ്ലാങ്ക് ചേർക്കുക',
+    keyNumberCodeLabel: 'കീ നമ്പർ / കോഡ്',
+    connectedShopLabel: 'ബന്ധിപ്പിച്ച ഷോപ്പ്',
+    globalCatalogueLabel: 'ഗ്ലോബൽ കാറ്റലോഗ്',
+    connectedCustomersLabel: 'ബന്ധിപ്പിച്ച കസ്റ്റമർ(മാർ)',
+    noCustomerLinkedYet: 'ഇതുവരെ കസ്റ്റമർ ആരും ലിങ്ക് ചെയ്തിട്ടില്ല',
+    keyCodeLabel: 'കീ കോഡ്',
+    keyCodePlaceholderEg: 'ഉദാ. CY-102',
+    categoryTypeLabel: 'വിഭാഗ തരം',
+    categoryPlaceholderEg: 'ഉദാ. പാഡ്‌ലോക്ക്',
+    backImageUrlLabel: 'ബാക്ക് ഇമേജ് URL',
+    saveChangesBtn: 'മാറ്റങ്ങൾ സേവ് ചെയ്യുക',
+    publishKeyBtn: 'കീ പ്രസിദ്ധീകരിക്കുക',
+    crossShopMarketplaceLabel: 'ക്രോസ്-ഷോപ്പ് മാർക്കറ്റ്‌പ്ലേസ്',
+    inventoryTitle: 'മെഷീനുകൾ',
+    manageSharedInventoryDesc: 'പ്ലാറ്റ്‌ഫോമിലുടനീളമുള്ള പങ്കിട്ട ഇൻവെന്ററി ഫീഡ്, ബാനർ പരസ്യ കാമ്പെയ്‌നുകൾ, ഷോപ്പ് ഓഫറുകൾ എന്നിവ കൈകാര്യം ചെയ്യുക.',
+    browseListProductsDesc: 'പ്ലാറ്റ്‌ഫോമിലെ ഓരോ ഷോപ്പിലും പങ്കിട്ട ഉൽപ്പന്നങ്ങൾ ബ്രൗസ് ചെയ്ത് ലിസ്റ്റ് ചെയ്യുക',
+    inventoryFeedTab: 'മെഷീൻ ഫീഡ്',
+    bannerManagementTab: 'ബാനർ മാനേജ്‌മെന്റ്',
+    offerManagementTab: 'ഓഫർ മാനേജ്‌മെന്റ്',
+    failedUpdateCampaign: 'കാമ്പെയ്‌ൻ അപ്‌ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു',
+    failedScheduleCampaign: 'കാമ്പെയ്‌ൻ ഷെഡ്യൂൾ ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു',
+    confirmTerminateAdCampaign: 'ഈ പരസ്യ കാമ്പെയ്ൻ അവസാനിപ്പിക്കണമെന്ന് തീർച്ചയാണോ?',
+    interactivePopupLabel: 'ഇന്ററാക്ടീവ് പോപ്പ്അപ്പ്',
+    textNoticeLabel: 'ടെക്സ്റ്റ് നോട്ടീസ്',
+    mainBannerLabel: 'പ്രധാന ബാനർ',
+    growthMarketingLabel: 'വളർച്ച & മാർക്കറ്റിംഗ്',
+    adCampaignsTitle: 'പരസ്യ കാമ്പെയ്‌നുകൾ',
+    publishBannersPopupsDesc: 'ഷോപ്പ് ഡാഷ്‌ബോർഡ് സ്‌ക്രീനുകളെ ലക്ഷ്യമിട്ടുള്ള ബാനറുകളും പോപ്പ്അപ്പുകളും പ്രസിദ്ധീകരിക്കുക.',
+    newAdCampaignBtn: 'പുതിയ പരസ്യ കാമ്പെയ്ൻ',
+    loadingCampaignsMsg: 'കാമ്പെയ്‌നുകൾ ലോഡ് ചെയ്യുന്നു…',
+    noAdCampaignsScheduled: 'ഇതുവരെ പരസ്യ കാമ്പെയ്‌നുകളൊന്നും ഷെഡ്യൂൾ ചെയ്തിട്ടില്ല.',
+    liveLabel: 'ലൈവ്',
+    scheduledLabel: 'ഷെഡ്യൂൾ ചെയ്തത്',
+    priorityLabel: 'മുൻഗണന',
+    startLabel: 'ആരംഭം',
+    endLabel: 'അവസാനം',
+    allKeyShopsLabel: 'എല്ലാ കീ ഷോപ്പുകളും',
+    targetedShopSingular: '{n} ലക്ഷ്യ ഷോപ്പ്',
+    targetedShopsPlural: '{n} ലക്ഷ്യ ഷോപ്പുകൾ',
+    editBtn: 'എഡിറ്റ് ചെയ്യുക',
+    cancelCampaignBtn: 'കാമ്പെയ്ൻ റദ്ദാക്കുക',
+    adCampaignLabel: 'പരസ്യ കാമ്പെയ്ൻ',
+    editAdCampaignTitle: 'പരസ്യ കാമ്പെയ്ൻ എഡിറ്റ് ചെയ്യുക',
+    newVisualAdCampaignTitle: 'പുതിയ വിഷ്വൽ പരസ്യ കാമ്പെയ്ൻ',
+    adTitleAnnouncementLabel: 'പരസ്യ ശീർഷകം / അറിയിപ്പ്',
+    adTitlePlaceholderEg: 'ഉദാ. ഈ വെള്ളിയാഴ്ച ഗോദ്‌റെജ് കീ ഡ്യൂപ്ലിക്കേറ്റുകൾക്ക് 20% കിഴിവ്',
+    bannerImageSourceLabel: 'ബാനർ ചിത്ര ഉറവിടം',
+    pasteImageUrlPlaceholder: 'ചിത്ര URL ഒട്ടിക്കുക (അല്ലെങ്കിൽ ഗൂഗിൾ ചിത്ര ലിങ്ക്)',
+    uploadBtn: 'അപ്‌ലോഡ് ചെയ്യുക',
+    adFormatLabel: 'പരസ്യ ഫോർമാറ്റ്',
+    mainBannerNoticeOption: 'പ്രധാന ബാനർ അറിയിപ്പ്',
+    interactiveLoginPopupOption: 'ഇന്ററാക്ടീവ് ലോഗിൻ പോപ്പ്അപ്പ്',
+    dashboardTextNoticeOption: 'ഡാഷ്‌ബോർഡ് ടെക്സ്റ്റ് അറിയിപ്പ്',
+    campaignPriorityLabel: 'കാമ്പെയ്ൻ മുൻഗണന',
+    startDateLabel: 'ആരംഭ തീയതി',
+    endDateLabelShort: 'അവസാന തീയതി',
+    targetAudienceLabel: 'ലക്ഷ്യ പ്രേക്ഷകർ',
+    broadcastAllKeyShops: 'എല്ലാ കീ ഷോപ്പുകളിലേക്കും പ്രക്ഷേപണം ചെയ്യുക',
+    targetSpecificShops: 'നിർദ്ദിഷ്ട ഷോപ്പുകളെ ലക്ഷ്യമിടുക',
+    scheduleCampaignBtn: 'കാമ്പെയ്ൻ ഷെഡ്യൂൾ ചെയ്യുക',
+    searchInventoryPlaceholder: 'ഇൻവെന്ററി തിരയുക...',
+    newListingBtn: 'മെഷീൻ ചേർക്കുക',
+    allCategoriesLabel: 'എല്ലാ വിഭാഗങ്ങളും',
+    loadingListingsMsg: 'ലിസ്റ്റിംഗുകൾ ലോഡ് ചെയ്യുന്നു...',
+    noOffersPublishedYet: 'ഇതുവരെ ഓഫറുകളൊന്നും പ്രസിദ്ധീകരിച്ചിട്ടില്ല',
+    noInventoryListedYet: 'ഇതുവരെ ഇൻവെന്ററി ലിസ്റ്റ് ചെയ്തിട്ടില്ല',
+    expiredLabel: 'കാലഹരണപ്പെട്ടു',
+    percentOffSuffix: '% കിഴിവ്',
+    validTillPrefix: 'വരെ സാധുതയുള്ളത്',
+    linkedPrefix: 'ലിങ്ക് ചെയ്തത്:',
+    superAdminIndependentLabel: 'സൂപ്പർ അഡ്മിൻ (സ്വതന്ത്ര)',
+    shopLabel: 'കട:',
+    ownerLabel: 'ഉടമ:',
+    callPrefix: 'വിളിക്കുക',
+    removeBtn: 'നീക്കം ചെയ്യുക',
+    advertisementLabel: 'പരസ്യം',
+    offerLabel: 'ഓഫർ',
+    promotionalProductLabel: 'ഉൽപ്പന്നം',
+    failedUpdateListing: 'ലിസ്റ്റിംഗ് അപ്ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു',
+    failedPublishListing: 'ലിസ്റ്റിംഗ് പ്രസിദ്ധീകരിക്കുന്നതിൽ പരാജയപ്പെട്ടു',
+    confirmRemoveListing: 'ഈ ലിസ്റ്റിംഗ് നീക്കം ചെയ്യണോ?',
+    inventoryListingLabel: 'മെഷീൻ ലിസ്റ്റിംഗ്',
+    editListingTitle: 'ലിസ്റ്റിംഗ് എഡിറ്റ് ചെയ്യുക',
+    newInventoryListingTitle: 'പുതിയ ഇൻവെന്ററി ലിസ്റ്റിംഗ്',
+    nameLabel: 'പേര്',
+    listingNamePlaceholderEg: 'ഉദാ. പ്രീമിയം ഗോദ്‌റെജ് കീ-ബ്ലാങ്ക്സ് - ബൾക്ക് പാക്ക്',
+    productTypeLabel: 'ഉൽപ്പന്ന തരം',
+    selectProductTypePlaceholder: 'ഉൽപ്പന്ന തരം തിരഞ്ഞെടുക്കുക',
+    noProductTypesAvailable: 'ഇതുവരെ ഉൽപ്പന്ന തരങ്ങൾ ലഭ്യമല്ല',
+    descriptionOptionalLabel: 'വിവരണം (ഓപ്ഷണൽ)',
+    shortDescriptionPlaceholder: 'ലിസ്റ്റിംഗ് കാർഡിൽ കാണിക്കുന്ന ഹ്രസ്വ വിവരണം',
+    productPhotoOptionalLabel: 'ഉൽപ്പന്ന ഫോട്ടോ (ഓപ്ഷണൽ)',
+    imageMediaOptionalLabel: 'ചിത്രം / മീഡിയ (ഓപ്ഷണൽ)',
+    priceOptionalLabel: 'വില (ഓപ്ഷണൽ)',
+    priceLeaveBlankPlaceholder: 'ബാധകമല്ലെങ്കിൽ ശൂന്യമായി വിടുക',
+    phoneNumberLabel: 'ഫോൺ നമ്പർ',
+    phoneNumberPlaceholderEg: 'ഉദാ. 9876543210',
+    tapToCallHint: 'വാങ്ങുന്നവർക്കായി ലിസ്റ്റിംഗ് കാർഡിൽ ടാപ്പ്-ടു-കോൾ ബട്ടണായി കാണിക്കും.',
+    discountPercentageOptionalLabel: 'കിഴിവ് ശതമാനം (ഓപ്ഷണൽ)',
+    discountPercentagePlaceholderEg: 'ഉദാ. 20',
+    validUntilOptionalLabel: 'സാധുതയുള്ള തീയതി വരെ (ഓപ്ഷണൽ)',
+    validUntilHint: 'കാലാവധി ഇല്ലാത്ത ഓഫറിന് ശൂന്യമായി വിടുക. കാലഹരണപ്പെട്ട ഓഫറുകൾ പങ്കിട്ട ഫീഡിൽ നിന്ന് മറയ്ക്കും.',
+    linkExistingListingLabel: 'നിങ്ങളുടെ നിലവിലുള്ള ലിസ്റ്റിംഗുകളിലൊന്നിലേക്ക് ലിങ്ക് ചെയ്യുക (ഓപ്ഷണൽ)',
+    noLinkedListingOption: 'ലിങ്ക് ചെയ്ത ലിസ്റ്റിംഗ് ഇല്ല',
+    productLabel: 'ഉൽപ്പന്നം',
+    publishListingBtn: 'ലിസ്റ്റിംഗ് പ്രസിദ്ധീകരിക്കുക',
+    fromKeyShopHqLabel: 'കീ ഷോപ്പ് ആസ്ഥാനത്ത് നിന്ന്',
+    offersAdsBannersTitle: 'ഓഫറുകൾ, പരസ്യങ്ങൾ & ബാനറുകൾ',
+    everyActiveAdOfferDesc: 'സൂപ്പർ അഡ്മിൻ പ്രസിദ്ധീകരിച്ച എല്ലാ സജീവ പരസ്യം, ബാനർ, അറിയിപ്പ്, ഓഫർ എന്നിവ.',
+    loadingEllipsis: 'ലോഡ് ചെയ്യുന്നു…',
+    nothingPublishedYet: 'ഇതുവരെ ഒന്നും പ്രസിദ്ധീകരിച്ചിട്ടില്ല.',
+    advertisementsAndBannersLabel: 'പരസ്യങ്ങൾ & ബാനറുകൾ',
+    offersLabel: 'ഓഫറുകൾ',
+    subscriptionRatesUpdatedMsg: 'സബ്‌സ്ക്രിപ്ഷൻ പ്ലാൻ വിലകൾ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!',
+    updateFailedPrefix: 'അപ്ഡേറ്റ് പരാജയപ്പെട്ടു',
+    platformFinanceLabel: 'പ്ലാറ്റ്‌ഫോം ധനകാര്യം',
+    subscriptionPricingTitle: 'സബ്‌സ്ക്രിപ്ഷൻ വിലനിർണ്ണയം',
+    configureFranchisePricingDesc: 'പ്ലാറ്റ്‌ഫോമിനായി ഫ്രാഞ്ചൈസി സബ്‌സ്ക്രിപ്ഷൻ പ്ലാൻ നിരക്കുകൾ ക്രമീകരിക്കുക.',
+    monthlyLower: 'മാസംതോറും',
+    monthlyRecurringPlanLabel: 'മാസിക ആവർത്തന പ്ലാൻ',
+    sixMonthLower: '6-മാസം',
+    halfYearlyPlanRateLabel: 'അർദ്ധ-വാർഷിക പ്ലാൻ നിരക്ക്',
+    yearlyLower: 'വാർഷികം',
+    yearlyDiscountedRateLabel: 'വാർഷിക കിഴിവ് നിരക്ക്',
+    subscriptionPlanPricingLabel: 'സബ്‌സ്ക്രിപ്ഷൻ പ്ലാൻ വിലനിർണ്ണയം',
+    setRatesForKeyShopsDesc: 'കീ ഷോപ്പുകൾക്കായി നിരക്കുകൾ സജ്ജമാക്കുക. ഈ വിലകൾ പ്രൊവിഷനിംഗ് സമയത്ത് ചെക്ക്ഔട്ട് ഗേറ്റ്‌വേ സ്ക്രീൻ സ്വയമേവ അപ്ഡേറ്റ് ചെയ്യും.',
+    monthlyRecurringPlanRupeeLabel: 'മാസിക ആവർത്തന പ്ലാൻ (₹)',
+    monthlyRecurringBillHint: 'പ്ലാറ്റ്‌ഫോം സേവനത്തിനുള്ള മാസിക ആവർത്തന വാടക ബിൽ.',
+    sixMonthPlanRateRupeeLabel: '6-മാസ പ്ലാൻ നിരക്ക് (₹)',
+    halfYearlyUpfrontRateHint: 'കടകൾക്കുള്ള കിഴിവുള്ള അർദ്ധ-വാർഷിക മുൻകൂർ നിരക്ക്.',
+    yearlyPlanDiscountedRateRupeeLabel: 'വാർഷിക പ്ലാൻ കിഴിവ് നിരക്ക് (₹)',
+    annualUpfrontRateHint: 'കടകൾക്കുള്ള കിഴിവുള്ള വാർഷിക മുൻകൂർ നിരക്ക്.',
+    updateSubscriptionRatesBtn: 'സബ്‌സ്ക്രിപ്ഷൻ നിരക്കുകൾ അപ്ഡേറ്റ് ചെയ്യുക',
+    enterValidAmountMsg: 'ദയവായി സാധുവായ തുക നൽകുക',
+    monthlyRevenueLogsTitle: 'മാസിക വരുമാന ലോഗുകൾ',
+    recordSubscriptionCollectionsDesc: 'SaaS പ്രകടന ട്രാക്കിംഗിനായി സബ്‌സ്ക്രിപ്ഷൻ ശേഖരണങ്ങൾ സ്വമേധയാ രേഖപ്പെടുത്തുക.',
+    allTimeLower: 'എക്കാലവും',
+    totalRevenueCollectedLabel: 'ആകെ ശേഖരിച്ച വരുമാനം',
+    collectedThisYearLabel: 'ഈ വർഷം ശേഖരിച്ചത്',
+    revenueRecordsAvgLabel: 'വരുമാന രേഖകൾ — ശരാശരി',
+    collectionsTrendLabel: 'ശേഖരണ പ്രവണത',
+    lastLoggedEntriesPrefix: 'അവസാന',
+    loggedEntriesSuffix: 'രേഖപ്പെടുത്തിയ എൻട്രികൾ',
+    noRevenueLogsYet: 'ഇതുവരെ വരുമാന ലോഗുകൾ രേഖപ്പെടുത്തിയിട്ടില്ല.',
+    addRevenueRecordLabel: 'വരുമാന രേഖ ചേർക്കുക',
+    monthLabel: 'മാസം',
+    yearLabel: 'വർഷം',
+    amountCollectedRupeeLabel: 'ശേഖരിച്ച തുക (₹)',
+    notesRemarksLabel: 'കുറിപ്പുകൾ / അഭിപ്രായങ്ങൾ',
+    logRevenuePayoutBtn: 'വരുമാന പേയ്‌മെന്റ് രേഖപ്പെടുത്തുക',
+    platformRevenueHistoryLabel: 'പ്ലാറ്റ്‌ഫോം വരുമാന ചരിത്രം',
+    periodCol: 'കാലയളവ്',
+    notesCol: 'കുറിപ്പുകൾ',
+    amountCol: 'തുക',
+    duplicateKeyLookupLabel: 'ഡ്യൂപ്ലിക്കേറ്റ് കീ ലുക്കപ്പ്',
+    masterKeyCatalogSearchTitle: 'മാസ്റ്റർ കീ കാറ്റലോഗ് തിരയൽ',
+    lookupBlankSpecDesc: 'സെക്കൻഡുകൾക്കുള്ളിൽ ബ്ലാങ്ക് സ്പെസിഫിക്കേഷനുകൾ, കീ കോഡുകൾ, ഉപഭോക്തൃ രജിസ്ട്രി രേഖകൾ എന്നിവ തിരയുക.',
+    keyCodeVehicleCategoryLabel: 'കീ കോഡ്, വാഹന നമ്പർ, അല്ലെങ്കിൽ വിഭാഗം',
+    searchByKeyCodePlaceholder: 'കീ കോഡ്, വാഹന നമ്പർ, ഉപഭോക്തൃ സ്ഥലം, വിഭാഗം എന്നിവയാൽ തിരയുക\u2026',
+    searchingRegistryMsg: 'രജിസ്ട്രി തിരയുന്നു\u2026',
+    noMatchingKeysMsg: 'പൊരുത്തപ്പെടുന്ന കീകളോ ഉപഭോക്തൃ രേഖകളോ കണ്ടെത്തിയില്ല',
+    registeredCustomerKeyLabel: 'രജിസ്റ്റർ ചെയ്ത ഉപഭോക്തൃ കീ',
+    customerPrefix: 'ഉപഭോക്താവ്:',
+    vehicleNoPrefix: 'വാഹന നമ്പർ:',
+    viewFullDetailsLabel: 'പൂർണ്ണ വിവരങ്ങൾ കാണുക',
+    keyDetailsLabel: 'കീ വിവരങ്ങൾ',
+    lockCategoryLabel: 'ലോക്ക് വിഭാഗം',
+    backProfileLabel: 'ബാക്ക് പ്രൊഫൈൽ',
+    customerNameLabel: 'ഉപഭോക്താവിന്റെ പേര്',
+    vehicleNumberLabel: 'വാഹന നമ്പർ',
+    webcamSnapshotLabel: 'ക്യാമറ സ്നാപ്പ്ഷോട്ട്',
+    registryLocationOverviewLabel: 'രജിസ്ട്രി ലൊക്കേഷൻ അവലോകനം (മറ്റ് വർക്ക്‌സ്പേസ്)',
+    customerMobileLabel: 'ഉപഭോക്തൃ മൊബൈൽ',
+    registeredShopLabel: 'രജിസ്റ്റർ ചെയ്ത ഷോപ്പ്',
+    keyShopWorkspaceLabel: 'കീ ഷോപ്പ് വർക്ക്‌സ്പേസ്',
+    shopMobileLabel: 'ഷോപ്പ് മൊബൈൽ',
+    sensitiveCoordsHiddenMsg: 'ഈ കീ രജിസ്ട്രേഷൻ മറ്റൊരു ഡ്യൂപ്ലിക്കേറ്റ് കീ ഷോപ്പിൽ സൃഷ്ടിച്ചതിനാൽ സെൻസിറ്റീവ് കോർഡിനേറ്റുകളും ക്യാമറ ചിത്രങ്ങളും മറച്ചിരിക്കുന്നു.',
+    closeDetailsBtn: 'വിവരങ്ങൾ അടയ്ക്കുക',
+    fileSizeExceeds5MBMsg: 'ഫയൽ വലുപ്പം 5MB പരിധി കവിയുന്നു',
+    onlyJpegPngPdfMsg: 'JPEG, PNG, PDF ഡോക്യുമെന്റ് ഫോർമാറ്റുകൾ മാത്രമേ സ്വീകരിക്കൂ',
+    documentAlreadyStagedTemplate: '{type} എന്നതിനുള്ള ഡോക്യുമെന്റ് ഇതിനകം സ്റ്റേജ് ചെയ്തിട്ടുണ്ട്.',
+    pleaseEnterKeyCodeMsg: 'ദയവായി ആദ്യം ഒരു കീ കോഡ് നൽകുക',
+    pleaseEnterValidTestEmailMsg: 'ടെസ്റ്റ് OTP ലഭിക്കാൻ ദയവായി സാധുവായ ഇമെയിൽ വിലാസം നൽകുക.',
+    failedSendOtpMsg: 'OTP കോഡ് അയയ്ക്കുന്നതിൽ പരാജയപ്പെട്ടു.',
+    invalidOtpCodeMsg: 'അസാധുവായ OTP കോഡ്. ദയവായി ശരിയായ കോഡ് നൽകുക.',
+    complianceRecordLoggedMsg: 'ഉപഭോക്തൃ കംപ്ലയൻസ് റെക്കോർഡ് വിജയകരമായി രേഖപ്പെടുത്തി!',
+    submissionFailedTemplate: 'സമർപ്പണം പരാജയപ്പെട്ടു: {message}',
+    contactKeyStepLabel: 'ബന്ധപ്പെടൽ & കീ',
+    idPhotoStepLabel: 'ID ഫോട്ടോ',
+    documentsStepLabel: 'ഡോക്യുമെന്റുകൾ',
+    reviewStepLabel: 'അവലോകനം',
+    newCustomerEyebrow: 'പുതിയ ഉപഭോക്താവ്',
+    multiStepComplianceDesc: 'മൾട്ടി-സ്റ്റെപ്പ് കംപ്ലയൻസ് ഓൺബോർഡിംഗ് — കീ വിതരണം, ഐഡന്റിറ്റി ക്യാപ്‌ചർ & GPS-സ്റ്റാമ്പ്ഡ് വിലാസം, അഞ്ച് പെട്ടെന്നുള്ള ഘട്ടങ്ങളിൽ.',
+    stepLabel: 'ഘട്ടം',
+    ofLabel: 'ൽ',
+    contactKeyCredentialsTitle: 'ബന്ധപ്പെടൽ & കീ ക്രെഡൻഷ്യലുകൾ',
+    registerContactDetailsDesc: 'ഉപഭോക്താവിന്റെ ബന്ധപ്പെടൽ വിവരങ്ങൾ, വാഹനം & കീ കോഡ്, വസതി വിലാസം എന്നിവ രജിസ്റ്റർ ചെയ്യുക.',
+    shopFieldLabel: 'ഷോപ്പ്',
+    selectShopPlaceholder: 'ഒരു ഷോപ്പ് തിരഞ്ഞെടുക്കുക…',
+    customerRegisteredUnderShopMsg: 'ഈ ഉപഭോക്താവും അതിന്റെ കീ കോഡും തിരഞ്ഞെടുത്ത ഷോപ്പിന്റെ വർക്ക്‌സ്‌പേസിന് കീഴിൽ രജിസ്റ്റർ ചെയ്യപ്പെടും.',
+    duplicateKeyDetectedLabel: 'ഡ്യൂപ്ലിക്കേറ്റ് കീ കണ്ടെത്തി',
+    duplicateKeyDetectedDescTemplate: 'കീ കോഡ് {code} ഇതിനകം നിലവിലുള്ള ഒരു ഉപഭോക്താവിന് രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്. ദയവായി പരിശോധിച്ച് അതുല്യമായ കീ കോഡ് നൽകുക.',
+    fullCustomerNameLabel: 'പൂർണ്ണ ഉപഭോക്തൃ നാമം',
+    customerNamePlaceholderEg: 'രോഹൻ മൽഹോത്ര',
+    keyCodeKeyNumberLabel: 'കീ കോഡ് / കീ നമ്പർ',
+    keyCodeEnterPlaceholderEg: 'കീ കോഡ് നൽകുക (ഉദാ. TN09B)',
+    resendBtn: 'വീണ്ടും അയയ്ക്കുക',
+    sendOtpBtn: 'OTP അയയ്ക്കുക',
+    smsToPhoneLabel: 'ഫോണിലേക്ക് SMS',
+    emailTestingLabel: 'ഇമെയിൽ (ടെസ്റ്റിംഗ്)',
+    testEmailPlaceholder: 'test@email.com — OTP-ക്ക് മാത്രം, സേവ് ചെയ്യില്ല',
+    addressLineLabel: 'വിലാസ വരി',
+    locatingLabel: 'കണ്ടെത്തുന്നു…',
+    currentLocationBtn: 'നിലവിലെ സ്ഥാനം',
+    addressLinePlaceholderEg: 'ഉദാ. ഫ്ലാറ്റ് 101, പാർക്ക് അവന്യൂ',
+    openLocationSettingsBtn: 'ലൊക്കേഷൻ സെറ്റിംഗുകൾ തുറക്കുക',
+    openAppSettingsBtn: 'ആപ്പ് സെറ്റിംഗുകൾ തുറക്കുക',
+    stateLabel: 'സംസ്ഥാനം',
+    districtLabel: 'ജില്ല',
+    countryLabel: 'രാജ്യം',
+    gpsCapturedTemplate: 'GPS ക്യാപ്‌ചർ ചെയ്തു: {lat}, {long}',
+    enterOtpCodeSentToEmailTemplate: '{email} എന്നതിലേക്ക് അയച്ച 4-അക്ക കോഡ് നൽകുക',
+    enterOtpCodeSentToPhoneMsg: 'ഉപഭോക്താവിന്റെ ഫോണിലേക്ക് അയച്ച 4-അക്ക കോഡ് നൽകുക',
+    testingModeNoProviderTemplate: 'ടെസ്റ്റിംഗ് മോഡ് — {provider} പ്രൊവൈഡർ കോൺഫിഗർ ചെയ്തിട്ടില്ല',
+    verifyOtpBtn: 'OTP പരിശോധിക്കുക',
+    otpVerifiedSuccessEmailMsg: 'ഉപഭോക്തൃ ഇമെയിൽ OTP വിജയകരമായി പരിശോധിച്ചു.',
+    otpVerifiedSuccessPhoneMsg: 'ഉപഭോക്തൃ ഫോൺ നമ്പർ OTP വിജയകരമായി പരിശോധിച്ചു.',
+    complianceDocUploadTitle: 'കംപ്ലയൻസ് ഡോക്യുമെന്റ് അപ്‌ലോഡ്',
+    uploadGovIdDesc: 'ഈ ഉപഭോക്താവിനെ പരിശോധിക്കാൻ ഉപയോഗിക്കുന്ന സർക്കാർ ID തെളിവിന്റെ പകർപ്പ് അപ്‌ലോഡ് ചെയ്യുക.',
+    documentTypeLabel: 'ഡോക്യുമെന്റ് തരം',
+    aadhaarCardLabel: 'ആധാർ കാർഡ്',
+    drivingLicenseLabel: 'ഡ്രൈവിംഗ് ലൈസൻസ്',
+    panCardLabel: 'പാൻ കാർഡ്',
+    voterIdLabel: 'വോട്ടർ ID',
+    dropOrBrowseCopyTemplate: '{type} ന്റെ ഒരു പകർപ്പ് ഡ്രോപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യുക',
+    jpegPngPdfUpTo5MbLabel: 'JPEG, PNG അല്ലെങ്കിൽ PDF — 5MB വരെ',
+    stagedIdCopiesTemplate: 'സ്റ്റേജ് ചെയ്ത ID പകർപ്പുകൾ ({count})',
+    verifyDetailsBeforeSubmitDesc: 'ഈ കംപ്ലയൻസ് രജിസ്ട്രേഷൻ സമർപ്പിക്കുന്നതിന് മുമ്പ് താഴെ നൽകിയ ഓരോ വിശദാംശവും പരിശോധിക്കുക. ഈ ഘട്ടത്തിൽ യാതൊന്നും സ്വയമേവ ക്യാപ്‌ചർ ചെയ്യപ്പെടുകയോ പരിഷ്‌ക്കരിക്കപ്പെടുകയോ ഇല്ല.',
+    reviewCustomerLabel: 'ഉപഭോക്താവ്',
+    reviewPhoneLabel: 'ഫോൺ',
+    keyBlankLabel: 'കീ ബ്ലാങ്ക്',
+    registeredAddressLabel: 'രജിസ്റ്റർ ചെയ്ത വിലാസം',
+    idProofTypeLabel: 'ID തെളിവ് തരം',
+    uploadedDocumentsLabel: 'അപ്‌ലോഡ് ചെയ്ത ഡോക്യുമെന്റുകൾ',
+    filesAttachedTemplate: '{count} ഫയൽ(കൾ) അറ്റാച്ച് ചെയ്തു',
+    noneAttachedLabel: 'ഒന്നും അറ്റാച്ച് ചെയ്തിട്ടില്ല',
+    reviewLocationLabel: 'സ്ഥാനം',
+    gpsCapturedHeadingLabel: 'GPS ക്യാപ്‌ചർ ചെയ്തു',
+    latLongMiddotTemplate: 'അക്ഷാംശം {lat} · രേഖാംശം {long}',
+    noGpsLocationCapturedDesc: 'GPS സ്ഥാനം ഒന്നും ക്യാപ്‌ചർ ചെയ്തിട്ടില്ല. കോർഡിനേറ്റുകൾ ചേർക്കണമെങ്കിൽ "ബന്ധപ്പെടൽ & കീ" ഘട്ടത്തിലേക്ക് മടങ്ങി "നിലവിലെ സ്ഥാനം" ബട്ടൺ ഉപയോഗിക്കുക.',
+    submitComplianceRecordBtn: 'കംപ്ലയൻസ് റെക്കോർഡ് സമർപ്പിക്കുക',
+    historyPageDesc: 'മുൻകാല ഡ്യൂപ്ലിക്കേറ്റ്-കീ രജിസ്ട്രേഷനുകളും കംപ്ലയൻസ് സമർപ്പണങ്ങളും തിരയുകയും പരിശോധിക്കുകയും ചെയ്യുക.',
+    loadingComplianceRecordsMsg: 'കംപ്ലയൻസ് റെക്കോർഡുകൾ ലോഡ് ചെയ്യുന്നു…',
+    noComplianceRecordsMatchMsg: 'ഈ തിരയലുമായി പൊരുത്തപ്പെടുന്ന കംപ്ലയൻസ് റെക്കോർഡുകൾ ഇല്ല.',
+    vehicleCol: 'വാഹനം',
+    locationCol: 'സ്ഥാനം',
+    loggedCol: 'രേഖപ്പെടുത്തി',
+    actionsCol: 'പ്രവർത്തനങ്ങൾ',
+    editDetailsBtn: 'വിശദാംശങ്ങൾ എഡിറ്റ് ചെയ്യുക',
+    documentIdTypeLabel: 'ഡോക്യുമെന്റ് ID തരം',
+    uploadNewFileCopyLabel: 'പുതിയ ഫയൽ പകർപ്പ് അപ്‌ലോഡ് ചെയ്യുക',
+    jpegPngPdfLabel: 'JPEG, PNG അല്ലെങ്കിൽ PDF',
+    downloadTitleLabel: 'ഡൗൺലോഡ് ചെയ്യുക',
+    customerComplianceRecordUpdatedMsg: 'ഉപഭോക്തൃ കംപ്ലയൻസ് റെക്കോർഡ് വിജയകരമായി അപ്‌ഡേറ്റ് ചെയ്തു!',
+    failedSaveCustomerEditsMsg: 'ഉപഭോക്തൃ എഡിറ്റുകൾ സേവ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു.',
+    loadingSupportResourcesMsg: 'സപ്പോർട്ട് വിഭവങ്ങൾ ലോഡ് ചെയ്യുന്നു…',
+    supportTrainingCenterTitle: 'സപ്പോർട്ട് & പരിശീലന കേന്ദ്രം',
+    reachSupportTrainingDesc: 'കീ ഷോപ്പ് സാങ്കേതിക പിന്തുണയുമായി ബന്ധപ്പെടുകയും ലോക്ക്സ്മിത്ത് പരിശീലന വിഭവങ്ങൾ ഉപയോഗിച്ച് നിങ്ങളുടെ വൈദഗ്ധ്യം മെച്ചപ്പെടുത്തുകയും ചെയ്യുക.',
+    contactLiveAgentTitle: 'ലൈവ് ഏജന്റുമായി ബന്ധപ്പെടുക',
+    supportHoursLabel: 'തിങ്കൾ-ശനി, രാവിലെ 9 - വൈകിട്ട് 7 IST',
+    liveCustomerSupportDesc: 'നിങ്ങളുടെ കീ നിർമ്മാണ യന്ത്രങ്ങൾക്കോ ഡ്യൂപ്ലിക്കേറ്റ് കീ പോർട്ടൽ ഡാഷ്‌ബോർഡിനോ സഹായിക്കാൻ തത്സമയ ഉപഭോക്തൃ പിന്തുണ ലഭ്യമാണ്.',
+    directWhatsappSupportLabel: 'നേരിട്ടുള്ള വാട്ട്‌സ്ആപ്പ് പിന്തുണ',
+    chatOnWhatsappBtn: 'വാട്ട്‌സ്ആപ്പിൽ ചാറ്റ് ചെയ്യുക',
+    locksmithSkillUpgradesTitle: 'ലോക്ക്സ്മിത്ത് നൈപുണ്യ അപ്‌ഗ്രേഡുകൾ',
+    videoTutorialsFromExpertsDesc: 'ഡ്യൂപ്ലിക്കേറ്റ് കീ വിദഗ്ധരുടെ വീഡിയോ ട്യൂട്ടോറിയലുകൾ',
+    trainingMaterialLabel: 'പരിശീലന സാമഗ്രി',
+    watchLinkLabel: 'ലിങ്ക് കാണുക',
+    noSkillUpgradeVideosMsg: 'നിലവിൽ വൈദഗ്ധ്യ അപ്‌ഗ്രേഡ് വീഡിയോകൾ ലഭ്യമല്ല.',
+    loadingSupportConfigMsg: 'പിന്തുണ ക്രമീകരണം ലോഡ് ചെയ്യുന്നു…',
+    platformSupportEyebrow: 'പ്ലാറ്റ്‌ഫോം പിന്തുണ',
+    customerSupportConfigTitle: 'ഉപഭോക്തൃ പിന്തുണ ക്രമീകരണം',
+    configureGlobalSupportDesc: 'എല്ലാ ഷോപ്പിനും ദൃശ്യമാകുന്ന ആഗോള ഉപഭോക്തൃ പരിചരണ കോൺടാക്റ്റും പരിശീലന വീഡിയോ ലിങ്കുകളും ക്രമീകരിക്കുക.',
+    customerSupportWhatsappLabel: 'ഉപഭോക്തൃ പിന്തുണ വാട്സ്ആപ്പ് നമ്പർ',
+    whatsappNumberPlaceholderEg: 'ഉദാ. +91 98765 43210',
+    supportContactEyebrow: 'സപ്പോർട്ട് കോൺടാക്റ്റ്',
+    supportContactTitle: 'സപ്പോർട്ട് കോൺടാക്റ്റ്',
+    supportContactDesc: 'താഴെയുള്ള കോൺടാക്റ്റ് വിവരങ്ങൾ ഉപയോഗിച്ച് നേരിട്ട് കീ ഷോപ്പ് ടീമുമായി ബന്ധപ്പെടുക.',
+    ownerNameLabel: 'ഉടമയുടെ പേര്',
+    ownerPhoneLabel: 'ഉടമയുടെ ഫോൺ',
+    ownerNamePlaceholderEg: 'ഉദാ. രാജേഷ് കുമാർ',
+    ownerPhonePlaceholderEg: 'ഉദാ. +91 98765 43210',
+    ownerAddressPlaceholderEg: 'ഉദാ. 12 എംജി റോഡ്, ബെംഗളൂരു',
+    noContactInfoConfiguredMsg: 'കോൺടാക്റ്റ് വിവരങ്ങൾ ഇതുവരെ കോൺഫിഗർ ചെയ്തിട്ടില്ല.',
+    ownerContactSectionTitle: 'ഉടമയുടെ കോൺടാക്റ്റ് വിവരങ്ങൾ',
+    ownerContactSectionDesc: 'ഈ വിവരങ്ങൾ എല്ലാ ഷോപ്പിനും സപ്പോർട്ട് കോൺടാക്റ്റ് സ്ക്രീനിൽ കാണിക്കും.',
+    videoSingularLabel: 'വീഡിയോ',
+    videoPluralLabel: 'വീഡിയോകൾ',
+    addVideoBtn: 'വീഡിയോ ചേർക്കുക',
+    noVideosConfiguredMsg: 'വീഡിയോകളൊന്നും ക്രമീകരിച്ചിട്ടില്ല. ലോക്ക്സ്മിത്ത് പരിശീലന ലിങ്കുകൾ ചേർക്കാൻ “വീഡിയോ ചേർക്കുക” ക്ലിക്ക് ചെയ്യുക.',
+    removeVideoTitle: 'വീഡിയോ നീക്കം ചെയ്യുക',
+    videoTitleNameLabel: 'വീഡിയോ തലക്കെട്ട് / പേര്',
+    videoTitlePlaceholderEg: 'ഉദാ. Locksmith Career Income',
+    youtubeUrlLabel: 'യൂട്യൂബ് URL',
+    saveConfigurationBtn: 'ക്രമീകരണം സേവ് ചെയ്യുക',
+    shopCategoriesTitle: 'ഷോപ്പ് വിഭാഗങ്ങൾ',
+    categorySingularLabel: 'വിഭാഗം',
+    categoryPluralLabel: 'വിഭാഗങ്ങൾ',
+    manageShopCategoriesDesc: 'പൊതു സ്വയം-രജിസ്ട്രേഷൻ വിസാർഡിന്റെ വിഭാഗം ഡ്രോപ്ഡൗണിൽ നൽകുന്ന ഷോപ്പ് "തരം" ഓപ്ഷനുകൾ നിയന്ത്രിക്കുക.',
+    enterCategoryNamePlaceholder: 'വിഭാഗത്തിന്റെ പേര് നൽകുക',
+    addBtnLabel: 'ചേർക്കുക',
+    noCategoriesYetMsg: 'ഇതുവരെ ഷോപ്പ് വിഭാഗങ്ങളൊന്നുമില്ല. മുകളിൽ ഒന്ന് ചേർക്കുക - നിങ്ങൾ അങ്ങനെ ചെയ്യുന്നത് വരെ രജിസ്ട്രേഷൻ ഫോമിന്റെ ഡ്രോപ്ഡൗൺ ശൂന്യമായിരിക്കും.',
+    productTypesTitle: 'ഉൽപ്പന്ന തരങ്ങൾ',
+    typeSingularLabel: 'തരം',
+    typePluralLabel: 'തരങ്ങൾ',
+    manageProductTypesDesc: 'ഇൻവെന്ററി ഉൽപ്പന്ന സൃഷ്ടി ഫോമിൽ നൽകുന്ന ഉൽപ്പന്ന തരം ഓപ്ഷനുകൾ നിയന്ത്രിക്കുക.',
+    enterProductTypePlaceholder: 'ഉൽപ്പന്ന തരം നൽകുക',
+    noProductTypesYetMsg: 'ഇതുവരെ ഉൽപ്പന്ന തരങ്ങളൊന്നുമില്ല. മുകളിൽ ഒന്ന് ചേർക്കുക - നിങ്ങൾ അങ്ങനെ ചെയ്യുന്നത് വരെ ഇൻവെന്ററി ഉൽപ്പന്ന സൃഷ്ടി ഡ്രോപ്ഡൗൺ ശൂന്യമായിരിക്കും.',
+    supportConfigUpdatedMsg: 'പിന്തുണ ക്രമീകരണം വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു!',
+    saveFailedTemplate: 'സേവ് പരാജയപ്പെട്ടു: {msg}',
+    pleaseEnterCategoryNameMsg: 'ദയവായി ഒരു വിഭാഗത്തിന്റെ പേര് നൽകുക.',
+    failedAddCategoryTemplate: 'വിഭാഗം ചേർക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    failedUpdateCategoryTemplate: 'വിഭാഗം അപ്ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    deleteCategoryConfirmTemplate: '"{name}" വിഭാഗം ഇല്ലാതാക്കണോ? ഇത് ഇതിനകം ഉപയോഗിക്കുന്ന ഷോപ്പുകൾ അത് നിലനിർത്തും, പക്ഷേ ഇത് ഇനി രജിസ്ട്രേഷൻ ഫോമിൽ നൽകില്ല.',
+    failedDeleteCategoryTemplate: 'വിഭാഗം ഇല്ലാതാക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    pleaseEnterProductTypeNameMsg: 'ദയവായി ഒരു ഉൽപ്പന്ന തരത്തിന്റെ പേര് നൽകുക.',
+    failedAddProductTypeTemplate: 'ഉൽപ്പന്ന തരം ചേർക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    failedUpdateProductTypeTemplate: 'ഉൽപ്പന്ന തരം അപ്ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    deleteProductTypeConfirmTemplate: '"{name}" ഉൽപ്പന്ന തരം ഇല്ലാതാക്കണോ? ഇത് ഇതിനകം ഉപയോഗിക്കുന്ന ലിസ്റ്റിംഗുകൾ അത് നിലനിർത്തും, പക്ഷേ ഇത് ഇനി ഇൻവെന്ററി ഉൽപ്പന്ന സൃഷ്ടി ഫോമിൽ നൽകില്ല.',
+    failedDeleteProductTypeTemplate: 'ഉൽപ്പന്ന തരം ഇല്ലാതാക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    loadingWorkspaceSettingsMsg: 'വർക്ക്‌സ്‌പേസ് ക്രമീകരണങ്ങൾ ലോഡ് ചെയ്യുന്നു…',
+    workspaceConfigurationEyebrow: 'വർക്ക്‌സ്‌പേസ് കോൺഫിഗറേഷൻ',
+    manageShopProfileDesc: 'നിങ്ങളുടെ ഷോപ്പ് പ്രൊഫൈൽ, ബ്രാൻഡിംഗ്, സ്ഥിരീകരണ രേഖകൾ, അക്കൗണ്ട് സുരക്ഷ എന്നിവ കൈകാര്യം ചെയ്യുക.',
+    refreshTitle: 'പുതുക്കുക',
+    workspaceProfileTitle: 'വർക്ക്‌സ്‌പേസ് പ്രൊഫൈൽ',
+    businessIdentityContactDesc: 'ബിസിനസ് ഐഡന്റിറ്റി & ബന്ധപ്പെടാനുള്ള വിവരങ്ങൾ',
+    workspaceDisplayNameLabel: 'വർക്ക്‌സ്‌പേസ് ഡിസ്‌പ്ലേ പേര്',
+    pdfFileLabel: 'PDF ഫയൽ',
+    uploadingEllipsisLabel: 'അപ്‌ലോഡ് ചെയ്യുന്നു…',
+    saveWorkspaceDetailsBtn: 'വർക്ക്‌സ്‌പേസ് വിവരങ്ങൾ സംരക്ഷിക്കുക',
+    adminCredentialsTitle: 'അഡ്മിൻ ക്രെഡൻഷ്യലുകൾ',
+    usernameNameLabel: 'ഉപയോക്തൃനാമം / പേര്',
+    emailAddressLabel: 'ഇമെയിൽ വിലാസം',
+    workspacePasswordLabel: 'വർക്ക്‌സ്‌പേസ് പാസ്‌വേഡ്',
+    hidePasswordTitle: 'പാസ്‌വേഡ് മറയ്ക്കുക',
+    revealPasswordTitle: 'പാസ്‌വേഡ് കാണിക്കുക',
+    forgotPasswordResetOtpBtn: 'പാസ്‌വേഡ് മറന്നോ? OTP വഴി പുനഃക്രമീകരിക്കുക',
+    confirmYourPasswordTitle: 'നിങ്ങളുടെ പാസ്‌വേഡ് സ്ഥിരീകരിക്കുക',
+    verifyIdentityRevealDesc: 'സംരക്ഷിച്ച ക്രെഡൻഷ്യലുകൾ കാണാൻ നിങ്ങളുടെ ഐഡന്റിറ്റി പരിശോധിക്കുക.',
+    accountPasswordLabel: 'അക്കൗണ്ട് പാസ്‌വേഡ്',
+    enterPasswordPlaceholder: 'പാസ്‌വേഡ് നൽകുക',
+    accountRecoveryEyebrow: 'അക്കൗണ്ട് വീണ്ടെടുക്കൽ',
+    resetAccountPasswordTitle: 'അക്കൗണ്ട് പാസ്‌വേഡ് പുനഃക്രമീകരിക്കുക',
+    emailRecoveryTab: 'ഇമെയിൽ വീണ്ടെടുക്കൽ',
+    phoneRecoveryTab: 'ഫോൺ വീണ്ടെടുക്കൽ',
+    registeredPhoneNumberLabel: 'രജിസ്റ്റർ ചെയ്ത ഫോൺ നമ്പർ',
+    registeredEmailAddressLabel: 'രജിസ്റ്റർ ചെയ്ത ഇമെയിൽ വിലാസം',
+    sendOtpVerificationCodeBtn: 'OTP സ്ഥിരീകരണ കോഡ് അയയ്ക്കുക',
+    fourDigitCodeDispatchedTemplate: 'ഒരു 4-അക്ക കോഡ് {identifier} എന്നതിലേക്ക് അയച്ചിട്ടുണ്ട്.',
+    enterOtpLabel: 'OTP നൽകുക',
+    newPasswordLabel: 'പുതിയ പാസ്‌വേഡ്',
+    min6CharactersPlaceholder: 'കുറഞ്ഞത് 6 അക്ഷരങ്ങൾ',
+    confirmPasswordLabel: 'പാസ്‌വേഡ് സ്ഥിരീകരിക്കുക',
+    retypePasswordPlaceholder: 'പാസ്‌വേഡ് വീണ്ടും ടൈപ്പ് ചെയ്യുക',
+    updatePasswordBtn: 'പാസ്‌വേഡ് അപ്ഡേറ്റ് ചെയ്യുക',
+    failedGenerateReportMsg: 'റിപ്പോർട്ട് സൃഷ്ടിക്കുന്നതിൽ പരാജയപ്പെട്ടു.',
+    pleaseGenerateReportFirstMsg: 'ദയവായി ആദ്യം റിപ്പോർട്ട് സൃഷ്ടിക്കുക.',
+    complianceAnalyticsEyebrow: 'കംപ്ലയൻസ് & അനലിറ്റിക്സ്',
+    reportsPortalDesc: 'ഏത് തീയതി പരിധിക്കും ഡൈനാമിക് CSV, പ്ലെയിൻ-ടെക്സ്റ്റ് കസ്റ്റമർ രജിസ്ട്രേഷൻ റിപ്പോർട്ടുകൾ സൃഷ്ടിക്കുക.',
+    reportBuilderTitle: 'റിപ്പോർട്ട് ബിൽഡർ',
+    selectDateRangeGenerateDesc: 'ഒരു തീയതി പരിധി തിരഞ്ഞെടുത്ത്, തുടർന്ന് റിപ്പോർട്ട് സൃഷ്ടിക്കുക',
+    fromDateLabel: 'ആരംഭ തീയതി',
+    toDateLabel: 'അവസാന തീയതി',
+    generatingEllipsisLabel: 'സൃഷ്ടിക്കുന്നു…',
+    referralProgramTitle: 'റഫറൽ പ്രോഗ്രാം',
+    referralProgramDesc: 'നിങ്ങളുടെ കോഡ് മറ്റ് കട ഉടമകളുമായി പങ്കിട്ട് റിവാർഡുകൾ നേടുക.',
+    copyTitle: 'പകർത്തുക',
+    shareReferralCodeBtn: 'റഫറൽ കോഡ് പങ്കിടുക',
+    generateReferralCodeBtn: 'റഫറൽ കോഡ് സൃഷ്ടിക്കുക',
+    failedGenerateReferralCodeMsg: 'റഫറൽ കോഡ് സൃഷ്ടിക്കുന്നതിൽ പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.',
+    referralShareMessageTemplate: 'Key Shop-ൽ രജിസ്റ്റർ ചെയ്യുമ്പോൾ എന്റെ റഫറൽ കോഡ് {code} ഉപയോഗിക്കുക!',
+    verificationDocumentLabel: 'വെരിഫിക്കേഷൻ ഡോക്യുമെന്റ്',
+    useCameraBtn: 'ക്യാമറ ഉപയോഗിക്കുക',
+    chooseFromGalleryBtn: 'ഗ്യാലറിയിൽ നിന്ന് തിരഞ്ഞെടുക്കുക',
+    generateReportBtn: 'റിപ്പോർട്ട് സൃഷ്ടിക്കുക',
+    recordsInReportLabel: 'റിപ്പോർട്ടിലെ റെക്കോർഡുകൾ',
+    allTimeLabel: 'എല്ലാ സമയവും',
+    todayLabel: 'ഇന്ന്',
+    dateRangeCoveredLabel: 'ഉൾപ്പെടുത്തിയ തീയതി പരിധി',
+    visualReportSummaryTitle: 'ദൃശ്യ റിപ്പോർട്ട് സംഗ്രഹം',
+    hoverToViewValuesDesc: 'കൃത്യമായ മൂല്യങ്ങൾ കാണാൻ ഘടകങ്ങൾക്ക് മുകളിൽ ഹോവർ ചെയ്യുക',
+    registrationsByKeyBlankRefTitle: 'കീ ബ്ലാങ്ക് റഫറൻസ് പ്രകാരമുള്ള രജിസ്ട്രേഷനുകൾ',
+    registrationTimelineTrendTitle: 'രജിസ്ട്രേഷൻ ടൈംലൈൻ ട്രെൻഡ്',
+    noTrendDataMsg: 'ട്രെൻഡ് ഡാറ്റ ഇല്ല',
+    reportPreviewTitle: 'റിപ്പോർട്ട് പ്രിവ്യൂ',
+    recordsLabel: 'റെക്കോർഡുകൾ',
+    exportCsvBtn: 'CSV എക്സ്പോർട്ട് ചെയ്യുക',
+    exportTxtBtn: 'TXT എക്സ്പോർട്ട് ചെയ്യുക',
+    showingFirstColumnsPreviewDesc: 'ബ്രൗസർ പ്രിവ്യൂവിൽ ആദ്യ 4 കോളങ്ങൾ വരെ കാണിക്കുന്നു. എല്ലാ വിശദമായ ഡാറ്റ കോളങ്ങളും കാണാൻ എക്സ്പോർട്ട് ചെയ്യുക.',
+    aadhaarMustBe12DigitsMsg: 'ആധാർ നമ്പർ കൃത്യമായി 12 അക്കങ്ങൾ ആയിരിക്കണം.',
+    aadhaarNumberLabel: 'ആധാർ നമ്പർ',
+    autoFilledFromGpsPlaceholder: 'GPS-ൽ നിന്ന് സ്വയമേവ പൂരിപ്പിച്ചു',
+    backToHomeLink: 'ഹോമിലേക്ക് മടങ്ങുക',
+    canLogInWithEitherMsg: 'ഇവയിലേതെങ്കിലും ഉപയോഗിച്ച് നിങ്ങൾക്ക് ലോഗിൻ ചെയ്യാം',
+    cardholderNameLabel: 'കാർഡ് ഉടമയുടെ പേര്',
+    cardNumberLabel: 'കാർഡ് നമ്പർ',
+    choosePaymentChannelLabel: 'പേയ്‌മെന്റ് ചാനൽ തിരഞ്ഞെടുക്കുക',
+    chooseSubscriptionPlanLabel: 'സബ്‌സ്ക്രിപ്ഷൻ പ്ലാൻ തിരഞ്ഞെടുക്കുക',
+    cityLabel: 'നഗരം',
+    createShopAccountBtn: 'ഷോപ്പ് അക്കൗണ്ട് സൃഷ്ടിക്കുക',
+    customersStatLabel: 'ഉപഭോക്താക്കൾ',
+    cvvLabel: 'CVV',
+    digitAadhaarOptionalPlaceholder: '12-അക്ക ആധാർ നമ്പർ (ഓപ്ഷണൽ)',
+    referralCodeLabel: 'റഫറൽ കോഡ് (ഓപ്ഷണൽ)',
+    referralCodePlaceholder: 'നിങ്ങളുടെ പക്കൽ ഉണ്ടെങ്കിൽ റഫറൽ കോഡ് നൽകുക',
+    agreeToTermsPrefix: 'ഞാൻ നിബന്ധനകളും വ്യവസ്ഥകളും വായിക്കുകയും അംഗീകരിക്കുകയും ചെയ്യുന്നു',
+    termsAndConditionsLinkLabel: 'നിബന്ധനകളും വ്യവസ്ഥകളും',
+    pleaseAcceptTermsMsg: 'തുടരുന്നതിന് ദയവായി നിബന്ധനകളും വ്യവസ്ഥകളും വായിച്ച് അംഗീകരിക്കുക.',
+    digitMobilePlaceholder: '10-അക്ക മൊബൈൽ',
+    digitPinCodePlaceholder: '6-അക്ക പിൻ കോഡ്',
+    emailOrMobileLabel: 'ഇമെയിൽ അല്ലെങ്കിൽ മൊബൈൽ നമ്പർ',
+    emailOrMobilePlaceholder: 'ഇമെയിൽ വിലാസം അല്ലെങ്കിൽ മൊബൈൽ നമ്പർ',
+    emailOtpLabel: 'ഇമെയിൽ OTP',
+    enterRegisteredMethodTemplate: 'റീസെറ്റ് കോഡ് അഭ്യർത്ഥിക്കാൻ നിങ്ങളുടെ വർക്ക്‌സ്‌പേസുമായി ബന്ധപ്പെട്ട രജിസ്റ്റർ ചെയ്ത {method} നൽകുക.',
+    expiryLabel: 'കാലാവധി',
+    forgotPasswordLink: 'പാസ്‌വേഡ് മറന്നോ?',
+    keysCutStatLabel: 'മുറിച്ച താക്കോലുകൾ',
+    keyShopDashboardLabel: 'കീ ഷോപ്പ് ഡാഷ്ബോർഡ്',
+    loadingCategoriesEllipsis: 'വിഭാഗങ്ങൾ ലോഡ് ചെയ്യുന്നു…',
+    mobileNumberLabel: 'മൊബൈൽ നമ്പർ',
+    mobileNumberVerifiedMsg: 'മൊബൈൽ നമ്പർ പരിശോധിച്ചു',
+    noShopCategoriesAvailableMsg: 'ഇതുവരെ ഷോപ്പ് വിഭാഗങ്ങളൊന്നും ലഭ്യമല്ല',
+    otpVerifiedSetNewPasswordMsg: 'OTP പരിശോധിച്ചു. ദയവായി താഴെ ഒരു പുതിയ പാസ്‌വേഡ് സജ്ജമാക്കുക.',
+    passwordLabel: 'പാസ്‌വേഡ്',
+    passwordResetSuccessMsg: 'പാസ്‌വേഡ് വിജയകരമായി റീസെറ്റ് ചെയ്തു',
+    payableAmountLabel: 'നൽകേണ്ട തുക',
+    paySettleSetupBtn: 'പണമടച്ച് സെറ്റപ്പ് പൂർത്തിയാക്കുക',
+    phoneOtpLabel: 'ഫോൺ OTP',
+    pinCodeLabel: 'പിൻ കോഡ്',
+    pinCodeMustBe6DigitsMsg: 'പിൻ കോഡ് കൃത്യമായി 6 അക്കങ്ങൾ ആയിരിക്കണം.',
+    pleaseEnterValidEmailMsg: 'ദയവായി സാധുവായ ഇമെയിൽ വിലാസം നൽകുക.',
+    pleaseFillRequiredRegFieldsMsg: 'ദയവായി ആവശ്യമായ എല്ലാ രജിസ്ട്രേഷൻ ഫീൽഡുകളും പൂരിപ്പിക്കുക.',
+    pleaseVerifyMobileOtpMsg: 'തുടരുന്നതിന് മുമ്പ് ദയവായി OTP ഉപയോഗിച്ച് നിങ്ങളുടെ മൊബൈൽ നമ്പർ പരിശോധിക്കുക.',
+    registeredEmailLabel: 'രജിസ്റ്റർ ചെയ്ത ഇമെയിൽ',
+    registerYourKeyShopTitle: 'നിങ്ങളുടെ കീ ഷോപ്പ് രജിസ്റ്റർ ചെയ്യുക',
+    registrationSubmittedTitle: 'രജിസ്ട്രേഷൻ സമർപ്പിച്ചു',
+    regPasswordMinLengthMsg: 'പാസ്‌വേഡ് കുറഞ്ഞത് 6 അക്ഷരങ്ങൾ ഉണ്ടായിരിക്കണം.',
+    rememberMeLabel: 'എന്നെ ഓർമ്മിക്കുക',
+    resendOtpBtn: 'OTP വീണ്ടും അയയ്ക്കുക',
+    resetYourPasswordTitle: 'നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുക',
+    returnToLoginBtn: 'ലോഗിനിലേക്ക് മടങ്ങുക',
+    runYourShopHeading: 'നിങ്ങളുടെ ഷോപ്പ് നടത്തുക',
+    scanQrCodeAppsDesc: 'GooglePay, PhonePe, അല്ലെങ്കിൽ Paytm ഉപയോഗിച്ച് QR കോഡ് സ്കാൻ ചെയ്യുക',
+    secureRecoveryWorkspaceDesc: 'നിങ്ങളുടെ വർക്ക്‌സ്‌പേസിനുള്ള സുരക്ഷിത വീണ്ടെടുക്കൽ',
+    selectShopCategoryPlaceholder: 'ഷോപ്പ് വിഭാഗം തിരഞ്ഞെടുക്കുക',
+    selectVerificationMethodDesc: 'നിങ്ങളുടെ വർക്ക്‌സ്‌പേസ് ക്രെഡൻഷ്യലുകൾ വീണ്ടെടുക്കാൻ നിങ്ങളുടെ വെരിഫിക്കേഷൻ രീതി തിരഞ്ഞെടുക്കുക.',
+    sendOtpCodeBtn: 'OTP കോഡ് അയയ്ക്കുക',
+    sendOtpToVerifyBtn: 'സ്ഥിരീകരിക്കാൻ OTP അയയ്ക്കുക',
+    settlingPaymentEllipsis: 'പേയ്‌മെന്റ് സെറ്റിൽ ചെയ്യുന്നു…',
+    shopAdminDownloadAppBtn: 'ഷോപ്പ് അഡ്മിനോ? ആപ്പ് ഡൗൺലോഡ് ചെയ്യുക',
+    shopOnboardingEyebrow: 'ഷോപ്പ് ഓൺബോർഡിംഗ്',
+    signInLeadDesc: 'നിങ്ങളുടെ ഡ്യൂപ്ലിക്കേറ്റ്-കീ ഷോപ്പ് നടത്താൻ സൈൻ ഇൻ ചെയ്യുക — ഓർഡറുകൾ, ഉപഭോക്താക്കൾ, ഇൻവെന്ററി, എല്ലാം ഒരിടത്ത്.',
+    signInToKeyShopBtn: 'കീ ഷോപ്പിലേക്ക് സൈൻ ഇൻ ചെയ്യുക',
+    signInWithNewCredentialsMsg: 'ഇപ്പോൾ നിങ്ങളുടെ പുതിയ ക്രെഡൻഷ്യലുകൾ ഉപയോഗിച്ച് സൈൻ ഇൻ ചെയ്യാം.',
+    smartGoldStandardWaySpan: 'സ്മാർട്ട്, ഗോൾഡ്-സ്റ്റാൻഡേർഡ് രീതിയിൽ.',
+    streetLandmarkPlaceholder: 'തെരുവ് / ലാൻഡ്‌മാർക്ക്',
+    trackDuplicateKeysDesc: 'എല്ലാ ബ്രാഞ്ചിലും ഡ്യൂപ്ലിക്കേറ്റ് കീകൾ, ഉപഭോക്താക്കൾ, സ്റ്റോർ ഓർഡറുകൾ എന്നിവ ട്രാക്ക് ചെയ്യുക — ഇന്ത്യൻ ലോക്ക്‌സ്മിത്തുകൾക്കായി നിർമ്മിച്ച മികച്ച ഡാഷ്ബോർഡ്.',
+    trustedByShopsBadge: 'ഇന്ത്യയിലുടനീളമുള്ള 500+ കീ ഷോപ്പുകളുടെ വിശ്വാസം നേടിയത്',
+    upiQrScanLabel: 'UPI / QR സ്കാൻ',
+    verifyBtnLabel: 'സ്ഥിരീകരിക്കുക',
+    wantToRegisterShopMsg: 'നിങ്ങളുടെ ഷോപ്പ് രജിസ്റ്റർ ചെയ്യാൻ ആഗ്രഹിക്കുന്നുവോ?',
+    welcomeBackHeading: 'തിരികെ സ്വാഗതം',
+    loginFailedCheckCredentialsMsg: 'ലോഗിൻ പരാജയപ്പെട്ടു. ദയവായി ക്രെഡൻഷ്യലുകൾ പരിശോധിക്കുക.',
+    failedDispatchVerificationCodeMsg: 'സ്ഥിരീകരണ കോഡ് അയയ്ക്കുന്നതിൽ പരാജയപ്പെട്ടു',
+    incorrectVerificationCodeMsg: 'തെറ്റായ സ്ഥിരീകരണ കോഡ്. ദയവായി വീണ്ടും ശ്രമിക്കുക.',
+    passwordsDoNotMatchMsg: 'പാസ്‌വേഡുകൾ പൊരുത്തപ്പെടുന്നില്ല',
+    passwordResetFailedMsg: 'പാസ്‌വേഡ് പുനഃസജ്ജീകരണം പരാജയപ്പെട്ടു',
+    pleaseEnterMobileNumberFirstMsg: 'ദയവായി ആദ്യം നിങ്ങളുടെ മൊബൈൽ നമ്പർ നൽകുക.',
+    failedDispatchVerificationOtpMsg: 'സ്ഥിരീകരണ OTP അയയ്ക്കുന്നതിൽ പരാജയപ്പെട്ടു.',
+    incorrectVerificationOtpCodeMsg: 'തെറ്റായ സ്ഥിരീകരണ OTP കോഡ്. ദയവായി വീണ്ടും ശ്രമിക്കുക.',
+    registrationSuccessfulShopActiveMsg: 'രജിസ്ട്രേഷൻ വിജയകരം! നിങ്ങളുടെ ഷോപ്പ് അക്കൗണ്ട് ഇപ്പോൾ സജീവമാണ് - നിങ്ങൾക്ക് ഉടൻ ലോഗിൻ ചെയ്യാം.',
+    selfRegistrationFailedMsg: 'സ്വയം-രജിസ്ട്രേഷൻ പരാജയപ്പെട്ടു.',
+    shopWorkspaceSettingsSavedMsg: 'ഷോപ്പ് വർക്ക്‌സ്‌പേസ് ക്രമീകരണങ്ങൾ വിജയകരമായി സംരക്ഷിച്ചു!',
+    documentUploadFailedMsg: 'ഡോക്യുമെന്റ് അപ്‌ലോഡ് പരാജയപ്പെട്ടു',
+    removeThisDocumentConfirm: 'ഈ ഡോക്യുമെന്റ് നീക്കം ചെയ്യണോ?',
+    failedRemoveDocumentMsg: 'ഡോക്യുമെന്റ് നീക്കം ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു',
+    incorrectPasswordEnteredMsg: 'തെറ്റായ പാസ്‌വേഡ് നൽകി.',
+    pleaseEnterRegisteredEmailPhoneMsg: 'ദയവായി നിങ്ങളുടെ രജിസ്റ്റർ ചെയ്ത ഇമെയിൽ അല്ലെങ്കിൽ ഫോൺ നമ്പർ നൽകുക',
+    failedSendOtpCodeMsg: 'OTP കോഡ് അയയ്ക്കുന്നതിൽ പരാജയപ്പെട്ടു.',
+    invalidOtpCodeEnterCorrectMsg: 'അസാധുവായ OTP കോഡ്. ദയവായി ശരിയായ കോഡ് നൽകുക.',
+    passwordUpdatedSuccessfullyMsg: 'പാസ്‌വേഡ് വിജയകരമായി അപ്‌ഡേറ്റ് ചെയ്തു!',
+    failedUpdatePasswordMsg: 'പാസ്‌വേഡ് അപ്‌ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു',
   }
 };
 
@@ -539,6 +4889,18 @@ const GLOBAL_SEARCH_RESULT_META = {
 // login screen, since a native app has no reason to show a browsable
 // marketing site before sign-in.
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
+
+const TERMS_AND_CONDITIONS_TITLE = 'Terms and Conditions';
+const TERMS_AND_CONDITIONS_BODY = `By creating an account and using this application, you agree to the following:
+
+1. I understand that the server or mobile application may occasionally be slow or unavailable, and I will wait until the service is restored.
+2. If I encounter any server errors, application issues, or temporary service interruptions, I understand that they will be resolved as soon as possible and will wait patiently.
+3. I will keep all customer information, including photos, personal details, and documents, confidential and will not share them with any unauthorized person or third party.
+4. I will use this application only for its intended purpose of managing and storing customer and business information. I will not misuse the application for any illegal, fraudulent, or unauthorized activities.
+5. I understand that misuse of the application or violation of these terms may result in suspension or permanent termination of my account without prior notice.
+6. Subscription fees are non-refundable. Once a subscription has been purchased, I will not request a refund or transfer the subscription to another person or account.
+7. I agree to comply with all applicable laws, regulations, and these Terms and Conditions while using the application.
+8. By proceeding with registration, I confirm that I have read, understood, and agree to these Terms and Conditions.`;
 
 // Shared "Current Location" resolver used by both the Shop Registration wizard
 // (captureShopLocation) and the Customer Registration wizard
@@ -1054,13 +5416,14 @@ export default function App() {
     keys: t('keys'),
     'pricing-offers': t('pricing'),
     revenue: t('revenue'),
-    'support-config': 'Support Config',
-    promotions: 'Inventory',
+    'support-config': t('supportConfig'),
+    promotions: t('inventory'),
     'search-keys': t('searchKeys'),
     register: t('register'),
     history: t('history'),
     reports: t('reports'),
-    'customer-care': 'Customer Care',
+    'customer-care': t('customerCare'),
+    'support-contact': t('supportContactTitle'),
     settings: t('settings'),
   };
 
@@ -1084,6 +5447,7 @@ export default function App() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
   const [autoOpenShopModal, setAutoOpenShopModal] = useState(false);
+  const [autoOpenListingModal, setAutoOpenListingModal] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLangDialog, setShowLangDialog] = useState(false);
   const langDialogCardRef = useRef(null);
@@ -1154,6 +5518,11 @@ export default function App() {
   const [regState, setRegState] = useState('');
   const [regPinCode, setRegPinCode] = useState('');
   const [regAadhaarNumber, setRegAadhaarNumber] = useState('');
+  // Optional code entered by the new shop owner, validated server-side against
+  // another shop's Shop.referralCode (see ShopService.getOrCreateReferralCode).
+  const [regReferralCode, setRegReferralCode] = useState('');
+  const [regTermsAccepted, setRegTermsAccepted] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
   // Shop "type" dropdown, populated from the Super-Admin-curated list (see
   // ShopCategoriesView) via the public GET /api/shop-categories endpoint -
   // fetched once the registration dialog opens (see useEffect below).
@@ -1249,7 +5618,7 @@ export default function App() {
       await login(authEmail, authPassword);
       resetToDashboard();
     } catch (err) {
-      setAuthError(err.message || 'Login failed. Please check credentials.');
+      setAuthError(err.message || t('loginFailedCheckCredentialsMsg'));
     } finally {
       setAuthLoading(false);
     }
@@ -1265,7 +5634,7 @@ export default function App() {
       if (result?.devCode) setResetOtpDevCode(result.devCode);
       setOtpSent(true);
     } catch (err) {
-      setResetError(err.message || 'Failed to dispatch verification code');
+      setResetError(err.message || t('failedDispatchVerificationCodeMsg'));
     } finally {
       setResetLoading(false);
     }
@@ -1279,7 +5648,7 @@ export default function App() {
       await api.verifyOtp(resetIdentifier, resetMethod || 'email', 'reset', resetOtpInput);
       setOtpVerified(true);
     } catch (err) {
-      setResetError(err.message || 'Incorrect verification code. Please try again.');
+      setResetError(err.message || t('incorrectVerificationCodeMsg'));
     } finally {
       setResetLoading(false);
     }
@@ -1289,7 +5658,7 @@ export default function App() {
     e.preventDefault();
     setResetError('');
     if (newPassword !== confirmPassword) {
-      setResetError('Passwords do not match');
+      setResetError(t('passwordsDoNotMatchMsg'));
       return;
     }
     setResetLoading(true);
@@ -1297,7 +5666,7 @@ export default function App() {
       await api.resetPasswordPublic(resetIdentifier, resetMethod, newPassword);
       setResetSuccess(true);
     } catch (err) {
-      setResetError(err.message || 'Password reset failed');
+      setResetError(err.message || t('passwordResetFailedMsg'));
     } finally {
       setResetLoading(false);
     }
@@ -1320,7 +5689,7 @@ export default function App() {
   // Inline mobile OTP verification for Step 1 - phone-only, no email option.
   const handleSendRegOtp = async () => {
     if (!regPhone) {
-      alert('Please enter your mobile number first.');
+      alert(t('pleaseEnterMobileNumberFirstMsg'));
       return;
     }
     if (!PHONE_REGEX.test(regPhone)) {
@@ -1335,7 +5704,7 @@ export default function App() {
       if (result?.devCode) setRegOtpDevCode(result.devCode);
       setRegOtpSent(true);
     } catch (err) {
-      setRegOtpError(err.message || 'Failed to dispatch verification OTP.');
+      setRegOtpError(err.message || t('failedDispatchVerificationOtpMsg'));
     } finally {
       setRegOtpLoading(false);
     }
@@ -1349,7 +5718,7 @@ export default function App() {
       await api.verifyOtp(regPhone, 'phone', 'register', regOtpInput);
       setRegOtpVerified(true);
     } catch (err) {
-      setRegOtpError(err.message || 'Incorrect verification OTP code. Please try again.');
+      setRegOtpError(err.message || t('incorrectVerificationOtpCodeMsg'));
     } finally {
       setRegOtpLoading(false);
     }
@@ -1418,6 +5787,7 @@ export default function App() {
         state: regState,
         pinCode: regPinCode,
         aadhaarNumber: regAadhaarNumber || undefined,
+        referralCode: regReferralCode || undefined,
         password: regPassword,
         plan: regPlan,
         latitude: regLat ?? undefined,
@@ -1427,10 +5797,10 @@ export default function App() {
       setRegPayProcessing(false);
       setRegPaySuccess(true);
       setRegLoginEmail(res.loginEmail || '');
-      setRegSuccessMessage(res.message || 'Registration successful! Your shop account is now active - you can log in right away.');
+      setRegSuccessMessage(res.message || t('registrationSuccessfulShopActiveMsg'));
     } catch (err) {
       setRegPayProcessing(false);
-      setRegError(err.message || 'Self-registration failed.');
+      setRegError(err.message || t('selfRegistrationFailedMsg'));
     }
   };
 
@@ -1477,7 +5847,7 @@ export default function App() {
       <div className="flex h-screen items-center justify-center" style={{ background: 'var(--bg-0)' }}>
         <div className="flex flex-col items-center gap-5 animate-fade-in">
           <div className="brand">
-            <img src={keyShopLogo} alt="Key Shop" className="brand-logo" />
+            <img src={keyShopLogo} alt="Key Shop" className="brand-logo-lg" />
           </div>
           <RefreshCw className="h-6 w-6 animate-spin" style={{ color: 'var(--gold)' }} />
           <p style={{ color: 'var(--text-3)' }} className="text-sm font-semibold">Bootstrapping your workspace&hellip;</p>
@@ -1498,27 +5868,27 @@ export default function App() {
             <div className="side-copy">
               <span className="pill-badge" style={{ marginBottom: 18 }}>
                 <span className="dot"></span>
-                Trusted by 500+ key shops across India
+                {t('trustedByShopsBadge')}
               </span>
-              <h2>Run your shop<span className="gold-line">the smart, gold-standard way.</span></h2>
-              <p>Track duplicate keys, customers and store orders across every branch &mdash; one bold dashboard built for Indian locksmiths.</p>
+              <h2>{t('runYourShopHeading')}<span className="gold-line">{t('smartGoldStandardWaySpan')}</span></h2>
+              <p>{t('trackDuplicateKeysDesc')}</p>
             </div>
 
             <div className="phone-frame">
               <div className="phone-notch"></div>
               <div className="phone-screen">
                 <div className="p-head">
-                  <span className="p-title">Key Shop Dashboard</span>
+                  <span className="p-title">{t('keyShopDashboardLabel')}</span>
                   <span className="phone-badge"></span>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="phone-stat">
                     <div className="num">1,284</div>
-                    <div className="lbl">Customers</div>
+                    <div className="lbl">{t('customersStatLabel')}</div>
                   </div>
                   <div className="phone-stat">
                     <div className="num">3,910</div>
-                    <div className="lbl">Keys Cut</div>
+                    <div className="lbl">{t('keysCutStatLabel')}</div>
                   </div>
                 </div>
                 <div className="phone-mini-bars">
@@ -1546,14 +5916,14 @@ export default function App() {
             <div className="login-box animate-fade-in">
               {!IS_NATIVE_APP && (
                 <button type="button" className="back-to-home-link" onClick={() => setPublicPage('home')}>
-                  <ArrowLeft className="h-3.5 w-3.5" /> Back to home
+                  <ArrowLeft className="h-3.5 w-3.5" /> {t('backToHomeLink')}
                 </button>
               )}
               <div className="brand">
                 <img src={keyShopLogo} alt="Key Shop" className="brand-logo" />
               </div>
-              <h1>Welcome back</h1>
-              <p className="lead">Sign in to run your duplicate-key shop &mdash; orders, customers and inventory, all in one place.</p>
+              <h1>{t('welcomeBackHeading')}</h1>
+              <p className="lead">{t('signInLeadDesc')}</p>
 
               {authError && (
                 <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', color: '#b91c1c', padding: '12px 14px', borderRadius: 13, marginBottom: 20, fontSize: 12.5, fontWeight: 600 }}>
@@ -1565,16 +5935,16 @@ export default function App() {
               <form onSubmit={handleLoginSubmit}>
                 <div className="reg-section">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>Email or Mobile Number <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailOrMobileLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="text" required value={authEmail} onChange={(e) => setAuthEmail(e.target.value)}
-                        placeholder="Email address or mobile number"
+                        placeholder={t('emailOrMobilePlaceholder')}
                       />
                     </div>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>Password <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('passwordLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type={showAuthPassword ? "text" : "password"} required value={authPassword} onChange={(e) => setAuthPassword(e.target.value)}
@@ -1594,21 +5964,21 @@ export default function App() {
                 <div className="field-row">
                   <label className="remember">
                     <input type="checkbox" defaultChecked />
-                    Remember me
+                    {t('rememberMeLabel')}
                   </label>
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
                     className="forgot-link"
                   >
-                    Forgot password?
+                    {t('forgotPasswordLink')}
                   </button>
                 </div>
                 <button
                   type="submit" disabled={authLoading}
                   className="btn btn-primary btn-block"
                 >
-                  {authLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <>Sign in to Key Shop <ArrowRight /></>}
+                  {authLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <>{t('signInToKeyShopBtn')} <ArrowRight /></>}
                 </button>
               </form>
 
@@ -1622,17 +5992,17 @@ export default function App() {
                   className="btn btn-outline btn-block"
                   style={{ marginTop: 12 }}
                 >
-                  <Download className="h-4 w-4" /> Shop Admin? Download the app
+                  <Download className="h-4 w-4" /> {t('shopAdminDownloadAppBtn')}
                 </a>
               )}
 
               <div className="login-foot" style={{ marginTop: 20 }}>
-                Want to register your shop?{' '}
+                {t('wantToRegisterShopMsg')}{' '}
                 <button
                   type="button"
                   onClick={() => setShowRegisterShop(true)}
                 >
-                  Create shop account
+                  {t('createShopAccountBtn')}
                 </button>
               </div>
             </div>
@@ -1654,8 +6024,8 @@ export default function App() {
                   <div className="icon-badge solid" style={{ marginBottom: 10 }}>
                     <Lock />
                   </div>
-                  <h2 style={{ fontSize: 20 }}>Reset your password</h2>
-                  <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>Secure recovery for your workspace</p>
+                  <h2 style={{ fontSize: 20 }}>{t('resetYourPasswordTitle')}</h2>
+                  <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>{t('secureRecoveryWorkspaceDesc')}</p>
                 </div>
 
                 {resetError && (
@@ -1670,19 +6040,19 @@ export default function App() {
                     <div className="icon-badge green" style={{ margin: '0 auto 14px' }}>
                       <Check />
                     </div>
-                    <p style={{ color: 'var(--green)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>Password reset successfully</p>
-                    <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4, marginBottom: 20 }}>You can now sign in with your new credentials.</p>
+                    <p style={{ color: 'var(--green)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>{t('passwordResetSuccessMsg')}</p>
+                    <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4, marginBottom: 20 }}>{t('signInWithNewCredentialsMsg')}</p>
                     <button
                       onClick={resetForgotPasswordFlow}
                       className="btn btn-primary btn-block"
                     >
-                      Return to login
+                      {t('returnToLoginBtn')}
                     </button>
                   </div>
                 ) : resetMethod === null ? (
                   <div>
                     <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 18 }}>
-                      Select your verification method to recover your workspace credentials.
+                      {t('selectVerificationMethodDesc')}
                     </p>
                     <div className="grid grid-cols-2 gap-3">
                       <button
@@ -1691,7 +6061,7 @@ export default function App() {
                         style={{ flexDirection: 'column', textAlign: 'center', gap: 10, minWidth: 0 }}
                       >
                         <span className="icon-badge blue"><Mail /></span>
-                        <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>Email OTP</span>
+                        <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('emailOtpLabel')}</span>
                       </button>
                       <button
                         onClick={() => setResetMethod('phone')}
@@ -1699,7 +6069,7 @@ export default function App() {
                         style={{ flexDirection: 'column', textAlign: 'center', gap: 10, minWidth: 0 }}
                       >
                         <span className="icon-badge teal"><Phone /></span>
-                        <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>Phone OTP</span>
+                        <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('phoneOtpLabel')}</span>
                       </button>
                     </div>
                     <button
@@ -1707,16 +6077,16 @@ export default function App() {
                       className="btn btn-ghost btn-block"
                       style={{ marginTop: 14 }}
                     >
-                      Cancel
+                      {t('btnCancel')}
                     </button>
                   </div>
                 ) : !otpSent ? (
                   <form onSubmit={handleSendOtp}>
                     <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
-                      Enter the registered {resetMethod} associated with your workspace to request a reset code.
+                      {t('enterRegisteredMethodTemplate').split('{method}')[0]}{resetMethod === 'email' ? t('emailOtpLabel') : t('phoneOtpLabel')}{t('enterRegisteredMethodTemplate').split('{method}')[1]}
                     </p>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: resetMethod === 'email' ? 'var(--blue)' : 'var(--teal)' }}>{resetMethod === 'email' ? <Mail /> : <Phone />}</div><b>{resetMethod === 'email' ? 'Registered Email' : 'Registered Phone Number'} <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: resetMethod === 'email' ? 'var(--blue)' : 'var(--teal)' }}>{resetMethod === 'email' ? <Mail /> : <Phone />}</div><b>{resetMethod === 'email' ? t('registeredEmailLabel') : t('registeredPhoneNumberLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
                           type={resetMethod === 'email' ? 'email' : 'text'}
@@ -1734,7 +6104,7 @@ export default function App() {
                         className="btn btn-ghost"
                         style={{ flex: 1 }}
                       >
-                        Back
+                        {t('btnBack')}
                       </button>
                       <button
                         type="submit"
@@ -1742,26 +6112,26 @@ export default function App() {
                         className="btn btn-primary"
                         style={{ flex: 2 }}
                       >
-                        {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Send OTP code'}
+                        {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('sendOtpCodeBtn')}
                       </button>
                     </div>
                   </form>
                 ) : !otpVerified ? (
                   <form onSubmit={handleVerifyOtp}>
                     <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 14 }}>
-                      A 4-digit code has been dispatched to <span style={{ color: 'var(--gold)', fontWeight: 800 }}>{resetIdentifier}</span>.
+                      {t('fourDigitCodeDispatchedTemplate').split('{identifier}')[0]}<span style={{ color: 'var(--gold)', fontWeight: 800 }}>{resetIdentifier}</span>{t('fourDigitCodeDispatchedTemplate').split('{identifier}')[1]}
                     </p>
                     {resetOtpDevCode && (
                       <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
                         <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                          Testing mode &mdash; no {resetMethod === 'phone' ? 'SMS' : 'SMTP'} provider configured
+                          {t('testingModeNoProviderTemplate').split('{provider}')[0]}{resetMethod === 'phone' ? 'SMS' : 'SMTP'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
                         </p>
                         <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{resetOtpDevCode}</p>
                       </div>
                     )}
                     {resetError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>{resetError}</div>}
                     <div className="field">
-                      <label style={{ textAlign: 'center' }}>Enter OTP</label>
+                      <label style={{ textAlign: 'center' }}>{t('enterOtpLabel')}</label>
                       <input
                         type="text"
                         required
@@ -1779,39 +6149,39 @@ export default function App() {
                         className="btn btn-ghost"
                         style={{ flex: 1 }}
                       >
-                        Resend
+                        {t('resendBtn')}
                       </button>
                       <button type="submit" disabled={resetLoading} className="btn btn-primary" style={{ flex: 2 }}>
-                        {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Verify OTP'}
+                        {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyOtpBtn')}
                       </button>
                     </div>
                   </form>
                 ) : (
                   <form onSubmit={handleResetPasswordSubmit}>
                     <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
-                      OTP verified. Please set a new password below.
+                      {t('otpVerifiedSetNewPasswordMsg')}
                     </p>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>New Password <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('newPasswordLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
                           type="password"
                           required
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
-                          placeholder="Min 6 characters"
+                          placeholder={t('min6CharactersPlaceholder')}
                         />
                       </div>
                     </div>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>Confirm Password <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('confirmPasswordLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
                           type="password"
                           required
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          placeholder="Retype password"
+                          placeholder={t('retypePasswordPlaceholder')}
                         />
                       </div>
                     </div>
@@ -1820,7 +6190,7 @@ export default function App() {
                       disabled={resetLoading}
                       className="btn btn-primary btn-block"
                     >
-                      {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Update password'}
+                      {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('updatePasswordBtn')}
                     </button>
                   </form>
                 )}
@@ -1834,8 +6204,8 @@ export default function App() {
       <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 460, margin: 'auto', padding: 28 }}>
         <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
           <div>
-            <span className="eyebrow" style={{ marginBottom: 4 }}><Building2 />Shop onboarding</span>
-            <h2 style={{ fontSize: 19 }}>Register your key shop</h2>
+            <span className="eyebrow" style={{ marginBottom: 4 }}><Building2 />{t('shopOnboardingEyebrow')}</span>
+            <h2 style={{ fontSize: 19 }}>{t('registerYourKeyShopTitle')}</h2>
           </div>
           <button
             onClick={() => {
@@ -1853,14 +6223,14 @@ export default function App() {
             <div className="icon-badge green" style={{ margin: '0 auto 16px' }}>
               <Check />
             </div>
-            <h3 style={{ fontSize: 16 }}>Registration submitted</h3>
+            <h3 style={{ fontSize: 16 }}>{t('registrationSubmittedTitle')}</h3>
             <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, lineHeight: 1.6, padding: '0 8px', marginTop: 8, marginBottom: regLoginEmail ? 12 : 20 }}>
               {regSuccessMessage}
             </p>
             {regLoginEmail && (
               <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 20 }}>
                 <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                  You can log in with either
+                  {t('canLogInWithEitherMsg')}
                 </p>
                 <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800 }}>{regLoginEmail}</p>
                 {regPhone && <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800, marginTop: 2 }}>{regPhone}</p>}
@@ -1873,7 +6243,7 @@ export default function App() {
               }}
               className="btn btn-ghost"
             >
-              Return to login
+              {t('returnToLoginBtn')}
             </button>
           </div>
         ) : (
@@ -1892,7 +6262,7 @@ export default function App() {
               <div>
                 <div className="reg-section">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>Name <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>{t('nameLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="text" required value={regOwnerName} onChange={(e) => setRegOwnerName(e.target.value)}
@@ -1901,7 +6271,7 @@ export default function App() {
                     </div>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><Building2 /></div><b>Shop Name <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><Building2 /></div><b>{t('shopNameLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="text" required value={regShopName} onChange={(e) => setRegShopName(e.target.value)}
@@ -1912,19 +6282,19 @@ export default function App() {
                   <div className="reg-field">
                     <div className="reg-field-label">
                       <div className="reg-ico" style={{ background: 'var(--orange)' }}><MapPin /></div>
-                      <b>Shop Address <span className="req">*</span></b>
+                      <b>{t('shopAddressLabel')} <span className="req">*</span></b>
                       <button
                         type="button" onClick={captureShopLocation} disabled={regLocLoading}
                         className="reg-trailing loc-btn"
                       >
                         <Crosshair className={regLocLoading ? 'animate-spin' : ''} />
-                        <span>{regLocLoading ? 'Locating…' : 'Current Location'}</span>
+                        <span>{regLocLoading ? t('locatingLabel') : t('currentLocationBtn')}</span>
                       </button>
                     </div>
                     <div className="input-wrap">
                       <input
                         type="text" required value={regLocation} onChange={(e) => setRegLocation(e.target.value)}
-                        placeholder="Street / landmark"
+                        placeholder={t('streetLandmarkPlaceholder')}
                       />
                     </div>
                     {/* GPS coordinates captured via the button above are reverse-geocoded
@@ -1946,7 +6316,7 @@ export default function App() {
                             className="cursor-pointer select-none"
                             style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
                           >
-                            Open Location Settings
+                            {t('openLocationSettingsBtn')}
                           </button>
                         )}
                         {regLocErrorKind === 'permission' && IS_NATIVE_APP && (
@@ -1956,7 +6326,7 @@ export default function App() {
                             className="cursor-pointer select-none"
                             style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
                           >
-                            Open App Settings
+                            {t('openAppSettingsBtn')}
                           </button>
                         )}
                       </div>
@@ -1964,54 +6334,63 @@ export default function App() {
                   </div>
                   <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                     <div className="reg-field" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><MapPin /></div><b>City <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><MapPin /></div><b>{t('cityLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
                           type="text" required value={regCity} onChange={(e) => setRegCity(e.target.value)}
-                          placeholder="Auto-filled from GPS"
+                          placeholder={t('autoFilledFromGpsPlaceholder')}
                         />
                       </div>
                     </div>
                     <div className="reg-field" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>State <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>{t('stateLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
                           type="text" required value={regState} onChange={(e) => setRegState(e.target.value)}
-                          placeholder="Auto-filled from GPS"
+                          placeholder={t('autoFilledFromGpsPlaceholder')}
                         />
                       </div>
                     </div>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><MapPin /></div><b>PIN Code <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><MapPin /></div><b>{t('pinCodeLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="text" required inputMode="numeric" maxLength={6} value={regPinCode} onChange={(e) => setRegPinCode(e.target.value.replace(/\D/g, ''))}
-                        placeholder="6-digit PIN code"
+                        placeholder={t('digitPinCodePlaceholder')}
                       />
                     </div>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><CreditCard /></div><b>Aadhaar Number</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><CreditCard /></div><b>{t('aadhaarNumberLabel')}</b></div>
                     <div className="input-wrap">
                       <input
                         type="text" inputMode="numeric" maxLength={12} value={regAadhaarNumber} onChange={(e) => setRegAadhaarNumber(e.target.value.replace(/\D/g, ''))}
-                        placeholder="12-digit Aadhaar number (optional)"
+                        placeholder={t('digitAadhaarOptionalPlaceholder')}
                       />
                     </div>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange, #f59e0b)' }}><Tag /></div><b>Category <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><BadgePercent /></div><b>{t('referralCodeLabel')}</b></div>
+                    <div className="input-wrap">
+                      <input
+                        type="text" value={regReferralCode} onChange={(e) => setRegReferralCode(e.target.value.toUpperCase())}
+                        placeholder={t('referralCodePlaceholder')}
+                      />
+                    </div>
+                  </div>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange, #f59e0b)' }}><Tag /></div><b>{t('fieldCategory')} <span className="req">*</span></b></div>
                     <CustomSelect
                       value={regCategoryId} onChange={setRegCategoryId}
                       disabled={regCategoriesLoading}
-                      placeholder={regCategoriesLoading ? 'Loading categories…' : 'Select shop category'}
-                      emptyLabel="No shop categories available yet"
+                      placeholder={regCategoriesLoading ? t('loadingCategoriesEllipsis') : t('selectShopCategoryPlaceholder')}
+                      emptyLabel={t('noShopCategoriesAvailableMsg')}
                       options={regCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
                     />
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>Email Address <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>{t('emailAddressLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
@@ -2020,19 +6399,19 @@ export default function App() {
                     </div>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Mobile Number <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('mobileNumberLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="tel" required value={regPhone} disabled={regOtpVerified}
                         onChange={(e) => { setRegPhone(e.target.value); setRegOtpSent(false); setRegOtpVerified(false); setRegOtpDevCode(''); }}
-                        placeholder="10-digit mobile" style={{ opacity: regOtpVerified ? 0.6 : 1 }}
+                        placeholder={t('digitMobilePlaceholder')} style={{ opacity: regOtpVerified ? 0.6 : 1 }}
                       />
                     </div>
                   </div>
 
                   {regOtpVerified ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--green)', fontSize: 12, fontWeight: 800 }}>
-                      <CheckCircle2 className="h-4 w-4" /> Mobile number verified
+                      <CheckCircle2 className="h-4 w-4" /> {t('mobileNumberVerifiedMsg')}
                     </div>
                   ) : !regOtpSent ? (
                     <button
@@ -2040,7 +6419,7 @@ export default function App() {
                       className="btn btn-primary" style={{ width: '100%' }}
                     >
                       {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}
-                      Send OTP to verify
+                      {t('sendOtpToVerifyBtn')}
                     </button>
                   ) : (
                     <div>
@@ -2049,7 +6428,7 @@ export default function App() {
                       {regOtpDevCode && (
                         <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 12 }}>
                           <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                            Testing mode &mdash; no SMS provider configured
+                            {t('testingModeNoProviderTemplate').split('{provider}')[0]}SMS{t('testingModeNoProviderTemplate').split('{provider}')[1]}
                           </p>
                           <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{regOtpDevCode}</p>
                         </div>
@@ -2062,24 +6441,24 @@ export default function App() {
                           style={{ flex: 1, background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '11px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
                         />
                         <button type="button" onClick={handleVerifyRegOtp} disabled={regOtpLoading} className="btn btn-primary">
-                          {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Verify'}
+                          {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyBtnLabel')}
                         </button>
                       </div>
                       <button
                         type="button" onClick={() => { setRegOtpSent(false); setRegOtpDevCode(''); setRegOtpInput(''); }}
                         style={{ display: 'block', margin: '10px auto 0', fontSize: 11, color: 'var(--text-3)', fontWeight: 700, textDecoration: 'underline' }}
                       >
-                        Resend OTP
+                        {t('resendOtpBtn')}
                       </button>
                     </div>
                   )}
 
                   <div className="reg-field" style={{ marginTop: 13 }}>
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>Password <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('passwordLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type={showRegPassword ? "text" : "password"} required minLength={6} value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
-                        placeholder="Min 6 characters" style={{ paddingRight: 42 }}
+                        placeholder={t('min6CharactersPlaceholder')} style={{ paddingRight: 42 }}
                       />
                       <button
                         type="button"
@@ -2093,46 +6472,93 @@ export default function App() {
                   </div>
                 </div>
 
+                <label className="flex items-center gap-2" style={{ marginTop: 16, cursor: 'pointer', fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)' }}>
+                  <input
+                    type="checkbox" checked={regTermsAccepted}
+                    onChange={(e) => setRegTermsAccepted(e.target.checked)}
+                    style={{ width: 16, height: 16, flexShrink: 0 }}
+                  />
+                  <span>
+                    {t('agreeToTermsPrefix')}{' '}
+                    <button
+                      type="button" onClick={() => setShowTermsModal(true)}
+                      style={{ color: 'var(--gold)', fontWeight: 800, textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                    >
+                      {t('termsAndConditionsLinkLabel')}
+                    </button>
+                  </span>
+                </label>
+
                 <div className="flex justify-end" style={{ marginTop: 20 }}>
                   <button
                     type="button"
                     onClick={() => {
                       if (!regShopName || !regOwnerName || !regCategoryId || !regEmail || !regPhone || !regLocation || !regCity || !regState || !regPinCode) {
-                        alert('Please fill out all required registration fields.');
+                        alert(t('pleaseFillRequiredRegFieldsMsg'));
                         return;
                       }
                       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
-                        alert('Please enter a valid email address.');
+                        alert(t('pleaseEnterValidEmailMsg'));
                         return;
                       }
                       if (!PHONE_REGEX.test(regPhone)) {
-                        alert(`Mobile number: ${PHONE_REGEX_MESSAGE}`);
+                        alert(`${t('mobileNumberLabel')}: ${PHONE_REGEX_MESSAGE}`);
                         return;
                       }
                       if (!/^\d{6}$/.test(regPinCode)) {
-                        alert('PIN code must be exactly 6 digits.');
+                        alert(t('pinCodeMustBe6DigitsMsg'));
+                        return;
+                      }
+                      if (!regTermsAccepted) {
+                        alert(t('pleaseAcceptTermsMsg'));
                         return;
                       }
                       if (regAadhaarNumber && !/^\d{12}$/.test(regAadhaarNumber)) {
-                        alert('Aadhaar number must be exactly 12 digits.');
+                        alert(t('aadhaarMustBe12DigitsMsg'));
                         return;
                       }
                       if (!regOtpVerified) {
-                        alert('Please verify your mobile number with the OTP before continuing.');
+                        alert(t('pleaseVerifyMobileOtpMsg'));
                         return;
                       }
                       if (!regPassword || regPassword.length < 6) {
-                        alert('Password must be at least 6 characters.');
+                        alert(t('regPasswordMinLengthMsg'));
                         return;
                       }
                       setRegStep(2);
                     }}
                     className="btn btn-primary reg-submit-btn"
                   >
-                    Continue <ArrowRight />
+                    {t('btnContinue')} <ArrowRight />
                   </button>
                 </div>
               </div>
+            )}
+
+            {showTermsModal && createPortal(
+              <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.85)' }}>
+                <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 620, margin: 'auto', padding: 28, maxHeight: '85vh', overflowY: 'auto' }}>
+                  <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
+                    <h2 style={{ fontSize: 17 }}>{TERMS_AND_CONDITIONS_TITLE}</h2>
+                    <button type="button" onClick={() => setShowTermsModal(false)} className="icon-btn">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 500, lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+                    {TERMS_AND_CONDITIONS_BODY}
+                  </p>
+                  <div className="flex justify-end" style={{ marginTop: 20 }}>
+                    <button
+                      type="button"
+                      onClick={() => setShowTermsModal(false)}
+                      className="btn btn-primary"
+                    >
+                      {t('btnClose')}
+                    </button>
+                  </div>
+                </div>
+              </div>,
+              document.body
             )}
 
             {/* STEP 2: Plan & Payment - combined onto a single screen so the
@@ -2146,12 +6572,12 @@ export default function App() {
                       <span className="absolute inset-0 rounded-full" style={{ border: '4px solid var(--gold-dim)' }}></span>
                       <span className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid transparent', borderTopColor: 'var(--gold)' }}></span>
                     </div>
-                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.06em' }}>Settling payment&hellip;</h3>
+                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('settlingPaymentEllipsis')}</h3>
                   </div>
                 )}
 
                 <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>Choose subscription plan</label>
+                  <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>{t('chooseSubscriptionPlanLabel')}</label>
                   <div className="store-tabs" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
                     <button
                       type="button"
@@ -2159,7 +6585,7 @@ export default function App() {
                       className={`store-tab ${regPlan === 'MONTHLY' ? 'active' : ''}`}
                       style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 8px' }}
                     >
-                      <span>Monthly</span>
+                      <span>{t('monthlyPlan')}</span>
                       <span style={{ fontSize: 9, opacity: 0.75 }}>Rs. 49</span>
                     </button>
                     <button
@@ -2168,7 +6594,7 @@ export default function App() {
                       className={`store-tab ${regPlan === 'HALF_YEARLY' ? 'active' : ''}`}
                       style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 8px' }}
                     >
-                      <span>6 Months</span>
+                      <span>{t('halfYearlyPlan')}</span>
                       <span style={{ fontSize: 9, opacity: 0.75 }}>Rs. 269</span>
                     </button>
                     <button
@@ -2177,21 +6603,21 @@ export default function App() {
                       className={`store-tab ${regPlan === 'YEARLY' ? 'active' : ''}`}
                       style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 8px' }}
                     >
-                      <span>Yearly</span>
+                      <span>{t('yearlyPlan')}</span>
                       <span style={{ fontSize: 9, opacity: 0.75 }}>Rs. 499</span>
                     </button>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', padding: 14, borderRadius: 14, border: '1px solid var(--border-2)', marginBottom: 18, fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>
-                  <span>Payable amount</span>
+                  <span>{t('payableAmountLabel')}</span>
                   <span style={{ fontWeight: 800, color: 'var(--gold)', fontSize: 16, fontFamily: 'var(--display)' }}>
                     Rs. {regPlan === 'MONTHLY' ? '49.00' : regPlan === 'HALF_YEARLY' ? '269.00' : '499.00'}
                   </span>
                 </div>
 
                 <div style={{ marginBottom: 18 }}>
-                  <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>Choose payment channel</label>
+                  <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>{t('choosePaymentChannelLabel')}</label>
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       type="button" onClick={() => setRegPayMethod('card')}
@@ -2199,7 +6625,7 @@ export default function App() {
                       style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
                     >
                       <CreditCard className="h-4 w-4" />
-                      <span style={{ fontSize: 10 }}>Credit card</span>
+                      <span style={{ fontSize: 10 }}>{t('creditCardLabel')}</span>
                     </button>
                     <button
                       type="button" onClick={() => setRegPayMethod('upi')}
@@ -2207,7 +6633,7 @@ export default function App() {
                       style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
                     >
                       <QrCode className="h-4 w-4" />
-                      <span style={{ fontSize: 10 }}>UPI / QR scan</span>
+                      <span style={{ fontSize: 10 }}>{t('upiQrScanLabel')}</span>
                     </button>
                   </div>
                 </div>
@@ -2215,7 +6641,7 @@ export default function App() {
                 {regPayMethod === 'card' ? (
                   <div className="animate-fade-in reg-section">
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>Card Number <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>{t('cardNumberLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
                           type="text" required maxLength={16} placeholder="4111 2222 3333 4444" value={regCardNumber} onChange={(e) => setRegCardNumber(e.target.value.replace(/\D/g, ''))}
@@ -2224,7 +6650,7 @@ export default function App() {
                       </div>
                     </div>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>Cardholder Name <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>{t('cardholderNameLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
                           type="text" required placeholder="RAJESH KUMAR" value={regCardHolder} onChange={(e) => setRegCardHolder(e.target.value.toUpperCase())}
@@ -2233,7 +6659,7 @@ export default function App() {
                     </div>
                     <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                       <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Calendar /></div><b>Expiry <span className="req">*</span></b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Calendar /></div><b>{t('expiryLabel')} <span className="req">*</span></b></div>
                         <div className="input-wrap">
                           <input
                             type="text" required maxLength={5} placeholder="MM/YY" value={regCardExpiry} onChange={(e) => setRegCardExpiry(e.target.value)}
@@ -2242,7 +6668,7 @@ export default function App() {
                         </div>
                       </div>
                       <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>CVV <span className="req">*</span></b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('cvvLabel')} <span className="req">*</span></b></div>
                         <div className="input-wrap">
                           <input
                             type="password" required maxLength={3} placeholder="***" value={regCardCvv} onChange={(e) => setRegCardCvv(e.target.value.replace(/\D/g, ''))}
@@ -2255,17 +6681,17 @@ export default function App() {
                 ) : (
                   <div className="animate-fade-in" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 24, borderRadius: 16, textAlign: 'center' }}>
                     <QrCode className="h-12 w-12" style={{ color: 'var(--gold)', margin: '0 auto 12px' }} />
-                    <p style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 600, marginBottom: 8 }}>Scan QR code using GooglePay, PhonePe, or Paytm</p>
+                    <p style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 600, marginBottom: 8 }}>{t('scanQrCodeAppsDesc')}</p>
                     <span style={{ fontWeight: 800, fontSize: 13, fontFamily: 'monospace', color: 'var(--text-0)' }}>UPI: keeplace.register@icici</span>
                   </div>
                 )}
 
                 <div className="flex gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                   <button type="button" onClick={() => setRegStep(1)} className="btn btn-ghost" style={{ flex: 1 }}>
-                    Back
+                    {t('btnBack')}
                   </button>
                   <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>
-                    Pay & settle setup
+                    {t('paySettleSetupBtn')}
                   </button>
                 </div>
               </form>
@@ -2304,7 +6730,7 @@ export default function App() {
           >
             <div className="brand" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <span style={{ display: 'flex', alignItems: 'center' }}>
-                <img src={keyShopLogo} alt="Key Shop" className="brand-logo" />
+                <img src={keyShopLogo} alt="Key Shop" className="brand-logo-lg" />
               </span>
               <button className="icon-btn md:hidden" onClick={() => setMobileNavOpen(false)}>
                 <X />
@@ -2394,7 +6820,7 @@ export default function App() {
                     className={`side-link ${activeTab === 'promotions' ? 'active' : ''}`}
                   >
                     <span className="nav-ico" style={{ background: 'var(--pink)' }}><Megaphone /></span>
-                    <span>Inventory</span>
+                    <span>Machines</span>
                   </button>
 
                   <div className="side-section-label">Support</div>
@@ -2444,7 +6870,7 @@ export default function App() {
                     className={`side-link ${activeTab === 'promotions' ? 'active' : ''}`}
                   >
                     <span className="nav-ico" style={{ background: 'var(--pink)' }}><Megaphone /></span>
-                    <span>Inventory</span>
+                    <span>Machines</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('offers-ads-banners')}
@@ -2717,19 +7143,20 @@ export default function App() {
               </div>
             </header>
 
-            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} />}
+            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} />}
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'pricing-offers' && <PricingOffersView t={t} api={api} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
-            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} />}
-            {activeTab === 'offers-ads-banners' && <OffersAdsBannersView api={api} />}
+            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} />}
+            {activeTab === 'offers-ads-banners' && <OffersAdsBannersView t={t} api={api} />}
             {activeTab === 'search-keys' && <KeysSearchView t={t} api={api} searchDispatch={activeTab === 'search-keys' ? searchDispatch : null} />}
             {activeTab === 'register' && <CustomerRegistrationWizard t={t} api={api} />}
             {activeTab === 'history' && <CustomerHistoryView t={t} api={api} searchDispatch={activeTab === 'history' ? searchDispatch : null} />}
             {activeTab === 'reports' && <ReportsPortalView t={t} api={api} />}
             {activeTab === 'customer-care' && <CustomerCareView t={t} api={api} />}
+            {activeTab === 'support-contact' && <SupportContactView t={t} api={api} />}
             {activeTab === 'support-config' && <SupportConfigView t={t} api={api} />}
             {activeTab === 'settings' && <ShopSettingsView t={t} api={api} />}
           </main>
@@ -2741,34 +7168,34 @@ export default function App() {
               onClick={() => { resetToDashboard(); setMobileNavOpen(false); }}
             >
               <span className="nav-ico-sm" style={{ background: 'var(--maroon)' }}><Home /></span>
-              <span>Dashboard</span>
+              <span>{t('dashboard')}</span>
             </button>
             <button
               className={`mbn-item ${activeTab === 'settings' ? 'active' : ''}`}
               onClick={() => { setActiveTab('settings'); setMobileNavOpen(false); }}
             >
               <span className="nav-ico-sm" style={{ background: 'var(--purple)' }}><User /></span>
-              <span>Account</span>
+              <span>{t('account')}</span>
             </button>
             <button
               className="mbn-item"
               onClick={() => setShowLangDialog(true)}
             >
               <span className="nav-ico-sm" style={{ background: 'var(--teal)' }}><Languages /></span>
-              <span>Language</span>
+              <span>{t('language')}</span>
             </button>
             <button
-              className={`mbn-item ${(user.role === 'SUPER_ADMIN' ? activeTab === 'support-config' : activeTab === 'customer-care') ? 'active' : ''}`}
+              className={`mbn-item ${(user.role === 'SUPER_ADMIN' ? activeTab === 'support-config' : activeTab === 'support-contact') ? 'active' : ''}`}
               onClick={() => {
                 // Role-based destination: Super Admin manages the global
                 // support config (WhatsApp number + training videos), while
-                // Shop Admin only views the already-configured contact info.
-                setActiveTab(user.role === 'SUPER_ADMIN' ? 'support-config' : 'customer-care');
+                // Shop Admin views the already-configured owner contact info.
+                setActiveTab(user.role === 'SUPER_ADMIN' ? 'support-config' : 'support-contact');
                 setMobileNavOpen(false);
               }}
             >
               <span className="nav-ico-sm" style={{ background: 'var(--rose)' }}><Headset /></span>
-              <span>Customer Service</span>
+              <span>{t('customerService')}</span>
             </button>
           </nav>
 
@@ -2793,7 +7220,7 @@ export default function App() {
                 boxShadow: '0 6px 20px rgba(0,0,0,0.35)',
               }}
             >
-              Press Back again to exit
+              {t('pressBackToExit')}
             </div>,
             document.body
           )}
@@ -2820,8 +7247,8 @@ export default function App() {
                 </button>
                 <div className="flex flex-col items-center mb-5" style={{ textAlign: 'center' }}>
                   <div className="icon-badge solid" style={{ marginBottom: 10 }}><Languages /></div>
-                  <h2 style={{ fontSize: 17 }}>Choose Language</h2>
-                  <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>Select your preferred language for the app</p>
+                  <h2 style={{ fontSize: 17 }}>{t('chooseLanguage')}</h2>
+                  <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>{t('selectLanguageDesc')}</p>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {[
@@ -2905,16 +7332,26 @@ function SearchKeysIcon() {
 
 const DASHBOARD_PRODUCT_CARDS = [
   { type: 'Used Machines', icon: Wrench, image: usedMachinesImg, description: 'View and manage used machines' },
-  { type: 'ECM Service', icon: Cpu, image: ecmServiceImg, description: 'Manage ECM service records' },
-  // imgScale: the Meter Service product photo has more transparent
-  // padding baked into the source image than the other three, so at the
-  // shared .icon-badge.photo size it reads visibly smaller than its
-  // siblings even though the box is identical - a small CSS scale-up
-  // (applied to the <img> only, box size untouched) compensates for that
-  // without affecting Used Machines/ECM/Scanning.
-  { type: 'Meter Service', icon: Gauge, image: meterServiceImg, description: 'Track and manage meter services', imgScale: 1.14 },
-  { type: 'Scanning Service', icon: ScanLine, image: scanningServiceImg, description: 'Scan & process compliance entries' },
+  { type: 'ECM', icon: Cpu, image: ecmServiceImg, description: 'Manage ECM records' },
+  // imgScale: the Meter product photo has more transparent padding baked
+  // into the source image than the other three, so at the shared
+  // .icon-badge.photo size it reads visibly smaller than its siblings even
+  // though the box is identical - a small CSS scale-up (applied to the
+  // <img> only, box size untouched) compensates for that without affecting
+  // Used Machines/ECM/Scanning.
+  { type: 'Meter', icon: Gauge, image: meterServiceImg, description: 'Track and manage meter records', imgScale: 1.14 },
+  { type: 'Scanning', icon: ScanLine, image: scanningServiceImg, description: 'Scan & process compliance entries' },
 ];
+
+// Maps each DASHBOARD_PRODUCT_CARDS.type (a fixed display type, not the
+// dynamic category name matched by goToProductType) to its [title, description]
+// translation keys, so the dashboard cards render translated text.
+const PRODUCT_TYPE_LABEL_KEYS = {
+  'Used Machines': ['usedMachines', 'usedMachinesDesc'],
+  'ECM': ['ecmService', 'ecmServiceDesc'],
+  'Meter': ['meterService', 'meterServiceDesc'],
+  'Scanning': ['scanningService', 'scanningServiceDesc'],
+};
 
 // Generic 2-column "info card" grid used across the dashboards - an icon
 // badge top-left, a bold title, and a short description underneath. Used for
@@ -2953,7 +7390,7 @@ function DashCardGrid({ items }) {
   );
 }
 
-function DashboardView({ t, setActiveTab, setSearchDispatch }) {
+function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal }) {
   const { user, api } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -2964,6 +7401,14 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
   // mechanism the global header search uses (see the App component).
   const goToProductType = (productType) => {
     setSearchDispatch({ query: productType, type: 'productType', nonce: Date.now() });
+    setActiveTab('promotions');
+  };
+
+  // "Add Machines" quick action jumps straight to the Inventory screen and
+  // auto-opens its create-listing dialog (Shop Admin only - the Super Admin
+  // cannot publish listings).
+  const goToAddMachines = () => {
+    setAutoOpenListingModal(true);
     setActiveTab('promotions');
   };
 
@@ -3016,7 +7461,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
     return (
       <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
         <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading dashboard…</span>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingDashboard')}</span>
       </div>
     );
   }
@@ -3031,9 +7476,9 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
             dashboard's card grid on one screen without scrolling. */}
         <div className="page-head" style={{ marginBottom: 10 }}>
           <div>
-            <div className="eyebrow"><Shield /> Super Admin Control</div>
-            <h1>Welcome back, {(user.name || 'Admin').split(' ')[0]} 👋</h1>
-            <p>{t('superAdmin')} Portal — platform overview across every tenant shop.</p>
+            <div className="eyebrow"><Shield /> {t('superAdminControl')}</div>
+            <h1>{t('welcomeBack')}, {(user.name || 'Admin').split(' ')[0]} 👋</h1>
+            <p>{t('superAdmin')} {t('portal')} — {t('platformOverviewDesc')}</p>
           </div>
         </div>
 
@@ -3044,10 +7489,10 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
             shorter Customer Support card spanning both columns. All cards
             share the same size/spacing via DashCardGrid. */}
         <DashCardGrid items={[
-          { title: 'New Customer', description: 'Register a compliance entry for new customer', icon: AddCustomerIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('super-customers') },
-          { title: 'Shops', description: 'View and manage every registered shop', image: keyShopLogo, onClick: () => setActiveTab('shops') },
-          ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: c.type, description: c.description, icon: c.icon, image: c.image, onClick: () => goToProductType(c.type) })),
-          { title: 'Customer Support', description: 'Manage the customer support contact & resources', image: customerSupportIcon, fullWidth: true, compact: true, onClick: () => setActiveTab('support-config') },
+          { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('super-customers') },
+          { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, onClick: () => setActiveTab('shops') },
+          ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, onClick: () => goToProductType(c.type) })),
+          { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, onClick: () => setActiveTab('support-config') },
         ]} />
       </div>
     );
@@ -3068,8 +7513,8 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
           <img src={keyShopLogo} alt="Key Shop" style={{ width: 58, height: 58, objectFit: 'contain', flexShrink: 0 }} />
           <div>
             <div className="eyebrow"><Store /> {t('shopTerminal')}</div>
-            <h1>Namaste, {firstName} 👋</h1>
-            <p>{data.shop ? data.shop.name : `${t('shopTerminal')} Workspace`} — compliance &amp; inventory terminal</p>
+            <h1>{t('namaste')}, {firstName} 👋</h1>
+            <p>{data.shop ? data.shop.name : `${t('shopTerminal')} ${t('workspace')}`} — {t('complianceInventoryTerminal')}</p>
           </div>
         </div>
       </div>
@@ -3079,15 +7524,15 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
             <div className="icon-badge rose"><AlertTriangle /></div>
             <div>
-              <p style={{ fontFamily: 'var(--display)', fontWeight: 700, color: 'var(--text-0)', fontSize: 14 }}>Subscription Renewal Required!</p>
+              <p style={{ fontFamily: 'var(--display)', fontWeight: 700, color: 'var(--text-0)', fontSize: 14 }}>{t('subscriptionRenewalRequired')}</p>
               <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
-                Your shop subscription expires in <b style={{ color: 'var(--gold)' }}>{sub.daysRemaining} days</b>. Please coordinate renewal with Key Shop Super Admin.
+                {t('subscriptionExpiresIn').split('{days}')[0]}<b style={{ color: 'var(--gold)' }}>{sub.daysRemaining}</b>{t('subscriptionExpiresIn').split('{days}')[1]}
               </p>
             </div>
           </div>
           <div className="pill-badge">
             <span className="dot"></span>
-            {sub.plan} Plan
+            {sub.plan} {t('planSuffix')}
           </div>
         </div>
       )}
@@ -3098,10 +7543,11 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
           4 product-category shortcuts, then a full-width, shorter Customer
           Support card spanning both columns. */}
       <DashCardGrid items={[
-        { title: 'New Customer', description: 'Register a compliance entry for new customer', icon: AddCustomerIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('register') },
-        { title: 'Search Keys', description: 'Find and digitize key records quickly', icon: SearchKeysIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('search-keys') },
-        ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: c.type, description: c.description, icon: c.icon, image: c.image, onClick: () => goToProductType(c.type) })),
-        { title: 'Customer Support', description: 'Get help & view support contact details', image: customerSupportIcon, fullWidth: true, compact: true, onClick: () => setActiveTab('customer-care') },
+        { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('register') },
+        { title: t('searchKeysCardTitle'), description: t('findDigitizeKeysDesc'), icon: SearchKeysIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('search-keys') },
+        { title: t('newListingBtn'), description: t('addMachinesCardDesc'), icon: Plus, iconVariant: 'flat-icon', onClick: goToAddMachines },
+        ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, onClick: () => goToProductType(c.type) })),
+        { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, onClick: () => setActiveTab('customer-care') },
       ]} />
 
       {/* Active Announcements Popup Modal - shows 2-3 ads/banners/offers together
@@ -3112,7 +7558,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
           <div className="card animate-fade-in" style={{ width: 'clamp(320px, 80vw, 860px)', overflow: 'hidden', margin: 'auto', display: 'flex', flexDirection: 'column' }}>
             <div className="flex items-center justify-between" style={{ padding: '18px 22px', borderBottom: '1px solid var(--border)' }}>
               <span className="badge badge-gold">
-                <Sparkles style={{ width: 11, height: 11 }} /> Featured Offers &amp; Banners
+                <Sparkles style={{ width: 11, height: 11 }} /> {t('featuredOffersBanners')}
               </span>
               <button onClick={dismissPopupAds} className="icon-btn">
                 <X />
@@ -3138,7 +7584,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
                     <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} style={{ width: '100%', height: 160, objectFit: 'cover' }} />
                     <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
                       <span className="badge" style={{ alignSelf: 'flex-start', background: accent, color: 'var(--bg-0, #0a0908)', fontSize: 10 }}>
-                        {ad.type === 'BANNER' ? 'Banner' : ad.type === 'NOTICE' ? 'Notice' : 'Offer'}
+                        {ad.type === 'BANNER' ? t('banner') : ad.type === 'NOTICE' ? t('notice') : t('offer')}
                       </span>
                       <span style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 13.5, color: 'var(--text-0)', lineHeight: 1.3 }}>{ad.title}</span>
                     </div>
@@ -3149,7 +7595,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
 
             <div style={{ borderTop: '1px solid var(--border)', padding: '16px 22px', display: 'flex', gap: 10 }}>
               <button onClick={dismissPopupAds} className="btn btn-ghost btn-block">
-                Dismiss
+                {t('btnDismiss')}
               </button>
               <button
                 onClick={() => {
@@ -3158,7 +7604,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch }) {
                 }}
                 className="btn btn-primary btn-block"
               >
-                View All Offers &amp; Banners
+                {t('viewAllOffersBanners')}
               </button>
             </div>
           </div>
@@ -3319,7 +7765,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       resetAddForm();
       fetchShops();
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to create key shop. Try again.');
+      setErrorMsg(err.message || t('failedToCreateShop'));
       throw err;
     }
   };
@@ -3338,7 +7784,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       }
 
       if (!provisionOwnerAadhaar) {
-        alert('Owner Aadhaar document is mandatory to provision a shop workspace.');
+        alert(t('ownerAadhaarMandatory'));
         return;
       }
 
@@ -3378,7 +7824,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         await executeShopCreation(dto);
       }
     } catch (err) {
-      setErrorMsg(err.message || 'Failed to initialize subscription checkout. Try again.');
+      setErrorMsg(err.message || t('failedInitCheckout'));
     }
   };
 
@@ -3387,11 +7833,11 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     setPaymentProcessing(true);
 
     const logs = [
-      'Establishing secure end-to-end sandbox tunnel...',
-      'Verifying account balance & credit lines...',
-      'Authorizing subscription escrow settlement transaction...',
-      'Encrypting card details via AES-GCM...',
-      'Fulfilling Key Shop API workspace provisioning...'
+      t('logEstablishingTunnel'),
+      t('logVerifyingBalance'),
+      t('logAuthorizingEscrow'),
+      t('logEncryptingCard'),
+      t('logFulfillingProvisioning'),
     ];
 
     for (let i = 0; i < logs.length; i++) {
@@ -3405,7 +7851,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       setPaymentSuccess(true);
     } catch (err) {
       setPaymentProcessing(false);
-      alert(`Payment failed: ${err.message}`);
+      alert(t('paymentFailedPrefix').replace('{message}', err.message));
     }
   };
 
@@ -3511,7 +7957,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       setShowEditModal(false);
       fetchShops();
     } catch (err) {
-      alert(err.message || 'Update failed');
+      alert(err.message || t('updateFailedMsg'));
     }
   };
 
@@ -3519,16 +7965,16 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Layers /> Platform Operations</div>
+          <div className="eyebrow"><Layers /> {t('platformOperations')}</div>
           <h1>{t('shops')}</h1>
-          <p>Provision, monitor and manage every key shop workspace on the Key Shop platform.</p>
+          <p>{t('provisionShopsDesc')}</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
           className="btn btn-primary"
         >
           <Plus />
-          <span>Provision New Shop</span>
+          <span>{t('provisionNewShop')}</span>
         </button>
       </div>
 
@@ -3539,13 +7985,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       <div className="card table-card">
         <div className="table-head">
           <h2 style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 17 }}>
-            All Shops <span style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 13 }}>({shops.length})</span>
+            {t('allShops')} <span style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 13 }}>({shops.length})</span>
           </h2>
           <div className="search-box">
             <Search />
             <input
               type="text" value={shopSearchQuery} onChange={(e) => setShopSearchQuery(e.target.value)}
-              placeholder="Search by shop name, admin name, or email&hellip;"
+              placeholder={t('searchShopsPlaceholder')}
             />
           </div>
         </div>
@@ -3562,7 +8008,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             return (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 200 }}>
                 <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-                <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading shop registry…</span>
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingShopRegistry')}</span>
               </div>
             );
           }
@@ -3571,8 +8017,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             return (
               <p style={{ padding: 24, fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
                 {shops.length === 0
-                  ? 'No shop workspaces provisioned yet. Use "Provision New Shop" to onboard your first tenant.'
-                  : 'No shop workspaces match this search.'}
+                  ? t('noShopsProvisionedYet')
+                  : t('noShopsMatchSearch')}
               </p>
             );
           }
@@ -3581,13 +8027,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           <table className="kee-table">
             <thead>
               <tr>
-                <th>Shop Details</th>
-                <th>Admin Contact</th>
-                <th>Active Plan</th>
-                <th>Valid Until</th>
-                <th>Disk Storage</th>
-                <th style={{ textAlign: 'center' }}>Status</th>
-                <th style={{ textAlign: 'right' }}>Actions</th>
+                <th>{t('shopDetails')}</th>
+                <th>{t('adminContact')}</th>
+                <th>{t('activePlan')}</th>
+                <th>{t('validUntil')}</th>
+                <th>{t('diskStorage')}</th>
+                <th style={{ textAlign: 'center' }}>{t('status')}</th>
+                <th style={{ textAlign: 'right' }}>{t('actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -3624,7 +8070,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`}
                       style={{ border: 'none', cursor: 'pointer' }}
                     >
-                      <span className="dot" />{s.isActive ? 'Active' : 'Suspended'}
+                      <span className="dot" />{s.isActive ? t('active') : t('suspended')}
                     </button>
                   </td>
                   <td>
@@ -3632,7 +8078,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       <button
                         onClick={() => handleEditShopClick(s)}
                         className="icon-btn"
-                        title="Edit Workspace"
+                        title={t('editWorkspace')}
                       >
                         <Settings />
                       </button>
@@ -3643,7 +8089,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                           setShowSubModal(true);
                         }}
                         className="icon-btn"
-                        title="Manage Plan"
+                        title={t('managePlan')}
                       >
                         <DollarSign />
                       </button>
@@ -3663,8 +8109,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             {/* Modal Header */}
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><Layers /> Shop Onboarding</span>
-                <h2 style={{ fontSize: 19 }}>Provision New Shop Workspace</h2>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><Layers /> {t('shopOnboarding')}</span>
+                <h2 style={{ fontSize: 19 }}>{t('provisionNewShopWorkspace')}</h2>
               </div>
               <button onClick={() => setShowAddModal(false)} className="icon-btn">
                 <X className="h-4 w-4" />
@@ -3681,20 +8127,20 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             <form onSubmit={handleCreateShopSubmit}>
               <div className="reg-section">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>Shop Name <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>{t('shopNameLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="text" required value={shopName} onChange={(e) => setShopName(e.target.value)}
-                      placeholder="e.g. Apex Duplicate Keys"
+                      placeholder={t('shopNamePlaceholder')}
                     />
                   </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>Shop Address / Location <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>{t('shopAddressLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="text" required value={provisionLocation} onChange={(e) => setProvisionLocation(e.target.value)}
-                      placeholder="e.g. Metro Station Road, Sector 5"
+                      placeholder={t('shopAddressPlaceholder')}
                     />
                   </div>
                 </div>
@@ -3702,45 +8148,45 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
               <div className="reg-section">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><User /></div><b>Admin Full Name <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><User /></div><b>{t('adminFullNameLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="text" required value={adminName} onChange={(e) => setAdminName(e.target.value)}
-                      placeholder="e.g. Ramesh Kumar"
+                      placeholder={t('adminFullNamePlaceholder')}
                     />
                   </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Mail /></div><b>Admin Email <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Mail /></div><b>{t('adminEmailLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="email" required value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)}
-                      placeholder="e.g. admin@apexkeys.com"
+                      placeholder={t('adminEmailPlaceholder')}
                     />
                   </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Lock /></div><b>Initial Password <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Lock /></div><b>{t('initialPasswordLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="password" required value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)}
-                      placeholder="e.g. apexpassword123"
+                      placeholder={t('initialPasswordPlaceholder')}
                     />
                   </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Phone Number <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('fieldPhone')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="tel" required value={provisionPhone} onChange={(e) => setProvisionPhone(e.target.value)}
-                      placeholder="e.g. +91 99999 99999"
+                      placeholder={t('phonePlaceholder')}
                     />
                   </div>
                 </div>
                 <div className="reg-field">
                   <div className="reg-field-label">
                     <div className="reg-ico" style={{ background: 'var(--rose)' }}><Phone /></div>
-                    <b>WhatsApp Number <span className="req">*</span></b>
+                    <b>{t('whatsappNumberLabel')} <span className="req">*</span></b>
                     <label className="reg-trailing">
                       <input
                         type="checkbox" checked={provisionSameAsPhone}
@@ -3750,13 +8196,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                         }}
                         style={{ accentColor: 'var(--gold)', width: 13, height: 13 }}
                       />
-                      <span>Same as Phone</span>
+                      <span>{t('sameAsPhone')}</span>
                     </label>
                   </div>
                   <div className="input-wrap">
                     <input
                       type="tel" required value={provisionWhatsapp} onChange={(e) => setProvisionWhatsapp(e.target.value)}
-                      disabled={provisionSameAsPhone} placeholder="WhatsApp Number"
+                      disabled={provisionSameAsPhone} placeholder={t('whatsappNumberLabel')}
                       style={{ opacity: provisionSameAsPhone ? 0.5 : 1 }}
                     />
                   </div>
@@ -3766,23 +8212,23 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="reg-section">
                 <div className="form-grid">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>Subscription Plan <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>{t('subscriptionPlanLabel')} <span className="req">*</span></b></div>
                     <CustomSelect
                       value={subPlan} onChange={setSubPlan}
                       options={[
-                        { value: 'MONTHLY', label: `Monthly Plan • Rs. ${planPrices.MONTHLY}/mo` },
-                        { value: 'HALF_YEARLY', label: `6-Month Plan • Rs. ${planPrices.HALF_YEARLY}/6mo` },
-                        { value: 'YEARLY', label: `Yearly Plan • Rs. ${planPrices.YEARLY}/yr` },
+                        { value: 'MONTHLY', label: `${t('monthlyPlan')} • Rs. ${planPrices.MONTHLY}/mo` },
+                        { value: 'HALF_YEARLY', label: `${t('halfYearlyPlan')} • Rs. ${planPrices.HALF_YEARLY}/6mo` },
+                        { value: 'YEARLY', label: `${t('yearlyPlan')} • Rs. ${planPrices.YEARLY}/yr` },
                       ]}
                     />
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Calendar /></div><b>End Date (Validity) <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Calendar /></div><b>{t('endDateValidityLabel')} <span className="req">*</span></b></div>
                     <input
                       type="date" required value={subEndDate} disabled
                       style={{ width: '100%', background: 'var(--card-2)', opacity: 0.6, border: '1.5px solid var(--border-2)', color: 'var(--text-2)', borderRadius: 13, padding: '13px 15px', fontSize: 14, outline: 'none', cursor: 'not-allowed' }}
                     />
-                    <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>Auto-calculated based on selected tier</span>
+                    <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('autoCalculatedTier')}</span>
                   </div>
                 </div>
               </div>
@@ -3790,7 +8236,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="reg-section">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--purple)' }}><Camera /></div><b>Shop Photo <span className="req">*</span></b></div>
+                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--purple)' }}><Camera /></div><b>{t('shopPhotoLabel')} <span className="req">*</span></b></div>
                     <input
                       type="file" accept="image/*" required
                       onClick={primeStoragePermission}
@@ -3807,7 +8253,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     />
                   </div>
                   <div>
-                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--pink)' }}><FileText /></div><b>Shop License <span className="req">*</span></b></div>
+                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--pink)' }}><FileText /></div><b>{t('shopLicenseLabel')} <span className="req">*</span></b></div>
                     <input
                       type="file" accept="image/*,application/pdf" required
                       onClick={primeStoragePermission}
@@ -3824,7 +8270,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     />
                   </div>
                   <div>
-                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>Owner Aadhaar <span className="req">*</span></b></div>
+                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>{t('ownerAadhaarLabel')} <span className="req">*</span></b></div>
                     <input
                       type="file" accept="image/*,application/pdf" required
                       onClick={primeStoragePermission}
@@ -3849,13 +8295,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   type="button" onClick={() => setShowAddModal(false)}
                   className="btn btn-ghost"
                 >
-                  Cancel
+                  {t('btnCancel')}
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
                 >
-                  Provision Account
+                  {t('provisionAccountBtn')}
                 </button>
               </div>
             </form>
@@ -3869,8 +8315,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 640, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><Settings /> Workspace Settings</span>
-                <h2 style={{ fontSize: 19 }}>Edit Shop Workspace Details</h2>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><Settings /> {t('workspaceSettings')}</span>
+                <h2 style={{ fontSize: 19 }}>{t('editShopWorkspaceDetails')}</h2>
               </div>
               <button onClick={() => setShowEditModal(false)} className="icon-btn">
                 <X className="h-4 w-4" />
@@ -3880,7 +8326,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             <form onSubmit={handleEditShopSubmit}>
               <div className="reg-section">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>Workspace Name <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>{t('workspaceNameLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="text" required value={editName} onChange={(e) => setEditName(e.target.value)}
@@ -3891,7 +8337,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
               <div className="reg-section">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Phone Number <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('fieldPhone')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="tel" required value={editPhone} onChange={(e) => setEditPhone(e.target.value)}
@@ -3899,7 +8345,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><MapPin /></div><b>Registered Address (Fixed)</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><MapPin /></div><b>{t('registeredAddressFixed')}</b></div>
                   <div className="input-wrap">
                     <input
                       type="text" readOnly value={editAddress}
@@ -3914,13 +8360,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   {/* Shop Photo */}
                   <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 10, borderRadius: 14, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 8 }}>
                     <div>
-                      <span style={{ fontSize: 9, color: 'var(--purple)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, textTransform: 'uppercase' }}><Camera style={{ width: 11, height: 11 }} /> Shop Photo</span>
+                      <span style={{ fontSize: 9, color: 'var(--purple)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, textTransform: 'uppercase' }}><Camera style={{ width: 11, height: 11 }} /> {t('shopPhotoLabel')}</span>
                       {editShopPhoto ? (
                         <div style={{ marginTop: 6, height: 56, width: '100%', borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-2)', background: '#000' }}>
                           <img src={getAssetUrl(editShopPhoto)} className="w-full h-full object-cover" alt="Shop Photo Preview" />
                         </div>
                       ) : (
-                        <span style={{ fontSize: 9, color: 'var(--text-3)', fontStyle: 'italic', display: 'block', marginTop: 6 }}>Not Uploaded</span>
+                        <span style={{ fontSize: 9, color: 'var(--text-3)', fontStyle: 'italic', display: 'block', marginTop: 6 }}>{t('notUploaded')}</span>
                       )}
                     </div>
                     {editShopPhoto && (
@@ -3930,7 +8376,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                         className="btn btn-primary btn-sm btn-block"
                         style={{ fontSize: 9, padding: '6px 10px' }}
                       >
-                        Download
+                        {t('btnDownload')}
                       </button>
                     )}
                   </div>
@@ -3938,7 +8384,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   {/* Shop License */}
                   <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 10, borderRadius: 14, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 8 }}>
                     <div>
-                      <span style={{ fontSize: 9, color: 'var(--pink)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, textTransform: 'uppercase' }}><FileText style={{ width: 11, height: 11 }} /> Shop License</span>
+                      <span style={{ fontSize: 9, color: 'var(--pink)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, textTransform: 'uppercase' }}><FileText style={{ width: 11, height: 11 }} /> {t('shopLicenseLabel')}</span>
                       {editShopLicense ? (
                         <div style={{ marginTop: 6, height: 56, width: '100%', borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-2)', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {(editShopLicense.startsWith('data:application/pdf') || editShopLicense.toLowerCase().endsWith('.pdf')) ? (
@@ -3948,7 +8394,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                           )}
                         </div>
                       ) : (
-                        <span style={{ fontSize: 9, color: 'var(--text-3)', fontStyle: 'italic', display: 'block', marginTop: 6 }}>Not Uploaded</span>
+                        <span style={{ fontSize: 9, color: 'var(--text-3)', fontStyle: 'italic', display: 'block', marginTop: 6 }}>{t('notUploaded')}</span>
                       )}
                     </div>
                     {editShopLicense && (
@@ -3958,7 +8404,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                         className="btn btn-primary btn-sm btn-block"
                         style={{ fontSize: 9, padding: '6px 10px' }}
                       >
-                        Download
+                        {t('btnDownload')}
                       </button>
                     )}
                   </div>
@@ -3966,7 +8412,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   {/* Owner Aadhaar */}
                   <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 10, borderRadius: 14, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 8 }}>
                     <div>
-                      <span style={{ fontSize: 9, color: 'var(--blue)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, textTransform: 'uppercase' }}><CreditCard style={{ width: 11, height: 11 }} /> Owner Aadhaar</span>
+                      <span style={{ fontSize: 9, color: 'var(--blue)', display: 'flex', alignItems: 'center', gap: 4, fontWeight: 700, textTransform: 'uppercase' }}><CreditCard style={{ width: 11, height: 11 }} /> {t('ownerAadhaarLabel')}</span>
                       {editOwnerAadhaar ? (
                         <div style={{ marginTop: 6, height: 56, width: '100%', borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-2)', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {(editOwnerAadhaar.startsWith('data:application/pdf') || editOwnerAadhaar.toLowerCase().endsWith('.pdf')) ? (
@@ -3976,7 +8422,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                           )}
                         </div>
                       ) : (
-                        <span style={{ fontSize: 9, color: 'var(--text-3)', fontStyle: 'italic', display: 'block', marginTop: 6 }}>Not Uploaded</span>
+                        <span style={{ fontSize: 9, color: 'var(--text-3)', fontStyle: 'italic', display: 'block', marginTop: 6 }}>{t('notUploaded')}</span>
                       )}
                     </div>
                     {editOwnerAadhaar && (
@@ -3986,7 +8432,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                         className="btn btn-primary btn-sm btn-block"
                         style={{ fontSize: 9, padding: '6px 10px' }}
                       >
-                        Download
+                        {t('btnDownload')}
                       </button>
                     )}
                   </div>
@@ -3998,13 +8444,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   type="button" onClick={() => setShowEditModal(false)}
                   className="btn btn-ghost"
                 >
-                  Cancel
+                  {t('btnCancel')}
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
                 >
-                  Save Settings
+                  {t('saveSettings')}
                 </button>
               </div>
             </form>
@@ -4019,8 +8465,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 440, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><DollarSign /> Billing</span>
-                <h2 style={{ fontSize: 19 }}>Update Shop Subscription</h2>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><DollarSign /> {t('billingEyebrow')}</span>
+                <h2 style={{ fontSize: 19 }}>{t('updateShopSubscriptionTitle')}</h2>
               </div>
               <button onClick={() => setShowSubModal(false)} className="icon-btn">
                 <X className="h-4 w-4" />
@@ -4028,30 +8474,30 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             </div>
 
             <div style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, background: 'var(--card-2)', padding: 12, borderRadius: 13, border: '1px solid var(--border-2)', marginBottom: 18 }}>
-              Target shop: <span style={{ fontWeight: 800, color: 'var(--gold)' }}>{selectedShop.name}</span>
+              {t('targetShopLabel')} <span style={{ fontWeight: 800, color: 'var(--gold)' }}>{selectedShop.name}</span>
             </div>
 
             <form onSubmit={handleUpdateSubscriptionSubmit}>
               <div className="reg-section">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>Plan Tier <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>{t('planTierLabel')} <span className="req">*</span></b></div>
                   <CustomSelect
                     value={newPlan} onChange={setNewPlan}
                     options={[
-                      { value: 'MONTHLY', label: `Monthly Plan • Rs. ${planPrices.MONTHLY}/mo` },
-                      { value: 'HALF_YEARLY', label: `6-Month Plan • Rs. ${planPrices.HALF_YEARLY}/6mo` },
-                      { value: 'YEARLY', label: `Yearly Plan • Rs. ${planPrices.YEARLY}/yr` },
+                      { value: 'MONTHLY', label: `${t('monthlyPlanFull')} • Rs. ${planPrices.MONTHLY}/mo` },
+                      { value: 'HALF_YEARLY', label: `${t('sixMonthPlanFull')} • Rs. ${planPrices.HALF_YEARLY}/6mo` },
+                      { value: 'YEARLY', label: `${t('yearlyPlanFull')} • Rs. ${planPrices.YEARLY}/yr` },
                     ]}
                   />
                 </div>
 
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Calendar /></div><b>New End Date <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Calendar /></div><b>{t('newEndDateLabel')} <span className="req">*</span></b></div>
                   <input
                     type="date" required value={newEndDate} disabled
                     style={{ width: '100%', background: 'var(--card-2)', opacity: 0.6, border: '1.5px solid var(--border-2)', color: 'var(--text-2)', borderRadius: 13, padding: '13px 15px', fontSize: 14, outline: 'none', cursor: 'not-allowed' }}
                   />
-                  <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>Auto-calculated based on selected tier</span>
+                  <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('autoCalculatedTier')}</span>
                 </div>
               </div>
 
@@ -4060,13 +8506,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   type="button" onClick={() => setShowSubModal(false)}
                   className="btn btn-ghost"
                 >
-                  Cancel
+                  {t('btnCancel')}
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
                 >
-                  Update Plan
+                  {t('updatePlanBtn')}
                 </button>
               </div>
             </form>
@@ -4083,8 +8529,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="flex items-center gap-2">
                 <div className="icon-badge green"><ShieldCheck /></div>
                 <div>
-                  <h2 style={{ fontSize: 14 }}>Plan Subscription Escrow Pay</h2>
-                  <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, marginTop: 2 }}>Workspace Terminal Provisioning Payment</p>
+                  <h2 style={{ fontSize: 14 }}>{t('planSubscriptionEscrowPay')}</h2>
+                  <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, marginTop: 2 }}>{t('workspaceTerminalProvisioningPayment')}</p>
                 </div>
               </div>
               {!paymentProcessing && !paymentSuccess && (
@@ -4101,9 +8547,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   <Check style={{ width: 30, height: 30 }} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: 18 }}>Payment Authorized!</h3>
+                  <h3 style={{ fontSize: 18 }}>{t('paymentAuthorizedTitle')}</h3>
                   <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, maxWidth: 320, margin: '8px auto 0' }}>
-                    The subscription payment has settled successfully. Workspace <strong style={{ color: 'var(--text-1)' }}>{provisionDto.name}</strong> is now fully provisioned and activated.
+                    {t('paymentSettledDesc').split('{name}')[0]}<strong style={{ color: 'var(--text-1)' }}>{provisionDto.name}</strong>{t('paymentSettledDesc').split('{name}')[1]}
                   </p>
                 </div>
                 <button
@@ -4112,7 +8558,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   }}
                   className="btn btn-primary btn-block"
                 >
-                  Close & Proceed
+                  {t('closeAndProceedBtn')}
                 </button>
               </div>
             ) : paymentProcessing ? (
@@ -4123,8 +8569,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   <span className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid transparent', borderTopColor: 'var(--gold)' }}></span>
                 </div>
                 <div>
-                  <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '.05em' }}>Processing Transaction</h3>
-                  <p style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600, marginTop: 4 }}>Finalizing workspace creation tunnels.</p>
+                  <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '.05em' }}>{t('processingTransactionTitle')}</h3>
+                  <p style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600, marginTop: 4 }}>{t('finalizingWorkspaceCreation')}</p>
                 </div>
                 <div style={{ width: '100%', background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 12, borderRadius: 13, fontSize: 10.5, color: 'var(--text-3)', fontFamily: 'monospace', textAlign: 'center', minHeight: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ color: 'var(--gold)' }}>{processingLog}</span>
@@ -4136,8 +8582,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 {/* Invoice Summary */}
                 <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 16, borderRadius: 16, marginBottom: 18 }}>
                   <div>
-                    <span style={{ fontSize: 10, color: 'var(--text-3)', textTransform: 'uppercase', display: 'block', fontWeight: 700 }}>Workspace Provision Invoice</span>
-                    <span style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 600 }}>Plan: <span style={{ fontWeight: 800, color: 'var(--gold)' }}>{provisionDto.plan}</span></span>
+                    <span style={{ fontSize: 10, color: 'var(--text-3)', textTransform: 'uppercase', display: 'block', fontWeight: 700 }}>{t('workspaceProvisionInvoice')}</span>
+                    <span style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 600 }}>{t('planColonLabel')} <span style={{ fontWeight: 800, color: 'var(--gold)' }}>{provisionDto.plan}</span></span>
                   </div>
                   <span style={{ fontSize: 21, fontWeight: 800, color: 'var(--green)', fontFamily: 'var(--display)' }}>Rs. {planPrices[provisionDto.plan]}</span>
                 </div>
@@ -4151,7 +8597,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
                   >
                     <CreditCard className="h-4 w-4" />
-                    <span style={{ fontSize: 10 }}>Credit Card</span>
+                    <span style={{ fontSize: 10 }}>{t('creditCardLabel')}</span>
                   </button>
                   <button
                     type="button"
@@ -4160,24 +8606,24 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
                   >
                     <QrCode className="h-4 w-4" />
-                    <span style={{ fontSize: 10 }}>UPI QR Code</span>
+                    <span style={{ fontSize: 10 }}>{t('upiQrCodeLabel')}</span>
                   </button>
                 </div>
 
                 {paymentMethod === 'card' ? (
                   <div className="animate-fade-in">
                     <div className="field">
-                      <label>Cardholder Full Name</label>
+                      <label>{t('cardholderFullNameLabel')}</label>
                       <div className="input-wrap">
                         <User />
                         <input
                           type="text" required value={cardHolder} onChange={(e) => setCardHolder(e.target.value)}
-                          placeholder="e.g. Ramesh Kumar"
+                          placeholder={t('cardholderNamePlaceholder')}
                         />
                       </div>
                     </div>
                     <div className="field">
-                      <label>Debit / Credit Card Number</label>
+                      <label>{t('debitCreditCardNumberLabel')}</label>
                       <div className="input-wrap">
                         <CreditCard />
                         <input
@@ -4194,7 +8640,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     </div>
                     <div className="form-grid">
                       <div className="field" style={{ marginBottom: 0 }}>
-                        <label>Expiry Date</label>
+                        <label>{t('expiryDateLabel')}</label>
                         <div className="input-wrap">
                           <Calendar />
                           <input
@@ -4213,7 +8659,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                         </div>
                       </div>
                       <div className="field" style={{ marginBottom: 0 }}>
-                        <label>CVV Code</label>
+                        <label>{t('cvvCodeLabel')}</label>
                         <div className="input-wrap">
                           <Lock />
                           <input
@@ -4235,9 +8681,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       />
                     </div>
                     <div>
-                      <p style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 700 }}>Scan to Authorize Setup Invoice</p>
+                      <p style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 700 }}>{t('scanToAuthorizeInvoice')}</p>
                       <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, maxWidth: 260, marginTop: 4 }}>
-                        Scan with GPay, PhonePe, Paytm, or BHIM. Subscription activates automatically post-detection.
+                        {t('scanQrDesc')}
                       </p>
                     </div>
                   </div>
@@ -4247,7 +8693,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 <div style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                   <div className="flex items-center gap-1.5 justify-center" style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
                     <Lock className="h-3 w-3" style={{ color: 'var(--green)' }} />
-                    <span>256-bit Secure Gateway Payment Portal</span>
+                    <span>{t('secureGatewayPaymentPortal')}</span>
                   </div>
 
                   <div className="flex gap-2">
@@ -4257,14 +8703,14 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       className="btn btn-ghost"
                       style={{ flex: 1 }}
                     >
-                      Cancel Setup
+                      {t('cancelSetupBtn')}
                     </button>
                     <button
                       type="submit"
                       className="btn btn-primary"
                       style={{ flex: 2 }}
                     >
-                      Pay Rs. {planPrices[provisionDto.plan]} & Provision
+                      {t('payAndProvisionPrefix')} {planPrices[provisionDto.plan]} {t('payAndProvisionSuffix')}
                     </button>
                   </div>
                 </div>
@@ -4332,13 +8778,13 @@ function SuperCustomersView({ t, api, searchDispatch }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><ShieldCheck /> Cross-Tenant Compliance</div>
-          <h1>Customer Registry</h1>
-          <p>Supervise and edit duplicate-key compliance records across every shop workspace on Key Shop.</p>
+          <div className="eyebrow"><ShieldCheck /> {t('crossTenantCompliance')}</div>
+          <h1>{t('customerRegistryTitle')}</h1>
+          <p>{t('superviseComplianceRecordsDesc')}</p>
         </div>
         <button onClick={openCreateWizard} className="btn btn-primary">
           <Plus />
-          <span>Create Customer</span>
+          <span>{t('createCustomerBtn')}</span>
         </button>
       </div>
 
@@ -4349,13 +8795,13 @@ function SuperCustomersView({ t, api, searchDispatch }) {
       <div className="card table-card">
         <div className="table-head">
           <h2 style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 17 }}>
-            All Customers <span style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 13 }}>({customers.length})</span>
+            {t('allCustomers')} <span style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 13 }}>({customers.length})</span>
           </h2>
           <div className="search-box">
             <Search />
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name, phone, or key code&hellip;"
+              placeholder={t('searchByNamePhoneKeyCode')}
             />
           </div>
         </div>
@@ -4363,28 +8809,28 @@ function SuperCustomersView({ t, api, searchDispatch }) {
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 200 }}>
             <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-            <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading customer registry&hellip;</span>
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingCustomerRegistry')}</span>
           </div>
         ) : customers.length === 0 ? (
           <p style={{ padding: 24, fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
-            No customer records match this search across the platform.
+            {t('noCustomerRecordsMatch')}
           </p>
         ) : (
         <table className="kee-table">
           <thead>
             <tr>
-              <th>Tenant Workspace</th>
-              <th>Customer</th>
-              <th>Phone</th>
-              <th>Key Code</th>
-              <th>Registered</th>
-              <th style={{ textAlign: 'right' }}>Actions</th>
+              <th>{t('tenantWorkspaceCol')}</th>
+              <th>{t('customerCol')}</th>
+              <th>{t('phoneCol')}</th>
+              <th>{t('keyCodeCol')}</th>
+              <th>{t('registeredCol')}</th>
+              <th style={{ textAlign: 'right' }}>{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
             {customers.map(c => (
               <tr key={c.id}>
-                <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.shop ? c.shop.name : 'Shop Workspace'}</td>
+                <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.shop ? c.shop.name : t('shopWorkspaceFallback')}</td>
                 <td>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <div className={`icon-badge ${c.photoUrl ? 'jgreen' : 'rose'}`} style={{ width: 34, height: 34, borderRadius: 10 }}>
@@ -4392,14 +8838,13 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                     </div>
                     <div>
                       <div className="cell-primary">{c.name}</div>
-                      <div className="cell-sub">{c.photoUrl ? 'Photo on file' : 'Photo pending'}</div>
+                      <div className="cell-sub">{c.photoUrl ? t('photoOnFile') : t('photoPending')}</div>
                     </div>
                   </div>
                 </td>
                 <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
                 <td>
                   <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
-                  {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
                 </td>
                 <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
                   {new Date(c.createdAt).toLocaleDateString()}
@@ -4407,7 +8852,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 </td>
                 <td>
                   <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
-                    <button onClick={() => setViewCust(c)} className="icon-btn" title="View compliance file">
+                    <button onClick={() => setViewCust(c)} className="icon-btn" title={t('viewComplianceFile')}>
                       <Eye />
                     </button>
                   </div>
@@ -4446,7 +8891,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 620, margin: 'auto', padding: 28, overflowX: 'hidden' }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><FileText /> Compliance File</span>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><FileText /> {t('complianceFileEyebrow')}</span>
                 <h2 style={{ fontSize: 19 }}>{viewCust.name}</h2>
               </div>
               <button onClick={() => setViewCust(null)} className="icon-btn">
@@ -4457,22 +8902,21 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             <div className="reg-section">
               <div className="grid grid-cols-2 gap-4">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Phone /></div><b>Phone Contact</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Phone /></div><b>{t('phoneContactLabel')}</b></div>
                   <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{viewCust.phone}</span>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>Registry Date</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>{t('registryDateLabel')}</b></div>
                   <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{new Date(viewCust.createdAt).toLocaleString()}</span>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Home /></div><b>Address</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Home /></div><b>{t('addressLabel')}</b></div>
                   <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }} className="block truncate">{viewCust.address}</span>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Blank Code</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyBlankCodeLabel')}</b></div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="badge badge-active"><span className="dot" />{viewCust.keyNumber}</span>
-                    {viewCust.keyType && <span className="badge" style={{ background: 'var(--purple-dim, rgba(124,77,255,0.12))', color: 'var(--purple)' }}>{viewCust.keyType}</span>}
                   </div>
                 </div>
               </div>
@@ -4481,11 +8925,11 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             <div className="reg-section">
               <div className="grid grid-cols-2 gap-4">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Fingerprint /></div><b>ID Verification</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Fingerprint /></div><b>{t('idVerificationLabel')}</b></div>
                   <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{viewCust.idProofType}</span>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>ID Number (Decrypted)</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('idNumberDecryptedLabel')}</b></div>
                   <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--gold)' }}>{viewCust.idProofNumber}</span>
                 </div>
               </div>
@@ -4497,23 +8941,23 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                       <MapPin style={{ width: 16, height: 16 }} />
                     </div>
                     <div>
-                      <p style={{ fontWeight: 700, color: 'var(--text-0)', fontSize: 13 }}>GPS Coordinates</p>
+                      <p style={{ fontWeight: 700, color: 'var(--text-0)', fontSize: 13 }}>{t('gpsCoordinatesLabel')}</p>
                       {viewCust.latitude && viewCust.longitude ? (
-                        <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600 }}>Lat: {viewCust.latitude} &bull; Long: {viewCust.longitude}</p>
+                        <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600 }}>{t('latLongTemplate').split('{lat}')[0]}{viewCust.latitude}{t('latLongTemplate').split('{lat}')[1].split('{long}')[0]}{viewCust.longitude}</p>
                       ) : (
-                        <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600, fontStyle: 'italic' }}>Not captured</p>
+                        <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600, fontStyle: 'italic' }}>{t('notCapturedLabel')}</p>
                       )}
                     </div>
                   </div>
                   {viewCust.mapsLink && (
                     <a href={viewCust.mapsLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800 }} className="flex items-center gap-1 hover:underline">
-                      <span>Google Maps</span><ExternalLink className="h-3 w-3" />
+                      <span>{t('googleMapsLabel')}</span><ExternalLink className="h-3 w-3" />
                     </a>
                   )}
                 </div>
                 {viewCust.capturedAddress && (
                   <div style={{ fontSize: 10.5, color: 'var(--text-2)', borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 8, paddingLeft: 42, fontWeight: 600 }}>
-                    <span style={{ display: 'block', fontWeight: 800, fontSize: 9, color: 'var(--text-3)', textTransform: 'uppercase' }}>Captured Address</span>
+                    <span style={{ display: 'block', fontWeight: 800, fontSize: 9, color: 'var(--text-3)', textTransform: 'uppercase' }}>{t('capturedAddressLabel')}</span>
                     <span>{viewCust.capturedAddress}</span>
                   </div>
                 )}
@@ -4522,7 +8966,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 
             <div className="reg-section" style={{ marginBottom: 0 }}>
               <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Camera /></div><b>Webcam Photo</b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Camera /></div><b>{t('webcamPhotoLabel')}</b></div>
                 {viewCust.photoUrl ? (
                   <div style={{ width: '100%', height: 128, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-2)' }}>
                     <img src={getAssetUrl(viewCust.photoUrl)} alt="Customer snapshot" className="w-full h-full object-cover" />
@@ -4536,7 +8980,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 
               {viewCust.documents && viewCust.documents.length > 0 && (
                 <div className="reg-field space-y-2" style={{ minWidth: 0 }}>
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><FileCheck /></div><b>Attached ID Copies</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><FileCheck /></div><b>{t('attachedIdCopiesLabel')}</b></div>
                   {viewCust.documents.map((d, di) => {
                     const docColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
                     const docColor = docColors[di % docColors.length];
@@ -4551,12 +8995,12 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                           className={`badge ${uploaded ? 'badge-active' : 'badge-suspended'}`}
                           style={{ flexShrink: 0, fontSize: 9.5 }}
                         >
-                          {uploaded ? 'Uploaded' : 'Missing'}
+                          {uploaded ? t('uploadedBadge') : t('missingBadge')}
                         </span>
                         <button
                           type="button"
-                          title="Download"
-                          aria-label="Download"
+                          title={t('btnDownload')}
+                          aria-label={t('btnDownload')}
                           disabled={!uploaded}
                           onClick={() => downloadAsset(d.fileUrl, d.originalName || d.fileKey || 'document')}
                           className="icon-btn"
@@ -4572,7 +9016,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             </div>
 
             <div className="flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
-              <button onClick={() => setViewCust(null)} className="btn btn-ghost">Close File</button>
+              <button onClick={() => setViewCust(null)} className="btn btn-ghost">{t('closeFileBtn')}</button>
             </div>
           </div>
         </div>,
@@ -4585,7 +9029,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 // ============================================================================
 // COMPONENT 4: MASTER KEY DATABASE CRUD (SUPER ADMIN ONLY)
 // ============================================================================
-function KeysCatalogView({ api, searchDispatch }) {
+function KeysCatalogView({ t, api, searchDispatch }) {
   const [keys, setKeys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -4637,7 +9081,7 @@ function KeysCatalogView({ api, searchDispatch }) {
       resetForm();
       fetchKeys();
     } catch (err) {
-      setErrorMsg(err.message || 'Operation failed');
+      setErrorMsg(err.message || t('operationFailedMsg'));
     }
   };
 
@@ -4650,7 +9094,7 @@ function KeysCatalogView({ api, searchDispatch }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to remove this key blank from the central catalogue?')) return;
+    if (!confirm(t('confirmRemoveKeyBlank'))) return;
     try {
       await api.deleteMasterKey(id);
       fetchKeys();
@@ -4671,16 +9115,16 @@ function KeysCatalogView({ api, searchDispatch }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Key /> Platform Catalogue</div>
-          <h1>Master Key Catalogue</h1>
-          <p>Provision key blank specifications available for lookup across every shop terminal.</p>
+          <div className="eyebrow"><Key /> {t('platformCatalogueLabel')}</div>
+          <h1>{t('masterKeyCatalogueTitle')}</h1>
+          <p>{t('provisionKeyBlankSpecsDesc')}</p>
         </div>
         <button
           onClick={() => { resetForm(); setShowAddModal(true); }}
           className="btn btn-primary"
         >
           <Plus />
-          <span>Add Key Blank</span>
+          <span>{t('addKeyBlankBtn')}</span>
         </button>
       </div>
 
@@ -4690,7 +9134,7 @@ function KeysCatalogView({ api, searchDispatch }) {
           <Search />
           <input
             type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search catalogue by code, category, specs reference&hellip;"
+            placeholder={t('searchCataloguePlaceholder')}
             style={{ fontSize: 14 }}
           />
           {searchQuery && (
@@ -4704,7 +9148,7 @@ function KeysCatalogView({ api, searchDispatch }) {
       {loading ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading catalogue&hellip;</span>
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingCatalogueMsg')}</span>
         </div>
       ) : (() => {
         const filteredKeys = keys.filter(k =>
@@ -4716,7 +9160,7 @@ function KeysCatalogView({ api, searchDispatch }) {
           return (
             <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
               <div className="icon-badge maroon"><KeyRound /></div>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>No key blanks match this search</span>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noKeyBlanksMatch')}</span>
             </div>
           );
         }
@@ -4743,7 +9187,7 @@ function KeysCatalogView({ api, searchDispatch }) {
                       style={{ flex: 1 }}
                     >
                       <Edit className="h-3.5 w-3.5" />
-                      <span>Modify</span>
+                      <span>{t('modifyBtn')}</span>
                     </button>
                     <button
                       onClick={() => handleDelete(k.id)}
@@ -4751,7 +9195,7 @@ function KeysCatalogView({ api, searchDispatch }) {
                       style={{ flex: 1 }}
                     >
                       <Trash className="h-3.5 w-3.5" />
-                      <span>Delete</span>
+                      <span>{t('deleteBtn')}</span>
                     </button>
                   </div>
                 </div>
@@ -4767,8 +9211,8 @@ function KeysCatalogView({ api, searchDispatch }) {
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 640, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><Key /> Catalogue Entry</span>
-                <h2 style={{ fontSize: 19 }}>{editKey ? 'Modify Key Blank' : 'Add New Key Blank'}</h2>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><Key /> {t('catalogueEntryLabel')}</span>
+                <h2 style={{ fontSize: 19 }}>{editKey ? t('modifyKeyBlankTitle') : t('addNewKeyBlankTitle')}</h2>
               </div>
               <button onClick={() => setShowAddModal(false)} className="icon-btn">
                 <X className="h-4 w-4" />
@@ -4786,17 +9230,17 @@ function KeysCatalogView({ api, searchDispatch }) {
               <div className="reg-section">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Hash /></div><b>Key Number / Code</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Hash /></div><b>{t('keyNumberCodeLabel')}</b></div>
                     <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-0)', wordBreak: 'break-word' }}>{editKey.keyNumber}</span>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Store /></div><b>Connected Shop</b></div>
-                    <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-0)', wordBreak: 'break-word' }}>{editKey.shop ? editKey.shop.name : 'Global Catalogue'}</span>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Store /></div><b>{t('connectedShopLabel')}</b></div>
+                    <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-0)', wordBreak: 'break-word' }}>{editKey.shop ? editKey.shop.name : t('globalCatalogueLabel')}</span>
                   </div>
                 </div>
 
                 <div className="reg-field" style={{ marginTop: 13 }}>
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><User /></div><b>Connected Customer{editKey.customers && editKey.customers.length !== 1 ? 's' : ''}</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><User /></div><b>{t('connectedCustomersLabel')}</b></div>
                   {editKey.customers && editKey.customers.length > 0 ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {editKey.customers.map(c => (
@@ -4807,7 +9251,7 @@ function KeysCatalogView({ api, searchDispatch }) {
                       ))}
                     </div>
                   ) : (
-                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', fontStyle: 'italic' }}>No customer linked yet</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', fontStyle: 'italic' }}>{t('noCustomerLinkedYet')}</span>
                   )}
                 </div>
               </div>
@@ -4817,20 +9261,20 @@ function KeysCatalogView({ api, searchDispatch }) {
               <div className="reg-section">
                 <div className="form-grid">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Hash /></div><b>Key Code <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Hash /></div><b>{t('keyCodeLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="text" required value={keyNumber} onChange={(e) => setKeyNumber(e.target.value)}
-                        placeholder="e.g. CY-102"
+                        placeholder={t('keyCodePlaceholderEg')}
                       />
                     </div>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Layers /></div><b>Category Type <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Layers /></div><b>{t('categoryTypeLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="text" required value={category} onChange={(e) => setCategory(e.target.value)}
-                        placeholder="e.g. Padlock"
+                        placeholder={t('categoryPlaceholderEg')}
                       />
                     </div>
                   </div>
@@ -4839,7 +9283,7 @@ function KeysCatalogView({ api, searchDispatch }) {
 
               <div className="reg-section">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Camera /></div><b>Back Image URL</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Camera /></div><b>{t('backImageUrlLabel')}</b></div>
                   <div className="input-wrap">
                     <input
                       type="text" value={backImageUrl} onChange={(e) => setBackImageUrl(e.target.value)}
@@ -4854,13 +9298,13 @@ function KeysCatalogView({ api, searchDispatch }) {
                   type="button" onClick={() => setShowAddModal(false)}
                   className="btn btn-ghost"
                 >
-                  Cancel
+                  {t('btnCancel')}
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
                 >
-                  {editKey ? 'Save Changes' : 'Publish Key'}
+                  {editKey ? t('saveChangesBtn') : t('publishKeyBtn')}
                 </button>
               </div>
             </form>
@@ -4875,7 +9319,7 @@ function KeysCatalogView({ api, searchDispatch }) {
 // ============================================================================
 // COMPONENT 6: ADVERTISEMENTS CRUD (SUPER ADMIN ONLY)
 // ============================================================================
-function AdsManagementView({ api }) {
+function AdsManagementView({ t, api }) {
   const [ads, setAds] = useState([]);
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -4941,7 +9385,7 @@ function AdsManagementView({ api }) {
       resetForm();
       fetchAds();
     } catch (err) {
-      setErrorMsg(err.message || (editingAdId ? 'Failed to update campaign' : 'Failed to schedule campaign'));
+      setErrorMsg(err.message || (editingAdId ? t('failedUpdateCampaign') : t('failedScheduleCampaign')));
     }
   };
 
@@ -4973,7 +9417,7 @@ function AdsManagementView({ api }) {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to terminate this advertisement campaign?')) return;
+    if (!confirm(t('confirmTerminateAdCampaign'))) return;
     try {
       await api.deleteAdvertisement(id);
       fetchAds();
@@ -4991,9 +9435,9 @@ function AdsManagementView({ api }) {
   };
 
   const adTypeMeta = (type) => {
-    if (type === 'POPUP') return { label: 'Interactive Popup', icon: Sparkles };
-    if (type === 'NOTICE') return { label: 'Text Notice', icon: Bell };
-    return { label: 'Main Banner', icon: Radio };
+    if (type === 'POPUP') return { label: t('interactivePopupLabel'), icon: Sparkles };
+    if (type === 'NOTICE') return { label: t('textNoticeLabel'), icon: Bell };
+    return { label: t('mainBannerLabel'), icon: Radio };
   };
 
   const isLive = (ad) => {
@@ -5005,28 +9449,28 @@ function AdsManagementView({ api }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Megaphone /> Growth &amp; Marketing</div>
-          <h1>Advertisement Campaigns</h1>
-          <p>Publish banners and popups targeted to shop dashboard screens.</p>
+          <div className="eyebrow"><Megaphone /> {t('growthMarketingLabel')}</div>
+          <h1>{t('adCampaignsTitle')}</h1>
+          <p>{t('publishBannersPopupsDesc')}</p>
         </div>
         <button
           onClick={() => { resetForm(); setShowAddModal(true); }}
           className="btn btn-primary"
         >
           <Plus />
-          <span>New Ad Campaign</span>
+          <span>{t('newAdCampaignBtn')}</span>
         </button>
       </div>
 
       {loading ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading campaigns&hellip;</span>
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingCampaignsMsg')}</span>
         </div>
       ) : ads.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge"><Megaphone /></div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>No ad campaigns scheduled yet.</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noAdCampaignsScheduled')}</span>
         </div>
       ) : (
         <div className="product-grid stagger-in">
@@ -5044,29 +9488,29 @@ function AdsManagementView({ api }) {
                   )}
                   <span className="product-tag"><Icon className="h-3 w-3" style={{ display: 'inline', marginRight: 4, verticalAlign: '-1px' }} />{meta.label}</span>
                   <span className={`badge ${live ? 'badge-active' : 'badge-suspended'}`} style={{ position: 'absolute', top: 10, right: 10 }}>
-                    <span className="dot" />{live ? 'Live' : 'Scheduled'}
+                    <span className="dot" />{live ? t('liveLabel') : t('scheduledLabel')}
                   </span>
                 </div>
                 <div className="product-body">
                   <div className="flex items-center justify-between">
                     <span className="pname">{ad.title}</span>
-                    <span className="badge badge-gold">Priority {ad.priority}</span>
+                    <span className="badge badge-gold">{t('priorityLabel')} {ad.priority}</span>
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 11, color: 'var(--text-2)', background: 'var(--card-2)', border: '1px solid var(--border)', padding: 10, borderRadius: 12, fontWeight: 600 }}>
                     <div>
-                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>Start</span>
+                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>{t('startLabel')}</span>
                       {new Date(ad.startDate).toLocaleDateString()}
                     </div>
                     <div>
-                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>End</span>
+                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>{t('endLabel')}</span>
                       {new Date(ad.endDate).toLocaleDateString()}
                     </div>
                   </div>
 
                   <div className="cell-sub" style={{ fontSize: 11.5 }}>
                     <Users className="h-3 w-3" style={{ display: 'inline', marginRight: 4, verticalAlign: '-2px' }} />
-                    {ad.targetAll ? 'All Key Shops' : `${ad.targetShops.length} targeted shop${ad.targetShops.length === 1 ? '' : 's'}`}
+                    {ad.targetAll ? t('allKeyShopsLabel') : (ad.targetShops.length === 1 ? t('targetedShopSingular').replace('{n}', ad.targetShops.length) : t('targetedShopsPlural').replace('{n}', ad.targetShops.length))}
                   </div>
 
                   <div className="flex gap-2" style={{ marginTop: 4 }}>
@@ -5075,14 +9519,14 @@ function AdsManagementView({ api }) {
                       className="btn btn-ghost btn-sm btn-block"
                     >
                       <Edit className="h-3.5 w-3.5" />
-                      <span>Edit</span>
+                      <span>{t('editBtn')}</span>
                     </button>
                     <button
                       onClick={() => handleDelete(ad.id)}
                       className="btn btn-danger-outline btn-sm btn-block"
                     >
                       <Trash className="h-3.5 w-3.5" />
-                      <span>Cancel Campaign</span>
+                      <span>{t('cancelCampaignBtn')}</span>
                     </button>
                   </div>
                 </div>
@@ -5098,8 +9542,8 @@ function AdsManagementView({ api }) {
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 640, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><Radio /> Ad Campaign</span>
-                <h2 style={{ fontSize: 19 }}>{editingAdId ? 'Edit Ad Campaign' : 'New Visual Ad Campaign'}</h2>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><Radio /> {t('adCampaignLabel')}</span>
+                <h2 style={{ fontSize: 19 }}>{editingAdId ? t('editAdCampaignTitle') : t('newVisualAdCampaignTitle')}</h2>
               </div>
               <button onClick={() => setShowAddModal(false)} className="icon-btn">
                 <X className="h-4 w-4" />
@@ -5115,30 +9559,30 @@ function AdsManagementView({ api }) {
 
             <form onSubmit={handleSubmit}>
               <div className="field">
-                <label>Ad Title / Announcement</label>
+                <label>{t('adTitleAnnouncementLabel')}</label>
                 <div className="input-wrap">
                   <Megaphone />
                   <input
                     type="text" required value={title} onChange={(e) => setTitle(e.target.value)}
-                    placeholder="e.g. 20% Off Godrej key duplicates this Friday"
+                    placeholder={t('adTitlePlaceholderEg')}
                   />
                 </div>
               </div>
 
               <div className="field">
-                <label>Banner Image Source</label>
+                <label>{t('bannerImageSourceLabel')}</label>
                 <div className="flex gap-2">
                   <div className="input-wrap" style={{ flex: 1 }}>
                     <ImageIcon />
                     <input
                       type="text" required value={imageUrl}
                       onChange={(e) => setImageUrl(cleanGoogleImageUrl(e.target.value))}
-                      placeholder="Paste Image URL (or Google Image Link)"
+                      placeholder={t('pasteImageUrlPlaceholder')}
                     />
                   </div>
                   <label className="btn btn-ghost btn-sm" style={{ cursor: 'pointer', flexShrink: 0 }}>
                     <Upload className="h-3.5 w-3.5" />
-                    <span>Upload</span>
+                    <span>{t('uploadBtn')}</span>
                     <input
                       type="file" accept="image/*" className="hidden"
                       onClick={primeStoragePermission}
@@ -5164,18 +9608,18 @@ function AdsManagementView({ api }) {
 
               <div className="form-grid">
                 <div className="field">
-                  <label>Ad Format</label>
+                  <label>{t('adFormatLabel')}</label>
                   <CustomSelect
                     value={type} onChange={setType}
                     options={[
-                      { value: 'BANNER', label: 'Main Banner Notice' },
-                      { value: 'POPUP', label: 'Interactive Login Popup' },
-                      { value: 'NOTICE', label: 'Dashboard Text Notice' },
+                      { value: 'BANNER', label: t('mainBannerNoticeOption') },
+                      { value: 'POPUP', label: t('interactiveLoginPopupOption') },
+                      { value: 'NOTICE', label: t('dashboardTextNoticeOption') },
                     ]}
                   />
                 </div>
                 <div className="field">
-                  <label>Campaign Priority</label>
+                  <label>{t('campaignPriorityLabel')}</label>
                   <div className="input-wrap">
                     <Sliders />
                     <input
@@ -5188,7 +9632,7 @@ function AdsManagementView({ api }) {
 
               <div className="form-grid" style={{ borderTop: '1px solid var(--border)', paddingTop: 18 }}>
                 <div className="field">
-                  <label>Start Date</label>
+                  <label>{t('startDateLabel')}</label>
                   <div className="input-wrap">
                     <Calendar />
                     <input
@@ -5197,7 +9641,7 @@ function AdsManagementView({ api }) {
                   </div>
                 </div>
                 <div className="field">
-                  <label>End Date</label>
+                  <label>{t('endDateLabelShort')}</label>
                   <div className="input-wrap">
                     <CalendarRange />
                     <input
@@ -5208,21 +9652,21 @@ function AdsManagementView({ api }) {
               </div>
 
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 4 }}>
-                <label className="eyebrow" style={{ marginBottom: 10 }}><Users /> Target Audience</label>
+                <label className="eyebrow" style={{ marginBottom: 10 }}><Users /> {t('targetAudienceLabel')}</label>
                 <div className="flex gap-4 items-center" style={{ marginBottom: 10 }}>
                   <label className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 700 }}>
                     <input
                       type="radio" name="target" checked={targetAll} onChange={() => setTargetAll(true)}
                       style={{ accentColor: 'var(--gold)', width: 15, height: 15 }}
                     />
-                    <span>Broadcast to all key shops</span>
+                    <span>{t('broadcastAllKeyShops')}</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer" style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 700 }}>
                     <input
                       type="radio" name="target" checked={!targetAll} onChange={() => setTargetAll(false)}
                       style={{ accentColor: 'var(--gold)', width: 15, height: 15 }}
                     />
-                    <span>Target specific shops</span>
+                    <span>{t('targetSpecificShops')}</span>
                   </label>
                 </div>
 
@@ -5246,13 +9690,13 @@ function AdsManagementView({ api }) {
                   type="button" onClick={() => setShowAddModal(false)}
                   className="btn btn-ghost"
                 >
-                  Cancel
+                  {t('btnCancel')}
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
                 >
-                  {editingAdId ? 'Save Changes' : 'Schedule Campaign'}
+                  {editingAdId ? t('saveChangesBtn') : t('scheduleCampaignBtn')}
                 </button>
               </div>
             </form>
@@ -5282,7 +9726,7 @@ function AdsManagementView({ api }) {
 // create/edit form; every new listing is created as a plain PRODUCT and
 // categorized purely via this list.
 
-function PromotionsView({ api, user, searchDispatch }) {
+function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
   const [subTab, setSubTab] = useState('feed'); // feed | banners | offers (banners/offers = Super Admin only)
 
@@ -5292,16 +9736,22 @@ function PromotionsView({ api, user, searchDispatch }) {
     if (searchDispatch) setSubTab('feed');
   }, [searchDispatch?.nonce]);
 
+  // The Dashboard "Add Machines" quick action always targets the plain
+  // Inventory Feed, never the Banner/Offer moderation sub-tabs.
+  useEffect(() => {
+    if (initiallyOpenAddModal) setSubTab('feed');
+  }, [initiallyOpenAddModal]);
+
   return (
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Package /> Cross-Shop Marketplace</div>
-          <h1>Inventory</h1>
+          <div className="eyebrow"><Package /> {t('crossShopMarketplaceLabel')}</div>
+          <h1>{t('inventoryTitle')}</h1>
           <p>
             {isSuperAdmin
-              ? 'Manage the shared inventory feed, banner ad campaigns and shop offers across the platform.'
-              : 'Browse and list products shared across every shop on the platform'}
+              ? t('manageSharedInventoryDesc')
+              : t('browseListProductsDesc')}
           </p>
         </div>
       </div>
@@ -5314,7 +9764,7 @@ function PromotionsView({ api, user, searchDispatch }) {
             onClick={() => setSubTab('feed')}
           >
             <Layers className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
-            Inventory Feed
+            {t('inventoryFeedTab')}
           </button>
           <button
             type="button"
@@ -5322,7 +9772,7 @@ function PromotionsView({ api, user, searchDispatch }) {
             onClick={() => setSubTab('banners')}
           >
             <Megaphone className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
-            Banner Management
+            {t('bannerManagementTab')}
           </button>
           <button
             type="button"
@@ -5330,27 +9780,42 @@ function PromotionsView({ api, user, searchDispatch }) {
             onClick={() => setSubTab('offers')}
           >
             <BadgePercent className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
-            Offer Management
+            {t('offerManagementTab')}
           </button>
         </div>
       )}
 
       {subTab === 'banners' && isSuperAdmin ? (
-        <AdsManagementView api={api} />
+        <AdsManagementView t={t} api={api} />
       ) : (
-        <PromotionsFeed key={subTab} api={api} user={user} isSuperAdmin={isSuperAdmin} onlyOffers={subTab === 'offers'} searchDispatch={subTab === 'feed' ? searchDispatch : null} />
+        <PromotionsFeed
+          key={subTab} t={t} api={api} user={user} isSuperAdmin={isSuperAdmin} onlyOffers={subTab === 'offers'}
+          searchDispatch={subTab === 'feed' ? searchDispatch : null}
+          initiallyOpenAddModal={subTab === 'feed' ? initiallyOpenAddModal : false}
+          onCloseInitiallyOpen={onCloseInitiallyOpen}
+        />
       )}
     </div>
   );
 }
 
-function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch }) {
+function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   useBackHandler(showAddModal, () => setShowAddModal(false));
   const [editingId, setEditingId] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Dashboard "Add Machines" quick action - open the create-listing dialog
+  // as soon as this feed mounts, then let the parent clear the one-shot flag.
+  useEffect(() => {
+    if (initiallyOpenAddModal) {
+      resetForm();
+      setShowAddModal(true);
+      onCloseInitiallyOpen?.();
+    }
+  }, [initiallyOpenAddModal]);
 
   // Form state
   const [type, setType] = useState('PRODUCT');
@@ -5476,12 +9941,12 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
       resetForm();
       fetchPromotions();
     } catch (err) {
-      setErrorMsg(err.message || (editingId ? 'Failed to update listing' : 'Failed to publish listing'));
+      setErrorMsg(err.message || (editingId ? t('failedUpdateListing') : t('failedPublishListing')));
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Are you sure you want to remove this listing?')) return;
+    if (!confirm(t('confirmRemoveListing'))) return;
     try {
       await api.deletePromotion(id);
       fetchPromotions();
@@ -5490,11 +9955,11 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
     }
   };
 
-  const typeMeta = (t) => t === 'AD'
-    ? { label: 'Advertisement', icon: Megaphone, color: 'purple' }
-    : t === 'OFFER'
-      ? { label: 'Offer', icon: BadgePercent, color: 'rose' }
-      : { label: 'Promotional Product', icon: Package, color: 'teal' };
+  const typeMeta = (listingType) => listingType === 'AD'
+    ? { label: t('advertisementLabel'), icon: Megaphone, color: 'purple' }
+    : listingType === 'OFFER'
+      ? { label: t('offerLabel'), icon: BadgePercent, color: 'rose' }
+      : { label: t('promotionalProductLabel'), icon: Package, color: 'teal' };
 
   const isExpiredOffer = (promo) => promo.type === 'OFFER' && promo.validUntil && new Date(promo.validUntil) < new Date();
 
@@ -5528,7 +9993,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
           <Search />
           <input
             type="text" value={textQuery} onChange={(e) => setTextQuery(e.target.value)}
-            placeholder="Search inventory by name, product type, shop or seller…"
+            placeholder={t('searchInventoryPlaceholder')}
           />
         </div>
         <button
@@ -5537,7 +10002,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
           style={{ flexShrink: 0 }}
         >
           <Plus />
-          <span>New Listing</span>
+          <span>{t('newListingBtn')}</span>
         </button>
       </div>
 
@@ -5549,7 +10014,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
             className={`badge ${categoryFilter === 'ALL' ? 'badge-gold' : ''}`}
             style={categoryFilter === 'ALL' ? undefined : { background: 'var(--card-2)', border: '1px solid var(--border-2)', color: 'var(--text-2)', cursor: 'pointer' }}
           >
-            All Categories
+            {t('allCategoriesLabel')}
           </button>
           {availableCategories.map(cat => (
             <button
@@ -5568,12 +10033,12 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
       {loading ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading listings&hellip;</span>
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingListingsMsg')}</span>
         </div>
       ) : visiblePromotions.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge teal"><Package /></div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{onlyOffers ? 'No offers published yet.' : 'No inventory listed yet.'}</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{onlyOffers ? t('noOffersPublishedYet') : t('noInventoryListedYet')}</span>
         </div>
       ) : (
         <div className="product-grid stagger-in">
@@ -5597,7 +10062,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
                     )}
                   </span>
                   {expired && (
-                    <span className="badge badge-suspended" style={{ position: 'absolute', top: 10, right: 10 }}>Expired</span>
+                    <span className="badge badge-suspended" style={{ position: 'absolute', top: 10, right: 10 }}>{t('expiredLabel')}</span>
                   )}
                 </div>
                 <div className="product-body">
@@ -5620,30 +10085,30 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
                       {promo.discountPercentage != null && (
                         <span className="badge badge-active">
                           <Percent className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
-                          {promo.discountPercentage}% off
+                          {promo.discountPercentage}{t('percentOffSuffix')}
                         </span>
                       )}
                       {promo.validUntil && (
                         <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
                           <Clock className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
-                          Valid till {new Date(promo.validUntil).toLocaleDateString()}
+                          {t('validTillPrefix')} {new Date(promo.validUntil).toLocaleDateString()}
                         </span>
                       )}
                       {promo.linkedPromotion && (
                         <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
-                          Linked: {promo.linkedPromotion.title}
+                          {t('linkedPrefix')} {promo.linkedPromotion.title}
                         </span>
                       )}
                     </div>
                   )}
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 11, color: 'var(--text-2)', background: 'var(--card-2)', border: '1px solid var(--border)', padding: 10, borderRadius: 12, fontWeight: 600 }}>
-                    <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={promo.shop?.name || 'Super Admin (independent)'}>
-                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>Shop</span>
-                      {promo.shop?.name || 'Super Admin (independent)'}
+                    <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={promo.shop?.name || t('superAdminIndependentLabel')}>
+                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>{t('shopLabel')}</span>
+                      {promo.shop?.name || t('superAdminIndependentLabel')}
                     </div>
                     <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={promo.createdBy?.name || ''}>
-                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>Owner</span>
+                      <span style={{ color: 'var(--text-3)', display: 'block', fontWeight: 800, textTransform: 'uppercase', fontSize: 9.5, letterSpacing: '.04em' }}>{t('ownerLabel')}</span>
                       {promo.createdBy?.name || '—'}
                     </div>
                   </div>
@@ -5655,7 +10120,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
                     // and falls back to the browser's normal tel: handling on web.
                     <a href={`tel:${promo.phone}`} className="btn btn-primary btn-sm btn-block">
                       <Phone className="h-3.5 w-3.5" />
-                      <span>Call: {promo.phone}</span>
+                      <span>{t('callPrefix')} {promo.phone}</span>
                     </a>
                   )}
 
@@ -5671,14 +10136,14 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
                         className="btn btn-ghost btn-sm btn-block"
                       >
                         <Edit className="h-3.5 w-3.5" />
-                        <span>Edit</span>
+                        <span>{t('editBtn')}</span>
                       </button>
                       <button
                         onClick={() => handleDelete(promo.id)}
                         className="btn btn-danger-outline btn-sm btn-block"
                       >
                         <Trash className="h-3.5 w-3.5" />
-                        <span>Remove</span>
+                        <span>{t('removeBtn')}</span>
                       </button>
                     </div>
                   )}
@@ -5695,8 +10160,8 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 640, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><Package /> Inventory Listing</span>
-                <h2 style={{ fontSize: 19 }}>{editingId ? 'Edit Listing' : 'New Inventory Listing'}</h2>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><Package /> {t('inventoryListingLabel')}</span>
+                <h2 style={{ fontSize: 19 }}>{editingId ? t('editListingTitle') : t('newInventoryListingTitle')}</h2>
               </div>
               <button onClick={() => setShowAddModal(false)} className="icon-btn">
                 <X className="h-4 w-4" />
@@ -5714,31 +10179,31 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
               <div className="reg-section">
 
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Tag /></div><b>Name <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Tag /></div><b>{t('nameLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="text" required value={title} onChange={(e) => setTitle(e.target.value)}
-                      placeholder="e.g. Premium Godrej Key Blanks - Bulk Pack"
+                      placeholder={t('listingNamePlaceholderEg')}
                     />
                   </div>
                 </div>
 
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><Layers /></div><b>Product Type</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><Layers /></div><b>{t('productTypeLabel')}</b></div>
                   <CustomSelect
                     value={productType} onChange={setProductType}
-                    placeholder="Select product type"
-                    emptyLabel="No product types available yet"
+                    placeholder={t('selectProductTypePlaceholder')}
+                    emptyLabel={t('noProductTypesAvailable')}
                     options={productTypes.map(pt => ({ value: pt.name, label: pt.name }))}
                   />
                 </div>
 
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><FileText /></div><b>Description (optional)</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><FileText /></div><b>{t('descriptionOptionalLabel')}</b></div>
                   <div className="input-wrap">
                     <input
                       type="text" value={description} onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Short description shown on the listing card"
+                      placeholder={t('shortDescriptionPlaceholder')}
                     />
                   </div>
                 </div>
@@ -5747,18 +10212,18 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
               <div className="reg-section">
 
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><ImageIcon /></div><b>{type === 'PRODUCT' ? 'Product Photo (optional)' : 'Image / Media (optional)'}</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><ImageIcon /></div><b>{type === 'PRODUCT' ? t('productPhotoOptionalLabel') : t('imageMediaOptionalLabel')}</b></div>
                   <div className="flex gap-2">
                     <div className="input-wrap" style={{ flex: 1 }}>
                       <input
                         type="text" value={imageUrl}
                         onChange={(e) => setImageUrl(cleanGoogleImageUrl(e.target.value))}
-                        placeholder="Paste Image URL (or Google Image Link)"
+                        placeholder={t('pasteImageUrlPlaceholder')}
                       />
                     </div>
                     <label className="btn btn-ghost btn-sm" style={{ cursor: 'pointer', flexShrink: 0 }}>
                       <Upload className="h-3.5 w-3.5" />
-                      <span>Upload</span>
+                      <span>{t('uploadBtn')}</span>
                       <input
                         type="file" accept="image/*" className="hidden"
                         onClick={primeStoragePermission}
@@ -5783,24 +10248,24 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
                 </div>
 
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><IndianRupee /></div><b>Price (optional)</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><IndianRupee /></div><b>{t('priceOptionalLabel')}</b></div>
                   <div className="input-wrap">
                     <input
                       type="number" min="0" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)}
-                      placeholder="Leave blank if not applicable"
+                      placeholder={t('priceLeaveBlankPlaceholder')}
                     />
                   </div>
                 </div>
 
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Phone Number <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)}
-                      placeholder="e.g. 9876543210"
+                      placeholder={t('phoneNumberPlaceholderEg')}
                     />
                   </div>
-                  <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>Shown on the listing card as a tap-to-call button for buyers.</span>
+                  <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('tapToCallHint')}</span>
                 </div>
               </div>
 
@@ -5808,33 +10273,33 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
                 <div className="reg-section">
 
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Percent /></div><b>Discount Percentage (optional)</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Percent /></div><b>{t('discountPercentageOptionalLabel')}</b></div>
                     <div className="input-wrap">
                       <input
                         type="number" min="0" max="100" step="1" value={discountPercentage}
                         onChange={(e) => setDiscountPercentage(e.target.value)}
-                        placeholder="e.g. 20"
+                        placeholder={t('discountPercentagePlaceholderEg')}
                       />
                     </div>
                   </div>
 
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><CalendarRange /></div><b>Valid Until (optional)</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><CalendarRange /></div><b>{t('validUntilOptionalLabel')}</b></div>
                     <div className="input-wrap">
                       <input
                         type="date" value={validUntil} onChange={(e) => setValidUntil(e.target.value)}
                       />
                     </div>
-                    <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>Leave blank for an offer with no expiry. Expired offers are hidden from the shared feed.</span>
+                    <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('validUntilHint')}</span>
                   </div>
 
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Boxes /></div><b>Link to one of your existing listings (optional)</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Boxes /></div><b>{t('linkExistingListingLabel')}</b></div>
                     <CustomSelect
                       value={linkedPromotionId} onChange={setLinkedPromotionId}
                       options={[
-                        { value: '', label: 'No linked listing' },
-                        ...linkableListings.map(p => ({ value: p.id, label: `${p.title} (${p.type === 'AD' ? 'Advertisement' : 'Product'})` })),
+                        { value: '', label: t('noLinkedListingOption') },
+                        ...linkableListings.map(p => ({ value: p.id, label: `${p.title} (${p.type === 'AD' ? t('advertisementLabel') : t('productLabel')})` })),
                       ]}
                     />
                   </div>
@@ -5846,13 +10311,13 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
                   type="button" onClick={() => setShowAddModal(false)}
                   className="btn btn-ghost"
                 >
-                  Cancel
+                  {t('btnCancel')}
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
                 >
-                  {editingId ? 'Save Changes' : 'Publish Listing'}
+                  {editingId ? t('saveChangesBtn') : t('publishListingBtn')}
                 </button>
               </div>
             </form>
@@ -5870,7 +10335,7 @@ function PromotionsFeed({ api, user, isSuperAdmin, onlyOffers, searchDispatch })
 // offer the Super Admin has published. Ads are already active+targeted-filtered
 // server-side (AdService.getTargetedAds); offers are filtered here client-side.
 // ============================================================================
-function OffersAdsBannersView({ api }) {
+function OffersAdsBannersView({ t, api }) {
   const [ads, setAds] = useState([]);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -5895,34 +10360,34 @@ function OffersAdsBannersView({ api }) {
     })();
   }, []);
 
-  const typeLabel = { POPUP: 'Popup', BANNER: 'Banner', NOTICE: 'Notice' };
+  const typeLabel = { POPUP: t('interactivePopupLabel'), BANNER: t('mainBannerLabel'), NOTICE: t('textNoticeLabel') };
   const accents = ['var(--gold)', 'var(--teal)', 'var(--rose)', 'var(--purple)', 'var(--skyblue)', 'var(--jgreen)'];
 
   return (
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Sparkles /> From Key Shop Headquarters</div>
-          <h1>Offers, Ads &amp; Banners</h1>
-          <p>Every active advertisement, banner, notice and offer published by the Super Admin.</p>
+          <div className="eyebrow"><Sparkles /> {t('fromKeyShopHqLabel')}</div>
+          <h1>{t('offersAdsBannersTitle')}</h1>
+          <p>{t('everyActiveAdOfferDesc')}</p>
         </div>
       </div>
 
       {loading ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading&hellip;</span>
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingEllipsis')}</span>
         </div>
       ) : ads.length === 0 && offers.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge teal"><Megaphone /></div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>Nothing published yet.</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('nothingPublishedYet')}</span>
         </div>
       ) : (
         <>
           {ads.length > 0 && (
             <>
-              <h3 style={{ fontSize: 14, margin: '4px 0 12px' }}>Advertisements &amp; Banners</h3>
+              <h3 style={{ fontSize: 14, margin: '4px 0 12px' }}>{t('advertisementsAndBannersLabel')}</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 16, marginBottom: 26 }}>
                 {ads.map((ad, i) => (
                   <div key={ad.id} style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${accents[i % accents.length]}`, background: 'var(--card-2)' }}>
@@ -5941,7 +10406,7 @@ function OffersAdsBannersView({ api }) {
 
           {offers.length > 0 && (
             <>
-              <h3 style={{ fontSize: 14, margin: '4px 0 12px' }}>Offers</h3>
+              <h3 style={{ fontSize: 14, margin: '4px 0 12px' }}>{t('offersLabel')}</h3>
               <div className="product-grid stagger-in">
                 {offers.map((promo) => (
                   <div key={promo.id} className="product-card">
@@ -5959,20 +10424,20 @@ function OffersAdsBannersView({ api }) {
                         {promo.discountPercentage != null && (
                           <span className="badge badge-active">
                             <Percent className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
-                            {promo.discountPercentage}% off
+                            {promo.discountPercentage}{t('percentOffSuffix')}
                           </span>
                         )}
                         {promo.validUntil && (
                           <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
                             <Clock className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
-                            Valid till {new Date(promo.validUntil).toLocaleDateString()}
+                            {t('validTillPrefix')} {new Date(promo.validUntil).toLocaleDateString()}
                           </span>
                         )}
                       </div>
                       {promo.phone && (
                         <a href={`tel:${promo.phone}`} className="btn btn-primary btn-sm btn-block">
                           <Phone className="h-3.5 w-3.5" />
-                          <span>Call: {promo.phone}</span>
+                          <span>{t('callPrefix')}: {promo.phone}</span>
                         </a>
                       )}
                     </div>
@@ -5993,7 +10458,7 @@ function OffersAdsBannersView({ api }) {
 // banner ad management now live under the separate Promotions screen
 // (see PromotionsView's "Banner Management" / "Offer Management" sub-tabs).
 // ============================================================================
-function PricingOffersView({ api }) {
+function PricingOffersView({ t, api }) {
   // Pricing states
   const [monthlyPrice, setMonthlyPrice] = useState(49);
   const [halfYearlyPrice, setHalfYearlyPrice] = useState(269);
@@ -6026,9 +10491,9 @@ function PricingOffersView({ api }) {
         HALF_YEARLY: Number(halfYearlyPrice),
         YEARLY: Number(yearlyPrice)
       });
-      alert('Subscription plan prices updated successfully!');
+      alert(t('subscriptionRatesUpdatedMsg'));
     } catch (err) {
-      alert(`Update failed: ${err.message}`);
+      alert(`${t('updateFailedPrefix')}: ${err.message}`);
     }
   };
 
@@ -6036,9 +10501,9 @@ function PricingOffersView({ api }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Tag /> Platform Finance</div>
-          <h1>Subscription Pricing</h1>
-          <p>Configure franchise subscription plan rates for the platform.</p>
+          <div className="eyebrow"><Tag /> {t('platformFinanceLabel')}</div>
+          <h1>{t('subscriptionPricingTitle')}</h1>
+          <p>{t('configureFranchisePricingDesc')}</p>
         </div>
       </div>
 
@@ -6047,36 +10512,36 @@ function PricingOffersView({ api }) {
           <div className="stat-card" style={{ animationDelay: '.05s' }}>
             <div className="stat-top">
               <div className="icon-badge purple"><IndianRupee /></div>
-              <span className="stat-trend"><Calendar />monthly</span>
+              <span className="stat-trend"><Calendar />{t('monthlyLower')}</span>
             </div>
             <div className="stat-num"><CountUp value={Number(monthlyPrice) || 0} prefix="₹" /></div>
-            <div className="stat-label">Monthly Recurring Plan</div>
+            <div className="stat-label">{t('monthlyRecurringPlanLabel')}</div>
           </div>
           <div className="stat-card" style={{ animationDelay: '.15s' }}>
             <div className="stat-top">
               <div className="icon-badge blue"><CalendarRange /></div>
-              <span className="stat-trend"><Calendar />6-month</span>
+              <span className="stat-trend"><Calendar />{t('sixMonthLower')}</span>
             </div>
             <div className="stat-num"><CountUp value={Number(halfYearlyPrice) || 0} prefix="₹" /></div>
-            <div className="stat-label">Half-Yearly Plan Rate</div>
+            <div className="stat-label">{t('halfYearlyPlanRateLabel')}</div>
           </div>
           <div className="stat-card" style={{ animationDelay: '.25s' }}>
             <div className="stat-top">
               <div className="icon-badge orange"><BadgePercent /></div>
-              <span className="stat-trend"><Calendar />yearly</span>
+              <span className="stat-trend"><Calendar />{t('yearlyLower')}</span>
             </div>
             <div className="stat-num"><CountUp value={Number(yearlyPrice) || 0} prefix="₹" /></div>
-            <div className="stat-label">Yearly Discounted Rate</div>
+            <div className="stat-label">{t('yearlyDiscountedRateLabel')}</div>
           </div>
         </div>
       )}
 
       <div className="card" style={{ maxWidth: 560, margin: '0 auto' }}>
         <div className="section-title" style={{ marginBottom: 6 }}>
-          <h2>Subscription Plan Pricing</h2>
+          <h2>{t('subscriptionPlanPricingLabel')}</h2>
         </div>
         <p className="cell-sub" style={{ marginBottom: 22, fontSize: 12.5 }}>
-          Set rates for the key shops. These prices will automatically update the checkout gateway screen during provisioning.
+          {t('setRatesForKeyShopsDesc')}
         </p>
 
         {pricingLoading ? (
@@ -6088,33 +10553,33 @@ function PricingOffersView({ api }) {
             <div className="reg-section">
 
               <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><IndianRupee /></div><b>Monthly Recurring Plan (&#8377;) <span className="req">*</span></b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><IndianRupee /></div><b>{t('monthlyRecurringPlanRupeeLabel')} <span className="req">*</span></b></div>
                 <div className="input-wrap">
                   <input
                     type="number" required value={monthlyPrice} onChange={(e) => setMonthlyPrice(e.target.value)}
                   />
                 </div>
-                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>Monthly recurring rental bill for platform service.</span>
+                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('monthlyRecurringBillHint')}</span>
               </div>
 
               <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CalendarRange /></div><b>6-Month Plan Rate (&#8377;) <span className="req">*</span></b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CalendarRange /></div><b>{t('sixMonthPlanRateRupeeLabel')} <span className="req">*</span></b></div>
                 <div className="input-wrap">
                   <input
                     type="number" required value={halfYearlyPrice} onChange={(e) => setHalfYearlyPrice(e.target.value)}
                   />
                 </div>
-                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>Discounted half-yearly upfront rate for shops.</span>
+                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('halfYearlyUpfrontRateHint')}</span>
               </div>
 
               <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><BadgePercent /></div><b>Yearly Plan Discounted Rate (&#8377;) <span className="req">*</span></b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><BadgePercent /></div><b>{t('yearlyPlanDiscountedRateRupeeLabel')} <span className="req">*</span></b></div>
                 <div className="input-wrap">
                   <input
                     type="number" required value={yearlyPrice} onChange={(e) => setYearlyPrice(e.target.value)}
                   />
                 </div>
-                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>Discounted upfront annual rate for shops.</span>
+                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('annualUpfrontRateHint')}</span>
               </div>
             </div>
 
@@ -6124,7 +10589,7 @@ function PricingOffersView({ api }) {
                 className="btn btn-primary"
               >
                 <Check />
-                <span>Update Subscription Rates</span>
+                <span>{t('updateSubscriptionRatesBtn')}</span>
               </button>
             </div>
           </form>
@@ -6137,7 +10602,7 @@ function PricingOffersView({ api }) {
 // ============================================================================
 // COMPONENT 7: REVENUE MANAGEMENT (SUPER ADMIN ONLY)
 // ============================================================================
-function RevenueManagementView({ api }) {
+function RevenueManagementView({ t, api }) {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -6171,7 +10636,7 @@ function RevenueManagementView({ api }) {
     // wire, or the backend rejects the whole request.
     const numericAmount = Number(amount);
     if (!Number.isFinite(numericAmount)) {
-      alert('Please enter a valid amount');
+      alert(t('enterValidAmountMsg'));
       return;
     }
     try {
@@ -6198,9 +10663,9 @@ function RevenueManagementView({ api }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><IndianRupee /> Platform Finance</div>
-          <h1>Monthly Revenue Logs</h1>
-          <p>Record subscription collections manually for SaaS performance tracking.</p>
+          <div className="eyebrow"><IndianRupee /> {t('platformFinanceLabel')}</div>
+          <h1>{t('monthlyRevenueLogsTitle')}</h1>
+          <p>{t('recordSubscriptionCollectionsDesc')}</p>
         </div>
       </div>
 
@@ -6209,10 +10674,10 @@ function RevenueManagementView({ api }) {
           <div className="stat-card" style={{ animationDelay: '.05s' }}>
             <div className="stat-top">
               <div className="icon-badge jgreen"><Banknote /></div>
-              <span className="stat-trend"><TrendingUp />all-time</span>
+              <span className="stat-trend"><TrendingUp />{t('allTimeLower')}</span>
             </div>
             <div className="stat-num"><CountUp value={totalCollected} decimals={2} prefix="₹" /></div>
-            <div className="stat-label">Total Revenue Collected</div>
+            <div className="stat-label">{t('totalRevenueCollectedLabel')}</div>
           </div>
           <div className="stat-card" style={{ animationDelay: '.15s' }}>
             <div className="stat-top">
@@ -6220,14 +10685,14 @@ function RevenueManagementView({ api }) {
               <span className="stat-trend"><TrendingUp />{thisYear}</span>
             </div>
             <div className="stat-num"><CountUp value={yearTotal} decimals={2} prefix="₹" /></div>
-            <div className="stat-label">Collected This Year</div>
+            <div className="stat-label">{t('collectedThisYearLabel')}</div>
           </div>
           <div className="stat-card" style={{ animationDelay: '.25s' }}>
             <div className="stat-top">
               <div className="icon-badge orange"><Receipt /></div>
             </div>
             <div className="stat-num"><CountUp value={records.length} /></div>
-            <div className="stat-label">Revenue Records &mdash; avg &#8377;{avgPerRecord.toFixed(2)}</div>
+            <div className="stat-label">{t('revenueRecordsAvgLabel')} &#8377;{avgPerRecord.toFixed(2)}</div>
           </div>
         </div>
       )}
@@ -6235,8 +10700,8 @@ function RevenueManagementView({ api }) {
       <div className="grid-2">
         <div className="card chart-card">
           <div className="section-title">
-            <h2>Collections Trend</h2>
-            <span className="sub">Last {chartRecords.length || 0} logged entries</span>
+            <h2>{t('collectionsTrendLabel')}</h2>
+            <span className="sub">{t('lastLoggedEntriesPrefix')} {chartRecords.length || 0} {t('loggedEntriesSuffix')}</span>
           </div>
 
           {loading ? (
@@ -6245,7 +10710,7 @@ function RevenueManagementView({ api }) {
             </div>
           ) : chartRecords.length === 0 ? (
             <div style={{ display: 'flex', height: 190, alignItems: 'center', justifyContent: 'center', fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
-              No revenue logs recorded yet.
+              {t('noRevenueLogsYet')}
             </div>
           ) : (
             <div className="bars">
@@ -6263,7 +10728,7 @@ function RevenueManagementView({ api }) {
 
         <div className="card">
           <div className="section-title" style={{ marginBottom: 16 }}>
-            <h2>Add Revenue Record</h2>
+            <h2>{t('addRevenueRecordLabel')}</h2>
           </div>
 
           <form onSubmit={handleSubmit}>
@@ -6271,7 +10736,7 @@ function RevenueManagementView({ api }) {
 
               <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Calendar /></div><b>Month</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Calendar /></div><b>{t('monthLabel')}</b></div>
                   <CustomSelect
                     value={month} onChange={(v) => setMonth(Number(v))}
                     options={Array.from({ length: 12 }, (_, i) => ({
@@ -6281,7 +10746,7 @@ function RevenueManagementView({ api }) {
                   />
                 </div>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CalendarRange /></div><b>Year</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CalendarRange /></div><b>{t('yearLabel')}</b></div>
                   <div className="input-wrap">
                     <input
                       type="number" required value={year} onChange={(e) => setYear(Number(e.target.value))}
@@ -6294,7 +10759,7 @@ function RevenueManagementView({ api }) {
             <div className="reg-section">
 
               <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><IndianRupee /></div><b>Amount Collected (&#8377;) <span className="req">*</span></b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><IndianRupee /></div><b>{t('amountCollectedRupeeLabel')} <span className="req">*</span></b></div>
                 <div className="input-wrap">
                   <input
                     type="number" step="0.01" required value={amount} onChange={(e) => setAmount(e.target.value)}
@@ -6304,7 +10769,7 @@ function RevenueManagementView({ api }) {
               </div>
 
               <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><FileText /></div><b>Notes / Remarks</b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><FileText /></div><b>{t('notesRemarksLabel')}</b></div>
                 <textarea
                   rows={3} value={notes} onChange={(e) => setNotes(e.target.value)}
                   placeholder="..."
@@ -6318,7 +10783,7 @@ function RevenueManagementView({ api }) {
               className="btn btn-primary btn-block"
             >
               <Check />
-              <span>Log Revenue Payout</span>
+              <span>{t('logRevenuePayoutBtn')}</span>
             </button>
           </form>
         </div>
@@ -6326,7 +10791,7 @@ function RevenueManagementView({ api }) {
 
       <div className="card table-card" style={{ marginTop: 22 }}>
         <div className="table-head">
-          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 17 }}>Platform Revenue History</h2>
+          <h2 style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 17 }}>{t('platformRevenueHistoryLabel')}</h2>
         </div>
 
         {loading ? (
@@ -6335,15 +10800,15 @@ function RevenueManagementView({ api }) {
           </div>
         ) : records.length === 0 ? (
           <p style={{ padding: 24, fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
-            No revenue logs recorded yet.
+            {t('noRevenueLogsYet')}
           </p>
         ) : (
           <table className="kee-table">
             <thead>
               <tr>
-                <th>Period</th>
-                <th>Notes</th>
-                <th>Amount</th>
+                <th>{t('periodCol')}</th>
+                <th>{t('notesCol')}</th>
+                <th>{t('amountCol')}</th>
               </tr>
             </thead>
             <tbody>
@@ -6378,7 +10843,7 @@ function RevenueManagementView({ api }) {
 // ============================================================================
 // COMPONENT 8: BLANK KEY SEARCH (SHOP ADMIN ONLY)
 // ============================================================================
-function KeysSearchView({ api, searchDispatch }) {
+function KeysSearchView({ t, api, searchDispatch }) {
   const { user } = useAuth();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -6452,20 +10917,20 @@ function KeysSearchView({ api, searchDispatch }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Search /> Duplicate Key Lookup</div>
-          <h1>Master Key Catalog Search</h1>
-          <p>Lookup blank specifications, key codes, and customer registry records in seconds.</p>
+          <div className="eyebrow"><Search /> {t('duplicateKeyLookupLabel')}</div>
+          <h1>{t('masterKeyCatalogSearchTitle')}</h1>
+          <p>{t('lookupBlankSpecDesc')}</p>
         </div>
       </div>
 
       <div className="reg-section" style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
         <div className="reg-field" style={{ marginBottom: 0 }}>
-          <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Search /></div><b>Key Code, Vehicle No, or Category</b></div>
+          <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Search /></div><b>{t('keyCodeVehicleCategoryLabel')}</b></div>
           <div className="search-box" style={{ width: '100%', minWidth: 0, background: 'var(--card-2)' }}>
             <Search />
             <input
               type="text" value={query} onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search by key code, vehicle number, customer location, category&hellip;"
+              placeholder={t('searchByKeyCodePlaceholder')}
               style={{ fontSize: 14, minWidth: 0 }}
             />
             {query && (
@@ -6480,12 +10945,12 @@ function KeysSearchView({ api, searchDispatch }) {
       {loading ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Searching registry&hellip;</span>
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('searchingRegistryMsg')}</span>
         </div>
       ) : results.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge rose"><KeyRound /></div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>No matching keys or customer records found</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noMatchingKeysMsg')}</span>
         </div>
       ) : (
         <div className="product-grid stagger-in">
@@ -6508,27 +10973,21 @@ function KeysSearchView({ api, searchDispatch }) {
                   </div>
                   {r.customer && (
                     <div className="space-y-1">
-                      <span className="badge badge-active"><span className="dot" />Registered Customer Key</span>
+                      <span className="badge badge-active"><span className="dot" />{t('registeredCustomerKeyLabel')}</span>
                       <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: 8, marginTop: 4 }}>
                         <div className="flex items-center gap-2">
                           <div className="icon-badge jgreen" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><Users style={{ width: 10, height: 10 }} /></div>
-                          <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>Customer: <strong style={{ color: 'var(--text-0)' }}>{r.customer.name}</strong></p>
+                          <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>{t('customerPrefix')} <strong style={{ color: 'var(--text-0)' }}>{r.customer.name}</strong></p>
                         </div>
                         <div className="flex items-center gap-2" style={{ marginTop: 4 }}>
                           <div className="icon-badge skyblue" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><Car style={{ width: 10, height: 10 }} /></div>
-                          <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>Vehicle No: <strong style={{ color: 'var(--green)' }}>{r.customer.vehicleNumber || 'N/A'}</strong></p>
+                          <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>{t('vehicleNoPrefix')} <strong style={{ color: 'var(--green)' }}>{r.customer.vehicleNumber || 'N/A'}</strong></p>
                         </div>
-                        {r.customer.keyType && (
-                          <div className="flex items-center gap-2" style={{ marginTop: 4 }}>
-                            <div className="icon-badge purple" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><KeyRound style={{ width: 10, height: 10 }} /></div>
-                            <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>Key Type: <strong style={{ color: 'var(--text-0)' }}>{r.customer.keyType}</strong></p>
-                          </div>
-                        )}
                       </div>
                     </div>
                   )}
                   <div className="product-foot" style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--gold)' }}>View Full Details</span>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--gold)' }}>{t('viewFullDetailsLabel')}</span>
                     <ExternalLink style={{ width: 13, height: 13, color: 'var(--gold)' }} />
                   </div>
                 </div>
@@ -6544,7 +11003,7 @@ function KeysSearchView({ api, searchDispatch }) {
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 620, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><KeyRound /> Key Details</span>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><KeyRound /> {t('keyDetailsLabel')}</span>
                 <h2 style={{ fontSize: 19 }}>{selectedResult.keySpec.keyNumber}</h2>
               </div>
               <button onClick={() => setSelectedResult(null)} className="icon-btn">
@@ -6554,13 +11013,13 @@ function KeysSearchView({ api, searchDispatch }) {
 
             <div className="reg-section">
               <div className="reg-field" style={{ marginBottom: selectedResult.keySpec.backImageUrl ? 13 : 0 }}>
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Tag /></div><b>Lock Category</b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Tag /></div><b>{t('lockCategoryLabel')}</b></div>
                 <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-0)' }}>{selectedResult.keySpec.category}</span>
               </div>
 
               {selectedResult.keySpec.backImageUrl && (
                 <div className="reg-field" style={{ marginBottom: 0 }}>
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><ImageIcon /></div><b>Back Profile</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><ImageIcon /></div><b>{t('backProfileLabel')}</b></div>
                   <img src={selectedResult.keySpec.backImageUrl} alt="Back profile" style={{ width: '100%', height: 128, borderRadius: 12, border: '1px solid var(--border-2)' }} className="object-cover" />
                 </div>
               )}
@@ -6574,27 +11033,21 @@ function KeysSearchView({ api, searchDispatch }) {
                   <>
                     <div className="grid grid-cols-2 gap-4">
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>Customer Name</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('customerNameLabel')}</b></div>
                         <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.name}</span>
                       </div>
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Phone /></div><b>Phone Number</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
                         <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.phone}</span>
                       </div>
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Car /></div><b>Vehicle Number</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Car /></div><b>{t('vehicleNumberLabel')}</b></div>
                         <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.vehicleNumber || 'N/A'}</span>
                       </div>
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Calendar /></div><b>Registry Date</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Calendar /></div><b>{t('registryDateLabel')}</b></div>
                         <span style={{ color: 'var(--text-1)', fontWeight: 600, fontSize: 12.5 }}>{new Date(selectedResult.customer.createdAt).toLocaleDateString()}</span>
                       </div>
-                      {selectedResult.customer.keyType && (
-                        <div className="reg-field">
-                          <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>Key Type</b></div>
-                          <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.keyType}</span>
-                        </div>
-                      )}
                     </div>
 
                     <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 14, borderRadius: 14, marginTop: 4 }}>
@@ -6604,30 +11057,30 @@ function KeysSearchView({ api, searchDispatch }) {
                             <MapPin style={{ width: 16, height: 16 }} />
                           </div>
                           <div>
-                            <p style={{ fontWeight: 700, color: 'var(--text-0)', fontSize: 13 }}>GPS Coordinates</p>
+                            <p style={{ fontWeight: 700, color: 'var(--text-0)', fontSize: 13 }}>{t('gpsCoordinatesLabel')}</p>
                             {selectedResult.customer.latitude && selectedResult.customer.longitude ? (
-                              <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600 }}>Lat: {selectedResult.customer.latitude} &bull; Long: {selectedResult.customer.longitude}</p>
+                              <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600 }}>{t('latLongTemplate').split('{lat}')[0]}{selectedResult.customer.latitude}{t('latLongTemplate').split('{lat}')[1].split('{long}')[0]}{selectedResult.customer.longitude}</p>
                             ) : (
-                              <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600, fontStyle: 'italic' }}>Not captured</p>
+                              <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600, fontStyle: 'italic' }}>{t('notCapturedLabel')}</p>
                             )}
                           </div>
                         </div>
                         {selectedResult.customer.mapsLink && (
                           <a href={selectedResult.customer.mapsLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800 }} className="flex items-center gap-1 hover:underline">
-                            <span>Google Maps</span><ExternalLink className="h-3 w-3" />
+                            <span>{t('googleMapsLabel')}</span><ExternalLink className="h-3 w-3" />
                           </a>
                         )}
                       </div>
                       {selectedResult.customer.capturedAddress && (
                         <div style={{ fontSize: 10.5, color: 'var(--text-2)', borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 8, paddingLeft: 42, fontWeight: 600 }}>
-                          <span style={{ display: 'block', fontWeight: 800, fontSize: 9, color: 'var(--text-3)', textTransform: 'uppercase' }}>Captured Address</span>
+                          <span style={{ display: 'block', fontWeight: 800, fontSize: 9, color: 'var(--text-3)', textTransform: 'uppercase' }}>{t('capturedAddressLabel')}</span>
                           <span>{selectedResult.customer.capturedAddress}</span>
                         </div>
                       )}
                     </div>
 
                     <div className="reg-field" style={{ marginTop: 13, marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Camera /></div><b>Webcam Snapshot</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Camera /></div><b>{t('webcamSnapshotLabel')}</b></div>
                       {selectedResult.customer.photoUrl ? (
                         <div style={{ width: '100%', height: 96, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-2)' }}>
                           <img src={getAssetUrl(selectedResult.customer.photoUrl)} alt="Customer" className="w-full h-full object-cover" />
@@ -6643,24 +11096,24 @@ function KeysSearchView({ api, searchDispatch }) {
                   <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 16, borderRadius: 16 }} className="space-y-3">
                     <div className="flex items-center gap-2">
                       <div className="icon-badge maroon" style={{ width: 24, height: 24, borderRadius: 7 }}><ShieldCheck style={{ width: 12, height: 12 }} /></div>
-                      <p style={{ fontSize: 10.5, color: 'var(--gold)', textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 800 }}>Registry Location Overview (Other Workspace)</p>
+                      <p style={{ fontSize: 10.5, color: 'var(--gold)', textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 800 }}>{t('registryLocationOverviewLabel')}</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>Customer Name</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('customerNameLabel')}</b></div>
                         <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.name}</span>
                       </div>
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Phone /></div><b>Customer Mobile</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Phone /></div><b>{t('customerMobileLabel')}</b></div>
                         <span style={{ color: 'var(--green)', fontWeight: 700, fontSize: 12.5, fontFamily: 'monospace' }}>{selectedResult.customer.phone}</span>
                       </div>
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Store /></div><b>Registered Shop</b></div>
-                        <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.shop?.name || 'Key Shop Workspace'}</span>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Store /></div><b>{t('registeredShopLabel')}</b></div>
+                        <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.shop?.name || t('keyShopWorkspaceLabel')}</span>
                       </div>
                       <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Shop Mobile</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('shopMobileLabel')}</b></div>
                         <span style={{ color: 'var(--green)', fontWeight: 700, fontSize: 12.5, fontFamily: 'monospace' }}>
                           {(() => {
                             let shopMobile = 'N/A';
@@ -6682,7 +11135,7 @@ function KeysSearchView({ api, searchDispatch }) {
                     <div style={{ display: 'flex', gap: 8, background: 'rgba(0,0,0,0.25)', border: '1px solid var(--border)', padding: 10, borderRadius: 12, marginTop: 4 }}>
                       <AlertTriangle style={{ width: 14, height: 14, color: 'var(--text-3)', flexShrink: 0, marginTop: 1 }} />
                       <span style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
-                        Sensitive coordinates and webcam images are hidden since this key registration was created in another duplicate key shop.
+                        {t('sensitiveCoordsHiddenMsg')}
                       </span>
                     </div>
                   </div>
@@ -6692,7 +11145,7 @@ function KeysSearchView({ api, searchDispatch }) {
 
             <div className="flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
               <button onClick={() => setSelectedResult(null)} className="btn btn-ghost">
-                Close Details
+                {t('closeDetailsBtn')}
               </button>
             </div>
           </div>
@@ -6726,17 +11179,12 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [idProofNumber, setIdProofNumber] = useState('N/A');
   const [reason, setReason] = useState('N/A');
   const [keyNumber, setKeyNumber] = useState('');
-  const [keyType, setKeyType] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [addressLine, setAddressLine] = useState('');
   const [stateVal, setStateVal] = useState('Tamil Nadu');
   const [district, setDistrict] = useState('Chennai');
   const [country, setCountry] = useState('India');
   const [masterKeyId, setMasterKeyId] = useState('');
-
-  // Super-Admin-managed list of key types (see KeyType model / api.getKeyTypes)
-  // that powers the Key Type dropdown next to the Key Code field below.
-  const [keyTypes, setKeyTypes] = useState([]);
 
   // Inline OTP states
   const [otpSent, setOtpSent] = useState(false);
@@ -6750,14 +11198,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [otpMethod, setOtpMethod] = useState('phone');
   const [otpTestEmail, setOtpTestEmail] = useState('');
   const [otpDevCode, setOtpDevCode] = useState('');
-
-  // Photos (Webcam support)
-  const [photoBase64, setPhotoBase64] = useState(null);
-  const [isWebcamActive, setIsWebcamActive] = useState(false);
-  const [webcamStream, setWebcamStream] = useState(null);
-  const [camError, setCamError] = useState('');
-  const [camErrorKind, setCamErrorKind] = useState('');
-  const videoRef = useRef(null);
 
   // Document Uploads
   const [uploadedDocs, setUploadedDocs] = useState([]);
@@ -6807,15 +11247,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       setCapturedAddress(finalAddress);
     }
   }, [addressLine, district, stateVal, country]);
-
-  useEffect(() => {
-    api.getKeyTypes()
-      .then((res) => {
-        setKeyTypes(res || []);
-        setKeyType((prev) => prev || res?.[0]?.name || '');
-      })
-      .catch((e) => console.error('Failed to load key types:', e));
-  }, []);
 
   // "Current Location" button for the Contact & Key step - captures the device's
   // real GPS position and reverse-geocodes it to best-effort prefill the address
@@ -6880,90 +11311,23 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setIsCapturingGps(false);
   };
 
-  const startWebcam = async () => {
-    setCamError('');
-    setCamErrorKind('');
-    try {
-      const stream = await resolveCameraAccess();
-      setWebcamStream(stream);
-      setIsWebcamActive(true);
-      setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      }, 100);
-    } catch (err) {
-      setCamError(err.message || 'Camera access denied or unavailable. Please upload a photo instead.');
-      setCamErrorKind(err.kind || 'unavailable');
-    }
-  };
-
-  const stopWebcam = () => {
-    if (webcamStream) {
-      webcamStream.getTracks().forEach(track => track.stop());
-      setWebcamStream(null);
-    }
-    setIsWebcamActive(false);
-  };
-
-  const captureSnapshot = () => {
-    if (!videoRef.current) return;
-    const video = videoRef.current;
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
-    const ctx = canvas.getContext('2d');
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    const dataUrl = canvas.toDataURL('image/jpeg');
-    setPhotoBase64(dataUrl);
-    stopWebcam();
-  };
-
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPhotoBase64(reader.result);
-      stopWebcam();
-    };
-    reader.readAsDataURL(file);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (webcamStream) {
-        webcamStream.getTracks().forEach(track => track.stop());
-      }
-    };
-  }, [webcamStream]);
-
-  useEffect(() => {
-    if (step !== 2 && webcamStream) {
-      webcamStream.getTracks().forEach(track => track.stop());
-      setWebcamStream(null);
-      setIsWebcamActive(false);
-    }
-  }, [step]);
-
-  const handleFileChange = (e) => {
+  const handleDocumentFile = (file) => {
     setUploadError('');
-    const file = e.target.files[0];
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      setUploadError('File size exceeds the 5MB limit');
+      setUploadError(t('fileSizeExceeds5MBMsg'));
       return;
     }
 
     const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
     if (!allowedTypes.includes(file.type)) {
-      setUploadError('Only JPEG, PNG, and PDF document formats are accepted');
+      setUploadError(t('onlyJpegPngPdfMsg'));
       return;
     }
 
     if (uploadedDocs.some(d => d.type === idProofType)) {
-      setUploadError(`Document for ${idProofType} is already staged.`);
+      setUploadError(t('documentAlreadyStagedTemplate').replace('{type}', idProofType));
       return;
     }
 
@@ -6978,17 +11342,43 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    handleDocumentFile(file);
+  };
+
+  const handleCaptureDocumentPhoto = async () => {
+    try {
+      const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
+      const photo = await Camera.getPhoto({
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        quality: 85,
+      });
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+      const file = new File([blob], `${idProofType.replace(/\s+/g, '_').toLowerCase()}.${photo.format || 'jpg'}`, { type: blob.type || 'image/jpeg' });
+      handleDocumentFile(file);
+    } catch (err) {
+      // User cancelling the native camera sheet rejects the promise - not a
+      // real error, so only surface genuine failures.
+      if (err && err.message && !/cancell?ed/i.test(err.message)) {
+        setUploadError(err.message || t('documentUploadFailedMsg'));
+      }
+    }
+  };
+
   const handleSendOtp = async () => {
     if (!phone || !PHONE_REGEX.test(phone)) {
       alert(PHONE_REGEX_MESSAGE);
       return;
     }
     if (!keyNumber) {
-      alert('Please enter a key code first');
+      alert(t('pleaseEnterKeyCodeMsg'));
       return;
     }
     if (otpMethod === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(otpTestEmail)) {
-      alert('Please enter a valid email address to receive the test OTP.');
+      alert(t('pleaseEnterValidTestEmailMsg'));
       return;
     }
 
@@ -7013,7 +11403,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       if (result?.devCode) setOtpDevCode(result.devCode);
       setOtpSent(true);
     } catch (e) {
-      setOtpError(e.message || 'Failed to send OTP code.');
+      setOtpError(e.message || t('failedSendOtpMsg'));
     }
   };
 
@@ -7024,7 +11414,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       await api.verifyOtp(identifier, otpMethod, 'customer_verify', enteredOtp);
       setOtpVerified(true);
     } catch (e) {
-      setOtpError(e.message || 'Invalid OTP code. Please enter the correct code.');
+      setOtpError(e.message || t('invalidOtpCodeMsg'));
     }
   };
 
@@ -7061,12 +11451,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
       const payload = {
         name, phone, address, idProofType, idProofNumber, reason,
-        keyNumber, keyType, vehicleNumber, masterKeyId: finalMasterKeyId, manualKey,
+        keyNumber, vehicleNumber, masterKeyId: finalMasterKeyId, manualKey,
         latitude: finalLat,
         longitude: finalLng,
         mapsLink: (finalLat && finalLng) ? `https://www.google.com/maps?q=${finalLat},${finalLng}` : null,
         capturedAddress: capturedAddress || address || null,
-        photoBase64
       };
 
       const customer = superAdminMode
@@ -7077,14 +11466,14 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         await api.uploadDocument(customer.id, doc.type, doc.file);
       }
 
-      alert('Customer compliance record logged successfully!');
+      alert(t('complianceRecordLoggedMsg'));
       if (superAdminMode && onDone) {
         onDone();
       } else {
         resetWizard();
       }
     } catch (e) {
-      alert(`Submission failed: ${e.message}`);
+      alert(t('submissionFailedTemplate').replace('{message}', e.message));
     }
   };
 
@@ -7106,26 +11495,19 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setOtpVerified(false);
     setEnteredOtp('');
     setDuplicateKeyWarning(false);
-    setPhotoBase64(null);
     setUploadedDocs([]);
     setLatitude(null);
     setLongitude(null);
     setGpsTimestamp(null);
     setGpsError('');
     setCapturedAddress('');
-    if (webcamStream) {
-      webcamStream.getTracks().forEach(track => track.stop());
-    }
-    setWebcamStream(null);
-    setIsWebcamActive(false);
     setStep(1);
   };
 
   const WIZARD_STEPS = [
-    { name: 'Contact & Key' },
-    { name: 'ID Photo' },
-    { name: 'Documents' },
-    { name: 'Review' },
+    { name: t('contactKeyStepLabel') },
+    { name: t('documentsStepLabel') },
+    { name: t('reviewStepLabel') },
   ];
 
   const plainInputStyle = {
@@ -7137,13 +11519,13 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><UserPlus /> New Customer</div>
-          <h1>{superAdminMode ? 'Register Customer' : t('register')}</h1>
-          <p>Multi-step compliance onboarding — key issuance, identity capture &amp; GPS-stamped address, in five quick steps.</p>
+          <div className="eyebrow"><UserPlus /> {t('newCustomerEyebrow')}</div>
+          <h1>{t('register')}</h1>
+          <p>{t('multiStepComplianceDesc')}</p>
         </div>
         {superAdminMode && onCancel && (
           <button type="button" onClick={onCancel} className="btn btn-ghost">
-            <X className="h-4 w-4" /><span>Cancel</span>
+            <X className="h-4 w-4" /><span>{t('btnCancel')}</span>
           </button>
         )}
       </div>
@@ -7159,7 +11541,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 <div className={`step-item ${done ? 'done' : ''} ${current ? 'current' : ''}`}>
                   <div className="step-circle">{done ? <Check className="h-4 w-4" /> : idx}</div>
                   <div className="step-label">
-                    <span className="num">Step {idx}</span>
+                    <span className="num">{t('stepLabel')} {idx}</span>
                     <span className="name">{s.name}</span>
                   </div>
                 </div>
@@ -7174,20 +11556,20 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         <div className="wizard-body">
           {step === 1 && (
             <div className="animate-fade-in">
-              <h3>Contact &amp; Key Credentials</h3>
-              <p className="desc">Register the customer's contact details, vehicle &amp; key code, and residential address.</p>
+              <h3>{t('contactKeyCredentialsTitle')}</h3>
+              <p className="desc">{t('registerContactDetailsDesc')}</p>
 
               {superAdminMode && (
                 <div className="reg-section">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Store /></div><b>Shop <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Store /></div><b>{t('shopFieldLabel')} <span className="req">*</span></b></div>
                     <CustomSelect
                       value={selectedShopId} onChange={setSelectedShopId}
-                      placeholder="Select a shop…"
+                      placeholder={t('selectShopPlaceholder')}
                       options={shops.map(s => ({ value: s.id, label: s.name }))}
                     />
                     <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 8 }}>
-                      This customer, and its key code, will be registered under the selected shop's workspace.
+                      {t('customerRegisteredUnderShopMsg')}
                     </p>
                   </div>
                 </div>
@@ -7197,9 +11579,9 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 <div className="animate-fade-in" style={{ display: 'flex', gap: 12, background: 'var(--red-dim)', border: '1px solid rgba(242,86,77,0.3)', borderRadius: 16, padding: 16, marginBottom: 20 }}>
                   <div className="icon-badge red" style={{ width: 36, height: 36, borderRadius: 11 }}><AlertTriangle className="h-4 w-4" /></div>
                   <div>
-                    <div style={{ color: 'var(--red)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>Duplicate key detected</div>
+                    <div style={{ color: 'var(--red)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>{t('duplicateKeyDetectedLabel')}</div>
                     <p style={{ color: 'var(--text-2)', fontSize: 12, fontWeight: 600, marginTop: 4, lineHeight: 1.5 }}>
-                      Key code <b style={{ color: 'var(--text-0)' }}>{keyNumber}</b> is already registered to an existing customer. Please verify and enter a unique key code.
+                      {t('duplicateKeyDetectedDescTemplate').split('{code}')[0]}<b style={{ color: 'var(--text-0)' }}>{keyNumber}</b>{t('duplicateKeyDetectedDescTemplate').split('{code}')[1]}
                     </p>
                   </div>
                 </div>
@@ -7208,15 +11590,15 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               <div className="reg-section">
                 <div className="form-grid">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>Full Customer Name <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('fullCustomerNameLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
-                      <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder="Rohan Malhotra" />
+                      <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder={t('customerNamePlaceholderEg')} />
                     </div>
                   </div>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>Vehicle Number <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>{t('vehicleNumberLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
-                      <input type="text" required value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder="e.g. TN09B1234" />
+                      <input type="text" required value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder={t('vehicleNumberPlaceholderEg')} />
                     </div>
                   </div>
                 </div>
@@ -7225,32 +11607,24 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               <div className="reg-section">
                 <div className="form-grid">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Code / Key Number <span className="req">*</span></b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyCodeKeyNumberLabel')} <span className="req">*</span></b></div>
                     <div className="input-wrap">
                       <input
                         type="text" required value={keyNumber}
                         onChange={(e) => { setKeyNumber(e.target.value); setDuplicateKeyWarning(false); }}
-                        placeholder="Enter key code (e.g. TN09B)"
+                        placeholder={t('keyCodeEnterPlaceholderEg')}
                       />
                     </div>
                   </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>Key Type</b></div>
-                    <CustomSelect
-                      value={keyType} onChange={setKeyType}
-                      placeholder="Select key type…"
-                      options={keyTypes.map(kt => ({ value: kt.name, label: kt.name }))}
-                    />
-                  </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Phone /></div><b>Phone Number <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
                   <div style={{ display: 'flex', gap: 10 }}>
                     <div className="input-wrap" style={{ flex: 1 }}>
                       <input
                         type="tel" required value={phone}
                         onChange={(e) => { setPhone(e.target.value); setOtpVerified(false); setOtpSent(false); setOtpDevCode(''); }}
-                        placeholder="98765 00000"
+                        placeholder={t('phoneNumberPlaceholderEg')}
                       />
                     </div>
                     {!otpVerified && (
@@ -7259,7 +11633,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                         disabled={!phone || !keyNumber || (otpMethod === 'email' && !otpTestEmail)}
                         className="btn btn-primary btn-sm"
                       >
-                        {otpSent ? 'Resend' : 'Send OTP'}
+                        {otpSent ? t('resendBtn') : t('sendOtpBtn')}
                       </button>
                     )}
                   </div>
@@ -7269,18 +11643,18 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                         type="button" onClick={() => setOtpMethod('phone')}
                         className={`store-tab ${otpMethod === 'phone' ? 'active' : ''}`}
                       >
-                        <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>SMS to phone</span>
+                        <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('smsToPhoneLabel')}</span>
                       </button>
                       <button
                         type="button" onClick={() => setOtpMethod('email')}
                         className={`store-tab ${otpMethod === 'email' ? 'active' : ''}`}
                       >
-                        <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>Email (testing)</span>
+                        <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('emailTestingLabel')}</span>
                       </button>
                       {otpMethod === 'email' && (
                         <input
                           type="email" value={otpTestEmail} onChange={(e) => setOtpTestEmail(e.target.value)}
-                          placeholder="test@email.com — for OTP only, not saved"
+                          placeholder={t('testEmailPlaceholder')}
                           style={{ flex: '1 1 220px', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 10, padding: '8px 12px', fontSize: 12, outline: 'none' }}
                         />
                       )}
@@ -7293,7 +11667,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 <div className="reg-field">
                   <div className="reg-field-label">
                     <div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div>
-                    <b>Address Line <span className="req">*</span></b>
+                    <b>{t('addressLineLabel')} <span className="req">*</span></b>
                     <button
                       type="button"
                       onClick={captureCustomerLocation}
@@ -7301,11 +11675,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                       className="reg-trailing loc-btn"
                     >
                       <Crosshair className={isCapturingGps ? 'animate-spin' : ''} />
-                      <span>{isCapturingGps ? 'Locating…' : 'Current Location'}</span>
+                      <span>{isCapturingGps ? t('locatingLabel') : t('currentLocationBtn')}</span>
                     </button>
                   </div>
                   <div className="input-wrap">
-                    <input type="text" required value={addressLine} onChange={(e) => setAddressLine(e.target.value)} placeholder="e.g. Flat 101, Park Avenue" />
+                    <input type="text" required value={addressLine} onChange={(e) => setAddressLine(e.target.value)} placeholder={t('addressLinePlaceholderEg')} />
                   </div>
                   {gpsError && (
                     <div style={{ marginTop: 6 }}>
@@ -7317,7 +11691,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                           className="cursor-pointer select-none"
                           style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
                         >
-                          Open Location Settings
+                          {t('openLocationSettingsBtn')}
                         </button>
                       )}
                       {gpsErrorKind === 'permission' && IS_NATIVE_APP && (
@@ -7327,19 +11701,19 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                           className="cursor-pointer select-none"
                           style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
                         >
-                          Open App Settings
+                          {t('openAppSettingsBtn')}
                         </button>
                       )}
                     </div>
                   )}
                   {latitude && longitude && !gpsError && (
-                    <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>GPS captured: {latitude.toFixed(5)}, {longitude.toFixed(5)}</p>
+                    <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>{t('gpsCapturedTemplate').split('{lat}')[0]}{latitude.toFixed(5)}{t('gpsCapturedTemplate').split('{lat}')[1].split('{long}')[0]}{longitude.toFixed(5)}</p>
                   )}
                 </div>
 
                 <div className="form-grid" style={{ marginBottom: 13 }}>
                   <div className="reg-field" style={{ marginBottom: 0 }}>
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Navigation /></div><b>State</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Navigation /></div><b>{t('stateLabel')}</b></div>
                     <CustomSelect
                       value={stateVal}
                       onChange={(selected) => {
@@ -7351,7 +11725,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     />
                   </div>
                   <div className="reg-field" style={{ marginBottom: 0 }}>
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><MapPin /></div><b>District</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><MapPin /></div><b>{t('districtLabel')}</b></div>
                     <CustomSelect
                       value={district} onChange={setDistrict}
                       options={INDIAN_STATES_DISTRICTS[stateVal] || []}
@@ -7359,7 +11733,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Building2 /></div><b>Country</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Building2 /></div><b>{t('countryLabel')}</b></div>
                   <div className="input-wrap" style={{ opacity: 0.65 }}>
                     <input type="text" readOnly value={country} style={{ cursor: 'not-allowed' }} />
                   </div>
@@ -7370,13 +11744,13 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 <div className="animate-fade-in" style={{ background: 'var(--card-2)', border: '1.5px solid var(--border-2)', borderRadius: 16, padding: 18, marginTop: 20 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
                     <span style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600 }}>
-                      Enter the 4-digit code sent {otpMethod === 'email' ? `to ${otpTestEmail}` : "to the customer's phone"}
+                      {otpMethod === 'email' ? t('enterOtpCodeSentToEmailTemplate').replace('{email}', otpTestEmail) : t('enterOtpCodeSentToPhoneMsg')}
                     </span>
                   </div>
                   {otpDevCode && (
                     <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
                       <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                        Testing mode &mdash; no {otpMethod === 'email' ? 'SMTP' : 'SMS'} provider configured
+                        {t('testingModeNoProviderTemplate').split('{provider}')[0]}{otpMethod === 'email' ? 'SMTP' : 'SMS'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
                       </p>
                       <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{otpDevCode}</p>
                     </div>
@@ -7389,7 +11763,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                       style={{ ...plainInputStyle, textAlign: 'center', fontWeight: 800, letterSpacing: 4 }}
                     />
                     <button type="button" onClick={handleVerifyOtp} className="btn btn-primary btn-sm" style={{ whiteSpace: 'nowrap' }}>
-                      Verify OTP
+                      {t('verifyOtpBtn')}
                     </button>
                   </div>
                   {otpError && <p style={{ color: 'var(--red)', fontSize: 11, fontWeight: 700, marginTop: 10 }}>{otpError}</p>}
@@ -7399,7 +11773,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               {otpVerified && (
                 <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--green-dim)', border: '1px solid rgba(62,207,106,0.3)', borderRadius: 14, padding: '12px 16px', marginTop: 20 }}>
                   <Check className="h-4 w-4" style={{ color: 'var(--green)' }} />
-                  <span style={{ color: 'var(--green)', fontSize: 12.5, fontWeight: 700 }}>Customer {otpMethod === 'email' ? 'email' : 'phone number'} OTP verified successfully.</span>
+                  <span style={{ color: 'var(--green)', fontSize: 12.5, fontWeight: 700 }}>{otpMethod === 'email' ? t('otpVerifiedSuccessEmailMsg') : t('otpVerifiedSuccessPhoneMsg')}</span>
                 </div>
               )}
             </div>
@@ -7407,97 +11781,41 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
           {step === 2 && (
             <div className="animate-fade-in">
-              <h3>Identity Photo Capture</h3>
-              <p className="desc">Capture a live photo via webcam, or upload an existing image for the compliance record.</p>
-
-              <div className="reg-section">
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 22 }}>
-                  <div className="capture-preview" style={{ width: 260, height: 200, borderRadius: 20, overflow: 'hidden', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    {isWebcamActive ? (
-                      <video ref={videoRef} autoPlay playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : photoBase64 ? (
-                      <img src={photoBase64} alt="Identity preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    ) : (
-                      <div className="icon-badge pink" style={{ width: 56, height: 56, borderRadius: 16 }}><Camera className="h-6 w-6" /></div>
-                    )}
-                  </div>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, justifyContent: 'center', width: '100%' }}>
-                    {isWebcamActive ? (
-                      <>
-                        <button type="button" onClick={captureSnapshot} className="btn btn-primary btn-sm">
-                          <Camera className="h-4 w-4" /> Capture Photo
-                        </button>
-                        <button type="button" onClick={stopWebcam} className="btn btn-danger-outline btn-sm">
-                          <X className="h-4 w-4" /> Stop Camera
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button type="button" onClick={startWebcam} className="btn btn-outline btn-sm">
-                          <Camera className="h-4 w-4" /> {photoBase64 ? 'Re-take Photo' : 'Start Webcam / Mobile Cam'}
-                        </button>
-                        <label className="btn btn-ghost btn-sm" style={{ cursor: 'pointer' }}>
-                          <UploadCloud className="h-4 w-4" />
-                          <span>Upload Image</span>
-                          <input type="file" accept="image/*" style={{ display: 'none' }} onClick={primeStoragePermission} onChange={handlePhotoUpload} />
-                        </label>
-                      </>
-                    )}
-                  </div>
-
-                  {camError && (
-                    <div style={{ textAlign: 'center' }}>
-                      <p style={{ fontSize: 11, color: 'var(--amber)', fontWeight: 700 }}>{camError}</p>
-                      {camErrorKind === 'permission' && IS_NATIVE_APP && (
-                        <button
-                          type="button"
-                          onClick={openAppSettings}
-                          className="cursor-pointer select-none"
-                          style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
-                        >
-                          Open App Settings
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="animate-fade-in">
-              <h3>Compliance Document Upload</h3>
-              <p className="desc">Upload a copy of the government ID proof used to verify this customer.</p>
+              <h3>{t('complianceDocUploadTitle')}</h3>
+              <p className="desc">{t('uploadGovIdDesc')}</p>
 
               <div className="reg-section">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>Document Type</b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>{t('documentTypeLabel')}</b></div>
                   <CustomSelect
                     value={idProofType} onChange={setIdProofType}
                     options={[
-                      { value: 'Aadhaar Card', label: 'Aadhaar Card', disabled: uploadedDocs.some(d => d.type === 'Aadhaar Card') },
-                      { value: 'Driving License', label: 'Driving License', disabled: uploadedDocs.some(d => d.type === 'Driving License') },
-                      { value: 'PAN Card', label: 'PAN Card', disabled: uploadedDocs.some(d => d.type === 'PAN Card') },
-                      { value: 'Voter ID', label: 'Voter ID', disabled: uploadedDocs.some(d => d.type === 'Voter ID') },
+                      { value: 'Aadhaar Card', label: t('aadhaarCardLabel'), disabled: uploadedDocs.some(d => d.type === 'Aadhaar Card') },
+                      { value: 'Driving License', label: t('drivingLicenseLabel'), disabled: uploadedDocs.some(d => d.type === 'Driving License') },
+                      { value: 'PAN Card', label: t('panCardLabel'), disabled: uploadedDocs.some(d => d.type === 'PAN Card') },
+                      { value: 'Voter ID', label: t('voterIdLabel'), disabled: uploadedDocs.some(d => d.type === 'Voter ID') },
                     ]}
                   />
                 </div>
               </div>
 
               <div className="reg-section">
+                {IS_NATIVE_APP && (
+                  <button type="button" onClick={handleCaptureDocumentPhoto} className="btn btn-outline btn-sm" style={{ marginBottom: 12 }}>
+                    <Camera className="h-4 w-4" /> {t('useCameraBtn')}
+                  </button>
+                )}
                 <label htmlFor="docUploadInput" className="dropzone">
                   <div className="icon-badge orange"><UploadCloud className="h-5 w-5" /></div>
-                  <div className="dz-title">Drop or browse a copy of {idProofType}</div>
-                  <div className="dz-sub">JPEG, PNG or PDF — up to 5MB</div>
+                  <div className="dz-title">{t('dropOrBrowseCopyTemplate').replace('{type}', idProofType)}</div>
+                  <div className="dz-sub">{t('jpegPngPdfUpTo5MbLabel')}</div>
                   <input type="file" id="docUploadInput" onClick={primeStoragePermission} onChange={handleFileChange} style={{ display: 'none' }} accept="image/jpeg, image/png, application/pdf" />
                 </label>
                 {uploadError && <p style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginTop: 12, textAlign: 'center' }}>{uploadError}</p>}
 
                 {uploadedDocs.length > 0 && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
-                    <span className="side-section-label" style={{ padding: 0 }}>Staged ID copies ({uploadedDocs.length})</span>
+                    <span className="side-section-label" style={{ padding: 0 }}>{t('stagedIdCopiesTemplate').replace('{count}', uploadedDocs.length)}</span>
                     {uploadedDocs.map((doc, idx) => {
                       const docColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
                       const docColor = docColors[idx % docColors.length];
@@ -7520,46 +11838,46 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
             </div>
           )}
 
-          {step === 4 && (
+          {step === 3 && (
             <div className="animate-fade-in">
-              <h3>Review</h3>
-              <p className="desc">Verify every detail entered below before submitting this compliance registration. Nothing is captured or modified automatically on this step.</p>
+              <h3>{t('reviewStepLabel')}</h3>
+              <p className="desc">{t('verifyDetailsBeforeSubmitDesc')}</p>
 
               <div className="reg-section">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
                     <div className="icon-badge purple" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><User style={{ width: 16, height: 16 }} /></div>
                     <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>Customer</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('reviewCustomerLabel')}</div>
                       <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{name}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="icon-badge blue" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Phone style={{ width: 16, height: 16 }} /></div>
                     <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>Phone</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('reviewPhoneLabel')}</div>
                       <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{phone}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="icon-badge orange" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Car style={{ width: 16, height: 16 }} /></div>
                     <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>Vehicle Number</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('vehicleNumberLabel')}</div>
                       <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{vehicleNumber}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="icon-badge pink" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><KeyRound style={{ width: 16, height: 16 }} /></div>
                     <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>Key Blank</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}{keyType ? ` (${keyType})` : ''}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('keyBlankLabel')}</div>
+                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}</div>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-3" style={{ marginTop: 16 }}>
                   <div className="icon-badge teal" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><MapPin style={{ width: 16, height: 16 }} /></div>
                   <div>
-                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>Registered Address</div>
+                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('registeredAddressLabel')}</div>
                     <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{addressLine}, {district}, {stateVal}, India</div>
                   </div>
                 </div>
@@ -7570,35 +11888,35 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <div className="flex items-center gap-3">
                     <div className="icon-badge skyblue" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Fingerprint style={{ width: 16, height: 16 }} /></div>
                     <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>ID Proof Type</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('idProofTypeLabel')}</div>
                       <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{idProofType}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="icon-badge rose" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><FileCheck style={{ width: 16, height: 16 }} /></div>
                     <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>Uploaded Documents</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{uploadedDocs.length > 0 ? `${uploadedDocs.length} file(s) attached` : 'None attached'}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('uploadedDocumentsLabel')}</div>
+                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{uploadedDocs.length > 0 ? t('filesAttachedTemplate').replace('{count}', uploadedDocs.length) : t('noneAttachedLabel')}</div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <span className="side-section-label" style={{ padding: 0, display: 'block', marginBottom: 12 }}>Location</span>
+              <span className="side-section-label" style={{ padding: 0, display: 'block', marginBottom: 12 }}>{t('reviewLocationLabel')}</span>
               {latitude && longitude ? (
                 <div className="loc-box">
                   <div className="loc-info">
                     <div className="icon-badge green"><Crosshair className="h-5 w-5" /></div>
                     <div className="loc-text">
-                      <div className="t1">GPS Captured</div>
-                      <div className="t2">Lat {Number(latitude).toFixed(5)} · Long {Number(longitude).toFixed(5)}</div>
+                      <div className="t1">{t('gpsCapturedHeadingLabel')}</div>
+                      <div className="t2">{t('latLongMiddotTemplate').split('{lat}')[0]}{Number(latitude).toFixed(5)}{t('latLongMiddotTemplate').split('{lat}')[1].split('{long}')[0]}{Number(longitude).toFixed(5)}</div>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 16, padding: 16 }}>
                   <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
-                    No GPS location was captured. Go back to the "Contact &amp; Key" step and use the "Current Location" button if you'd like to attach coordinates.
+                    {t('noGpsLocationCapturedDesc')}
                   </p>
                 </div>
               )}
@@ -7615,12 +11933,12 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         <div className="wizard-foot">
           {step > 1 ? (
             <button type="button" className="btn btn-ghost" onClick={() => setStep(step - 1)}>
-              <ArrowLeft className="h-4 w-4" /> Back
+              <ArrowLeft className="h-4 w-4" /> {t('btnBack')}
             </button>
           ) : <span />}
 
           <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            <span className="wizard-foot-steplabel" style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 700 }}>Step {step} of {WIZARD_STEPS.length}</span>
+            <span className="wizard-foot-steplabel" style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 700 }}>{t('stepLabel')} {step} {t('ofLabel')} {WIZARD_STEPS.length}</span>
 
             {step === 1 && (
               <button
@@ -7628,22 +11946,17 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || !district || !stateVal || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
                 onClick={() => setStep(2)}
               >
-                Continue <ArrowRight className="h-4 w-4" />
+                {t('btnContinue')} <ArrowRight className="h-4 w-4" />
               </button>
             )}
             {step === 2 && (
-              <button type="button" className="btn btn-primary" disabled={!photoBase64} onClick={() => setStep(3)}>
-                Continue <ArrowRight className="h-4 w-4" />
+              <button type="button" className="btn btn-primary" onClick={() => setStep(3)}>
+                {t('btnContinue')} <ArrowRight className="h-4 w-4" />
               </button>
             )}
             {step === 3 && (
-              <button type="button" className="btn btn-primary" onClick={() => setStep(4)}>
-                Continue <ArrowRight className="h-4 w-4" />
-              </button>
-            )}
-            {step === 4 && (
               <button type="button" className="btn btn-primary" onClick={handleFinalSubmit}>
-                Submit Compliance Record <Check className="h-4 w-4" />
+                {t('submitComplianceRecordBtn')} <Check className="h-4 w-4" />
               </button>
             )}
           </div>
@@ -7752,13 +12065,13 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
         await api.uploadDocument(selectedCust.id, `${editIdProofType} Copy`, editUploadFile);
       }
 
-      alert('Customer compliance record updated successfully!');
+      alert(t('customerComplianceRecordUpdatedMsg'));
       setIsEditing(false);
       setEditUploadFile(null);
       setSelectedCust(null);
       fetchHistory();
     } catch (err) {
-      alert(err.message || 'Failed to save customer edits.');
+      alert(err.message || t('failedSaveCustomerEditsMsg'));
     }
   };
 
@@ -7766,9 +12079,9 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><FileCheck /> Compliance Registry</div>
+          <div className="eyebrow"><FileCheck /> {t('complianceRegistry')}</div>
           <h1>{t('history')}</h1>
-          <p>Search and verify past duplicate-key registrations and compliance submissions.</p>
+          <p>{t('historyPageDesc')}</p>
         </div>
       </div>
 
@@ -7782,7 +12095,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
             <Search />
             <input
               type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search by name, phone, key code&hellip;"
+              placeholder={t('searchByNamePhoneKeyCode')}
             />
           </div>
         </div>
@@ -7790,23 +12103,23 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 200 }}>
             <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-            <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading compliance records&hellip;</span>
+            <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingComplianceRecordsMsg')}</span>
           </div>
         ) : customers.length === 0 ? (
           <p style={{ padding: 24, fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
-            No compliance records match this search.
+            {t('noComplianceRecordsMatchMsg')}
           </p>
         ) : (
         <table className="kee-table history-table">
           <thead>
             <tr>
-              <th>Customer</th>
-              <th>Phone</th>
-              <th>Vehicle</th>
-              <th>Key Code</th>
-              <th>Location</th>
-              <th>Logged</th>
-              <th style={{ textAlign: 'right' }}>Actions</th>
+              <th>{t('customerCol')}</th>
+              <th>{t('phoneCol')}</th>
+              <th>{t('vehicleCol')}</th>
+              <th>{t('keyCodeCol')}</th>
+              <th>{t('locationCol')}</th>
+              <th>{t('loggedCol')}</th>
+              <th style={{ textAlign: 'right' }}>{t('actionsCol')}</th>
             </tr>
           </thead>
           <tbody>
@@ -7816,7 +12129,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 const rowColor = rowColors[idx % rowColors.length];
                 return (
                   <tr key={c.id} onClick={() => setSelectedCust(c)} style={{ cursor: 'pointer' }}>
-                    <td data-label="Customer">
+                    <td data-label={t('customerCol')}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                         <div className={`icon-badge ${rowColor}`} style={{ width: 32, height: 32, borderRadius: 10, flexShrink: 0 }}>
                           <User style={{ width: 15, height: 15 }} />
@@ -7824,22 +12137,21 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                         <div className="cell-primary">{c.name}</div>
                       </div>
                     </td>
-                    <td className="cell-sub" data-label="Phone" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
-                    <td className="cell-sub" data-label="Vehicle" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.vehicleNumber || 'N/A'}</td>
-                    <td data-label="Key Code">
+                    <td className="cell-sub" data-label={t('phoneCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
+                    <td className="cell-sub" data-label={t('vehicleCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.vehicleNumber || 'N/A'}</td>
+                    <td data-label={t('keyCodeCol')}>
                       <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
-                      {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
                     </td>
-                    <td className="cell-sub" data-label="Location" style={{ fontWeight: 700, color: 'var(--text-2)', maxWidth: 180 }}>
+                    <td className="cell-sub" data-label={t('locationCol')} style={{ fontWeight: 700, color: 'var(--text-2)', maxWidth: 180 }}>
                       <span className="flex items-center gap-1" style={{ overflow: 'hidden' }}>
                         <MapPin style={{ width: 13, height: 13, color: 'var(--green)', flexShrink: 0 }} />
                         <span className="truncate">{c.capturedAddress || 'N/A'}</span>
                       </span>
                     </td>
-                    <td className="cell-sub" data-label="Logged" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
-                    <td data-label="Actions">
+                    <td className="cell-sub" data-label={t('loggedCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                    <td data-label={t('actionsCol')}>
                       <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
-                        <button onClick={(e) => { e.stopPropagation(); setSelectedCust(c); }} className="icon-btn" title="View compliance file">
+                        <button onClick={(e) => { e.stopPropagation(); setSelectedCust(c); }} className="icon-btn" title={t('viewComplianceFile')}>
                           <Eye />
                         </button>
                       </div>
@@ -7858,7 +12170,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 640, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><FileCheck /> Compliance File</span>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><FileCheck /> {t('complianceFileEyebrow')}</span>
                 <h2 style={{ fontSize: 19 }}>{selectedCust.name}</h2>
               </div>
               <button onClick={() => setSelectedCust(null)} className="icon-btn">
@@ -7871,22 +12183,21 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 <div className="reg-section">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Phone /></div><b>Phone Contact</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Phone /></div><b>{t('phoneContactLabel')}</b></div>
                       <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{selectedCust.phone}</span>
                     </div>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>Registry Date</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>{t('registryDateLabel')}</b></div>
                       <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{new Date(selectedCust.createdAt).toLocaleString()}</span>
                     </div>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Car /></div><b>Vehicle Number</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Car /></div><b>{t('vehicleNumberLabel')}</b></div>
                       <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{selectedCust.vehicleNumber || 'N/A'}</span>
                     </div>
                     <div className="reg-field" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Blank Code</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyBlankCodeLabel')}</b></div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="badge badge-active"><span className="dot" />{selectedCust.keyNumber}</span>
-                        {selectedCust.keyType && <span className="badge" style={{ background: 'var(--purple-dim, rgba(124,77,255,0.12))', color: 'var(--purple)' }}>{selectedCust.keyType}</span>}
                       </div>
                     </div>
                   </div>
@@ -7900,23 +12211,23 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                           <MapPin style={{ width: 16, height: 16 }} />
                         </div>
                         <div>
-                          <p style={{ fontWeight: 700, color: 'var(--text-0)', fontSize: 13 }}>GPS Coordinates</p>
+                          <p style={{ fontWeight: 700, color: 'var(--text-0)', fontSize: 13 }}>{t('gpsCoordinatesLabel')}</p>
                           {selectedCust.latitude && selectedCust.longitude ? (
-                            <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600 }}>Lat: {selectedCust.latitude} &bull; Long: {selectedCust.longitude}</p>
+                            <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600 }}>{t('latLongTemplate').split('{lat}')[0]}{selectedCust.latitude}{t('latLongTemplate').split('{lat}')[1].split('{long}')[0]}{selectedCust.longitude}</p>
                           ) : (
-                            <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600, fontStyle: 'italic' }}>Not captured</p>
+                            <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600, fontStyle: 'italic' }}>{t('notCapturedLabel')}</p>
                           )}
                         </div>
                       </div>
                       {selectedCust.mapsLink && (
                         <a href={selectedCust.mapsLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800 }} className="flex items-center gap-1 hover:underline">
-                          <span>Google Maps</span><ExternalLink className="h-3 w-3" />
+                          <span>{t('googleMapsLabel')}</span><ExternalLink className="h-3 w-3" />
                         </a>
                       )}
                     </div>
                     {selectedCust.capturedAddress && (
                       <div style={{ fontSize: 10.5, color: 'var(--text-2)', borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 8, paddingLeft: 42, fontWeight: 600 }}>
-                        <span style={{ display: 'block', fontWeight: 800, fontSize: 9, color: 'var(--text-3)', textTransform: 'uppercase' }}>Captured Address</span>
+                        <span style={{ display: 'block', fontWeight: 800, fontSize: 9, color: 'var(--text-3)', textTransform: 'uppercase' }}>{t('capturedAddressLabel')}</span>
                         <span>{selectedCust.capturedAddress}</span>
                       </div>
                     )}
@@ -7925,7 +12236,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
 
                 <div className="reg-section" style={{ marginBottom: 0 }}>
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Camera /></div><b>Webcam Photo</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Camera /></div><b>{t('webcamPhotoLabel')}</b></div>
                     {selectedCust.photoUrl ? (
                       <div style={{ width: '100%', height: 128, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-2)' }}>
                         <img src={getAssetUrl(selectedCust.photoUrl)} alt="Customer snapshot" className="w-full h-full object-cover" />
@@ -7939,7 +12250,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
 
                   {selectedCust.documents && selectedCust.documents.length > 0 && (
                     <div className="reg-field space-y-2" style={{ marginBottom: 0, minWidth: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><FileCheck /></div><b>Attached ID Copies</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><FileCheck /></div><b>{t('attachedIdCopiesLabel')}</b></div>
                       {selectedCust.documents.map((d, di) => {
                         const docColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
                         const docColor = docColors[di % docColors.length];
@@ -7954,12 +12265,12 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                               className={`badge ${uploaded ? 'badge-active' : 'badge-suspended'}`}
                               style={{ flexShrink: 0, fontSize: 9.5 }}
                             >
-                              {uploaded ? 'Uploaded' : 'Missing'}
+                              {uploaded ? t('uploadedBadge') : t('missingBadge')}
                             </span>
                             <button
                               type="button"
-                              title="Download"
-                              aria-label="Download"
+                              title={t('downloadTitleLabel')}
+                              aria-label={t('downloadTitleLabel')}
                               disabled={!uploaded}
                               onClick={() => downloadAsset(d.fileUrl, d.originalName || d.fileKey || 'document')}
                               className="icon-btn"
@@ -7976,9 +12287,9 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
 
                 <div className="flex justify-end gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                   <button onClick={() => setIsEditing(true)} className="btn btn-primary btn-sm">
-                    <Edit /> Edit Details
+                    <Edit /> {t('editDetailsBtn')}
                   </button>
-                  <button onClick={() => setSelectedCust(null)} className="btn btn-ghost btn-sm">Close File</button>
+                  <button onClick={() => setSelectedCust(null)} className="btn btn-ghost btn-sm">{t('closeFileBtn')}</button>
                 </div>
               </>
             ) : (
@@ -7986,13 +12297,13 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 <div className="reg-section">
                   <div className="form-grid">
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>Full Customer Name</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('fullCustomerNameLabel')}</b></div>
                       <div className="input-wrap">
                         <input type="text" required value={editName} onChange={(e) => setEditName(e.target.value)} />
                       </div>
                     </div>
                     <div className="reg-field" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Phone Number</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
                       <div className="input-wrap">
                         <input type="tel" required value={editPhoneVal} onChange={(e) => setEditPhoneVal(e.target.value)} />
                       </div>
@@ -8003,13 +12314,13 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 <div className="reg-section">
                   <div className="form-grid">
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>Vehicle Number</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>{t('vehicleNumberLabel')}</b></div>
                       <div className="input-wrap">
                         <input type="text" required value={editVehicleNumber} onChange={(e) => setEditVehicleNumber(e.target.value.toUpperCase())} />
                       </div>
                     </div>
                     <div className="reg-field" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>Key Blank Code</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyBlankCodeLabel')}</b></div>
                       <div className="input-wrap">
                         <input type="text" required value={editKeyNumber} onChange={(e) => setEditKeyNumber(e.target.value)} />
                       </div>
@@ -8020,7 +12331,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 <div className="reg-section">
 
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>Address Line</b></div>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>{t('addressLineLabel')}</b></div>
                     <div className="input-wrap">
                       <input type="text" required value={editAddressLine} onChange={(e) => setEditAddressLine(e.target.value)} />
                     </div>
@@ -8028,19 +12339,19 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
 
                   <div className="form-grid">
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Navigation /></div><b>District</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Navigation /></div><b>{t('districtLabel')}</b></div>
                       <div className="input-wrap">
                         <input type="text" required value={editDistrict} onChange={(e) => setEditDistrict(e.target.value)} />
                       </div>
                     </div>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Navigation /></div><b>State</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Navigation /></div><b>{t('stateLabel')}</b></div>
                       <div className="input-wrap">
                         <input type="text" required value={editStateVal} onChange={(e) => setEditStateVal(e.target.value)} />
                       </div>
                     </div>
                     <div className="reg-field full" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Navigation /></div><b>Country</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Navigation /></div><b>{t('countryLabel')}</b></div>
                       <div className="input-wrap">
                         <input type="text" readOnly value="India" style={{ opacity: .55, cursor: 'not-allowed' }} />
                       </div>
@@ -8051,22 +12362,22 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 <div className="reg-section" style={{ marginBottom: 0 }}>
                   <div className="form-grid">
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><ShieldCheck /></div><b>Document ID Type</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><ShieldCheck /></div><b>{t('documentIdTypeLabel')}</b></div>
                       <CustomSelect
                         value={editIdProofType} onChange={setEditIdProofType}
                         options={[
-                          { value: 'Aadhaar Card', label: 'Aadhaar Card', disabled: selectedCust?.documents?.some(d => d.documentType === 'Aadhaar Card' || d.documentType === 'Aadhaar Card Copy') },
-                          { value: 'Driving License', label: 'Driving License', disabled: selectedCust?.documents?.some(d => d.documentType === 'Driving License' || d.documentType === 'Driving License Copy') },
-                          { value: 'PAN Card', label: 'PAN Card', disabled: selectedCust?.documents?.some(d => d.documentType === 'PAN Card' || d.documentType === 'PAN Card Copy') },
-                          { value: 'Voter ID', label: 'Voter ID', disabled: selectedCust?.documents?.some(d => d.documentType === 'Voter ID' || d.documentType === 'Voter ID Copy') },
+                          { value: 'Aadhaar Card', label: t('aadhaarCardLabel'), disabled: selectedCust?.documents?.some(d => d.documentType === 'Aadhaar Card' || d.documentType === 'Aadhaar Card Copy') },
+                          { value: 'Driving License', label: t('drivingLicenseLabel'), disabled: selectedCust?.documents?.some(d => d.documentType === 'Driving License' || d.documentType === 'Driving License Copy') },
+                          { value: 'PAN Card', label: t('panCardLabel'), disabled: selectedCust?.documents?.some(d => d.documentType === 'PAN Card' || d.documentType === 'PAN Card Copy') },
+                          { value: 'Voter ID', label: t('voterIdLabel'), disabled: selectedCust?.documents?.some(d => d.documentType === 'Voter ID' || d.documentType === 'Voter ID Copy') },
                         ]}
                       />
                     </div>
                     <div className="reg-field" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><UploadCloud /></div><b>Upload New File Copy</b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><UploadCloud /></div><b>{t('uploadNewFileCopyLabel')}</b></div>
                       <div className="dropzone" style={{ padding: '16px 12px', position: 'relative' }}>
                         <UploadCloud style={{ width: 20, height: 20, color: 'var(--gold)' }} />
-                        <span className="dz-sub">{editUploadFile ? editUploadFile.name : 'JPEG, PNG or PDF'}</span>
+                        <span className="dz-sub">{editUploadFile ? editUploadFile.name : t('jpegPngPdfLabel')}</span>
                         <input
                           type="file"
                           onClick={primeStoragePermission}
@@ -8088,10 +12399,10 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                     }}
                     className="btn btn-ghost"
                   >
-                    Cancel
+                    {t('btnCancel')}
                   </button>
                   <button type="submit" className="btn btn-primary">
-                    Save Changes
+                    {t('saveChangesBtn')}
                   </button>
                 </div>
               </form>
@@ -8141,72 +12452,30 @@ export function CustomerCareView({ t, api }) {
     return (
       <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
         <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading support resources&hellip;</span>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingSupportResourcesMsg')}</span>
       </div>
     );
   }
-
-  const whatsapp = config?.whatsapp || '+91 98765 43210';
-  const cleanPhone = whatsapp.replace(/[^0-9]/g, '');
 
   return (
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Phone /> Customer Care</div>
-          <h1>Support & Training Center</h1>
-          <p>Reach Key Shop technical support and level up with locksmith training resources.</p>
+          <div className="eyebrow"><Phone /> {t('customerCare')}</div>
+          <h1>{t('supportTrainingCenterTitle')}</h1>
+          <p>{t('reachSupportTrainingDesc')}</p>
         </div>
       </div>
 
-      <div className="grid-2">
-        {/* Support Card */}
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: 22 }}>
-          <div>
-            <div className="flex items-center gap-3" style={{ marginBottom: 10 }}>
-              <div className="icon-badge maroon"><Phone /></div>
-              <div>
-                <h2 style={{ fontSize: 16 }}>Contact Live Agent</h2>
-                <span className="pill-badge" style={{ marginTop: 6 }}><Clock style={{ width: 11, height: 11 }} />Mon&ndash;Sat, 9 AM&ndash;7 PM IST</span>
-              </div>
-            </div>
-            <p style={{ fontSize: 13, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.6 }}>
-              Live customer support is on hand to help with your key-making machines or duplicate key portal dashboard.
-            </p>
-          </div>
-
-          <div className="loc-box" style={{ background: 'rgba(37,211,102,0.08)', borderColor: 'rgba(37,211,102,0.28)' }}>
-            <div className="loc-info">
-              <div className="icon-badge jgreen">
-                <MessageCircle />
-              </div>
-              <div className="loc-text">
-                <span className="t1" style={{ display: 'block' }}>{whatsapp}</span>
-                <span className="t2">Direct WhatsApp Support</span>
-              </div>
-            </div>
-            <a
-              href={`https://wa.me/${cleanPhone || '919876543210'}?text=Hi%20Key%20Shop%20Support%2C%20I%20have%20a%20question%20regarding%20my%20duplicate%20key%20shop%20platform.`}
-              target="_blank"
-              rel="noreferrer"
-              className="btn btn-sm"
-              style={{ background: '#25d366', color: '#062b17', flexShrink: 0 }}
-            >
-              <MessageCircle /> Chat on WhatsApp
-            </a>
-          </div>
-        </div>
-
-        {/* Video Resources Card */}
-        <div className="card">
-          <div className="section-title" style={{ marginBottom: 14 }}>
+      <div className="card">
+        <div className="section-title" style={{ marginBottom: 14 }}>
             <div className="flex items-center gap-3">
               <div className="icon-badge teal" style={{ width: 34, height: 34, borderRadius: 10 }}>
                 <Radio style={{ width: 16, height: 16 }} />
               </div>
               <div>
-                <h2 style={{ fontSize: 16 }}>Locksmith Skill Upgrades</h2>
-                <span className="sub">Video tutorials from duplicate key experts</span>
+                <h2 style={{ fontSize: 16 }}>{t('locksmithSkillUpgradesTitle')}</h2>
+                <span className="sub">{t('videoTutorialsFromExpertsDesc')}</span>
               </div>
             </div>
           </div>
@@ -8234,20 +12503,94 @@ export function CustomerCareView({ t, api }) {
                       </a>
                     </div>
                     <div className="product-body" style={{ padding: 12, gap: 4 }}>
-                      <span style={{ fontSize: 9, color: 'var(--gold)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '.05em' }}>Training Material</span>
+                      <span style={{ fontSize: 9, color: 'var(--gold)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '.05em' }}>{t('trainingMaterialLabel')}</span>
                       <h4 className="pname" style={{ fontSize: 12.5 }}>{vid.name}</h4>
-                      <a href={vid.url} target="_blank" rel="noreferrer" style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600 }} className="hover:underline truncate block">Watch Link</a>
+                      <a href={vid.url} target="_blank" rel="noreferrer" style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600 }} className="hover:underline truncate block">{t('watchLinkLabel')}</a>
                     </div>
                   </div>
                 );
               })
             ) : (
               <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic', gridColumn: '1 / -1', padding: '32px 0', textAlign: 'center' }}>
-                No skill upgrade videos currently available.
+                {t('noSkillUpgradeVideosMsg')}
               </p>
             )}
           </div>
         </div>
+      </div>
+  );
+}
+
+// ============================================================================
+// COMPONENT 11.55: SUPPORT CONTACT VIEW (SHOP ADMIN - OWNER CONTACT DETAILS)
+// ============================================================================
+// Reached via the mobile bottom-nav "Customer Service" icon for Shop Admins.
+// Shows the Super-Admin-managed owner contact details (name, phone,
+// WhatsApp, address) - distinct from CustomerCareView above, which only
+// shows training videos.
+export function SupportContactView({ t, api }) {
+  const [config, setConfig] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setConfig(await api.getSupportConfig());
+      } catch (e) {
+        console.error('Failed to load support config:', e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
+        <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingSupportResourcesMsg')}</span>
+      </div>
+    );
+  }
+
+  const hasContactInfo = !!(config?.ownerName || config?.ownerPhone || config?.whatsapp || config?.ownerAddress);
+  const rows = [
+    { icon: User, color: 'purple', label: t('ownerNameLabel'), value: config?.ownerName },
+    { icon: Phone, color: 'maroon', label: t('ownerPhoneLabel'), value: config?.ownerPhone },
+    { icon: MessageCircle, color: 'jgreen', label: t('whatsappNumberLabel'), value: config?.whatsapp },
+    { icon: MapPin, color: 'teal', label: t('addressLabel'), value: config?.ownerAddress },
+  ].filter(r => r.value);
+
+  return (
+    <div className="animate-fade-in">
+      <div className="page-head">
+        <div>
+          <div className="eyebrow"><Headset /> {t('supportContactEyebrow')}</div>
+          <h1>{t('supportContactTitle')}</h1>
+          <p>{t('supportContactDesc')}</p>
+        </div>
+      </div>
+
+      <div className="card" style={{ maxWidth: 520 }}>
+        {hasContactInfo ? (
+          <div className="space-y-3">
+            {rows.map((r, idx) => (
+              <div key={idx} className="loc-box">
+                <div className="loc-info">
+                  <div className={`icon-badge ${r.color}`}><r.icon /></div>
+                  <div className="loc-text">
+                    <span className="t1" style={{ display: 'block' }}>{r.value}</span>
+                    <span className="t2">{r.label}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic', padding: '32px 0', textAlign: 'center' }}>
+            {t('noContactInfoConfiguredMsg')}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -8258,6 +12601,9 @@ export function CustomerCareView({ t, api }) {
 // ============================================================================
 export function SupportConfigView({ t, api }) {
   const [whatsapp, setWhatsapp] = useState('');
+  const [ownerName, setOwnerName] = useState('');
+  const [ownerPhone, setOwnerPhone] = useState('');
+  const [ownerAddress, setOwnerAddress] = useState('');
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -8286,28 +12632,19 @@ export function SupportConfigView({ t, api }) {
   const [editingPtName, setEditingPtName] = useState('');
   const [savingPtId, setSavingPtId] = useState(null);
 
-  // Key Types management - the Super-Admin-curated list of key "types" (e.g.
-  // Vehicle Key) that populates the Key Type dropdown on the Customer
-  // Registration form. Mirrors the Shop Categories/Product Types blocks above.
-  const [keyTypes, setKeyTypes] = useState([]);
-  const [ktLoading, setKtLoading] = useState(true);
-  const [newKeyTypeName, setNewKeyTypeName] = useState('');
-  const [addingKeyType, setAddingKeyType] = useState(false);
-  const [editingKtId, setEditingKtId] = useState(null);
-  const [editingKtName, setEditingKtName] = useState('');
-  const [savingKtId, setSavingKtId] = useState(null);
-
   useEffect(() => {
     fetchConfig();
     fetchCategories();
     fetchProductTypes();
-    fetchKeyTypes();
   }, []);
 
   const fetchConfig = async () => {
     try {
       const res = await api.getSupportConfig();
       setWhatsapp(res.whatsapp || '');
+      setOwnerName(res.ownerName || '');
+      setOwnerPhone(res.ownerPhone || '');
+      setOwnerAddress(res.ownerAddress || '');
       setVideos(res.videos || []);
     } catch (e) {
       console.error('Failed to load support config:', e);
@@ -8320,10 +12657,10 @@ export function SupportConfigView({ t, api }) {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.updateSupportConfig({ whatsapp, videos });
-      alert('Support configuration updated successfully!');
+      await api.updateSupportConfig({ whatsapp, videos, ownerName, ownerPhone, ownerAddress });
+      alert(t('supportConfigUpdatedMsg'));
     } catch (e) {
-      alert(`Save failed: ${e.message}`);
+      alert(t('saveFailedTemplate').split('{msg}')[0] + e.message);
     } finally {
       setSaving(false);
     }
@@ -8343,7 +12680,7 @@ export function SupportConfigView({ t, api }) {
   const handleAddCategory = async () => {
     const name = newCategoryName.trim();
     if (!name) {
-      alert('Please enter a category name.');
+      alert(t('pleaseEnterCategoryNameMsg'));
       return;
     }
     setAddingCategory(true);
@@ -8352,7 +12689,7 @@ export function SupportConfigView({ t, api }) {
       setNewCategoryName('');
       await fetchCategories();
     } catch (e) {
-      alert(`Failed to add category: ${e.message}`);
+      alert(t('failedAddCategoryTemplate').split('{msg}')[0] + e.message);
     } finally {
       setAddingCategory(false);
     }
@@ -8366,7 +12703,7 @@ export function SupportConfigView({ t, api }) {
   const handleSaveEditCategory = async (id) => {
     const name = editingCatName.trim();
     if (!name) {
-      alert('Please enter a category name.');
+      alert(t('pleaseEnterCategoryNameMsg'));
       return;
     }
     setSavingCatId(id);
@@ -8375,20 +12712,21 @@ export function SupportConfigView({ t, api }) {
       setEditingCatId(null);
       await fetchCategories();
     } catch (e) {
-      alert(`Failed to update category: ${e.message}`);
+      alert(t('failedUpdateCategoryTemplate').split('{msg}')[0] + e.message);
     } finally {
       setSavingCatId(null);
     }
   };
 
   const handleDeleteCategory = async (cat) => {
-    if (!confirm(`Delete the "${cat.name}" category? Shops already using it keep it, but it will no longer be offered on the registration form.`)) return;
+    const [confirmPre, confirmPost] = t('deleteCategoryConfirmTemplate').split('{name}');
+    if (!confirm(confirmPre + cat.name + confirmPost)) return;
     setSavingCatId(cat.id);
     try {
       await api.deleteShopCategory(cat.id);
       await fetchCategories();
     } catch (e) {
-      alert(`Failed to delete category: ${e.message}`);
+      alert(t('failedDeleteCategoryTemplate').split('{msg}')[0] + e.message);
     } finally {
       setSavingCatId(null);
     }
@@ -8408,7 +12746,7 @@ export function SupportConfigView({ t, api }) {
   const handleAddProductType = async () => {
     const name = newProductTypeName.trim();
     if (!name) {
-      alert('Please enter a product type name.');
+      alert(t('pleaseEnterProductTypeNameMsg'));
       return;
     }
     setAddingProductType(true);
@@ -8417,7 +12755,7 @@ export function SupportConfigView({ t, api }) {
       setNewProductTypeName('');
       await fetchProductTypes();
     } catch (e) {
-      alert(`Failed to add product type: ${e.message}`);
+      alert(t('failedAddProductTypeTemplate').split('{msg}')[0] + e.message);
     } finally {
       setAddingProductType(false);
     }
@@ -8431,7 +12769,7 @@ export function SupportConfigView({ t, api }) {
   const handleSaveEditProductType = async (id) => {
     const name = editingPtName.trim();
     if (!name) {
-      alert('Please enter a product type name.');
+      alert(t('pleaseEnterProductTypeNameMsg'));
       return;
     }
     setSavingPtId(id);
@@ -8440,87 +12778,23 @@ export function SupportConfigView({ t, api }) {
       setEditingPtId(null);
       await fetchProductTypes();
     } catch (e) {
-      alert(`Failed to update product type: ${e.message}`);
+      alert(t('failedUpdateProductTypeTemplate').split('{msg}')[0] + e.message);
     } finally {
       setSavingPtId(null);
     }
   };
 
   const handleDeleteProductType = async (pt) => {
-    if (!confirm(`Delete the "${pt.name}" product type? Listings already using it keep it, but it will no longer be offered on the Inventory Product Creation form.`)) return;
+    const [confirmPre, confirmPost] = t('deleteProductTypeConfirmTemplate').split('{name}');
+    if (!confirm(confirmPre + pt.name + confirmPost)) return;
     setSavingPtId(pt.id);
     try {
       await api.deleteProductType(pt.id);
       await fetchProductTypes();
     } catch (e) {
-      alert(`Failed to delete product type: ${e.message}`);
+      alert(t('failedDeleteProductTypeTemplate').split('{msg}')[0] + e.message);
     } finally {
       setSavingPtId(null);
-    }
-  };
-
-  const fetchKeyTypes = async () => {
-    try {
-      const res = await api.getKeyTypes();
-      setKeyTypes(res || []);
-    } catch (e) {
-      console.error('Failed to load key types:', e);
-    } finally {
-      setKtLoading(false);
-    }
-  };
-
-  const handleAddKeyType = async () => {
-    const name = newKeyTypeName.trim();
-    if (!name) {
-      alert('Please enter a key type name.');
-      return;
-    }
-    setAddingKeyType(true);
-    try {
-      await api.createKeyType(name);
-      setNewKeyTypeName('');
-      await fetchKeyTypes();
-    } catch (e) {
-      alert(`Failed to add key type: ${e.message}`);
-    } finally {
-      setAddingKeyType(false);
-    }
-  };
-
-  const handleStartEditKeyType = (kt) => {
-    setEditingKtId(kt.id);
-    setEditingKtName(kt.name);
-  };
-
-  const handleSaveEditKeyType = async (id) => {
-    const name = editingKtName.trim();
-    if (!name) {
-      alert('Please enter a key type name.');
-      return;
-    }
-    setSavingKtId(id);
-    try {
-      await api.updateKeyType(id, name);
-      setEditingKtId(null);
-      await fetchKeyTypes();
-    } catch (e) {
-      alert(`Failed to update key type: ${e.message}`);
-    } finally {
-      setSavingKtId(null);
-    }
-  };
-
-  const handleDeleteKeyType = async (kt) => {
-    if (!confirm(`Delete the "${kt.name}" key type? Customers already using it keep it, but it will no longer be offered on the Customer Registration form.`)) return;
-    setSavingKtId(kt.id);
-    try {
-      await api.deleteKeyType(kt.id);
-      await fetchKeyTypes();
-    } catch (e) {
-      alert(`Failed to delete key type: ${e.message}`);
-    } finally {
-      setSavingKtId(null);
     }
   };
 
@@ -8528,7 +12802,7 @@ export function SupportConfigView({ t, api }) {
     return (
       <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
         <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading support configuration&hellip;</span>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingSupportConfigMsg')}</span>
       </div>
     );
   }
@@ -8537,9 +12811,9 @@ export function SupportConfigView({ t, api }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><LifeBuoy /> Platform Support</div>
-          <h1>Customer Support Configuration</h1>
-          <p>Configure the global customer care contact and training video links visible to every shop.</p>
+          <div className="eyebrow"><LifeBuoy /> {t('platformSupportEyebrow')}</div>
+          <h1>{t('customerSupportConfigTitle')}</h1>
+          <p>{t('configureGlobalSupportDesc')}</p>
         </div>
       </div>
 
@@ -8547,11 +12821,46 @@ export function SupportConfigView({ t, api }) {
         <form onSubmit={handleSave}>
           <div className="reg-section">
             <div className="reg-field" style={{ marginBottom: 0 }}>
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><MessageCircle /></div><b>Customer Support WhatsApp Number <span className="req">*</span></b></div>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><MessageCircle /></div><b>{t('customerSupportWhatsappLabel')} <span className="req">*</span></b></div>
               <div className="input-wrap">
                 <input
                   type="text" required value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)}
-                  placeholder="e.g. +91 98765 43210"
+                  placeholder={t('whatsappNumberPlaceholderEg')}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="reg-section">
+            <div className="reg-section-head">
+              <div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div>
+              <h3>{t('ownerContactSectionTitle')}</h3>
+              <span className="sub" style={{ marginLeft: 'auto' }}>{t('ownerContactSectionDesc')}</span>
+            </div>
+            <div className="reg-field">
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('ownerNameLabel')}</b></div>
+              <div className="input-wrap">
+                <input
+                  type="text" value={ownerName} onChange={(e) => setOwnerName(e.target.value)}
+                  placeholder={t('ownerNamePlaceholderEg')}
+                />
+              </div>
+            </div>
+            <div className="reg-field">
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Phone /></div><b>{t('ownerPhoneLabel')}</b></div>
+              <div className="input-wrap">
+                <input
+                  type="text" value={ownerPhone} onChange={(e) => setOwnerPhone(e.target.value)}
+                  placeholder={t('ownerPhonePlaceholderEg')}
+                />
+              </div>
+            </div>
+            <div className="reg-field" style={{ marginBottom: 0 }}>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>{t('addressLabel')}</b></div>
+              <div className="input-wrap">
+                <input
+                  type="text" value={ownerAddress} onChange={(e) => setOwnerAddress(e.target.value)}
+                  placeholder={t('ownerAddressPlaceholderEg')}
                 />
               </div>
             </div>
@@ -8559,19 +12868,19 @@ export function SupportConfigView({ t, api }) {
 
           <div className="reg-section" style={{ marginBottom: 0 }}>
             <div className="reg-section-head" style={{ justifyContent: 'flex-end' }}>
-              <span className="sub" style={{ marginRight: 10 }}>{videos.length} video{videos.length === 1 ? '' : 's'}</span>
+              <span className="sub" style={{ marginRight: 10 }}>{videos.length} {videos.length === 1 ? t('videoSingularLabel') : t('videoPluralLabel')}</span>
               <button
                 type="button"
                 onClick={() => setVideos([...videos, { name: '', url: '' }])}
                 className="btn btn-outline btn-sm"
               >
-                <Plus /> Add Video
+                <Plus /> {t('addVideoBtn')}
               </button>
             </div>
 
             {videos.length === 0 ? (
               <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
-                No videos configured. Click &ldquo;Add Video&rdquo; to add locksmith training links.
+                {t('noVideosConfiguredMsg')}
               </p>
             ) : (
               <div className="space-y-3" style={{ maxHeight: 380, overflowY: 'auto', paddingRight: 4, paddingTop: 2 }}>
@@ -8585,13 +12894,13 @@ export function SupportConfigView({ t, api }) {
                       onClick={() => setVideos(videos.filter((_, i) => i !== idx))}
                       className="icon-btn"
                       style={{ position: 'absolute', top: 12, right: 12, color: 'var(--red)' }}
-                      title="Remove video"
+                      title={t('removeVideoTitle')}
                     >
                       <X />
                     </button>
                     <div className="form-grid" style={{ paddingRight: 36 }}>
                       <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: `var(--${rowColor})` }}><PlayCircle /></div><b>Video Title / Name</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: `var(--${rowColor})` }}><PlayCircle /></div><b>{t('videoTitleNameLabel')}</b></div>
                         <div className="input-wrap">
                           <input
                             type="text" required value={vid.name}
@@ -8600,12 +12909,12 @@ export function SupportConfigView({ t, api }) {
                               newVids[idx].name = e.target.value;
                               setVideos(newVids);
                             }}
-                            placeholder="e.g. Locksmith Career Income"
+                            placeholder={t('videoTitlePlaceholderEg')}
                           />
                         </div>
                       </div>
                       <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><ExternalLink /></div><b>YouTube URL</b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><ExternalLink /></div><b>{t('youtubeUrlLabel')}</b></div>
                         <div className="input-wrap">
                           <input
                             type="url" required value={vid.url}
@@ -8629,7 +12938,7 @@ export function SupportConfigView({ t, api }) {
           <div className="form-action-bar flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginTop: 20, marginBottom: 8 }}>
             <button type="submit" disabled={saving} className="btn btn-primary">
               {saving ? <RefreshCw className="animate-spin" /> : <Check />}
-              <span>Save Configuration</span>
+              <span>{t('saveConfigurationBtn')}</span>
             </button>
           </div>
         </form>
@@ -8639,11 +12948,11 @@ export function SupportConfigView({ t, api }) {
         <div className="reg-section" style={{ marginBottom: 0 }}>
           <div className="reg-section-head">
             <div className="reg-ico" style={{ background: 'var(--purple)' }}><Tag /></div>
-            <h3>Shop Categories</h3>
-            <span className="sub" style={{ marginLeft: 'auto' }}>{categories.length} categor{categories.length === 1 ? 'y' : 'ies'}</span>
+            <h3>{t('shopCategoriesTitle')}</h3>
+            <span className="sub" style={{ marginLeft: 'auto' }}>{categories.length} {categories.length === 1 ? t('categorySingularLabel') : t('categoryPluralLabel')}</span>
           </div>
           <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
-            Manage the shop "type" options offered on the public self-registration wizard's Category dropdown.
+            {t('manageShopCategoriesDesc')}
           </p>
 
           <div className="reg-field" style={{ marginBottom: 16 }}>
@@ -8651,12 +12960,12 @@ export function SupportConfigView({ t, api }) {
               <div className="input-wrap" style={{ flex: 1 }}>
                 <input
                   type="text" value={newCategoryName} onChange={(e) => setNewCategoryName(e.target.value)}
-                  placeholder="Enter category name"
+                  placeholder={t('enterCategoryNamePlaceholder')}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddCategory(); } }}
                 />
               </div>
               <button type="button" onClick={handleAddCategory} disabled={addingCategory} className="btn btn-outline btn-sm">
-                {addingCategory ? <RefreshCw className="animate-spin" /> : <Plus />} Add
+                {addingCategory ? <RefreshCw className="animate-spin" /> : <Plus />} {t('addBtnLabel')}
               </button>
             </div>
           </div>
@@ -8667,7 +12976,7 @@ export function SupportConfigView({ t, api }) {
             </div>
           ) : categories.length === 0 ? (
             <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
-              No shop categories yet. Add one above - the registration form's dropdown will be empty until you do.
+              {t('noCategoriesYetMsg')}
             </p>
           ) : (
             <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
@@ -8680,10 +12989,10 @@ export function SupportConfigView({ t, api }) {
                         style={{ flex: 1 }} autoFocus
                         onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSaveEditCategory(cat.id); } }}
                       />
-                      <button type="button" onClick={() => handleSaveEditCategory(cat.id)} disabled={savingCatId === cat.id} className="icon-btn" title="Save" style={{ color: 'var(--jgreen)' }}>
+                      <button type="button" onClick={() => handleSaveEditCategory(cat.id)} disabled={savingCatId === cat.id} className="icon-btn" title={t('btnSave')} style={{ color: 'var(--jgreen)' }}>
                         {savingCatId === cat.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4" />}
                       </button>
-                      <button type="button" onClick={() => setEditingCatId(null)} className="icon-btn" title="Cancel">
+                      <button type="button" onClick={() => setEditingCatId(null)} className="icon-btn" title={t('btnCancel')}>
                         <X className="h-4 w-4" />
                       </button>
                     </>
@@ -8691,12 +13000,12 @@ export function SupportConfigView({ t, api }) {
                     <>
                       <Tag style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
                       <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{cat.name}</span>
-                      <button type="button" onClick={() => handleStartEditCategory(cat)} className="icon-btn" title="Edit">
+                      <button type="button" onClick={() => handleStartEditCategory(cat)} className="icon-btn" title={t('btnEdit')}>
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
                         type="button" onClick={() => handleDeleteCategory(cat)} disabled={savingCatId === cat.id}
-                        className="icon-btn" style={{ color: 'var(--red)' }} title="Delete"
+                        className="icon-btn" style={{ color: 'var(--red)' }} title={t('btnDelete')}
                       >
                         {savingCatId === cat.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
                       </button>
@@ -8713,11 +13022,11 @@ export function SupportConfigView({ t, api }) {
         <div className="reg-section" style={{ marginBottom: 0 }}>
           <div className="reg-section-head">
             <div className="reg-ico" style={{ background: 'var(--blue)' }}><Layers /></div>
-            <h3>Product Types</h3>
-            <span className="sub" style={{ marginLeft: 'auto' }}>{productTypes.length} type{productTypes.length === 1 ? '' : 's'}</span>
+            <h3>{t('productTypesTitle')}</h3>
+            <span className="sub" style={{ marginLeft: 'auto' }}>{productTypes.length} {productTypes.length === 1 ? t('typeSingularLabel') : t('typePluralLabel')}</span>
           </div>
           <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
-            Manage the Product Type options offered on the Inventory Product Creation form.
+            {t('manageProductTypesDesc')}
           </p>
 
           <div className="reg-field" style={{ marginBottom: 16 }}>
@@ -8725,12 +13034,12 @@ export function SupportConfigView({ t, api }) {
               <div className="input-wrap" style={{ flex: 1 }}>
                 <input
                   type="text" value={newProductTypeName} onChange={(e) => setNewProductTypeName(e.target.value)}
-                  placeholder="Enter product type"
+                  placeholder={t('enterProductTypePlaceholder')}
                   onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddProductType(); } }}
                 />
               </div>
               <button type="button" onClick={handleAddProductType} disabled={addingProductType} className="btn btn-outline btn-sm">
-                {addingProductType ? <RefreshCw className="animate-spin" /> : <Plus />} Add
+                {addingProductType ? <RefreshCw className="animate-spin" /> : <Plus />} {t('addBtnLabel')}
               </button>
             </div>
           </div>
@@ -8741,7 +13050,7 @@ export function SupportConfigView({ t, api }) {
             </div>
           ) : productTypes.length === 0 ? (
             <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
-              No product types yet. Add one above - the Inventory Product Creation dropdown will be empty until you do.
+              {t('noProductTypesYetMsg')}
             </p>
           ) : (
             <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
@@ -8754,10 +13063,10 @@ export function SupportConfigView({ t, api }) {
                         style={{ flex: 1 }} autoFocus
                         onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSaveEditProductType(pt.id); } }}
                       />
-                      <button type="button" onClick={() => handleSaveEditProductType(pt.id)} disabled={savingPtId === pt.id} className="icon-btn" title="Save" style={{ color: 'var(--jgreen)' }}>
+                      <button type="button" onClick={() => handleSaveEditProductType(pt.id)} disabled={savingPtId === pt.id} className="icon-btn" title={t('btnSave')} style={{ color: 'var(--jgreen)' }}>
                         {savingPtId === pt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4" />}
                       </button>
-                      <button type="button" onClick={() => setEditingPtId(null)} className="icon-btn" title="Cancel">
+                      <button type="button" onClick={() => setEditingPtId(null)} className="icon-btn" title={t('btnCancel')}>
                         <X className="h-4 w-4" />
                       </button>
                     </>
@@ -8765,12 +13074,12 @@ export function SupportConfigView({ t, api }) {
                     <>
                       <Layers style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
                       <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{pt.name}</span>
-                      <button type="button" onClick={() => handleStartEditProductType(pt)} className="icon-btn" title="Edit">
+                      <button type="button" onClick={() => handleStartEditProductType(pt)} className="icon-btn" title={t('btnEdit')}>
                         <Edit className="h-4 w-4" />
                       </button>
                       <button
                         type="button" onClick={() => handleDeleteProductType(pt)} disabled={savingPtId === pt.id}
-                        className="icon-btn" style={{ color: 'var(--red)' }} title="Delete"
+                        className="icon-btn" style={{ color: 'var(--red)' }} title={t('btnDelete')}
                       >
                         {savingPtId === pt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
                       </button>
@@ -8783,79 +13092,6 @@ export function SupportConfigView({ t, api }) {
         </div>
       </div>
 
-      <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
-        <div className="reg-section" style={{ marginBottom: 0 }}>
-          <div className="reg-section-head">
-            <div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div>
-            <h3>Key Types</h3>
-            <span className="sub" style={{ marginLeft: 'auto' }}>{keyTypes.length} type{keyTypes.length === 1 ? '' : 's'}</span>
-          </div>
-          <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
-            Manage the Key Type options offered next to the Key field on the Customer Registration form.
-          </p>
-
-          <div className="reg-field" style={{ marginBottom: 16 }}>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <div className="input-wrap" style={{ flex: 1 }}>
-                <input
-                  type="text" value={newKeyTypeName} onChange={(e) => setNewKeyTypeName(e.target.value)}
-                  placeholder="Enter key type"
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddKeyType(); } }}
-                />
-              </div>
-              <button type="button" onClick={handleAddKeyType} disabled={addingKeyType} className="btn btn-outline btn-sm">
-                {addingKeyType ? <RefreshCw className="animate-spin" /> : <Plus />} Add
-              </button>
-            </div>
-          </div>
-
-          {ktLoading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
-              <RefreshCw className="animate-spin" style={{ width: 22, height: 22, color: 'var(--gold)' }} />
-            </div>
-          ) : keyTypes.length === 0 ? (
-            <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
-              No key types yet. Add one above - the Customer Registration dropdown will be empty until you do.
-            </p>
-          ) : (
-            <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
-              {keyTypes.map((kt) => (
-                <div key={kt.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
-                  {editingKtId === kt.id ? (
-                    <>
-                      <input
-                        type="text" value={editingKtName} onChange={(e) => setEditingKtName(e.target.value)}
-                        style={{ flex: 1 }} autoFocus
-                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSaveEditKeyType(kt.id); } }}
-                      />
-                      <button type="button" onClick={() => handleSaveEditKeyType(kt.id)} disabled={savingKtId === kt.id} className="icon-btn" title="Save" style={{ color: 'var(--jgreen)' }}>
-                        {savingKtId === kt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4" />}
-                      </button>
-                      <button type="button" onClick={() => setEditingKtId(null)} className="icon-btn" title="Cancel">
-                        <X className="h-4 w-4" />
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <KeyRound style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
-                      <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{kt.name}</span>
-                      <button type="button" onClick={() => handleStartEditKeyType(kt)} className="icon-btn" title="Edit">
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button" onClick={() => handleDeleteKeyType(kt)} disabled={savingKtId === kt.id}
-                        className="icon-btn" style={{ color: 'var(--red)' }} title="Delete"
-                      >
-                        {savingKtId === kt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
-                      </button>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 }
@@ -8866,11 +13102,12 @@ function ShopSettingsView({ t, api }) {
   const [address, setAddress] = useState('');
   const [gst, setGst] = useState('');
   const [phone, setPhone] = useState('');
-  const [shopPhoto, setShopPhoto] = useState(null);
-  const [shopLicense, setShopLicense] = useState(null);
-  const [ownerAadhaar, setOwnerAadhaar] = useState(null);
-  const [docUploading, setDocUploading] = useState(null); // which doc slot is currently uploading
+  const [verificationDoc, setVerificationDoc] = useState(null);
+  const [docUploading, setDocUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [referralCode, setReferralCode] = useState(null);
+  const [referralGenerating, setReferralGenerating] = useState(false);
+  const [referralCopied, setReferralCopied] = useState(false);
 
   // Verification states
   const [revealPassword, setRevealPassword] = useState(false);
@@ -8902,17 +13139,18 @@ function ShopSettingsView({ t, api }) {
     fetchSettings();
   }, []);
 
-  // Maps the local UI slot key to the ShopDocument.documentType value the
-  // backend uses (see backend/src/common/shop-document.util.ts).
-  const DOC_TYPE_BY_KEY = { shopPhoto: 'SHOP_PHOTO', shopLicense: 'SHOP_LICENSE', ownerAadhaar: 'OWNER_AADHAAR' };
-  const DOC_SETTERS = { shopPhoto: setShopPhoto, shopLicense: setShopLicense, ownerAadhaar: setOwnerAadhaar };
-  const DOC_VALUES = () => ({ shopPhoto, shopLicense, ownerAadhaar });
+  // Single unified verification document type for Shop Settings uploads (see
+  // SHOP_DOCUMENT_TYPES.VERIFICATION_DOCUMENT in backend/src/common/shop-document.util.ts).
+  // The legacy SHOP_PHOTO/SHOP_LICENSE/OWNER_AADHAAR rows created at registration
+  // time are left dormant in the DB - not shown or editable here anymore.
+  const VERIFICATION_DOC_TYPE = 'VERIFICATION_DOCUMENT';
 
   const fetchSettings = async () => {
     setLoading(true);
     try {
       const res = await api.getSettings();
       setShopName(res.name);
+      setReferralCode(res.referralCode || null);
 
       if (res.companyDetails) {
         try {
@@ -8927,21 +13165,15 @@ function ShopSettingsView({ t, api }) {
         }
       }
 
-      // Verification documents now come from the relational ShopDocument
+      // Verification document now comes from the relational ShopDocument
       // table (res.documents), not from companyDetails JSON. Only the
-      // most-recent active document per type is kept (the backend already
-      // soft-deletes the previous one on replace, but findMany could still
-      // return more than one in edge cases, so pick the newest defensively).
-      const docsByType = {};
-      for (const doc of res.documents || []) {
-        const existing = docsByType[doc.documentType];
-        if (!existing || new Date(doc.createdAt) > new Date(existing.createdAt)) {
-          docsByType[doc.documentType] = doc;
-        }
-      }
-      for (const key of Object.keys(DOC_TYPE_BY_KEY)) {
-        DOC_SETTERS[key](docsByType[DOC_TYPE_BY_KEY[key]] || null);
-      }
+      // most-recent active VERIFICATION_DOCUMENT row is kept (the backend
+      // already soft-deletes the previous one on replace, but findMany could
+      // still return more than one in edge cases, so pick the newest
+      // defensively).
+      const verificationDocs = (res.documents || []).filter(d => d.documentType === VERIFICATION_DOC_TYPE);
+      verificationDocs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setVerificationDoc(verificationDocs[0] || null);
     } catch (e) {
       console.error(e);
     } finally {
@@ -8962,36 +13194,102 @@ function ShopSettingsView({ t, api }) {
     }
     try {
       await persistCompanyDetails();
-      alert('Shop workspace settings saved successfully!');
+      alert(t('shopWorkspaceSettingsSavedMsg'));
     } catch (e) {
       alert(e.message);
     }
   };
 
-  const handleDocUpload = async (docType, file) => {
+  const handleDocFileSelected = async (file) => {
     if (!file) return;
-    setDocUploading(docType);
+    if (file.size > 5 * 1024 * 1024) {
+      alert(t('fileSizeExceeds5MBMsg'));
+      return;
+    }
+    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    if (!allowedTypes.includes(file.type)) {
+      alert(t('onlyJpegPngPdfMsg'));
+      return;
+    }
+    setDocUploading(true);
     try {
-      // Backend soft-deletes any existing active document of this type and
-      // creates a new ShopDocument row - no separate delete call needed here.
-      const uploaded = await api.uploadSettingsDocument(DOC_TYPE_BY_KEY[docType], file);
-      DOC_SETTERS[docType](uploaded);
+      // Backend soft-deletes any existing active VERIFICATION_DOCUMENT row and
+      // creates a new one - no separate delete call needed here.
+      const uploaded = await api.uploadSettingsDocument(VERIFICATION_DOC_TYPE, file);
+      setVerificationDoc(uploaded);
     } catch (err) {
-      alert(err.message || 'Document upload failed');
+      alert(err.message || t('documentUploadFailedMsg'));
     } finally {
-      setDocUploading(null);
+      setDocUploading(false);
     }
   };
 
-  const handleDocRemove = async (docType) => {
-    const current = DOC_VALUES()[docType];
-    if (!current) return;
-    if (!confirm('Remove this document?')) return;
+  const handleCaptureDocPhoto = async () => {
     try {
-      await api.deleteSettingsDocument(current.id);
-      DOC_SETTERS[docType](null);
+      const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
+      const photo = await Camera.getPhoto({
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Camera,
+        quality: 85,
+      });
+      const response = await fetch(photo.webPath);
+      const blob = await response.blob();
+      const file = new File([blob], `verification_document.${photo.format || 'jpg'}`, { type: blob.type || 'image/jpeg' });
+      await handleDocFileSelected(file);
     } catch (err) {
-      alert(err.message || 'Failed to remove document');
+      // User cancelling the native camera sheet rejects the promise - not a
+      // real error, so only surface genuine failures.
+      if (err && err.message && !/cancell?ed/i.test(err.message)) {
+        alert(err.message || t('documentUploadFailedMsg'));
+      }
+    }
+  };
+
+  const handleDocRemove = async () => {
+    if (!verificationDoc) return;
+    if (!confirm(t('removeThisDocumentConfirm'))) return;
+    try {
+      await api.deleteSettingsDocument(verificationDoc.id);
+      setVerificationDoc(null);
+    } catch (err) {
+      alert(err.message || t('failedRemoveDocumentMsg'));
+    }
+  };
+
+  const handleGenerateReferralCode = async () => {
+    setReferralGenerating(true);
+    try {
+      const { referralCode: code } = await api.generateReferralCode();
+      setReferralCode(code);
+    } catch (err) {
+      alert(err.message || t('failedGenerateReferralCodeMsg'));
+    } finally {
+      setReferralGenerating(false);
+    }
+  };
+
+  const handleCopyReferralCode = async () => {
+    if (!referralCode) return;
+    try {
+      await navigator.clipboard.writeText(referralCode);
+      setReferralCopied(true);
+      setTimeout(() => setReferralCopied(false), 2000);
+    } catch (err) {
+      // Clipboard API unavailable - fall through silently, user can still
+      // read/copy the code manually from the screen.
+    }
+  };
+
+  const handleShareReferralCode = async () => {
+    if (!referralCode) return;
+    const message = t('referralShareMessageTemplate').replace('{code}', referralCode);
+    if (Capacitor.isNativePlatform()) {
+      const { Share } = await import('@capacitor/share');
+      await Share.share({ text: message });
+    } else if (navigator.share) {
+      await navigator.share({ text: message });
+    } else {
+      handleCopyReferralCode();
     }
   };
 
@@ -9006,7 +13304,7 @@ function ShopSettingsView({ t, api }) {
       setShowPassVerifyModal(false);
       setPassVerifyInput('');
     } catch (err) {
-      setPassVerifyError(err.message || 'Incorrect password entered.');
+      setPassVerifyError(err.message || t('incorrectPasswordEnteredMsg'));
     } finally {
       setPassVerifyLoading(false);
     }
@@ -9015,7 +13313,7 @@ function ShopSettingsView({ t, api }) {
   // OTP Reset handlers
   const handleOtpResetSend = async () => {
     if (!otpResetIdentifier) {
-      alert('Please enter your registered email or phone number');
+      alert(t('pleaseEnterRegisteredEmailPhoneMsg'));
       return;
     }
     setOtpResetDevCode('');
@@ -9025,7 +13323,7 @@ function ShopSettingsView({ t, api }) {
       setOtpResetSent(true);
       setOtpResetError('');
     } catch (err) {
-      alert(err.message || 'Failed to send OTP code.');
+      alert(err.message || t('failedSendOtpCodeMsg'));
     }
   };
 
@@ -9037,7 +13335,7 @@ function ShopSettingsView({ t, api }) {
       setOtpResetVerified(true);
       setOtpResetError('');
     } catch (err) {
-      setOtpResetError(err.message || 'Invalid OTP code. Please enter the correct code.');
+      setOtpResetError(err.message || t('invalidOtpCodeEnterCorrectMsg'));
     } finally {
       setOtpResetLoading(false);
     }
@@ -9046,7 +13344,7 @@ function ShopSettingsView({ t, api }) {
   const handleOtpResetSubmit = async (e) => {
     e.preventDefault();
     if (otpResetNewPassword !== otpResetConfirmPassword) {
-      setOtpResetError('Passwords do not match');
+      setOtpResetError(t('passwordsDoNotMatchMsg'));
       return;
     }
     setOtpResetLoading(true);
@@ -9054,7 +13352,7 @@ function ShopSettingsView({ t, api }) {
       await api.resetPasswordPublic(otpResetIdentifier, otpResetMethod || 'email', otpResetNewPassword);
       setRevealedPasswordVal(otpResetNewPassword);
       setOtpResetSuccess(true);
-      alert('Password updated successfully!');
+      alert(t('passwordUpdatedSuccessfullyMsg'));
       setOtpResetOpen(false);
       // Reset flow variables
       setOtpResetSent(false);
@@ -9065,7 +13363,7 @@ function ShopSettingsView({ t, api }) {
       setOtpResetConfirmPassword('');
       setOtpResetDevCode('');
     } catch (err) {
-      setOtpResetError(err.message || 'Failed to update password');
+      setOtpResetError(err.message || t('failedUpdatePasswordMsg'));
     } finally {
       setOtpResetLoading(false);
     }
@@ -9075,7 +13373,7 @@ function ShopSettingsView({ t, api }) {
     return (
       <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
         <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
-        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>Loading workspace settings…</span>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingWorkspaceSettingsMsg')}</span>
       </div>
     );
   }
@@ -9084,11 +13382,11 @@ function ShopSettingsView({ t, api }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Settings /> Workspace Configuration</div>
+          <div className="eyebrow"><Settings /> {t('workspaceConfigurationEyebrow')}</div>
           <h1>{t('settings')}</h1>
-          <p>Manage your shop profile, branding, verification documents, and account security.</p>
+          <p>{t('manageShopProfileDesc')}</p>
         </div>
-        <button onClick={fetchSettings} className="icon-btn" title="Refresh"><RefreshCw /></button>
+        <button onClick={fetchSettings} className="icon-btn" title={t('refreshTitle')}><RefreshCw /></button>
       </div>
 
       <div className="grid-2">
@@ -9097,116 +13395,123 @@ function ShopSettingsView({ t, api }) {
         <div className="section-title">
           <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Store style={{ width: 16, height: 16, color: 'var(--gold)' }} />
-            Workspace Profile
+            {t('workspaceProfileTitle')}
           </h2>
-          <span className="sub">Business identity &amp; contact details</span>
+          <span className="sub">{t('businessIdentityContactDesc')}</span>
         </div>
 
         <form onSubmit={handleUpdate}>
           <div className="reg-section">
             <div className="reg-field">
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>Workspace Display Name <span className="req">*</span></b></div>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>{t('workspaceDisplayNameLabel')} <span className="req">*</span></b></div>
               <div className="input-wrap">
                 <input type="text" required value={shopName} onChange={(e) => setShopName(e.target.value)} />
               </div>
             </div>
 
             <div className="reg-field">
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>Phone Number <span className="req">*</span></b></div>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
               <div className="input-wrap">
                 <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91..." />
               </div>
             </div>
 
             <div className="reg-field" style={{ marginBottom: 0 }}>
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>Registered Address <span className="req">*</span></b></div>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>{t('registeredAddressLabel')} <span className="req">*</span></b></div>
               <div className="input-wrap">
                 <input type="text" required value={address} onChange={(e) => setAddress(e.target.value)} />
               </div>
             </div>
           </div>
 
-          {/* Shop Verification Documents Section */}
+          {/* Shop Verification Document Section */}
           <div className="reg-section" style={{ marginBottom: 0 }}>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {[
-                { key: 'shopPhoto', label: 'Shop Photo', value: shopPhoto, icon: Camera, fileName: 'shop_photo', color: 'purple' },
-                { key: 'shopLicense', label: 'Shop License', value: shopLicense, icon: FileCheck, fileName: 'shop_license', color: 'skyblue' },
-                { key: 'ownerAadhaar', label: 'Owner Aadhaar', value: ownerAadhaar, icon: Fingerprint, fileName: 'owner_aadhaar', color: 'maroon' },
-              ].map(({ key, label, value, icon: SlotIcon, fileName, color }) => {
-                const isPdf = value && value.fileUrl && value.fileUrl.toLowerCase().endsWith('.pdf');
-                const uploading = docUploading === key;
-                return (
-                  <div key={key} style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 14, padding: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
-                    <div className="flex items-center justify-between">
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, fontWeight: 800, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
-                        <span className={`icon-badge ${color}`} style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><SlotIcon style={{ width: 10, height: 10 }} /></span>
-                        {label}
-                      </span>
-                      <span className={`badge ${value ? 'badge-active' : 'badge-pending'}`} style={{ padding: '2px 8px', fontSize: 9 }}>
-                        <span className="dot"></span>{value ? 'Uploaded' : 'Missing'}
-                      </span>
-                    </div>
-                    {value ? (
-                      <div style={{ height: 74, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-2)', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        {isPdf ? (
-                          <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--red)', fontWeight: 800 }}>
-                            <FileText style={{ width: 15, height: 15 }} /> PDF File
-                          </span>
-                        ) : (
-                          <img src={getAssetUrl(value.fileUrl)} className="w-full h-full object-cover" alt={`${label} Preview`} />
-                        )}
-                      </div>
-                    ) : (
-                      <div style={{ height: 74, borderRadius: 10, border: '1.5px dashed var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)' }}>
-                        <SlotIcon style={{ width: 20, height: 20 }} />
-                      </div>
-                    )}
-                    <div className="flex gap-2">
-                      {value ? (
-                        <>
-                          <button
-                            type="button"
-                            onClick={() => downloadAsset(value.fileUrl, value.originalName || filenameForAsset(value.fileUrl, fileName))}
-                            className="btn btn-primary btn-sm"
-                            style={{ flex: 1, fontSize: 10.5, padding: '8px 10px' }}
-                          >
-                            <Download style={{ width: 12, height: 12 }} />
-                            <span>Download</span>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDocRemove(key)}
-                            className="btn btn-danger-outline btn-sm"
-                            style={{ flex: 1, fontSize: 10.5, padding: '8px 10px' }}
-                          >
-                            <Trash style={{ width: 12, height: 12 }} />
-                            <span>Remove</span>
-                          </button>
-                        </>
+            {(() => {
+              const value = verificationDoc;
+              const isPdf = value && value.fileUrl && value.fileUrl.toLowerCase().endsWith('.pdf');
+              return (
+                <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 14, padding: 12, display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 320 }}>
+                  <div className="flex items-center justify-between">
+                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, fontWeight: 800, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                      <span className="icon-badge purple" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><FileCheck style={{ width: 10, height: 10 }} /></span>
+                      {t('verificationDocumentLabel')}
+                    </span>
+                    <span className={`badge ${value ? 'badge-active' : 'badge-pending'}`} style={{ padding: '2px 8px', fontSize: 9 }}>
+                      <span className="dot"></span>{value ? t('uploadedBadge') : t('missingBadge')}
+                    </span>
+                  </div>
+                  {value ? (
+                    <div style={{ height: 140, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-2)', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      {isPdf ? (
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--red)', fontWeight: 800 }}>
+                          <FileText style={{ width: 15, height: 15 }} /> {t('pdfFileLabel')}
+                        </span>
                       ) : (
-                        <label className="btn btn-ghost btn-sm btn-block" style={{ fontSize: 10.5, padding: '8px 10px', cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.6 : 1 }}>
-                          {uploading ? <RefreshCw className="animate-spin" style={{ width: 12, height: 12 }} /> : <Upload style={{ width: 12, height: 12 }} />}
-                          <span>{uploading ? 'Uploading…' : 'Upload'}</span>
-                          <input
-                            type="file" accept="image/jpeg,image/png,application/pdf" className="hidden" disabled={uploading}
-                            onClick={primeStoragePermission}
-                            onChange={(e) => { const file = e.target.files[0]; e.target.value = ''; handleDocUpload(key, file); }}
-                          />
-                        </label>
+                        <img src={getAssetUrl(value.fileUrl)} className="w-full h-full object-cover" alt={t('verificationDocumentLabel')} />
                       )}
                     </div>
+                  ) : (
+                    <div style={{ height: 140, borderRadius: 10, border: '1.5px dashed var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)' }}>
+                      <FileCheck style={{ width: 24, height: 24 }} />
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    {value ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => downloadAsset(value.fileUrl, value.originalName || filenameForAsset(value.fileUrl, 'verification_document'))}
+                          className="btn btn-primary btn-sm"
+                          style={{ flex: 1, fontSize: 10.5, padding: '8px 10px' }}
+                        >
+                          <Download style={{ width: 12, height: 12 }} />
+                          <span>{t('downloadTitleLabel')}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleDocRemove}
+                          className="btn btn-danger-outline btn-sm"
+                          style={{ flex: 1, fontSize: 10.5, padding: '8px 10px' }}
+                        >
+                          <Trash style={{ width: 12, height: 12 }} />
+                          <span>{t('btnRemove')}</span>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {IS_NATIVE_APP && (
+                          <button
+                            type="button"
+                            onClick={handleCaptureDocPhoto}
+                            disabled={docUploading}
+                            className="btn btn-ghost btn-sm"
+                            style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', opacity: docUploading ? 0.6 : 1 }}
+                          >
+                            <Camera style={{ width: 12, height: 12 }} />
+                            <span>{t('useCameraBtn')}</span>
+                          </button>
+                        )}
+                        <label className="btn btn-ghost btn-sm" style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', cursor: docUploading ? 'not-allowed' : 'pointer', opacity: docUploading ? 0.6 : 1 }}>
+                          {docUploading ? <RefreshCw className="animate-spin" style={{ width: 12, height: 12 }} /> : <Upload style={{ width: 12, height: 12 }} />}
+                          <span>{docUploading ? t('uploadingEllipsisLabel') : t('chooseFromGalleryBtn')}</span>
+                          <input
+                            type="file" accept="image/jpeg,image/png,application/pdf" className="hidden" disabled={docUploading}
+                            onClick={primeStoragePermission}
+                            onChange={(e) => { const file = e.target.files[0]; e.target.value = ''; handleDocFileSelected(file); }}
+                          />
+                        </label>
+                      </>
+                    )}
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })()}
           </div>
 
           <div className="form-action-bar flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginTop: 20 }}>
             <button type="submit" className="btn btn-primary">
               <Check />
-              <span>Save Workspace Details</span>
+              <span>{t('saveWorkspaceDetailsBtn')}</span>
             </button>
           </div>
         </form>
@@ -9219,28 +13524,28 @@ function ShopSettingsView({ t, api }) {
         <div className="section-title">
           <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
             <ShieldCheck style={{ width: 16, height: 16, color: 'var(--gold)' }} />
-            Admin Credentials
+            {t('adminCredentialsTitle')}
           </h2>
         </div>
 
         <div className="reg-section">
           <div className="reg-field" style={{ marginBottom: 12 }}>
-            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>Username / Name</b></div>
+            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('usernameNameLabel')}</b></div>
             <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)', fontFamily: 'var(--display)' }}>{user.name}</p>
           </div>
           <div className="reg-field" style={{ marginBottom: 12 }}>
-            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>Email Address</b></div>
+            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
             <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email}</p>
           </div>
           <div className="reg-field" style={{ marginBottom: 0 }}>
-            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>Phone Number</b></div>
+            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
             <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{phone || 'N/A'}</p>
           </div>
         </div>
 
         <div className="reg-section" style={{ marginBottom: 0 }}>
           <div className="reg-field" style={{ marginBottom: 14 }}>
-            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><KeyRound /></div><b>Workspace Password</b></div>
+            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><KeyRound /></div><b>{t('workspacePasswordLabel')}</b></div>
             <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '10px 14px' }}>
               <div className="flex items-center gap-2">
                 {revealPassword ? (
@@ -9252,7 +13557,7 @@ function ShopSettingsView({ t, api }) {
               <button
                 onClick={() => (revealPassword ? setRevealPassword(false) : setShowPassVerifyModal(true))}
                 className="icon-btn"
-                title={revealPassword ? 'Hide password' : 'Reveal password'}
+                title={revealPassword ? t('hidePasswordTitle') : t('revealPasswordTitle')}
               >
                 {revealPassword ? <EyeOff /> : <Eye />}
               </button>
@@ -9264,9 +13569,40 @@ function ShopSettingsView({ t, api }) {
             className="btn btn-outline btn-block"
           >
             <Lock />
-            <span>Forgot Password? Reset via OTP</span>
+            <span>{t('forgotPasswordResetOtpBtn')}</span>
           </button>
         </div>
+      </div>
+
+      {/* Referral Program Block */}
+      <div className="card" style={{ marginTop: 20 }}>
+        <div className="section-title">
+          <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <BadgePercent style={{ width: 16, height: 16, color: 'var(--gold)' }} />
+            {t('referralProgramTitle')}
+          </h2>
+          <span className="sub">{t('referralProgramDesc')}</span>
+        </div>
+
+        {referralCode ? (
+          <div>
+            <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px', marginBottom: 12 }}>
+              <span style={{ color: 'var(--gold)', fontFamily: 'monospace', fontWeight: 800, fontSize: 16, letterSpacing: '.1em' }}>{referralCode}</span>
+              <button onClick={handleCopyReferralCode} className="icon-btn" title={t('copyTitle')}>
+                {referralCopied ? <CheckCircle2 style={{ color: 'var(--green)' }} /> : <Copy />}
+              </button>
+            </div>
+            <button onClick={handleShareReferralCode} className="btn btn-primary btn-block">
+              <Share2 />
+              <span>{t('shareReferralCodeBtn')}</span>
+            </button>
+          </div>
+        ) : (
+          <button onClick={handleGenerateReferralCode} disabled={referralGenerating} className="btn btn-primary btn-block">
+            {referralGenerating ? <RefreshCw className="animate-spin" /> : <BadgePercent />}
+            <span>{referralGenerating ? t('generatingEllipsisLabel') : t('generateReferralCodeBtn')}</span>
+          </button>
+        )}
       </div>
       </div>
       </div>
@@ -9285,8 +13621,8 @@ function ShopSettingsView({ t, api }) {
 
             <div className="flex flex-col items-center mb-6" style={{ textAlign: 'center' }}>
               <div className="icon-badge maroon" style={{ marginBottom: 10 }}><Lock /></div>
-              <h2 style={{ fontSize: 18 }}>Confirm your password</h2>
-              <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>Verify your identity to reveal saved credentials.</p>
+              <h2 style={{ fontSize: 18 }}>{t('confirmYourPasswordTitle')}</h2>
+              <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>{t('verifyIdentityRevealDesc')}</p>
             </div>
 
             <form onSubmit={handlePasswordVerificationSubmit}>
@@ -9298,11 +13634,11 @@ function ShopSettingsView({ t, api }) {
               )}
 
               <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>Account Password <span className="req">*</span></b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('accountPasswordLabel')} <span className="req">*</span></b></div>
                 <div className="input-wrap">
                   <input
                     type={showVerifyPass ? "text" : "password"} required value={passVerifyInput} onChange={(e) => setPassVerifyInput(e.target.value)}
-                    placeholder="Enter password" style={{ paddingRight: 42 }}
+                    placeholder={t('enterPasswordPlaceholder')} style={{ paddingRight: 42 }}
                   />
                   <button
                     type="button"
@@ -9316,9 +13652,9 @@ function ShopSettingsView({ t, api }) {
               </div>
 
               <div className="flex gap-2">
-                <button type="button" onClick={() => { setShowPassVerifyModal(false); setPassVerifyError(''); }} className="btn btn-ghost" style={{ flex: 1 }}>Cancel</button>
+                <button type="button" onClick={() => { setShowPassVerifyModal(false); setPassVerifyError(''); }} className="btn btn-ghost" style={{ flex: 1 }}>{t('btnCancel')}</button>
                 <button type="submit" disabled={passVerifyLoading} className="btn btn-primary" style={{ flex: 2 }}>
-                  {passVerifyLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Confirm'}
+                  {passVerifyLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('btnConfirm')}
                 </button>
               </div>
             </form>
@@ -9333,8 +13669,8 @@ function ShopSettingsView({ t, api }) {
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 440, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><Lock /> Account Recovery</span>
-                <h2 style={{ fontSize: 18 }}>Reset Account Password</h2>
+                <span className="eyebrow" style={{ marginBottom: 4 }}><Lock /> {t('accountRecoveryEyebrow')}</span>
+                <h2 style={{ fontSize: 18 }}>{t('resetAccountPasswordTitle')}</h2>
               </div>
               <button onClick={() => setOtpResetOpen(false)} className="icon-btn">
                 <X className="h-4 w-4" />
@@ -9350,7 +13686,7 @@ function ShopSettingsView({ t, api }) {
                     className={`store-tab ${otpResetMethod === 'email' || !otpResetMethod ? 'active' : ''}`}
                     style={{ flex: 1 }}
                   >
-                    Email Recovery
+                    {t('emailRecoveryTab')}
                   </button>
                   <button
                     type="button"
@@ -9358,11 +13694,11 @@ function ShopSettingsView({ t, api }) {
                     className={`store-tab ${otpResetMethod === 'phone' ? 'active' : ''}`}
                     style={{ flex: 1 }}
                   >
-                    Phone Recovery
+                    {t('phoneRecoveryTab')}
                   </button>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: otpResetMethod === 'phone' ? 'var(--teal)' : 'var(--blue)' }}>{otpResetMethod === 'phone' ? <Phone /> : <Mail />}</div><b>{otpResetMethod === 'phone' ? 'Registered Phone Number' : 'Registered Email Address'} <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: otpResetMethod === 'phone' ? 'var(--teal)' : 'var(--blue)' }}>{otpResetMethod === 'phone' ? <Phone /> : <Mail />}</div><b>{otpResetMethod === 'phone' ? t('registeredPhoneNumberLabel') : t('registeredEmailAddressLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="text" required value={otpResetIdentifier} onChange={(e) => setOtpResetIdentifier(e.target.value)}
@@ -9375,24 +13711,24 @@ function ShopSettingsView({ t, api }) {
                   className="btn btn-primary btn-block"
                 >
                   <Mail />
-                  <span>Send OTP Verification Code</span>
+                  <span>{t('sendOtpVerificationCodeBtn')}</span>
                 </button>
               </div>
             ) : !otpResetVerified ? (
               <form onSubmit={handleOtpResetVerify}>
                 <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 14 }}>
-                  A 4-digit code has been dispatched to <span style={{ color: 'var(--gold)', fontWeight: 800 }}>{otpResetIdentifier}</span>.
+                  {t('fourDigitCodeDispatchedTemplate').split('{identifier}')[0]}<span style={{ color: 'var(--gold)', fontWeight: 800 }}>{otpResetIdentifier}</span>{t('fourDigitCodeDispatchedTemplate').split('{identifier}')[1]}
                 </p>
                 {otpResetDevCode && (
                   <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
                     <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                      Testing mode &mdash; no {otpResetMethod === 'phone' ? 'SMS' : 'SMTP'} provider configured
+                      {t('testingModeNoProviderTemplate').split('{provider}')[0]}{otpResetMethod === 'phone' ? 'SMS' : 'SMTP'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
                     </p>
                     <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{otpResetDevCode}</p>
                   </div>
                 )}
                 <div className="field">
-                  <label style={{ textAlign: 'center' }}>Enter OTP</label>
+                  <label style={{ textAlign: 'center' }}>{t('enterOtpLabel')}</label>
                   <input
                     type="text" required maxLength={4} value={otpResetOtpInput} onChange={(e) => setOtpResetOtpInput(e.target.value.replace(/\D/g, ''))}
                     placeholder="1234"
@@ -9401,9 +13737,9 @@ function ShopSettingsView({ t, api }) {
                 </div>
                 {otpResetError && <div style={{ color: '#b91c1c', fontSize: 12, fontWeight: 600, marginBottom: 14 }}>{otpResetError}</div>}
                 <div className="flex gap-2">
-                  <button type="button" onClick={() => setOtpResetSent(false)} className="btn btn-ghost" style={{ flex: 1 }}>Back</button>
+                  <button type="button" onClick={() => setOtpResetSent(false)} className="btn btn-ghost" style={{ flex: 1 }}>{t('btnBack')}</button>
                   <button type="submit" disabled={otpResetLoading} className="btn btn-primary" style={{ flex: 2 }}>
-                    {otpResetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Verify OTP'}
+                    {otpResetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyOtpBtn')}
                   </button>
                 </div>
               </form>
@@ -9411,11 +13747,11 @@ function ShopSettingsView({ t, api }) {
               <form onSubmit={handleOtpResetSubmit}>
                 {otpResetError && <div style={{ color: '#b91c1c', fontSize: 12, fontWeight: 600, marginBottom: 14 }}>{otpResetError}</div>}
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>New Password <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('newPasswordLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type={otpShowNewPass ? "text" : "password"} required value={otpResetNewPassword} onChange={(e) => setOtpResetNewPassword(e.target.value)}
-                      placeholder="Min 6 characters" style={{ paddingRight: 42 }}
+                      placeholder={t('min6CharactersPlaceholder')} style={{ paddingRight: 42 }}
                     />
                     <button
                       type="button"
@@ -9428,11 +13764,11 @@ function ShopSettingsView({ t, api }) {
                   </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>Confirm Password <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('confirmPasswordLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type={otpShowConfirmPass ? "text" : "password"} required value={otpResetConfirmPassword} onChange={(e) => setOtpResetConfirmPassword(e.target.value)}
-                      placeholder="Retype password" style={{ paddingRight: 42 }}
+                      placeholder={t('retypePasswordPlaceholder')} style={{ paddingRight: 42 }}
                     />
                     <button
                       type="button"
@@ -9448,7 +13784,7 @@ function ShopSettingsView({ t, api }) {
                   type="submit" disabled={otpResetLoading}
                   className="btn btn-primary btn-block"
                 >
-                  {otpResetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Update Password'}
+                  {otpResetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('updatePasswordBtn')}
                 </button>
               </form>
             )}
@@ -9501,7 +13837,7 @@ export function ReportsPortalView({ t, api }) {
       })));
     } catch (err) {
       console.error(err);
-      alert('Failed to generate report.');
+      alert(t('failedGenerateReportMsg'));
     } finally {
       setLoading(false);
     }
@@ -9509,7 +13845,7 @@ export function ReportsPortalView({ t, api }) {
 
   const handleDownloadCSV = () => {
     if (reportData.length === 0) {
-      alert('Please generate the report first.');
+      alert(t('pleaseGenerateReportFirstMsg'));
       return;
     }
     const headers = Object.keys(reportData[0]);
@@ -9537,7 +13873,7 @@ export function ReportsPortalView({ t, api }) {
 
   const handleDownloadTXT = () => {
     if (reportData.length === 0) {
-      alert('Please generate the report first.');
+      alert(t('pleaseGenerateReportFirstMsg'));
       return;
     }
     const headers = Object.keys(reportData[0]);
@@ -9569,29 +13905,29 @@ export function ReportsPortalView({ t, api }) {
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><BarChart3 /> Compliance &amp; Analytics</div>
+          <div className="eyebrow"><BarChart3 /> {t('complianceAnalyticsEyebrow')}</div>
           <h1>{t('reports')}</h1>
-          <p>Generate dynamic CSV and plain-text customer registration reports for any date range.</p>
+          <p>{t('reportsPortalDesc')}</p>
         </div>
       </div>
 
       <div className="card" style={{ marginBottom: 'clamp(16px, 4vw, 24px)' }}>
         <div className="section-title" style={{ marginBottom: 18 }}>
-          <h2>Report Builder</h2>
-          <span className="sub">Select a date range, then generate the report</span>
+          <h2>{t('reportBuilderTitle')}</h2>
+          <span className="sub">{t('selectDateRangeGenerateDesc')}</span>
         </div>
 
         <form onSubmit={handleGenerate}>
           <div className="reg-section">
             <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
               <div className="reg-field" style={{ marginBottom: 0 }}>
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>From Date</b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>{t('fromDateLabel')}</b></div>
                 <div className="input-wrap">
                   <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} />
                 </div>
               </div>
               <div className="reg-field" style={{ marginBottom: 0 }}>
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><CalendarRange /></div><b>To Date</b></div>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><CalendarRange /></div><b>{t('toDateLabel')}</b></div>
                 <div className="input-wrap">
                   <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} />
                 </div>
@@ -9606,7 +13942,7 @@ export function ReportsPortalView({ t, api }) {
             style={{ marginTop: 6 }}
           >
             <RefreshCw className={loading ? 'animate-spin' : ''} />
-            <span>{loading ? 'Generating\u2026' : 'Generate Report'}</span>
+            <span>{loading ? t('generatingEllipsisLabel') : t('generateReportBtn')}</span>
           </button>
         </form>
       </div>
@@ -9620,22 +13956,22 @@ export function ReportsPortalView({ t, api }) {
                 <span className="stat-trend"><TrendingUp />exported</span>
               </div>
               <div className="stat-num"><CountUp value={reportData.length} /></div>
-              <div className="stat-label">Records in Report</div>
+              <div className="stat-label">{t('recordsInReportLabel')}</div>
             </div>
             <div className="stat-card" style={{ animationDelay: '.15s' }}>
               <div className="stat-top">
                 <div className="icon-badge blue"><Calendar /></div>
               </div>
-              <div className="stat-num" style={{ fontSize: 18 }}>{fromDate || 'All time'} &rarr; {toDate || 'Today'}</div>
-              <div className="stat-label">Date Range Covered</div>
+              <div className="stat-num" style={{ fontSize: 18 }}>{fromDate || t('allTimeLabel')} &rarr; {toDate || t('todayLabel')}</div>
+              <div className="stat-label">{t('dateRangeCoveredLabel')}</div>
             </div>
           </div>
 
           {/* Graphical Report Chart Visualization */}
           <div className="card chart-card" style={{ marginBottom: 24 }}>
             <div className="section-title">
-              <h2>Visual Report Summary</h2>
-              <span className="sub">Hover elements to view exact values</span>
+              <h2>{t('visualReportSummaryTitle')}</h2>
+              <span className="sub">{t('hoverToViewValuesDesc')}</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -9643,7 +13979,7 @@ export function ReportsPortalView({ t, api }) {
               {/* Left Column: Bar Chart */}
               <div>
                 <h4 className="bar-label" style={{ textAlign: 'center', marginBottom: 10, fontSize: 11 }}>
-                  Registrations by Key Blank Reference
+                  {t('registrationsByKeyBlankRefTitle')}
                 </h4>
                 <div className="bars">
                   {(() => {
@@ -9684,7 +14020,7 @@ export function ReportsPortalView({ t, api }) {
               {/* Right Column: Line Graph */}
               <div>
                 <h4 className="bar-label" style={{ textAlign: 'center', marginBottom: 10, fontSize: 11 }}>
-                  Registration Timeline Trend
+                  {t('registrationTimelineTrendTitle')}
                 </h4>
                   <div className="h-48 w-full rounded-xl p-4 flex flex-col justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border)' }}>
                     {(() => {
@@ -9697,7 +14033,7 @@ export function ReportsPortalView({ t, api }) {
                       const sortedDates = Object.keys(dateCounts).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(-10);
                       const dataPoints = sortedDates.map(date => ({ label: date, value: dateCounts[date] }));
 
-                      if (dataPoints.length === 0) return <div className="text-center py-12" style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600 }}>No trend data</div>;
+                      if (dataPoints.length === 0) return <div className="text-center py-12" style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600 }}>{t('noTrendDataMsg')}</div>;
 
                       const maxVal = Math.max(...dataPoints.map(d => d.value), 1);
                       const width = 500;
@@ -9762,23 +14098,23 @@ export function ReportsPortalView({ t, api }) {
             </div>
 
             <div className="flex justify-between items-center" style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, borderTop: '1px solid var(--border)', paddingTop: 14, marginTop: 4 }}>
-              <span>Hover chart elements to view exact values</span>
+              <span>{t('hoverToViewValuesDesc')}</span>
             </div>
           </div>
 
           <div className="card table-card">
             <div className="table-head">
               <h2 style={{ fontFamily: 'var(--display)', fontWeight: 800, fontSize: 17 }}>
-                Report Preview <span style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 13 }}>({reportData.length} records)</span>
+                {t('reportPreviewTitle')} <span style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 13 }}>({reportData.length} {t('recordsLabel')})</span>
               </h2>
               <div className="row-actions" style={{ gap: 10 }}>
                 <button onClick={handleDownloadCSV} className="btn btn-outline btn-sm">
                   <Download />
-                  <span>Export CSV</span>
+                  <span>{t('exportCsvBtn')}</span>
                 </button>
                 <button onClick={handleDownloadTXT} className="btn btn-primary btn-sm">
                   <Download />
-                  <span>Export TXT</span>
+                  <span>{t('exportTxtBtn')}</span>
                 </button>
               </div>
             </div>
@@ -9818,7 +14154,7 @@ export function ReportsPortalView({ t, api }) {
                 </tbody>
               </table>
             </div>
-            <p style={{ padding: '14px 24px', fontSize: 11, color: 'var(--text-3)', fontStyle: 'italic' }}>Showing up to first 4 columns in browser preview. Export to view all detailed data columns.</p>
+            <p style={{ padding: '14px 24px', fontSize: 11, color: 'var(--text-3)', fontStyle: 'italic' }}>{t('showingFirstColumnsPreviewDesc')}</p>
           </div>
         </div>
       )}

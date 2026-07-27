@@ -376,6 +376,19 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException('Please select a valid shop category');
     }
 
+    // Referral code is optional, but if the owner entered one it must match
+    // another shop's generated referralCode (see ShopService.getOrCreateReferralCode).
+    let referredByCode: string | null = null;
+    if (dto.referralCode) {
+      const referrer = await this.tenantService.prisma.shop.findFirst({
+        where: { referralCode: dto.referralCode.trim().toUpperCase(), deletedAt: null },
+      });
+      if (!referrer) {
+        throw new BadRequestException('Invalid referral code');
+      }
+      referredByCode = referrer.referralCode;
+    }
+
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(dto.password, salt);
 
@@ -406,6 +419,7 @@ export class AuthService implements OnModuleInit {
           // Type of shop being registered, picked from the Super-Admin-curated
           // dropdown (see ShopCategoryService).
           categoryId: dto.categoryId,
+          referredByCode,
         },
       });
 

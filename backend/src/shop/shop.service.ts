@@ -270,6 +270,32 @@ export class ShopService {
     });
   }
 
+  // SHOP ADMIN: Get or lazily generate this shop's shareable referral code.
+  // Idempotent - repeated taps of the "Refer" button return the same code
+  // rather than minting a new one each time.
+  async getOrCreateReferralCode(shopId: string): Promise<string> {
+    const shop = await this.tenantService.prisma.shop.findUnique({ where: { id: shopId } });
+    if (!shop) throw new NotFoundException('Shop not found');
+    if (shop.referralCode) return shop.referralCode;
+
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous 0/O/1/I characters
+    for (let attempt = 0; attempt < 5; attempt++) {
+      let code = '';
+      for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      try {
+        const updated = await this.tenantService.prisma.shop.update({
+          where: { id: shopId },
+          data: { referralCode: code },
+        });
+        return updated.referralCode!;
+      } catch (err) {
+        if (err.code === 'P2002') continue; // unique clash - retry with a new code
+        throw err;
+      }
+    }
+    throw new BadRequestException('Failed to generate a unique referral code, please try again');
+  }
+
   // SHOP ADMIN: Remove a verification document
   async deleteShopDocument(shopId: string, documentId: string) {
     const doc = await this.tenantService.prisma.shopDocument.findFirst({

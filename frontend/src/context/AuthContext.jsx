@@ -250,6 +250,10 @@ export const AuthProvider = ({ children }) => {
       return request(`/api/shop/settings/documents/${id}`, 'DELETE');
     },
 
+    // Idempotent - returns the shop's existing referralCode if one was
+    // already generated, otherwise mints a new one (see ShopService.getOrCreateReferralCode).
+    generateReferralCode: async () => request('/api/shop/settings/referral', 'POST'),
+
     // --- VISUAL ADS ---
     getAdvertisements: async () => {
       const url = user.role === 'SUPER_ADMIN' ? '/api/super/advertisements' : '/api/shop/advertisements';
@@ -336,13 +340,6 @@ export const AuthProvider = ({ children }) => {
     updateProductType: async (id, name) => request(`/api/super/product-types/${id}`, 'PUT', { name }),
     deleteProductType: async (id) => request(`/api/super/product-types/${id}`, 'DELETE'),
 
-    // --- KEY TYPES ---
-    // Requires login: powers the Key Type dropdown on Customer Registration
-    // and the Super Admin's Key Types management screen.
-    getKeyTypes: async () => request('/api/key-types'),
-    createKeyType: async (name) => request('/api/super/key-types', 'POST', { name }),
-    updateKeyType: async (id, name) => request(`/api/super/key-types/${id}`, 'PUT', { name }),
-    deleteKeyType: async (id) => request(`/api/super/key-types/${id}`, 'DELETE'),
   };
 
   return (

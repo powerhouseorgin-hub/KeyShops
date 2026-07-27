@@ -98,6 +98,17 @@ model Shop {
   categoryId String?
   category   ShopCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
+  // This shop's own shareable referral code, lazily generated the first time
+  // the Shop Admin taps "Refer" in Shop Settings (see ShopService.getOrCreateReferralCode).
+  // Null until generated. Unique so it can be looked up unambiguously when another
+  // shop enters it during self-registration.
+  referralCode String? @unique
+
+  // The referral code (if any) THIS shop entered during its own self-registration,
+  // i.e. whose shop referred them. Plain string, not a FK, so history survives even
+  // if the referring shop's code later changes - mirrors Customer.keyType's pattern.
+  referredByCode String?
+
   users         User[]
   subscriptions Subscription[]
   customers     Customer[]
@@ -142,25 +153,6 @@ model ShopCategory {
 // removed later. Seeded with the previously-hardcoded default types so the
 // dropdown is never empty out of the box.
 model ProductType {
-  id   String @id @default(uuid())
-  name String @unique
-
-  deletedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([deletedAt])
-}
-
-// Super-Admin-managed reference list of "key types" (e.g. Vehicle Key)
-// offered as a dropdown next to the Key Code field on the Customer
-// Registration form - see KeyTypeController/Service. Not a foreign key
-// relation: Customer.keyType stays a plain string (mirrors
-// Promotion.productType) so existing customers are unaffected if a type is
-// renamed or removed later. Seeded with "Vehicle Key" as the default so the
-// dropdown is never empty out of the box.
-model KeyType {
   id   String @id @default(uuid())
   name String @unique
 
@@ -222,7 +214,6 @@ model Customer {
   idProofNumber   String? // Encrypted PII at rest
   reason          String?
   keyNumber       String
-  keyType         String?
   vehicleNumber   String?
   masterKeyId     String?
   masterKey       MasterKey?         @relation(fields: [masterKeyId], references: [id], onDelete: SetNull)
@@ -447,5 +438,13 @@ model PlatformConfig {
   id        String   @id @default("default")
   whatsapp  String   @default("+91 98765 43210")
   videos    Json     @default("[]")
+
+  // Super Admin contact details shown on the shop-facing "Support Contact"
+  // screen (reached from the bottom nav's Customer Service icon). Nullable so
+  // existing deployments aren't required to backfill them immediately.
+  ownerName    String?
+  ownerPhone   String?
+  ownerAddress String?
+
   updatedAt DateTime @updatedAt
 }

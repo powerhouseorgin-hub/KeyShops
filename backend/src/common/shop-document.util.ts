@@ -10,6 +10,11 @@ export const SHOP_DOCUMENT_TYPES = {
   SHOP_PHOTO: 'SHOP_PHOTO',
   SHOP_LICENSE: 'SHOP_LICENSE',
   OWNER_AADHAAR: 'OWNER_AADHAAR',
+  // Single unified document type used by the Shop Admin -> Shop Settings
+  // upload UI. SHOP_PHOTO/SHOP_LICENSE/OWNER_AADHAAR are still written at
+  // registration/provisioning time and remain readable, but are no longer
+  // editable from Shop Settings, which now only manages this one document.
+  VERIFICATION_DOCUMENT: 'VERIFICATION_DOCUMENT',
 } as const;
 
 export interface ShopDocumentInput {

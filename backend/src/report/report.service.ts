@@ -255,17 +255,42 @@ export class ReportService {
       where: { id: 'default' },
     });
     if (!config) {
-      return { whatsapp: '+91 98765 43210', videos: [] };
+      return { whatsapp: '+91 98765 43210', videos: [], ownerName: null, ownerPhone: null, ownerAddress: null };
     }
-    return { whatsapp: config.whatsapp, videos: config.videos };
+    return {
+      whatsapp: config.whatsapp,
+      videos: config.videos,
+      ownerName: config.ownerName,
+      ownerPhone: config.ownerPhone,
+      ownerAddress: config.ownerAddress,
+    };
   }
 
-  async updateSupportConfig(dto: { whatsapp: string; videos: { name: string; url: string }[] }) {
+  async updateSupportConfig(dto: {
+    whatsapp: string;
+    videos: { name: string; url: string }[];
+    ownerName?: string;
+    ownerPhone?: string;
+    ownerAddress?: string;
+  }) {
+    const data = {
+      whatsapp: dto.whatsapp,
+      videos: dto.videos ?? [],
+      ownerName: dto.ownerName ?? null,
+      ownerPhone: dto.ownerPhone ?? null,
+      ownerAddress: dto.ownerAddress ?? null,
+    };
     const updated = await this.tenantService.prisma.platformConfig.upsert({
       where: { id: 'default' },
-      create: { id: 'default', whatsapp: dto.whatsapp, videos: dto.videos ?? [] },
-      update: { whatsapp: dto.whatsapp, videos: dto.videos ?? [] },
+      create: { id: 'default', ...data },
+      update: data,
     });
-    return { whatsapp: updated.whatsapp, videos: updated.videos };
+    return {
+      whatsapp: updated.whatsapp,
+      videos: updated.videos,
+      ownerName: updated.ownerName,
+      ownerPhone: updated.ownerPhone,
+      ownerAddress: updated.ownerAddress,
+    };
   }
 }

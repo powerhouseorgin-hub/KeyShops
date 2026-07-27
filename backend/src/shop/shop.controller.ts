@@ -97,4 +97,10 @@ export class ShopController {
   async deleteSettingsDocument(@Request() req, @Param('id') id: string) {
     return this.shopService.deleteShopDocument(req.user.shopId, id);
   }
+
+  @Post('shop/settings/referral')
+  @Roles(Role.SHOP_ADMIN)
+  async generateReferralCode(@Request() req) {
+    return { referralCode: await this.shopService.getOrCreateReferralCode(req.user.shopId) };
+  }
 }
