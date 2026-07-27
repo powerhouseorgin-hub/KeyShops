@@ -386,6 +386,29 @@ const LANGUAGES = {
     inventory: 'Machines',
     customerCare: 'Customer Care',
     offersAdsBanners: 'Offers, Ads & Banners',
+    navOverview: 'Overview',
+    navOperations: 'Operations',
+    navBusiness: 'Business',
+    navSupport: 'Support',
+    navStore: 'Store',
+    navSettingsSection: 'Settings',
+    notificationsTitle: 'Notifications',
+    markAllRead: 'Mark all read',
+    noNotificationsFound: 'No notifications found',
+    searchingLabel: 'Searching\u2026',
+    noMatchingRecordsFound: 'No matching records found',
+    toggleShopActiveStatusTitle: 'Toggle shop active status',
+    bootstrappingWorkspace: 'Bootstrapping your workspace\u2026',
+    searchByPrefix: 'Search by',
+    searchTypeAnything: 'Anything',
+    searchTypeCustomer: 'Customer',
+    searchTypeProductType: 'Product Type',
+    searchTypeLocation: 'Location',
+    searchTypeKey: 'Key',
+    resultTypeCustomer: 'Customer',
+    resultTypeKey: 'Key',
+    resultTypeShop: 'Shop',
+    resultTypeProduct: 'Product',
     language: 'Language',
     btnSave: 'Save',
     btnSaveChanges: 'Save Changes',
@@ -496,6 +519,7 @@ const LANGUAGES = {
     diskStorage: 'Disk Storage',
     editWorkspace: 'Edit Workspace',
     managePlan: 'Manage Plan',
+    manageShopSettingsTitle: 'Manage Shop Settings',
     shopOnboarding: 'Shop Onboarding',
     provisionNewShopWorkspace: 'Provision New Shop Workspace',
     shopNameLabel: 'Shop Name',
@@ -995,7 +1019,9 @@ const LANGUAGES = {
     shareReferralCodeBtn: 'Share Referral Code',
     generateReferralCodeBtn: 'Generate Referral Code',
     failedGenerateReferralCodeMsg: 'Failed to generate referral code. Please try again.',
-    referralShareMessageTemplate: 'Use my referral code {code} when you register on Key Shop!',
+    referralShareMessageTemplate: 'Use my referral code {code} when you register on Key Shop! Download the app: {url}',
+    referralMessageCopiedMsg: 'Referral message copied to clipboard!',
+    referBtnTitle: 'Refer & Invite',
     verificationDocumentLabel: 'Verification Document',
     useCameraBtn: 'Use Camera',
     chooseFromGalleryBtn: 'Choose from Gallery',
@@ -1136,6 +1162,29 @@ const LANGUAGES = {
     inventory: 'मशीनें',
     customerCare: 'ग्राहक सेवा',
     offersAdsBanners: 'ऑफ़र, विज्ञापन और बैनर',
+    navOverview: 'अवलोकन',
+    navOperations: 'संचालन',
+    navBusiness: 'व्यवसाय',
+    navSupport: 'सहायता',
+    navStore: 'स्टोर',
+    navSettingsSection: 'सेटिंग्स',
+    notificationsTitle: 'सूचनाएं',
+    markAllRead: 'सभी को पढ़ा हुआ चिह्नित करें',
+    noNotificationsFound: 'कोई सूचना नहीं मिली',
+    searchingLabel: 'खोज रहे हैं\u2026',
+    noMatchingRecordsFound: 'कोई मिलान रिकॉर्ड नहीं मिला',
+    toggleShopActiveStatusTitle: 'दुकान सक्रिय स्थिति टॉगल करें',
+    bootstrappingWorkspace: 'आपका वर्कस्पेस लोड हो रहा है\u2026',
+    searchByPrefix: 'खोजें',
+    searchTypeAnything: 'कुछ भी',
+    searchTypeCustomer: 'ग्राहक',
+    searchTypeProductType: 'उत्पाद प्रकार',
+    searchTypeLocation: 'स्थान',
+    searchTypeKey: 'चाबी',
+    resultTypeCustomer: 'ग्राहक',
+    resultTypeKey: 'चाबी',
+    resultTypeShop: 'दुकान',
+    resultTypeProduct: 'उत्पाद',
     language: 'भाषा',
     btnSave: 'सहेजें',
     btnSaveChanges: 'परिवर्तन सहेजें',
@@ -1246,6 +1295,7 @@ const LANGUAGES = {
     diskStorage: 'डिस्क स्टोरेज',
     editWorkspace: 'वर्कस्पेस संपादित करें',
     managePlan: 'योजना प्रबंधित करें',
+    manageShopSettingsTitle: 'दुकान सेटिंग्स प्रबंधित करें',
     shopOnboarding: 'दुकान ऑनबोर्डिंग',
     provisionNewShopWorkspace: 'नया शॉप वर्कस्पेस प्रावधानित करें',
     shopNameLabel: 'दुकान का नाम',
@@ -1745,7 +1795,9 @@ const LANGUAGES = {
     shareReferralCodeBtn: 'रेफ़रल कोड साझा करें',
     generateReferralCodeBtn: 'रेफ़रल कोड बनाएं',
     failedGenerateReferralCodeMsg: 'रेफ़रल कोड बनाने में विफल। कृपया पुनः प्रयास करें।',
-    referralShareMessageTemplate: 'Key Shop पर रजिस्टर करते समय मेरा रेफ़रल कोड {code} इस्तेमाल करें!',
+    referralShareMessageTemplate: 'Key Shop पर रजिस्टर करते समय मेरा रेफ़रल कोड {code} इस्तेमाल करें! ऐप डाउनलोड करें: {url}',
+    referralMessageCopiedMsg: 'रेफ़रल संदेश क्लिपबोर्ड पर कॉपी हो गया!',
+    referBtnTitle: 'रेफर और आमंत्रित करें',
     verificationDocumentLabel: 'सत्यापन दस्तावेज़',
     useCameraBtn: 'कैमरा उपयोग करें',
     chooseFromGalleryBtn: 'गैलरी से चुनें',
@@ -1886,6 +1938,29 @@ const LANGUAGES = {
     inventory: 'இயந்திரங்கள்',
     customerCare: 'வாடிக்கையாளர் சேவை',
     offersAdsBanners: 'சலுகைகள், விளம்பரங்கள் & பேனர்கள்',
+    navOverview: 'கண்ணோட்டம்',
+    navOperations: 'செயல்பாடுகள்',
+    navBusiness: 'வணிகம்',
+    navSupport: 'ஆதரவு',
+    navStore: 'கடை',
+    navSettingsSection: 'அமைப்புகள்',
+    notificationsTitle: 'அறிவிப்புகள்',
+    markAllRead: 'அனைத்தையும் படித்ததாக குறி',
+    noNotificationsFound: 'அறிவிப்புகள் எதுவும் இல்லை',
+    searchingLabel: 'தேடுகிறது\u2026',
+    noMatchingRecordsFound: 'பொருந்தும் பதிவுகள் இல்லை',
+    toggleShopActiveStatusTitle: 'கடை செயலில் நிலையை மாற்று',
+    bootstrappingWorkspace: 'உங்கள் பணிமனை தயாராகிறது\u2026',
+    searchByPrefix: 'தேடு',
+    searchTypeAnything: 'எதுவும்',
+    searchTypeCustomer: 'வாடிக்கையாளர்',
+    searchTypeProductType: 'தயாரிப்பு வகை',
+    searchTypeLocation: 'இடம்',
+    searchTypeKey: 'சாவி',
+    resultTypeCustomer: 'வாடிக்கையாளர்',
+    resultTypeKey: 'சாவி',
+    resultTypeShop: 'கடை',
+    resultTypeProduct: 'தயாரிப்பு',
     language: 'மொழி',
     btnSave: 'சேமி',
     btnSaveChanges: 'மாற்றங்களை சேமி',
@@ -1996,6 +2071,7 @@ const LANGUAGES = {
     diskStorage: 'டிஸ்க் சேமிப்பகம்',
     editWorkspace: 'பணியிடத்தைத் திருத்து',
     managePlan: 'திட்டத்தை நிர்வகி',
+    manageShopSettingsTitle: 'கடை அமைப்புகளை நிர்வகி',
     shopOnboarding: 'கடை இணைப்பு',
     provisionNewShopWorkspace: 'புதிய கடை பணியிடத்தை ஏற்பாடு செய்யவும்',
     shopNameLabel: 'கடை பெயர்',
@@ -2495,7 +2571,9 @@ const LANGUAGES = {
     shareReferralCodeBtn: 'பரிந்துரை குறியீட்டைப் பகிரவும்',
     generateReferralCodeBtn: 'பரிந்துரை குறியீட்டை உருவாக்கு',
     failedGenerateReferralCodeMsg: 'பரிந்துரை குறியீட்டை உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.',
-    referralShareMessageTemplate: 'Key Shop-ல் பதிவு செய்யும்போது எனது பரிந்துரை குறியீடு {code} ஐப் பயன்படுத்தவும்!',
+    referralShareMessageTemplate: 'Key Shop-ல் பதிவு செய்யும்போது எனது பரிந்துரை குறியீடு {code} ஐப் பயன்படுத்தவும்! ஆப்ஸை பதிவிறக்கவும்: {url}',
+    referralMessageCopiedMsg: 'பரிந்துரை செய்தி கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது!',
+    referBtnTitle: 'பரிந்துரை & அழை',
     verificationDocumentLabel: 'சரிபார்ப்பு ஆவணம்',
     useCameraBtn: 'கேமராவைப் பயன்படுத்து',
     chooseFromGalleryBtn: 'கேலரியில் இருந்து தேர்ந்தெடு',
@@ -2636,6 +2714,29 @@ const LANGUAGES = {
     inventory: 'మెషీన్లు',
     customerCare: 'కస్టమర్ కేర్',
     offersAdsBanners: 'ఆఫర్లు, ప్రకటనలు & బ్యానర్లు',
+    navOverview: 'అవలోకనం',
+    navOperations: 'కార్యకలాపాలు',
+    navBusiness: 'వ్యాపారం',
+    navSupport: 'మద్దతు',
+    navStore: 'స్టోర్',
+    navSettingsSection: 'సెట్టింగ్‌లు',
+    notificationsTitle: 'నోటిఫికేషన్‌లు',
+    markAllRead: 'అన్నింటినీ చదివినట్లు గుర్తించండి',
+    noNotificationsFound: 'నోటిఫికేషన్‌లు కనుగొనబడలేదు',
+    searchingLabel: 'శోధిస్తోంది\u2026',
+    noMatchingRecordsFound: 'సరిపోలే రికార్డులు కనుగొనబడలేదు',
+    toggleShopActiveStatusTitle: 'షాప్ యాక్టివ్ స్టేటస్‌ని టోగుల్ చేయండి',
+    bootstrappingWorkspace: 'మీ వర్క్‌స్పేస్ సిద్ధమవుతోంది\u2026',
+    searchByPrefix: 'వెతకండి',
+    searchTypeAnything: 'ఏదైనా',
+    searchTypeCustomer: 'కస్టమర్',
+    searchTypeProductType: 'ఉత్పత్తి రకం',
+    searchTypeLocation: 'స్థానం',
+    searchTypeKey: 'కీ',
+    resultTypeCustomer: 'కస్టమర్',
+    resultTypeKey: 'కీ',
+    resultTypeShop: 'షాప్',
+    resultTypeProduct: 'ఉత్పత్తి',
     language: 'భాష',
     btnSave: 'సేవ్ చేయండి',
     btnSaveChanges: 'మార్పులను సేవ్ చేయండి',
@@ -2746,6 +2847,7 @@ const LANGUAGES = {
     diskStorage: 'డిస్క్ నిల్వ',
     editWorkspace: 'వర్క్‌స్పేస్‌ను సవరించండి',
     managePlan: 'ప్లాన్‌ను నిర్వహించండి',
+    manageShopSettingsTitle: 'షాప్ సెట్టింగ్‌లను నిర్వహించండి',
     shopOnboarding: 'షాప్ ఆన్‌బోర్డింగ్',
     provisionNewShopWorkspace: 'కొత్త షాప్ వర్క్‌స్పేస్‌ను ప్రొవిజన్ చేయండి',
     shopNameLabel: 'దుకాణం పేరు',
@@ -3245,7 +3347,9 @@ const LANGUAGES = {
     shareReferralCodeBtn: 'రెఫరల్ కోడ్ షేర్ చేయండి',
     generateReferralCodeBtn: 'రెఫరల్ కోడ్ సృష్టించండి',
     failedGenerateReferralCodeMsg: 'రెఫరల్ కోడ్ సృష్టించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.',
-    referralShareMessageTemplate: 'Key Shop‌లో నమోదు చేసేటప్పుడు నా రెఫరల్ కోడ్ {code} ఉపయోగించండి!',
+    referralShareMessageTemplate: 'Key Shop‌లో నమోదు చేసేటప్పుడు నా రెఫరల్ కోడ్ {code} ఉపయోగించండి! యాప్‌ను డౌన్‌లోడ్ చేయండి: {url}',
+    referralMessageCopiedMsg: 'రెఫరల్ సందేశం క్లిప్‌బోర్డ్‌కు కాపీ చేయబడింది!',
+    referBtnTitle: 'రెఫర్ & ఆహ్వానించండి',
     verificationDocumentLabel: 'ధృవీకరణ పత్రం',
     useCameraBtn: 'కెమెరా వాడండి',
     chooseFromGalleryBtn: 'గ్యాలరీ నుండి ఎంచుకోండి',
@@ -3386,6 +3490,29 @@ const LANGUAGES = {
     inventory: 'ಯಂತ್ರಗಳು',
     customerCare: 'ಗ್ರಾಹಕ ಸೇವೆ',
     offersAdsBanners: 'ಆಫರ್‌ಗಳು, ಜಾಹೀರಾತುಗಳು & ಬ್ಯಾನರ್‌ಗಳು',
+    navOverview: 'ಅವಲೋಕನ',
+    navOperations: 'ಕಾರ್ಯಾಚರಣೆಗಳು',
+    navBusiness: 'ವ್ಯಾಪಾರ',
+    navSupport: 'ಬೆಂಬಲ',
+    navStore: 'ಅಂಗಡಿ',
+    navSettingsSection: 'ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
+    notificationsTitle: 'ಅಧಿಸೂಚನೆಗಳು',
+    markAllRead: 'ಎಲ್ಲವನ್ನೂ ಓದಿದಂತೆ ಗುರುತಿಸಿ',
+    noNotificationsFound: 'ಯಾವುದೇ ಅಧಿಸೂಚನೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
+    searchingLabel: 'ಹುಡುಕಲಾಗುತ್ತಿದೆ\u2026',
+    noMatchingRecordsFound: 'ಹೊಂದಾಣಿಕೆಯ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
+    toggleShopActiveStatusTitle: 'ಅಂಗಡಿ ಸಕ್ರಿಯ ಸ್ಥಿತಿಯನ್ನು ಟಾಗಲ್ ಮಾಡಿ',
+    bootstrappingWorkspace: 'ನಿಮ್ಮ ಕಾರ್ಯಸ್ಥಳ ಸಿದ್ಧವಾಗುತ್ತಿದೆ\u2026',
+    searchByPrefix: 'ಹುಡುಕಿ',
+    searchTypeAnything: 'ಏನಾದರೂ',
+    searchTypeCustomer: 'ಗ್ರಾಹಕ',
+    searchTypeProductType: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರ',
+    searchTypeLocation: 'ಸ್ಥಳ',
+    searchTypeKey: 'ಕೀ',
+    resultTypeCustomer: 'ಗ್ರಾಹಕ',
+    resultTypeKey: 'ಕೀ',
+    resultTypeShop: 'ಅಂಗಡಿ',
+    resultTypeProduct: 'ಉತ್ಪನ್ನ',
     language: 'ಭಾಷೆ',
     btnSave: 'ಉಳಿಸಿ',
     btnSaveChanges: 'ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ',
@@ -3496,6 +3623,7 @@ const LANGUAGES = {
     diskStorage: 'ಡಿಸ್ಕ್ ಸಂಗ್ರಹಣೆ',
     editWorkspace: 'ವರ್ಕ್‌ಸ್ಪೇಸ್ ಸಂಪಾದಿಸಿ',
     managePlan: 'ಯೋಜನೆ ನಿರ್ವಹಿಸಿ',
+    manageShopSettingsTitle: 'ಅಂಗಡಿ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ',
     shopOnboarding: 'ಶಾಪ್ ಆನ್‌ಬೋರ್ಡಿಂಗ್',
     provisionNewShopWorkspace: 'ಹೊಸ ಶಾಪ್ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಅನ್ನು ಒದಗಿಸಿ',
     shopNameLabel: 'ಅಂಗಡಿ ಹೆಸರು',
@@ -3995,7 +4123,9 @@ const LANGUAGES = {
     shareReferralCodeBtn: 'ರೆಫರಲ್ ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಿ',
     generateReferralCodeBtn: 'ರೆಫರಲ್ ಕೋಡ್ ರಚಿಸಿ',
     failedGenerateReferralCodeMsg: 'ರೆಫರಲ್ ಕೋಡ್ ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
-    referralShareMessageTemplate: 'Key Shop ನಲ್ಲಿ ನೋಂದಾಯಿಸುವಾಗ ನನ್ನ ರೆಫರಲ್ ಕೋಡ್ {code} ಬಳಸಿ!',
+    referralShareMessageTemplate: 'Key Shop ನಲ್ಲಿ ನೋಂದಾಯಿಸುವಾಗ ನನ್ನ ರೆಫರಲ್ ಕೋಡ್ {code} ಬಳಸಿ! ಆ್ಯಪ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ: {url}',
+    referralMessageCopiedMsg: 'ರೆಫರಲ್ ಸಂದೇಶವನ್ನು ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲಾಗಿದೆ!',
+    referBtnTitle: 'ರೆಫರ್ ಮಾಡಿ & ಆಹ್ವಾನಿಸಿ',
     verificationDocumentLabel: 'ಪರಿಶೀಲನಾ ದಾಖಲೆ',
     useCameraBtn: 'ಕ್ಯಾಮರಾ ಬಳಸಿ',
     chooseFromGalleryBtn: 'ಗ್ಯಾಲರಿಯಿಂದ ಆಯ್ಕೆಮಾಡಿ',
@@ -4136,6 +4266,29 @@ const LANGUAGES = {
     inventory: 'മെഷീനുകൾ',
     customerCare: 'കസ്റ്റമർ കെയർ',
     offersAdsBanners: 'ഓഫറുകൾ, പരസ്യങ്ങൾ & ബാനറുകൾ',
+    navOverview: 'അവലോകനം',
+    navOperations: 'പ്രവർത്തനങ്ങൾ',
+    navBusiness: 'ബിസിനസ്',
+    navSupport: 'പിന്തുണ',
+    navStore: 'സ്റ്റോർ',
+    navSettingsSection: 'ക്രമീകരണങ്ങൾ',
+    notificationsTitle: 'അറിയിപ്പുകൾ',
+    markAllRead: 'എല്ലാം വായിച്ചതായി അടയാളപ്പെടുത്തുക',
+    noNotificationsFound: 'അറിയിപ്പുകളൊന്നും കണ്ടെത്തിയില്ല',
+    searchingLabel: 'തിരയുന്നു\u2026',
+    noMatchingRecordsFound: 'പൊരുത്തപ്പെടുന്ന രേഖകളൊന്നും കണ്ടെത്തിയില്ല',
+    toggleShopActiveStatusTitle: 'ഷോപ്പ് ആക്ടീവ് സ്റ്റാറ്റസ് ടോഗിൾ ചെയ്യുക',
+    bootstrappingWorkspace: 'നിങ്ങളുടെ വർക്ക്‌സ്‌പേസ് തയ്യാറാകുന്നു\u2026',
+    searchByPrefix: 'തിരയുക',
+    searchTypeAnything: 'എന്തും',
+    searchTypeCustomer: 'ഉപഭോക്താവ്',
+    searchTypeProductType: 'ഉൽപ്പന്ന തരം',
+    searchTypeLocation: 'സ്ഥലം',
+    searchTypeKey: 'കീ',
+    resultTypeCustomer: 'ഉപഭോക്താവ്',
+    resultTypeKey: 'കീ',
+    resultTypeShop: 'ഷോപ്പ്',
+    resultTypeProduct: 'ഉൽപ്പന്നം',
     language: 'ഭാഷ',
     btnSave: 'സേവ് ചെയ്യുക',
     btnSaveChanges: 'മാറ്റങ്ങൾ സേവ് ചെയ്യുക',
@@ -4246,6 +4399,7 @@ const LANGUAGES = {
     diskStorage: 'ഡിസ്ക് സ്റ്റോറേജ്',
     editWorkspace: 'വർക്ക്‌സ്‌പേസ് എഡിറ്റ് ചെയ്യുക',
     managePlan: 'പ്ലാൻ നിയന്ത്രിക്കുക',
+    manageShopSettingsTitle: 'ഷോപ്പ് ക്രമീകരണങ്ങൾ നിയന്ത്രിക്കുക',
     shopOnboarding: 'ഷോപ്പ് ഓൺബോർഡിംഗ്',
     provisionNewShopWorkspace: 'പുതിയ ഷോപ്പ് വർക്ക്‌സ്‌പേസ് പ്രൊവിഷൻ ചെയ്യുക',
     shopNameLabel: 'ഷോപ്പിന്റെ പേര്',
@@ -4745,7 +4899,9 @@ const LANGUAGES = {
     shareReferralCodeBtn: 'റഫറൽ കോഡ് പങ്കിടുക',
     generateReferralCodeBtn: 'റഫറൽ കോഡ് സൃഷ്ടിക്കുക',
     failedGenerateReferralCodeMsg: 'റഫറൽ കോഡ് സൃഷ്ടിക്കുന്നതിൽ പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.',
-    referralShareMessageTemplate: 'Key Shop-ൽ രജിസ്റ്റർ ചെയ്യുമ്പോൾ എന്റെ റഫറൽ കോഡ് {code} ഉപയോഗിക്കുക!',
+    referralShareMessageTemplate: 'Key Shop-ൽ രജിസ്റ്റർ ചെയ്യുമ്പോൾ എന്റെ റഫറൽ കോഡ് {code} ഉപയോഗിക്കുക! ആപ്പ് ഡൗൺലോഡ് ചെയ്യുക: {url}',
+    referralMessageCopiedMsg: 'റഫറൽ സന്ദേശം ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി!',
+    referBtnTitle: 'റഫർ ചെയ്യുക & ക്ഷണിക്കുക',
     verificationDocumentLabel: 'വെരിഫിക്കേഷൻ ഡോക്യുമെന്റ്',
     useCameraBtn: 'ക്യാമറ ഉപയോഗിക്കുക',
     chooseFromGalleryBtn: 'ഗ്യാലറിയിൽ നിന്ന് തിരഞ്ഞെടുക്കുക',
@@ -4865,11 +5021,11 @@ const LANGUAGES = {
 // can collapse to an icon-only button on mobile while still showing a full
 // icon+label list in the open dropdown on every screen size.
 const SEARCH_TYPE_OPTIONS = [
-  { value: 'all', label: 'Anything', icon: Search },
-  { value: 'customer', label: 'Customer', icon: Users },
-  { value: 'productType', label: 'Product Type', icon: Tag },
-  { value: 'location', label: 'Location', icon: MapPin },
-  { value: 'key', label: 'Key', icon: KeyRound },
+  { value: 'all', labelKey: 'searchTypeAnything', icon: Search },
+  { value: 'customer', labelKey: 'searchTypeCustomer', icon: Users },
+  { value: 'productType', labelKey: 'searchTypeProductType', icon: Tag },
+  { value: 'location', labelKey: 'searchTypeLocation', icon: MapPin },
+  { value: 'key', labelKey: 'searchTypeKey', icon: KeyRound },
 ];
 
 // Icon + label shown on each row of the global search "results overview"
@@ -4877,10 +5033,10 @@ const SEARCH_TYPE_OPTIONS = [
 // search effect below). Every entity type the global search can return
 // must have an entry here.
 const GLOBAL_SEARCH_RESULT_META = {
-  customer: { label: 'Customer', icon: Users },
-  key: { label: 'Key', icon: KeyRound },
-  shop: { label: 'Shop', icon: Store },
-  product: { label: 'Product', icon: Tag },
+  customer: { labelKey: 'resultTypeCustomer', icon: Users },
+  key: { labelKey: 'resultTypeKey', icon: KeyRound },
+  shop: { labelKey: 'resultTypeShop', icon: Store },
+  product: { labelKey: 'resultTypeProduct', icon: Tag },
 };
 
 // True only when running inside the native Android/iOS shell (Capacitor),
@@ -4889,6 +5045,11 @@ const GLOBAL_SEARCH_RESULT_META = {
 // login screen, since a native app has no reason to show a browsable
 // marketing site before sign-in.
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
+
+// Public landing page shared in referral invites (see the header Refer
+// button and the Shop Settings referral card) - the same domain already
+// used for the subscription payment QR code below.
+const KEE_LANDING_PAGE_URL = 'https://kee.platform';
 
 const TERMS_AND_CONDITIONS_TITLE = 'Terms and Conditions';
 const TERMS_AND_CONDITIONS_BODY = `By creating an account and using this application, you agree to the following:
@@ -5446,6 +5607,31 @@ export default function App() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  // Header "Refer" action - Shop Admin only (Super Admin has no shop of its
+  // own, so there's nothing to attach a referral code to). Reuses the same
+  // idempotent generate-or-fetch endpoint as the Shop Settings referral card.
+  const [headerReferralSharing, setHeaderReferralSharing] = useState(false);
+  const handleHeaderReferShare = async () => {
+    if (headerReferralSharing) return;
+    setHeaderReferralSharing(true);
+    try {
+      const { referralCode } = await api.generateReferralCode();
+      const message = t('referralShareMessageTemplate').replace('{code}', referralCode).replace('{url}', KEE_LANDING_PAGE_URL);
+      if (Capacitor.isNativePlatform()) {
+        const { Share } = await import('@capacitor/share');
+        await Share.share({ text: message });
+      } else if (navigator.share) {
+        await navigator.share({ text: message });
+      } else {
+        await navigator.clipboard.writeText(message);
+        alert(t('referralMessageCopiedMsg'));
+      }
+    } catch (err) {
+      alert(err.message || t('failedGenerateReferralCodeMsg'));
+    } finally {
+      setHeaderReferralSharing(false);
+    }
+  };
   const [autoOpenShopModal, setAutoOpenShopModal] = useState(false);
   const [autoOpenListingModal, setAutoOpenListingModal] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -5850,7 +6036,7 @@ export default function App() {
             <img src={keyShopLogo} alt="Key Shop" className="brand-logo-lg" />
           </div>
           <RefreshCw className="h-6 w-6 animate-spin" style={{ color: 'var(--gold)' }} />
-          <p style={{ color: 'var(--text-3)' }} className="text-sm font-semibold">Bootstrapping your workspace&hellip;</p>
+          <p style={{ color: 'var(--text-3)' }} className="text-sm font-semibold">{t('bootstrappingWorkspace')}</p>
         </div>
       </div>
     );
@@ -6766,7 +6952,7 @@ export default function App() {
             </div>
 
             <nav style={{ flex: 1, padding: '0 12px', overflowY: 'auto' }} onClick={(e) => { if (e.target.closest('button')) setMobileNavOpen(false); }}>
-              <div className="side-section-label">Overview</div>
+              <div className="side-section-label">{t('navOverview')}</div>
               <button
                 onClick={() => resetToDashboard()}
                 className={`side-link ${activeTab === 'dashboard' ? 'active' : ''}`}
@@ -6777,7 +6963,7 @@ export default function App() {
 
               {user.role === 'SUPER_ADMIN' ? (
                 <>
-                  <div className="side-section-label">Operations</div>
+                  <div className="side-section-label">{t('navOperations')}</div>
                   <button
                     onClick={() => setActiveTab('shops')}
                     className={`side-link ${activeTab === 'shops' ? 'active' : ''}`}
@@ -6800,7 +6986,7 @@ export default function App() {
                     <span>{t('keys')}</span>
                   </button>
 
-                  <div className="side-section-label">Business</div>
+                  <div className="side-section-label">{t('navBusiness')}</div>
                   <button
                     onClick={() => setActiveTab('pricing-offers')}
                     className={`side-link ${activeTab === 'pricing-offers' ? 'active' : ''}`}
@@ -6820,21 +7006,21 @@ export default function App() {
                     className={`side-link ${activeTab === 'promotions' ? 'active' : ''}`}
                   >
                     <span className="nav-ico" style={{ background: 'var(--pink)' }}><Megaphone /></span>
-                    <span>Machines</span>
+                    <span>{t('inventory')}</span>
                   </button>
 
-                  <div className="side-section-label">Support</div>
+                  <div className="side-section-label">{t('navSupport')}</div>
                   <button
                     onClick={() => setActiveTab('support-config')}
                     className={`side-link ${activeTab === 'support-config' ? 'active' : ''}`}
                   >
                     <span className="nav-ico" style={{ background: 'var(--rose)' }}><Phone /></span>
-                    <span>Support Config</span>
+                    <span>{t('supportConfig')}</span>
                   </button>
                 </>
               ) : (
                 <>
-                  <div className="side-section-label">Operations</div>
+                  <div className="side-section-label">{t('navOperations')}</div>
                   <button
                     onClick={() => setActiveTab('search-keys')}
                     className={`side-link ${activeTab === 'search-keys' ? 'active' : ''}`}
@@ -6857,7 +7043,7 @@ export default function App() {
                     <span>{t('history')}</span>
                   </button>
 
-                  <div className="side-section-label">Store</div>
+                  <div className="side-section-label">{t('navStore')}</div>
                   <button
                     onClick={() => setActiveTab('reports')}
                     className={`side-link ${activeTab === 'reports' ? 'active' : ''}`}
@@ -6870,23 +7056,23 @@ export default function App() {
                     className={`side-link ${activeTab === 'promotions' ? 'active' : ''}`}
                   >
                     <span className="nav-ico" style={{ background: 'var(--pink)' }}><Megaphone /></span>
-                    <span>Machines</span>
+                    <span>{t('inventory')}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('offers-ads-banners')}
                     className={`side-link ${activeTab === 'offers-ads-banners' ? 'active' : ''}`}
                   >
                     <span className="nav-ico" style={{ background: 'var(--gold)' }}><Sparkles /></span>
-                    <span>Offers, Ads &amp; Banners</span>
+                    <span>{t('offersAdsBanners')}</span>
                   </button>
 
-                  <div className="side-section-label">Settings</div>
+                  <div className="side-section-label">{t('navSettingsSection')}</div>
                   <button
                     onClick={() => setActiveTab('customer-care')}
                     className={`side-link ${activeTab === 'customer-care' ? 'active' : ''}`}
                   >
                     <span className="nav-ico" style={{ background: 'var(--rose)' }}><Phone /></span>
-                    <span>Customer Care</span>
+                    <span>{t('customerCare')}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('settings')}
@@ -6913,7 +7099,7 @@ export default function App() {
                 style={{ color: 'var(--red)' }}
               >
                 <LogOut />
-                <span>Log out</span>
+                <span>{t('logout')}</span>
               </button>
             </div>
           </aside>
@@ -6946,7 +7132,7 @@ export default function App() {
                         type="button"
                         onClick={() => setSearchTypeMenuOpen(v => !v)}
                         className="search-type-trigger"
-                        title="Search by"
+                        title={t('searchByPrefix')}
                       >
                         {(() => {
                           const active = SEARCH_TYPE_OPTIONS.find(o => o.value === globalSearchType) || SEARCH_TYPE_OPTIONS[0];
@@ -6954,7 +7140,7 @@ export default function App() {
                           return (
                             <>
                               <ActiveIcon className="h-3.5 w-3.5" />
-                              <span className="search-type-label">{active.label}</span>
+                              <span className="search-type-label">{t(active.labelKey)}</span>
                             </>
                           );
                         })()}
@@ -6973,7 +7159,7 @@ export default function App() {
                                   onClick={() => { setGlobalSearchType(opt.value); setSearchTypeMenuOpen(false); }}
                                 >
                                   <OptIcon className="h-3.5 w-3.5" />
-                                  <span>{opt.label}</span>
+                                  <span>{t(opt.labelKey)}</span>
                                 </button>
                               );
                             })}
@@ -6988,7 +7174,7 @@ export default function App() {
                         value={globalSearchQuery}
                         onChange={(e) => setGlobalSearchQuery(e.target.value)}
                         onFocus={() => setSearchTypeMenuOpen(false)}
-                        placeholder={`Search by ${globalSearchType === 'all' ? 'anything' : globalSearchType === 'productType' ? 'product type' : globalSearchType}\u2026`}
+                        placeholder={`${t('searchByPrefix')} ${t((SEARCH_TYPE_OPTIONS.find(o => o.value === globalSearchType) || SEARCH_TYPE_OPTIONS[0]).labelKey)}\u2026`}
                       />
                     </div>
 
@@ -7003,11 +7189,11 @@ export default function App() {
                           {globalSearchLoading ? (
                             <div className="global-search-results-status">
                               <RefreshCw className="animate-spin h-3.5 w-3.5" />
-                              <span>Searching…</span>
+                              <span>{t('searchingLabel')}</span>
                             </div>
                           ) : globalSearchResults.length === 0 ? (
                             <div className="global-search-results-status">
-                              <span>No matching records found</span>
+                              <span>{t('noMatchingRecordsFound')}</span>
                             </div>
                           ) : (
                             <div className="global-search-results-list">
@@ -7030,7 +7216,7 @@ export default function App() {
                                         {[r.line2, r.line3].filter(Boolean).join(' \u00b7 ')}
                                       </div>
                                     </div>
-                                    <span className="global-search-result-type-tag">{meta.label}</span>
+                                    <span className="global-search-result-type-tag">{t(meta.labelKey)}</span>
                                   </button>
                                 );
                               })}
@@ -7050,6 +7236,20 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-3 relative app-topbar-actions">
+                {/* Refer & Invite - Shop Admin only (Super Admin has no shop
+                    of its own to attach a referral code to). */}
+                {user.role !== 'SUPER_ADMIN' && (
+                  <button
+                    onClick={handleHeaderReferShare}
+                    disabled={headerReferralSharing}
+                    className="icon-btn"
+                    title={t('referBtnTitle')}
+                    style={{ width: 38, height: 38 }}
+                  >
+                    {headerReferralSharing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
+                  </button>
+                )}
+
                 {/* Notification Bell */}
                 <button
                   onClick={() => setShowNotifDropdown(!showNotifDropdown)}
@@ -7068,7 +7268,7 @@ export default function App() {
                 {showNotifDropdown && (
                   <div className="card animate-fade-in" style={{ position: 'absolute', right: 0, top: 46, width: 'min(320px, calc(100vw - 32px))', padding: 16, zIndex: 9999, textAlign: 'left' }}>
                     <div className="flex justify-between items-center" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 10, marginBottom: 10 }}>
-                      <h3 style={{ fontSize: 13 }}>Notifications</h3>
+                      <h3 style={{ fontSize: 13 }}>{t('notificationsTitle')}</h3>
                       {unreadCount > 0 && (
                         <button
                           onClick={async () => {
@@ -7089,13 +7289,13 @@ export default function App() {
                           }}
                           style={{ fontSize: 10, fontWeight: 800, color: 'var(--gold)', textTransform: 'uppercase' }}
                         >
-                          Mark all read
+                          {t('markAllRead')}
                         </button>
                       )}
                     </div>
                     <div style={{ maxHeight: 240, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {notifications.length === 0 ? (
-                        <div style={{ textAlign: 'center', color: 'var(--text-3)', fontSize: 12, padding: '24px 0' }}>No notifications found</div>
+                        <div style={{ textAlign: 'center', color: 'var(--text-3)', fontSize: 12, padding: '24px 0' }}>{t('noNotificationsFound')}</div>
                       ) : (
                         notifications.map(n => (
                           <div
@@ -7171,8 +7371,14 @@ export default function App() {
               <span>{t('dashboard')}</span>
             </button>
             <button
-              className={`mbn-item ${activeTab === 'settings' ? 'active' : ''}`}
-              onClick={() => { setActiveTab('settings'); setMobileNavOpen(false); }}
+              className={`mbn-item ${(user.role === 'SUPER_ADMIN' ? activeTab === 'shops' : activeTab === 'settings') ? 'active' : ''}`}
+              onClick={() => {
+                // Super Admin has no shop of their own, so "Account" here
+                // routes to Shops Management instead of the Shop Admin-only
+                // Settings screen (which requires a specific shopId).
+                setActiveTab(user.role === 'SUPER_ADMIN' ? 'shops' : 'settings');
+                setMobileNavOpen(false);
+              }}
             >
               <span className="nav-ico-sm" style={{ background: 'var(--purple)' }}><User /></span>
               <span>{t('account')}</span>
@@ -7641,10 +7847,15 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   }, [initiallyOpenAddModal]);
   const [showSubModal, setShowSubModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false); // Edit shop profile
+  // Full Shop Settings (GST, verification document, referral code) for a
+  // given shop, reusing the same ShopSettingsView the Shop Admin sees on
+  // their own dashboard - scoped to this shop via the shopId prop.
+  const [fullSettingsShopId, setFullSettingsShopId] = useState(null);
   const [selectedShop, setSelectedShop] = useState(null);
   useBackHandler(showAddModal, () => setShowAddModal(false));
   useBackHandler(showSubModal, () => setShowSubModal(false));
   useBackHandler(showEditModal, () => setShowEditModal(false));
+  useBackHandler(!!fullSettingsShopId, () => setFullSettingsShopId(null));
 
   // Form States for Add Shop
   const [shopName, setShopName] = useState('');
@@ -8066,7 +8277,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   <td style={{ textAlign: 'center' }}>
                     <button
                       onClick={() => toggleShopStatus(s)}
-                      title="Toggle shop active status"
+                      title={t('toggleShopActiveStatusTitle')}
                       className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`}
                       style={{ border: 'none', cursor: 'pointer' }}
                     >
@@ -8092,6 +8303,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                         title={t('managePlan')}
                       >
                         <DollarSign />
+                      </button>
+                      <button
+                        onClick={() => setFullSettingsShopId(s.id)}
+                        className="icon-btn"
+                        title={t('manageShopSettingsTitle')}
+                      >
+                        <ShieldCheck />
                       </button>
                     </div>
                   </td>
@@ -8675,7 +8893,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14, padding: '10px 0' }}>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 18, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 160, height: 160 }}>
                       <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://kee.platform/subscribe?amount=${planPrices[provisionDto.plan]}`}
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${KEE_LANDING_PAGE_URL}/subscribe?amount=${planPrices[provisionDto.plan]}`}
                         alt="Pay QR code"
                         className="w-full h-full object-contain"
                       />
@@ -8716,6 +8934,24 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 </div>
               </form>
             )}
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {/* Full Shop Settings modal - lets Super Admin manage a specific
+          shop's GST/verification document/referral code, reusing the exact
+          same view (scoped via shopId) the Shop Admin sees on their own
+          dashboard. */}
+      {fullSettingsShopId && createPortal(
+        <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.82)' }}>
+          <div style={{ width: '100%', maxWidth: 900, margin: 'auto' }}>
+            <div className="flex justify-end" style={{ marginBottom: 10 }}>
+              <button onClick={() => setFullSettingsShopId(null)} className="icon-btn" style={{ background: 'var(--card)' }}>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <ShopSettingsView t={t} api={api} shopId={fullSettingsShopId} />
           </div>
         </div>,
         document.body
@@ -11531,28 +11767,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       </div>
 
       <div className="card wizard-card">
-        <div className="step-indicator">
-          {WIZARD_STEPS.map((s, i) => {
-            const idx = i + 1;
-            const done = step > idx;
-            const current = step === idx;
-            return (
-              <React.Fragment key={s.name}>
-                <div className={`step-item ${done ? 'done' : ''} ${current ? 'current' : ''}`}>
-                  <div className="step-circle">{done ? <Check className="h-4 w-4" /> : idx}</div>
-                  <div className="step-label">
-                    <span className="num">{t('stepLabel')} {idx}</span>
-                    <span className="name">{s.name}</span>
-                  </div>
-                </div>
-                {i < WIZARD_STEPS.length - 1 && (
-                  <div className="step-line"><div className="fill" style={{ width: done ? '100%' : '0%' }} /></div>
-                )}
-              </React.Fragment>
-            );
-          })}
-        </div>
-
         <div className="wizard-body">
           {step === 1 && (
             <div className="animate-fade-in">
@@ -11884,22 +12098,23 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               </div>
 
               <div className="reg-section">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="icon-badge skyblue" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Fingerprint style={{ width: 16, height: 16 }} /></div>
-                    <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('idProofTypeLabel')}</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{idProofType}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="icon-badge rose" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><FileCheck style={{ width: 16, height: 16 }} /></div>
-                    <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('uploadedDocumentsLabel')}</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{uploadedDocs.length > 0 ? t('filesAttachedTemplate').replace('{count}', uploadedDocs.length) : t('noneAttachedLabel')}</div>
-                    </div>
+                <div className="flex items-center gap-3" style={{ marginBottom: uploadedDocs.length > 0 ? 14 : 0 }}>
+                  <div className="icon-badge rose" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><FileCheck style={{ width: 16, height: 16 }} /></div>
+                  <div>
+                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('uploadedDocumentsLabel')}</div>
+                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{uploadedDocs.length > 0 ? t('filesAttachedTemplate').replace('{count}', uploadedDocs.length) : t('noneAttachedLabel')}</div>
                   </div>
                 </div>
+                {uploadedDocs.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {uploadedDocs.map((doc, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '10px 14px' }}>
+                        <span style={{ color: 'var(--gold)', fontWeight: 800, fontSize: 12.5, fontFamily: 'var(--display)' }}>{doc.type}</span>
+                        <span style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.file.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <span className="side-section-label" style={{ padding: 0, display: 'block', marginBottom: 12 }}>{t('reviewLocationLabel')}</span>
@@ -13096,7 +13311,11 @@ export function SupportConfigView({ t, api }) {
   );
 }
 
-function ShopSettingsView({ t, api }) {
+// shopId is only passed when the Super Admin is managing a specific shop's
+// settings from Shops Management (see ShopsManagementView's "Manage Settings"
+// button) - a normal Shop Admin visiting their own Settings tab omits it and
+// the backend falls back to req.user.shopId.
+function ShopSettingsView({ t, api, shopId }) {
   const { user } = useAuth();
   const [shopName, setShopName] = useState('');
   const [address, setAddress] = useState('');
@@ -13148,7 +13367,7 @@ function ShopSettingsView({ t, api }) {
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const res = await api.getSettings();
+      const res = await api.getSettings(shopId);
       setShopName(res.name);
       setReferralCode(res.referralCode || null);
 
@@ -13183,7 +13402,7 @@ function ShopSettingsView({ t, api }) {
 
   const persistCompanyDetails = async (overrides = {}) => {
     const companyDetails = JSON.stringify({ address, phone, gst, ...overrides });
-    await api.updateSettings({ name: shopName, companyDetails });
+    await api.updateSettings({ name: shopName, companyDetails }, shopId);
   };
 
   const handleUpdate = async (e) => {
@@ -13215,7 +13434,7 @@ function ShopSettingsView({ t, api }) {
     try {
       // Backend soft-deletes any existing active VERIFICATION_DOCUMENT row and
       // creates a new one - no separate delete call needed here.
-      const uploaded = await api.uploadSettingsDocument(VERIFICATION_DOC_TYPE, file);
+      const uploaded = await api.uploadSettingsDocument(VERIFICATION_DOC_TYPE, file, shopId);
       setVerificationDoc(uploaded);
     } catch (err) {
       alert(err.message || t('documentUploadFailedMsg'));
@@ -13249,7 +13468,7 @@ function ShopSettingsView({ t, api }) {
     if (!verificationDoc) return;
     if (!confirm(t('removeThisDocumentConfirm'))) return;
     try {
-      await api.deleteSettingsDocument(verificationDoc.id);
+      await api.deleteSettingsDocument(verificationDoc.id, shopId);
       setVerificationDoc(null);
     } catch (err) {
       alert(err.message || t('failedRemoveDocumentMsg'));
@@ -13259,7 +13478,7 @@ function ShopSettingsView({ t, api }) {
   const handleGenerateReferralCode = async () => {
     setReferralGenerating(true);
     try {
-      const { referralCode: code } = await api.generateReferralCode();
+      const { referralCode: code } = await api.generateReferralCode(shopId);
       setReferralCode(code);
     } catch (err) {
       alert(err.message || t('failedGenerateReferralCodeMsg'));
@@ -13282,7 +13501,7 @@ function ShopSettingsView({ t, api }) {
 
   const handleShareReferralCode = async () => {
     if (!referralCode) return;
-    const message = t('referralShareMessageTemplate').replace('{code}', referralCode);
+    const message = t('referralShareMessageTemplate').replace('{code}', referralCode).replace('{url}', KEE_LANDING_PAGE_URL);
     if (Capacitor.isNativePlatform()) {
       const { Share } = await import('@capacitor/share');
       await Share.share({ text: message });
@@ -13519,7 +13738,10 @@ function ShopSettingsView({ t, api }) {
       </div>
 
       <div>
-      {/* Admin User Credentials Block */}
+      {/* Admin User Credentials Block - this is the logged-in user's own
+          account/password, so it's meaningless (and hidden) when a Super
+          Admin is managing another shop's settings on its behalf. */}
+      {!shopId && (
       <div className="card">
         <div className="section-title">
           <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -13573,9 +13795,10 @@ function ShopSettingsView({ t, api }) {
           </button>
         </div>
       </div>
+      )}
 
       {/* Referral Program Block */}
-      <div className="card" style={{ marginTop: 20 }}>
+      <div className="card" style={{ marginTop: shopId ? 0 : 20 }}>
         <div className="section-title">
           <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
             <BadgePercent style={{ width: 16, height: 16, color: 'var(--gold)' }} />

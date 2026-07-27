@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Request, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ShopService } from './shop.service';
 import { CreateShopDto, UpdateShopDto, UpdateSettingsDto, ManageSubscriptionDto } from './dto/shop.dto';
@@ -55,25 +55,41 @@ export class ShopController {
   // ==========================================
   // SHOP ADMIN ENDPOINTS
   // ==========================================
+  // Also reachable by SUPER_ADMIN so Shop Settings (Manage Shop -> Settings)
+  // can be administered on behalf of any shop from the Super Admin Shops
+  // Management screen. SHOP_ADMIN callers are always scoped to their own
+  // shop (req.user.shopId); SUPER_ADMIN callers must pass ?shopId= to say
+  // which shop they're editing, since Super Admins don't belong to a shop.
+
+  private resolveShopId(req, shopId?: string): string {
+    if (req.user.role === Role.SUPER_ADMIN) {
+      if (!shopId) {
+        throw new BadRequestException('shopId is required for Super Admin');
+      }
+      return shopId;
+    }
+    return req.user.shopId;
+  }
 
   @Get('shop/settings')
-  @Roles(Role.SHOP_ADMIN)
-  async getSettings(@Request() req) {
-    return this.shopService.getSettings(req.user.shopId);
+  @Roles(Role.SHOP_ADMIN, Role.SUPER_ADMIN)
+  async getSettings(@Request() req, @Query('shopId') shopId?: string) {
+    return this.shopService.getSettings(this.resolveShopId(req, shopId));
   }
 
   @Put('shop/settings')
-  @Roles(Role.SHOP_ADMIN)
-  async updateSettings(@Request() req, @Body() dto: UpdateSettingsDto) {
-    return this.shopService.updateSettings(req.user.shopId, dto);
+  @Roles(Role.SHOP_ADMIN, Role.SUPER_ADMIN)
+  async updateSettings(@Request() req, @Body() dto: UpdateSettingsDto, @Query('shopId') shopId?: string) {
+    return this.shopService.updateSettings(this.resolveShopId(req, shopId), dto);
   }
 
   @Post('shop/settings/documents')
-  @Roles(Role.SHOP_ADMIN)
+  @Roles(Role.SHOP_ADMIN, Role.SUPER_ADMIN)
   @UseInterceptors(FileInterceptor('file'))
   async uploadSettingsDocument(
     @Request() req,
     @Body('documentType') documentType: string,
+    @Query('shopId') shopId: string,
     @UploadedFile() file: any,
   ) {
     if (!file) {
@@ -89,18 +105,18 @@ export class ShopController {
     if (!allowedMimeTypes.includes(file.mimetype)) {
       throw new BadRequestException('Only JPEG, PNG, and PDF formats are accepted');
     }
-    return this.shopService.addOrReplaceShopDocument(req.user.shopId, documentType, file);
+    return this.shopService.addOrReplaceShopDocument(this.resolveShopId(req, shopId), documentType, file);
   }
 
   @Delete('shop/settings/documents/:id')
-  @Roles(Role.SHOP_ADMIN)
-  async deleteSettingsDocument(@Request() req, @Param('id') id: string) {
-    return this.shopService.deleteShopDocument(req.user.shopId, id);
+  @Roles(Role.SHOP_ADMIN, Role.SUPER_ADMIN)
+  async deleteSettingsDocument(@Request() req, @Param('id') id: string, @Query('shopId') shopId?: string) {
+    return this.shopService.deleteShopDocument(this.resolveShopId(req, shopId), id);
   }
 
   @Post('shop/settings/referral')
-  @Roles(Role.SHOP_ADMIN)
-  async generateReferralCode(@Request() req) {
-    return { referralCode: await this.shopService.getOrCreateReferralCode(req.user.shopId) };
+  @Roles(Role.SHOP_ADMIN, Role.SUPER_ADMIN)
+  async generateReferralCode(@Request() req, @Query('shopId') shopId?: string) {
+    return { referralCode: await this.shopService.getOrCreateReferralCode(this.resolveShopId(req, shopId)) };
   }
 }

@@ -238,21 +238,29 @@ export const AuthProvider = ({ children }) => {
     // --- SHOP SETTINGS: VERIFICATION DOCUMENTS ---
     // Backed by the ShopDocument table (see ShopService.addOrReplaceShopDocument /
     // deleteShopDocument). documentType is one of SHOP_PHOTO / SHOP_LICENSE / OWNER_AADHAAR.
-    uploadSettingsDocument: async (documentType, file) => {
+    // shopId is only needed (and only honored by the backend) when a Super
+    // Admin is managing a specific shop's settings from Shops Management -
+    // Shop Admins are always scoped to their own shop via the JWT.
+    uploadSettingsDocument: async (documentType, file, shopId) => {
       const formData = new FormData();
       formData.append('file', file);
       formData.append('documentType', documentType);
-      return request('/api/shop/settings/documents', 'POST', formData, true);
+      const qs = shopId ? `?shopId=${encodeURIComponent(shopId)}` : '';
+      return request(`/api/shop/settings/documents${qs}`, 'POST', formData, true);
     },
 
     // id is the ShopDocument row id (not a fileKey).
-    deleteSettingsDocument: async (id) => {
-      return request(`/api/shop/settings/documents/${id}`, 'DELETE');
+    deleteSettingsDocument: async (id, shopId) => {
+      const qs = shopId ? `?shopId=${encodeURIComponent(shopId)}` : '';
+      return request(`/api/shop/settings/documents/${id}${qs}`, 'DELETE');
     },
 
     // Idempotent - returns the shop's existing referralCode if one was
     // already generated, otherwise mints a new one (see ShopService.getOrCreateReferralCode).
-    generateReferralCode: async () => request('/api/shop/settings/referral', 'POST'),
+    generateReferralCode: async (shopId) => {
+      const qs = shopId ? `?shopId=${encodeURIComponent(shopId)}` : '';
+      return request(`/api/shop/settings/referral${qs}`, 'POST');
+    },
 
     // --- VISUAL ADS ---
     getAdvertisements: async () => {
@@ -275,8 +283,15 @@ export const AuthProvider = ({ children }) => {
     logRevenue: async (month, year, amount, notes) => request('/api/super/revenue', 'POST', { month, year, amount, notes }),
 
     // --- SETTINGS ---
-    getSettings: async () => request('/api/shop/settings'),
-    updateSettings: async (dto) => request('/api/shop/settings', 'PUT', dto),
+    // shopId is only used by Super Admin (see uploadSettingsDocument above).
+    getSettings: async (shopId) => {
+      const qs = shopId ? `?shopId=${encodeURIComponent(shopId)}` : '';
+      return request(`/api/shop/settings${qs}`);
+    },
+    updateSettings: async (dto, shopId) => {
+      const qs = shopId ? `?shopId=${encodeURIComponent(shopId)}` : '';
+      return request(`/api/shop/settings${qs}`, 'PUT', dto);
+    },
 
     // --- CROSS-SHOP PROMOTIONS (advertisements & promotional products, visible to every shop) ---
     // GET is a shared feed: every shop admin and the super admin see every shop's listings.
