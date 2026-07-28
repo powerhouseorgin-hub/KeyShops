@@ -5669,6 +5669,7 @@ export default function App() {
   };
   const [autoOpenShopModal, setAutoOpenShopModal] = useState(false);
   const [autoOpenListingModal, setAutoOpenListingModal] = useState(false);
+  const [autoOpenOffersTab, setAutoOpenOffersTab] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLangDialog, setShowLangDialog] = useState(false);
   const langDialogCardRef = useRef(null);
@@ -7356,12 +7357,12 @@ export default function App() {
               </div>
             </header>
 
-            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} />}
+            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} setAutoOpenOffersTab={setAutoOpenOffersTab} />}
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
-            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} />}
+            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} initiallyOpenOffersTab={autoOpenOffersTab} onCloseInitiallyOpenOffersTab={() => setAutoOpenOffersTab(false)} />}
             {activeTab === 'offers-ads-banners' && <OffersAdsBannersView t={t} api={api} />}
             {activeTab === 'search-keys' && <KeysSearchView t={t} api={api} searchDispatch={activeTab === 'search-keys' ? searchDispatch : null} />}
             {activeTab === 'register' && <CustomerRegistrationWizard t={t} api={api} />}
@@ -7549,7 +7550,7 @@ function SearchKeysIcon() {
 }
 
 const DASHBOARD_PRODUCT_CARDS = [
-  { type: 'Used Machines', icon: Wrench, image: usedMachinesImg, description: 'View and manage used machines', accent: 'var(--purple)' },
+  { type: 'Used Machines', icon: Wrench, image: usedMachinesImg, description: 'View and manage used machines', imgScale: 1.25, accent: 'var(--purple)' },
   { type: 'ECM', icon: Cpu, image: ecmServiceImg, description: 'Manage ECM records', accent: 'var(--orange)' },
   // imgScale: the Meter product photo has more transparent padding baked
   // into the source image than the other three, so at the shared
@@ -7608,7 +7609,7 @@ function DashCardGrid({ items }) {
   );
 }
 
-function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal }) {
+function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal, setAutoOpenOffersTab }) {
   const { user, api } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -7627,6 +7628,13 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
   // cannot publish listings).
   const goToAddMachines = () => {
     setAutoOpenListingModal(true);
+    setActiveTab('promotions');
+  };
+
+  // Super Admin "Offers" quick action jumps to the Inventory screen and
+  // auto-selects its Offer Management sub-tab.
+  const goToOffers = () => {
+    setAutoOpenOffersTab(true);
     setActiveTab('promotions');
   };
 
@@ -7709,7 +7717,9 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         <DashCardGrid items={[
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
+          { title: t('newListingBtn'), description: t('addMachinesCardDesc'), icon: Plus, iconVariant: 'flat-icon', accent: 'var(--jgreen)', onClick: goToAddMachines },
           ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, imgScale: c.imgScale, accent: c.accent, onClick: () => goToProductType(c.type) })),
+          { title: t('offersLabel'), description: t('everyActiveAdOfferDesc'), icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: goToOffers },
           { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
         ]} />
       </div>
@@ -9929,7 +9939,7 @@ function AdsManagementView({ t, api }) {
 // create/edit form; every new listing is created as a plain PRODUCT and
 // categorized purely via this list.
 
-function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
+function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, initiallyOpenOffersTab, onCloseInitiallyOpenOffersTab }) {
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
   const [subTab, setSubTab] = useState('feed'); // feed | banners | offers (banners/offers = Super Admin only)
 
@@ -9944,6 +9954,15 @@ function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, o
   useEffect(() => {
     if (initiallyOpenAddModal) setSubTab('feed');
   }, [initiallyOpenAddModal]);
+
+  // The Dashboard "Offers" quick action (Super Admin only) jumps straight to
+  // the Offer Management sub-tab.
+  useEffect(() => {
+    if (initiallyOpenOffersTab) {
+      setSubTab('offers');
+      onCloseInitiallyOpenOffersTab();
+    }
+  }, [initiallyOpenOffersTab]);
 
   return (
     <div className="animate-fade-in">
