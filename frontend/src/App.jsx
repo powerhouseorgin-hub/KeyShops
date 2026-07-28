@@ -924,6 +924,9 @@ const LANGUAGES = {
     configureGlobalSupportDesc: 'Configure the global customer care contact and training video links visible to every shop.',
     customerSupportWhatsappLabel: 'Customer Support WhatsApp Number',
     whatsappNumberPlaceholderEg: 'e.g. +91 98765 43210',
+    subscriptionPriceLabel: 'Yearly Subscription Price (₹)',
+    subscriptionPricePlaceholderEg: 'e.g. 999',
+    subscriptionPriceHint: 'Applied platform-wide wherever the subscription amount is displayed or charged.',
     supportContactEyebrow: 'Support Contact',
     supportContactTitle: 'Support Contact',
     supportContactDesc: 'Reach out to the Key Shop team directly using the contact details below.',
@@ -1700,6 +1703,9 @@ const LANGUAGES = {
     configureGlobalSupportDesc: 'हर दुकान को दिखने वाला वैश्विक ग्राहक सेवा संपर्क और प्रशिक्षण वीडियो लिंक कॉन्फ़िगर करें।',
     customerSupportWhatsappLabel: 'ग्राहक सहायता व्हाट्सएप नंबर',
     whatsappNumberPlaceholderEg: 'जैसे +91 98765 43210',
+    subscriptionPriceLabel: 'वार्षिक सदस्यता मूल्य (₹)',
+    subscriptionPricePlaceholderEg: 'जैसे 999',
+    subscriptionPriceHint: 'यह पूरे प्लेटफ़ॉर्म पर हर जगह लागू होता है जहां सदस्यता राशि दिखाई या चार्ज की जाती है।',
     supportContactEyebrow: 'सहायता संपर्क',
     supportContactTitle: 'सहायता संपर्क',
     supportContactDesc: 'नीचे दिए गए संपर्क विवरण का उपयोग करके सीधे की शॉप टीम से संपर्क करें।',
@@ -2476,6 +2482,9 @@ const LANGUAGES = {
     configureGlobalSupportDesc: 'ஒவ்வொரு கடைக்கும் தெரியும் உலகளாவிய வாடிக்கையாளர் சேவை தொடர்பு மற்றும் பயிற்சி வீடியோ இணைப்புகளை கட்டமைக்கவும்.',
     customerSupportWhatsappLabel: 'வாடிக்கையாளர் ஆதரவு வாட்ஸ்அப் எண்',
     whatsappNumberPlaceholderEg: 'உதா. +91 98765 43210',
+    subscriptionPriceLabel: 'ஆண்டு சந்தா விலை (₹)',
+    subscriptionPricePlaceholderEg: 'உதா. 999',
+    subscriptionPriceHint: 'சந்தா தொகை காட்டப்படும் அல்லது வசூலிக்கப்படும் இடங்களில் இது தளம் முழுவதும் பயன்படுத்தப்படும்.',
     supportContactEyebrow: 'ஆதரவு தொடர்பு',
     supportContactTitle: 'ஆதரவு தொடர்பு',
     supportContactDesc: 'கீழே உள்ள தொடர்பு விவரங்களைப் பயன்படுத்தி கீ ஷாப் குழுவை நேரடியாக தொடர்பு கொள்ளுங்கள்.',
@@ -3252,6 +3261,9 @@ const LANGUAGES = {
     configureGlobalSupportDesc: 'ప్రతి షాప్‌కు కనిపించే గ్లోబల్ కస్టమర్ కేర్ కాంటాక్ట్ మరియు శిక్షణ వీడియో లింక్‌లను కాన్ఫిగర్ చేయండి.',
     customerSupportWhatsappLabel: 'కస్టమర్ మద్దతు వాట్సాప్ నంబర్',
     whatsappNumberPlaceholderEg: 'ఉదా. +91 98765 43210',
+    subscriptionPriceLabel: 'వార్షిక సభ్యత్వ ధర (₹)',
+    subscriptionPricePlaceholderEg: 'ఉదా. 999',
+    subscriptionPriceHint: 'సభ్యత్వ మొత్తం చూపబడిన లేదా వసూలు చేయబడిన ప్రతిచోటా ఇది ప్లాట్‌ఫారమ్ అంతటా వర్తించబడుతుంది.',
     supportContactEyebrow: 'మద్దతు సంప్రదింపు',
     supportContactTitle: 'మద్దతు సంప్రదింపు',
     supportContactDesc: 'దిగువ సంప్రదింపు వివరాలను ఉపయోగించి నేరుగా కీ షాప్ బృందాన్ని సంప్రదించండి.',
@@ -4028,6 +4040,9 @@ const LANGUAGES = {
     configureGlobalSupportDesc: 'ಪ್ರತಿ ಅಂಗಡಿಗೆ ಗೋಚರಿಸುವ ಜಾಗತಿಕ ಗ್ರಾಹಕ ಸೇವಾ ಸಂಪರ್ಕ ಮತ್ತು ತರಬೇತಿ ವೀಡಿಯೊ ಲಿಂಕ್‌ಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿ.',
     customerSupportWhatsappLabel: 'ಗ್ರಾಹಕ ಬೆಂಬಲ ವಾಟ್ಸಾಪ್ ಸಂಖ್ಯೆ',
     whatsappNumberPlaceholderEg: 'ಉದಾ. +91 98765 43210',
+    subscriptionPriceLabel: 'ವಾರ್ಷಿಕ ಚಂದಾದಾರಿಕೆ ಬೆಲೆ (₹)',
+    subscriptionPricePlaceholderEg: 'ಉದಾ. 999',
+    subscriptionPriceHint: 'ಚಂದಾದಾರಿಕೆ ಮೊತ್ತವನ್ನು ತೋರಿಸಿದ ಅಥವಾ ವಿಧಿಸಿದ ಪ್ರತಿಯೊಂದು ಕಡೆಯೂ ಇದನ್ನು ವೇದಿಕೆಯಾದ್ಯಂತ ಅನ್ವಯಿಸಲಾಗುತ್ತದೆ.',
     supportContactEyebrow: 'ಬೆಂಬಲ ಸಂಪರ್ಕ',
     supportContactTitle: 'ಬೆಂಬಲ ಸಂಪರ್ಕ',
     supportContactDesc: 'ಕೆಳಗಿನ ಸಂಪರ್ಕ ವಿವರಗಳನ್ನು ಬಳಸಿಕೊಂಡು ನೇರವಾಗಿ ಕೀ ಶಾಪ್ ತಂಡವನ್ನು ಸಂಪರ್ಕಿಸಿ.',
@@ -4804,6 +4819,9 @@ const LANGUAGES = {
     configureGlobalSupportDesc: 'എല്ലാ ഷോപ്പിനും ദൃശ്യമാകുന്ന ആഗോള ഉപഭോക്തൃ പരിചരണ കോൺടാക്റ്റും പരിശീലന വീഡിയോ ലിങ്കുകളും ക്രമീകരിക്കുക.',
     customerSupportWhatsappLabel: 'ഉപഭോക്തൃ പിന്തുണ വാട്സ്ആപ്പ് നമ്പർ',
     whatsappNumberPlaceholderEg: 'ഉദാ. +91 98765 43210',
+    subscriptionPriceLabel: 'വാർഷിക സബ്സ്ക്രിപ്ഷൻ വില (₹)',
+    subscriptionPricePlaceholderEg: 'ഉദാ. 999',
+    subscriptionPriceHint: 'സബ്സ്ക്രിപ്ഷൻ തുക കാണിക്കുന്നതോ ഈടാക്കുന്നതോ ആയ എല്ലായിടത്തും ഇത് പ്ലാറ്റ്‌ഫോമിലുടനീളം ബാധകമാണ്.',
     supportContactEyebrow: 'സപ്പോർട്ട് കോൺടാക്റ്റ്',
     supportContactTitle: 'സപ്പോർട്ട് കോൺടാക്റ്റ്',
     supportContactDesc: 'താഴെയുള്ള കോൺടാക്റ്റ് വിവരങ്ങൾ ഉപയോഗിച്ച് നേരിട്ട് കീ ഷോപ്പ് ടീമുമായി ബന്ധപ്പെടുക.',
@@ -5575,7 +5593,6 @@ export default function App() {
     shops: t('shops'),
     'super-customers': t('customers'),
     keys: t('keys'),
-    'pricing-offers': t('pricing'),
     revenue: t('revenue'),
     'support-config': t('supportConfig'),
     promotions: t('inventory'),
@@ -5716,7 +5733,9 @@ export default function App() {
   const [regCategories, setRegCategories] = useState([]);
   const [regCategoriesLoading, setRegCategoriesLoading] = useState(false);
   const [regPassword, setRegPassword] = useState('');
-  const [regPlan, setRegPlan] = useState('MONTHLY'); // 'MONTHLY' | 'HALF_YEARLY' | 'YEARLY'
+  // Single yearly plan platform-wide - price is Super Admin-configurable
+  // (see SupportConfigView / PlatformConfig.subscriptionPrice).
+  const [regSubscriptionPrice, setRegSubscriptionPrice] = useState(999);
   const [regError, setRegError] = useState('');
   const [regSuccessMessage, setRegSuccessMessage] = useState('');
   // Login email returned by the backend (echoes dto.email - see
@@ -5776,6 +5795,15 @@ export default function App() {
       .then((cats) => setRegCategories(cats || []))
       .catch((e) => console.error('Failed to load shop categories:', e))
       .finally(() => setRegCategoriesLoading(false));
+  }, [showRegisterShop]);
+
+  // Single platform-wide yearly subscription price, Super Admin-configurable
+  // (see SupportConfigView) - also public/pre-login since it's needed here.
+  useEffect(() => {
+    if (!showRegisterShop) return;
+    api.getSupportConfig()
+      .then((cfg) => setRegSubscriptionPrice(cfg.subscriptionPrice ?? 999))
+      .catch((e) => console.error('Failed to load subscription price:', e));
   }, [showRegisterShop]);
 
 
@@ -5975,7 +6003,6 @@ export default function App() {
         aadhaarNumber: regAadhaarNumber || undefined,
         referralCode: regReferralCode || undefined,
         password: regPassword,
-        plan: regPlan,
         latitude: regLat ?? undefined,
         longitude: regLng ?? undefined,
       });
@@ -6764,41 +6791,16 @@ export default function App() {
 
                 <div style={{ marginBottom: 20 }}>
                   <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>{t('chooseSubscriptionPlanLabel')}</label>
-                  <div className="store-tabs" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8 }}>
-                    <button
-                      type="button"
-                      onClick={() => setRegPlan('MONTHLY')}
-                      className={`store-tab ${regPlan === 'MONTHLY' ? 'active' : ''}`}
-                      style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 8px' }}
-                    >
-                      <span>{t('monthlyPlan')}</span>
-                      <span style={{ fontSize: 9, opacity: 0.75 }}>Rs. 49</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setRegPlan('HALF_YEARLY')}
-                      className={`store-tab ${regPlan === 'HALF_YEARLY' ? 'active' : ''}`}
-                      style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 8px' }}
-                    >
-                      <span>{t('halfYearlyPlan')}</span>
-                      <span style={{ fontSize: 9, opacity: 0.75 }}>Rs. 269</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setRegPlan('YEARLY')}
-                      className={`store-tab ${regPlan === 'YEARLY' ? 'active' : ''}`}
-                      style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 8px' }}
-                    >
-                      <span>{t('yearlyPlan')}</span>
-                      <span style={{ fontSize: 9, opacity: 0.75 }}>Rs. 499</span>
-                    </button>
+                  <div className="store-tab active" style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 8px' }}>
+                    <span>{t('yearlyPlan')}</span>
+                    <span style={{ fontSize: 9, opacity: 0.75 }}>Rs. {regSubscriptionPrice}/yr</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', padding: 14, borderRadius: 14, border: '1px solid var(--border-2)', marginBottom: 18, fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>
                   <span>{t('payableAmountLabel')}</span>
                   <span style={{ fontWeight: 800, color: 'var(--gold)', fontSize: 16, fontFamily: 'var(--display)' }}>
-                    Rs. {regPlan === 'MONTHLY' ? '49.00' : regPlan === 'HALF_YEARLY' ? '269.00' : '499.00'}
+                    Rs. {Number(regSubscriptionPrice).toFixed(2)}
                   </span>
                 </div>
 
@@ -6987,13 +6989,6 @@ export default function App() {
                   </button>
 
                   <div className="side-section-label">{t('navBusiness')}</div>
-                  <button
-                    onClick={() => setActiveTab('pricing-offers')}
-                    className={`side-link ${activeTab === 'pricing-offers' ? 'active' : ''}`}
-                  >
-                    <span className="nav-ico" style={{ background: 'var(--orange)' }}><Settings /></span>
-                    <span>{t('pricing')}</span>
-                  </button>
                   <button
                     onClick={() => setActiveTab('revenue')}
                     className={`side-link ${activeTab === 'revenue' ? 'active' : ''}`}
@@ -7347,7 +7342,6 @@ export default function App() {
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
-            {activeTab === 'pricing-offers' && <PricingOffersView t={t} api={api} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
             {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} />}
             {activeTab === 'offers-ads-banners' && <OffersAdsBannersView t={t} api={api} />}
@@ -7862,7 +7856,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const [adminEmail, setAdminEmail] = useState('');
   const [adminName, setAdminName] = useState('');
   const [adminPassword, setAdminPassword] = useState('');
-  const [subPlan, setSubPlan] = useState('MONTHLY');
+  // Informational only - the actual end date is computed server-side (always
+  // exactly one year from creation, see ShopService.createShop).
   const [subEndDate, setSubEndDate] = useState('');
   const [provisionPhone, setProvisionPhone] = useState('');
   const [provisionWhatsapp, setProvisionWhatsapp] = useState('');
@@ -7885,12 +7880,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const [editShopLicenseName, setEditShopLicenseName] = useState('');
   const [editOwnerAadhaarName, setEditOwnerAadhaarName] = useState('');
 
-  // Form States for Subscription management
-  const [newPlan, setNewPlan] = useState('MONTHLY');
-  const [newEndDate, setNewEndDate] = useState('');
-
-  // Plan Prices configuration loaded from system settings
-  const [planPrices, setPlanPrices] = useState({ MONTHLY: 49, HALF_YEARLY: 269, YEARLY: 499 });
+  // Single yearly subscription price platform-wide, Super Admin-configurable
+  // (see SupportConfigView / PlatformConfig.subscriptionPrice).
+  const [subscriptionPrice, setSubscriptionPrice] = useState(999);
 
   // Payment integration states for new shop provision
   const [showPaymentProvisionModal, setShowPaymentProvisionModal] = useState(false);
@@ -7905,10 +7897,10 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const [cardExpiry, setCardExpiry] = useState('');
   const [cardCvv, setCardCvv] = useState('');
 
-  const fetchPlanPrices = async () => {
+  const fetchSubscriptionPrice = async () => {
     try {
-      const res = await api.getPlanPrices();
-      setPlanPrices(res);
+      const res = await api.getSupportConfig();
+      setSubscriptionPrice(res.subscriptionPrice ?? 999);
     } catch (e) {
       console.error(e);
     }
@@ -7916,46 +7908,18 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
   useEffect(() => {
     fetchShops();
-    fetchPlanPrices();
+    fetchSubscriptionPrice();
   }, []);
 
-  // Automatic End Date Updater for Shop Creation Form
+  // Single yearly plan - end date is always exactly one year from today.
   useEffect(() => {
-    const calculateEndDate = () => {
-      const now = new Date();
-      if (subPlan === 'MONTHLY') {
-        now.setMonth(now.getMonth() + 1);
-      } else if (subPlan === 'HALF_YEARLY') {
-        now.setMonth(now.getMonth() + 6);
-      } else if (subPlan === 'YEARLY') {
-        now.setFullYear(now.getFullYear() + 1);
-      }
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      setSubEndDate(`${yyyy}-${mm}-${dd}`);
-    };
-    calculateEndDate();
-  }, [subPlan]);
-
-  // Automatic End Date Updater for Plan Updates Form
-  useEffect(() => {
-    const calculateNewEndDate = () => {
-      const now = new Date();
-      if (newPlan === 'MONTHLY') {
-        now.setMonth(now.getMonth() + 1);
-      } else if (newPlan === 'HALF_YEARLY') {
-        now.setMonth(now.getMonth() + 6);
-      } else if (newPlan === 'YEARLY') {
-        now.setFullYear(now.getFullYear() + 1);
-      }
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, '0');
-      const dd = String(now.getDate()).padStart(2, '0');
-      setNewEndDate(`${yyyy}-${mm}-${dd}`);
-    };
-    calculateNewEndDate();
-  }, [newPlan]);
+    const now = new Date();
+    now.setFullYear(now.getFullYear() + 1);
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    setSubEndDate(`${yyyy}-${mm}-${dd}`);
+  }, []);
 
   const fetchShops = async () => {
     setLoading(true);
@@ -7999,7 +7963,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         return;
       }
 
-      const formattedEndDate = new Date(subEndDate).toISOString();
       // Verification documents are NOT embedded in companyDetails anymore -
       // they're sent as separate top-level DTO fields and persisted by the
       // backend as real files + ShopDocument rows (see
@@ -8010,13 +7973,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         phone: provisionPhone,
         whatsappNumber: provisionWhatsapp,
       });
+      // plan/endDate are NOT sent - a single YEARLY plan is enforced and
+      // computed server-side (see ShopService.createShop).
       const dto = {
         name: shopName,
         adminEmail,
         adminName,
         adminPassword,
-        plan: subPlan,
-        endDate: formattedEndDate,
         companyDetails,
         themeColor: '#C89416',
         shopPhoto: provisionShopPhoto,
@@ -8024,7 +7987,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         ownerAadhaar: provisionOwnerAadhaar
       };
 
-      const price = planPrices[subPlan] ?? 0;
+      const price = subscriptionPrice ?? 0;
       if (price > 0) {
         setProvisionDto(dto);
         setShowPaymentProvisionModal(true);
@@ -8071,8 +8034,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     setAdminEmail('');
     setAdminName('');
     setAdminPassword('');
-    setSubPlan('MONTHLY');
-    setSubEndDate('');
     setProvisionPhone('');
     setProvisionWhatsapp('');
     setProvisionLocation('');
@@ -8092,15 +8053,12 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     }
   };
 
+  // Renews the shop's subscription for a fresh one-year YEARLY window,
+  // starting now (see ShopService.updateSubscription).
   const handleUpdateSubscriptionSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.updateSubscription(selectedShop.id, {
-        plan: newPlan,
-        status: 'ACTIVE',
-        startDate: new Date().toISOString(),
-        endDate: new Date(newEndDate).toISOString()
-      });
+      await api.updateSubscription(selectedShop.id, { status: 'ACTIVE' });
       setShowSubModal(false);
       fetchShops();
     } catch (e) {
@@ -8296,7 +8254,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       <button
                         onClick={() => {
                           setSelectedShop(s);
-                          setNewPlan(s.subscriptions?.[0]?.plan || 'MONTHLY');
                           setShowSubModal(true);
                         }}
                         className="icon-btn"
@@ -8430,15 +8387,10 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="reg-section">
                 <div className="form-grid">
                   <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>{t('subscriptionPlanLabel')} <span className="req">*</span></b></div>
-                    <CustomSelect
-                      value={subPlan} onChange={setSubPlan}
-                      options={[
-                        { value: 'MONTHLY', label: `${t('monthlyPlan')} • Rs. ${planPrices.MONTHLY}/mo` },
-                        { value: 'HALF_YEARLY', label: `${t('halfYearlyPlan')} • Rs. ${planPrices.HALF_YEARLY}/6mo` },
-                        { value: 'YEARLY', label: `${t('yearlyPlan')} • Rs. ${planPrices.YEARLY}/yr` },
-                      ]}
-                    />
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>{t('subscriptionPlanLabel')}</b></div>
+                    <div style={{ width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-1)', borderRadius: 13, padding: '13px 15px', fontSize: 14, fontWeight: 700 }}>
+                      {t('yearlyPlan')} • Rs. {subscriptionPrice}/yr
+                    </div>
                   </div>
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Calendar /></div><b>{t('endDateValidityLabel')} <span className="req">*</span></b></div>
@@ -8698,21 +8650,17 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             <form onSubmit={handleUpdateSubscriptionSubmit}>
               <div className="reg-section">
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>{t('planTierLabel')} <span className="req">*</span></b></div>
-                  <CustomSelect
-                    value={newPlan} onChange={setNewPlan}
-                    options={[
-                      { value: 'MONTHLY', label: `${t('monthlyPlanFull')} • Rs. ${planPrices.MONTHLY}/mo` },
-                      { value: 'HALF_YEARLY', label: `${t('sixMonthPlanFull')} • Rs. ${planPrices.HALF_YEARLY}/6mo` },
-                      { value: 'YEARLY', label: `${t('yearlyPlanFull')} • Rs. ${planPrices.YEARLY}/yr` },
-                    ]}
-                  />
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><DollarSign /></div><b>{t('planTierLabel')}</b></div>
+                  <div style={{ width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-1)', borderRadius: 13, padding: '13px 15px', fontSize: 14, fontWeight: 700 }}>
+                    {t('yearlyPlanFull')} • Rs. {subscriptionPrice}/yr
+                  </div>
                 </div>
 
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Calendar /></div><b>{t('newEndDateLabel')} <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Calendar /></div><b>{t('newEndDateLabel')}</b></div>
                   <input
-                    type="date" required value={newEndDate} disabled
+                    type="date" readOnly
+                    value={(() => { const d = new Date(); d.setFullYear(d.getFullYear() + 1); return d.toISOString().slice(0, 10); })()}
                     style={{ width: '100%', background: 'var(--card-2)', opacity: 0.6, border: '1.5px solid var(--border-2)', color: 'var(--text-2)', borderRadius: 13, padding: '13px 15px', fontSize: 14, outline: 'none', cursor: 'not-allowed' }}
                   />
                   <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('autoCalculatedTier')}</span>
@@ -8801,9 +8749,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 16, borderRadius: 16, marginBottom: 18 }}>
                   <div>
                     <span style={{ fontSize: 10, color: 'var(--text-3)', textTransform: 'uppercase', display: 'block', fontWeight: 700 }}>{t('workspaceProvisionInvoice')}</span>
-                    <span style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 600 }}>{t('planColonLabel')} <span style={{ fontWeight: 800, color: 'var(--gold)' }}>{provisionDto.plan}</span></span>
+                    <span style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 600 }}>{t('planColonLabel')} <span style={{ fontWeight: 800, color: 'var(--gold)' }}>{t('yearlyPlan')}</span></span>
                   </div>
-                  <span style={{ fontSize: 21, fontWeight: 800, color: 'var(--green)', fontFamily: 'var(--display)' }}>Rs. {planPrices[provisionDto.plan]}</span>
+                  <span style={{ fontSize: 21, fontWeight: 800, color: 'var(--green)', fontFamily: 'var(--display)' }}>Rs. {subscriptionPrice}</span>
                 </div>
 
                 {/* Tab Selector */}
@@ -8893,7 +8841,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14, padding: '10px 0' }}>
                     <div style={{ background: '#fff', padding: 12, borderRadius: 18, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 160, height: 160 }}>
                       <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${KEE_LANDING_PAGE_URL}/subscribe?amount=${planPrices[provisionDto.plan]}`}
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${KEE_LANDING_PAGE_URL}/subscribe?amount=${subscriptionPrice}`}
                         alt="Pay QR code"
                         className="w-full h-full object-contain"
                       />
@@ -8928,7 +8876,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       className="btn btn-primary"
                       style={{ flex: 2 }}
                     >
-                      {t('payAndProvisionPrefix')} {planPrices[provisionDto.plan]} {t('payAndProvisionSuffix')}
+                      {t('payAndProvisionPrefix')} {subscriptionPrice} {t('payAndProvisionSuffix')}
                     </button>
                   </div>
                 </div>
@@ -10694,147 +10642,6 @@ function OffersAdsBannersView({ t, api }) {
 // banner ad management now live under the separate Promotions screen
 // (see PromotionsView's "Banner Management" / "Offer Management" sub-tabs).
 // ============================================================================
-function PricingOffersView({ t, api }) {
-  // Pricing states
-  const [monthlyPrice, setMonthlyPrice] = useState(49);
-  const [halfYearlyPrice, setHalfYearlyPrice] = useState(269);
-  const [yearlyPrice, setYearlyPrice] = useState(499);
-  const [pricingLoading, setPricingLoading] = useState(true);
-
-  useEffect(() => {
-    fetchPrices();
-  }, []);
-
-  const fetchPrices = async () => {
-    setPricingLoading(true);
-    try {
-      const res = await api.getPlanPrices();
-      setMonthlyPrice(res.MONTHLY ?? 49);
-      setHalfYearlyPrice(res.HALF_YEARLY ?? 269);
-      setYearlyPrice(res.YEARLY ?? 499);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setPricingLoading(false);
-    }
-  };
-
-  const handleUpdatePrices = async (e) => {
-    e.preventDefault();
-    try {
-      await api.updatePlanPrices({
-        MONTHLY: Number(monthlyPrice),
-        HALF_YEARLY: Number(halfYearlyPrice),
-        YEARLY: Number(yearlyPrice)
-      });
-      alert(t('subscriptionRatesUpdatedMsg'));
-    } catch (err) {
-      alert(`${t('updateFailedPrefix')}: ${err.message}`);
-    }
-  };
-
-  return (
-    <div className="animate-fade-in">
-      <div className="page-head">
-        <div>
-          <div className="eyebrow"><Tag /> {t('platformFinanceLabel')}</div>
-          <h1>{t('subscriptionPricingTitle')}</h1>
-          <p>{t('configureFranchisePricingDesc')}</p>
-        </div>
-      </div>
-
-      {!pricingLoading && (
-        <div className="stat-grid three">
-          <div className="stat-card" style={{ animationDelay: '.05s' }}>
-            <div className="stat-top">
-              <div className="icon-badge purple"><IndianRupee /></div>
-              <span className="stat-trend"><Calendar />{t('monthlyLower')}</span>
-            </div>
-            <div className="stat-num"><CountUp value={Number(monthlyPrice) || 0} prefix="₹" /></div>
-            <div className="stat-label">{t('monthlyRecurringPlanLabel')}</div>
-          </div>
-          <div className="stat-card" style={{ animationDelay: '.15s' }}>
-            <div className="stat-top">
-              <div className="icon-badge blue"><CalendarRange /></div>
-              <span className="stat-trend"><Calendar />{t('sixMonthLower')}</span>
-            </div>
-            <div className="stat-num"><CountUp value={Number(halfYearlyPrice) || 0} prefix="₹" /></div>
-            <div className="stat-label">{t('halfYearlyPlanRateLabel')}</div>
-          </div>
-          <div className="stat-card" style={{ animationDelay: '.25s' }}>
-            <div className="stat-top">
-              <div className="icon-badge orange"><BadgePercent /></div>
-              <span className="stat-trend"><Calendar />{t('yearlyLower')}</span>
-            </div>
-            <div className="stat-num"><CountUp value={Number(yearlyPrice) || 0} prefix="₹" /></div>
-            <div className="stat-label">{t('yearlyDiscountedRateLabel')}</div>
-          </div>
-        </div>
-      )}
-
-      <div className="card" style={{ maxWidth: 560, margin: '0 auto' }}>
-        <div className="section-title" style={{ marginBottom: 6 }}>
-          <h2>{t('subscriptionPlanPricingLabel')}</h2>
-        </div>
-        <p className="cell-sub" style={{ marginBottom: 22, fontSize: 12.5 }}>
-          {t('setRatesForKeyShopsDesc')}
-        </p>
-
-        {pricingLoading ? (
-          <div style={{ display: 'flex', height: 140, alignItems: 'center', justifyContent: 'center' }}>
-            <RefreshCw className="animate-spin" style={{ width: 26, height: 26, color: 'var(--gold)' }} />
-          </div>
-        ) : (
-          <form onSubmit={handleUpdatePrices}>
-            <div className="reg-section">
-
-              <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><IndianRupee /></div><b>{t('monthlyRecurringPlanRupeeLabel')} <span className="req">*</span></b></div>
-                <div className="input-wrap">
-                  <input
-                    type="number" required value={monthlyPrice} onChange={(e) => setMonthlyPrice(e.target.value)}
-                  />
-                </div>
-                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('monthlyRecurringBillHint')}</span>
-              </div>
-
-              <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CalendarRange /></div><b>{t('sixMonthPlanRateRupeeLabel')} <span className="req">*</span></b></div>
-                <div className="input-wrap">
-                  <input
-                    type="number" required value={halfYearlyPrice} onChange={(e) => setHalfYearlyPrice(e.target.value)}
-                  />
-                </div>
-                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('halfYearlyUpfrontRateHint')}</span>
-              </div>
-
-              <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><BadgePercent /></div><b>{t('yearlyPlanDiscountedRateRupeeLabel')} <span className="req">*</span></b></div>
-                <div className="input-wrap">
-                  <input
-                    type="number" required value={yearlyPrice} onChange={(e) => setYearlyPrice(e.target.value)}
-                  />
-                </div>
-                <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('annualUpfrontRateHint')}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 4 }}>
-              <button
-                type="submit"
-                className="btn btn-primary"
-              >
-                <Check />
-                <span>{t('updateSubscriptionRatesBtn')}</span>
-              </button>
-            </div>
-          </form>
-        )}
-      </div>
-    </div>
-  );
-}
-
 // ============================================================================
 // COMPONENT 7: REVENUE MANAGEMENT (SUPER ADMIN ONLY)
 // ============================================================================
@@ -12820,6 +12627,7 @@ export function SupportConfigView({ t, api }) {
   const [ownerPhone, setOwnerPhone] = useState('');
   const [ownerAddress, setOwnerAddress] = useState('');
   const [videos, setVideos] = useState([]);
+  const [subscriptionPrice, setSubscriptionPrice] = useState(999);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -12861,6 +12669,7 @@ export function SupportConfigView({ t, api }) {
       setOwnerPhone(res.ownerPhone || '');
       setOwnerAddress(res.ownerAddress || '');
       setVideos(res.videos || []);
+      setSubscriptionPrice(res.subscriptionPrice ?? 999);
     } catch (e) {
       console.error('Failed to load support config:', e);
     } finally {
@@ -12872,7 +12681,7 @@ export function SupportConfigView({ t, api }) {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.updateSupportConfig({ whatsapp, videos, ownerName, ownerPhone, ownerAddress });
+      await api.updateSupportConfig({ whatsapp, videos, ownerName, ownerPhone, ownerAddress, subscriptionPrice: Number(subscriptionPrice) });
       alert(t('supportConfigUpdatedMsg'));
     } catch (e) {
       alert(t('saveFailedTemplate').split('{msg}')[0] + e.message);
@@ -13043,6 +12852,20 @@ export function SupportConfigView({ t, api }) {
                   placeholder={t('whatsappNumberPlaceholderEg')}
                 />
               </div>
+            </div>
+          </div>
+
+          <div className="reg-section">
+            <div className="reg-field" style={{ marginBottom: 0 }}>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><IndianRupee /></div><b>{t('subscriptionPriceLabel')} <span className="req">*</span></b></div>
+              <div className="input-wrap">
+                <input
+                  type="number" required min="0" step="0.01" value={subscriptionPrice}
+                  onChange={(e) => setSubscriptionPrice(e.target.value)}
+                  placeholder={t('subscriptionPricePlaceholderEg')}
+                />
+              </div>
+              <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('subscriptionPriceHint')}</span>
             </div>
           </div>
 

@@ -69,14 +69,13 @@ export class ReportService {
       take: 6,
     });
 
-    // Compute total subscription revenue
-    const allSubscriptions = await this.tenantService.prisma.subscription.findMany();
-    const subscriptionTotal = allSubscriptions.reduce((acc, sub) => {
-      if (sub.plan === 'MONTHLY') return acc + 49;
-      if (sub.plan === 'HALF_YEARLY') return acc + 269;
-      if (sub.plan === 'YEARLY') return acc + 499;
-      return acc;
-    }, 0);
+    // Compute total subscription revenue using the single configurable yearly price
+    const platformConfig = await this.tenantService.prisma.platformConfig.findUnique({
+      where: { id: 'default' },
+    });
+    const subscriptionPrice = platformConfig?.subscriptionPrice ?? 999;
+    const subscriptionCount = await this.tenantService.prisma.subscription.count();
+    const subscriptionTotal = subscriptionCount * subscriptionPrice;
 
     return {
       shops: {
@@ -255,7 +254,7 @@ export class ReportService {
       where: { id: 'default' },
     });
     if (!config) {
-      return { whatsapp: '+91 98765 43210', videos: [], ownerName: null, ownerPhone: null, ownerAddress: null };
+      return { whatsapp: '+91 98765 43210', videos: [], ownerName: null, ownerPhone: null, ownerAddress: null, subscriptionPrice: 999 };
     }
     return {
       whatsapp: config.whatsapp,
@@ -263,6 +262,7 @@ export class ReportService {
       ownerName: config.ownerName,
       ownerPhone: config.ownerPhone,
       ownerAddress: config.ownerAddress,
+      subscriptionPrice: config.subscriptionPrice,
     };
   }
 
@@ -272,6 +272,7 @@ export class ReportService {
     ownerName?: string;
     ownerPhone?: string;
     ownerAddress?: string;
+    subscriptionPrice?: number;
   }) {
     const data = {
       whatsapp: dto.whatsapp,
@@ -279,6 +280,7 @@ export class ReportService {
       ownerName: dto.ownerName ?? null,
       ownerPhone: dto.ownerPhone ?? null,
       ownerAddress: dto.ownerAddress ?? null,
+      ...(dto.subscriptionPrice !== undefined ? { subscriptionPrice: dto.subscriptionPrice } : {}),
     };
     const updated = await this.tenantService.prisma.platformConfig.upsert({
       where: { id: 'default' },
@@ -291,6 +293,7 @@ export class ReportService {
       ownerName: updated.ownerName,
       ownerPhone: updated.ownerPhone,
       ownerAddress: updated.ownerAddress,
+      subscriptionPrice: updated.subscriptionPrice,
     };
   }
 }

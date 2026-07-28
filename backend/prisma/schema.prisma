@@ -444,6 +444,10 @@ model PlatformConfig {
   whatsapp  String   @default("+91 98765 43210")
   videos    Json     @default("[]")
 
+  // Single yearly subscription price applied platform-wide - the only
+  // configurable subscription rate now that all shops are on one plan tier.
+  subscriptionPrice Float @default(999)
+
   // Super Admin contact details shown on the shop-facing "Support Contact"
   // screen (reached from the bottom nav's Customer Service icon). Nullable so
   // existing deployments aren't required to backfill them immediately.

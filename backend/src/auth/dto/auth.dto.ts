@@ -85,7 +85,9 @@ export class VerifyOtpDto {
 // Public self-registration wizard's payload - two steps on the frontend:
 // Step 1 (basic details - name, shop name, address+GPS, city, state, PIN
 // code, optional Aadhaar number, email, OTP-verified mobile number,
-// password, all in one flat form) and Step 2 (plan + payment only).
+// password, all in one flat form) and Step 2 (payment for the single yearly
+// plan only - see AuthService.registerShop, which always creates a YEARLY
+// subscription).
 // Both email and phone double as login identifiers post-registration (see
 // AuthService.login) and must each be unique across all shop accounts -
 // enforced in AuthService.registerShop().
@@ -146,10 +148,6 @@ export class RegisterShopDto {
   @IsNotEmpty()
   @MinLength(6)
   password: string;
-
-  @IsString()
-  @IsNotEmpty()
-  plan: string; // 'MONTHLY' | 'HALF_YEARLY' | 'YEARLY' (the free trial plan has been retired)
 
   // Captured alongside `location` by the "Current Location" GPS button (see
   // captureShopLocation in App.jsx) - optional since a shop owner can type

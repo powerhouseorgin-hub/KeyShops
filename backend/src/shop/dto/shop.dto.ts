@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsString, IsOptional, IsEnum, IsBoolean, IsHexColor, IsDateString } from 'class-validator';
-import { Plan, SubscriptionStatus } from '@prisma/client';
+import { IsNotEmpty, IsString, IsOptional, IsEnum, IsBoolean, IsHexColor } from 'class-validator';
+import { SubscriptionStatus } from '@prisma/client';
 
 export class CreateShopDto {
   @IsString()
@@ -42,15 +42,6 @@ export class CreateShopDto {
   @IsString()
   @IsNotEmpty({ message: 'Admin initial password is required' })
   adminPassword?: string;
-
-  // Initial subscription
-  @IsEnum(Plan)
-  @IsNotEmpty({ message: 'Subscription plan is required' })
-  plan: Plan;
-
-  @IsDateString()
-  @IsNotEmpty({ message: 'Subscription end date is required' })
-  endDate: string;
 }
 
 export class UpdateShopDto {
@@ -87,20 +78,11 @@ export class UpdateSettingsDto {
   themeColor?: string;
 }
 
+// Only a single yearly plan exists platform-wide, so managing a subscription
+// just means setting its status - renewing always creates a fresh one-year
+// window starting now (see ShopService.updateSubscription).
 export class ManageSubscriptionDto {
-  @IsEnum(Plan)
-  @IsNotEmpty({ message: 'Plan is required' })
-  plan: Plan;
-
   @IsEnum(SubscriptionStatus)
   @IsNotEmpty({ message: 'Subscription status is required' })
   status: SubscriptionStatus;
-
-  @IsDateString()
-  @IsNotEmpty({ message: 'Start date is required' })
-  startDate: string;
-
-  @IsDateString()
-  @IsNotEmpty({ message: 'End date is required' })
-  endDate: string;
 }

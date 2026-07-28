@@ -75,6 +75,7 @@ export class ReportController {
       ownerName?: string;
       ownerPhone?: string;
       ownerAddress?: string;
+      subscriptionPrice?: number;
     },
   ) {
     return this.reportService.updateSupportConfig(dto);

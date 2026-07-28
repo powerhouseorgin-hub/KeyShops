@@ -67,14 +67,17 @@ export class ShopService {
         },
       });
 
-      // 3. Create Subscription
+      // 3. Create Subscription - single YEARLY plan platform-wide, one year from creation.
+      const startDate = new Date();
+      const endDate = new Date(startDate);
+      endDate.setFullYear(endDate.getFullYear() + 1);
       await tx.subscription.create({
         data: {
           shopId: shop.id,
-          plan: dto.plan,
+          plan: 'YEARLY',
           status: 'ACTIVE',
-          startDate: new Date(),
-          endDate: new Date(dto.endDate),
+          startDate,
+          endDate,
         },
       });
 
@@ -140,7 +143,9 @@ export class ShopService {
     });
   }
 
-  // SUPER ADMIN: Manage Subscriptions
+  // SUPER ADMIN: Manage Subscriptions. Always renews for a fresh one-year
+  // YEARLY window starting now, with the requested status - there's only one
+  // plan tier, so "managing" a subscription just means renew + set status.
   async updateSubscription(shopId: string, dto: ManageSubscriptionDto) {
     const shop = await this.tenantService.prisma.shop.findUnique({ where: { id: shopId } });
     if (!shop) throw new NotFoundException('Shop not found');
@@ -151,14 +156,18 @@ export class ShopService {
       data: { status: 'EXPIRED' },
     });
 
+    const startDate = new Date();
+    const endDate = new Date(startDate);
+    endDate.setFullYear(endDate.getFullYear() + 1);
+
     // Create new subscription record
     return this.tenantService.prisma.subscription.create({
       data: {
         shopId,
-        plan: dto.plan,
+        plan: 'YEARLY',
         status: dto.status,
-        startDate: new Date(dto.startDate),
-        endDate: new Date(dto.endDate),
+        startDate,
+        endDate,
       },
     });
   }

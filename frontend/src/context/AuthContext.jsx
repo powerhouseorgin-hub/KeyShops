@@ -315,19 +315,6 @@ export const AuthProvider = ({ children }) => {
     createSuperCustomer: async (dto) => request('/api/super/customers', 'POST', dto),
     updateSuperCustomer: async (id, dto) => request(`/api/super/customers/${id}`, 'PUT', dto),
 
-    getPlanPrices: async () => {
-      try {
-        const local = localStorage.getItem('kee_plan_prices');
-        if (local) return JSON.parse(local);
-      } catch (e) {}
-      return { MONTHLY: 49, HALF_YEARLY: 269, YEARLY: 499 };
-    },
-
-    updatePlanPrices: async (prices) => {
-      localStorage.setItem('kee_plan_prices', JSON.stringify(prices));
-      return prices;
-    },
-
     // --- DASHBOARDS & REPORTS ---
     getDashboard: async () => {
       const url = user.role === 'SUPER_ADMIN' ? '/api/super/dashboard' : '/api/shop/dashboard';

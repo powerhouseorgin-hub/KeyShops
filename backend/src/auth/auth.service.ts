@@ -436,19 +436,18 @@ export class AuthService implements OnModuleInit {
         },
       });
 
-      // 3. Create Subscription
-      let durationDays = 7;
-      if (dto.plan === 'MONTHLY') durationDays = 30;
-      else if (dto.plan === 'HALF_YEARLY') durationDays = 180;
-      else if (dto.plan === 'YEARLY') durationDays = 365;
+      // 3. Create Subscription - single YEARLY plan platform-wide.
+      const subStartDate = new Date();
+      const subEndDate = new Date(subStartDate);
+      subEndDate.setFullYear(subEndDate.getFullYear() + 1);
 
       await tx.subscription.create({
         data: {
           shopId: shop.id,
-          plan: dto.plan as any,
+          plan: 'YEARLY',
           status: 'ACTIVE',
-          startDate: new Date(),
-          endDate: new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000),
+          startDate: subStartDate,
+          endDate: subEndDate,
         },
       });
 
@@ -456,7 +455,7 @@ export class AuthService implements OnModuleInit {
       await tx.notification.create({
         data: {
           title: 'New Shop Registered',
-          message: `Shop "${dto.shopName}" by ${dto.ownerName} has registered and is now active. Tier: ${dto.plan}`,
+          message: `Shop "${dto.shopName}" by ${dto.ownerName} has registered and is now active.`,
           type: 'SHOP_REGISTRATION',
           shopId: null, // no specific shop's notification feed
           audience: 'SUPER_ADMIN', // internal to the Super Admin panel only - must NOT reach shop admins
