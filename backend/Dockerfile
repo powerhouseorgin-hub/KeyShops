@@ -1,5 +1,8 @@
 # ---- Build stage ----
-FROM node:20-slim AS build
+# Node 22+ required: @supabase/supabase-js's realtime-js dependency needs
+# native WebSocket support (added in Node 22), even though we only use
+# Supabase Storage, not realtime subscriptions.
+FROM node:22-slim AS build
 WORKDIR /app
 
 # Prisma's engine downloads need openssl on Debian-slim
@@ -14,7 +17,7 @@ RUN npm run prisma:generate
 RUN npm run build
 
 # ---- Runtime stage ----
-FROM node:20-slim AS runtime
+FROM node:22-slim AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
