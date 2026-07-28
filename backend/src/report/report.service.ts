@@ -254,14 +254,13 @@ export class ReportService {
       where: { id: 'default' },
     });
     if (!config) {
-      return { whatsapp: '+91 98765 43210', videos: [], ownerName: null, ownerPhone: null, ownerAddress: null, subscriptionPrice: 999 };
+      return { whatsapp: '+91 98765 43210', videos: [], email: null, customerCareNumber: null, subscriptionPrice: 999 };
     }
     return {
       whatsapp: config.whatsapp,
       videos: config.videos,
-      ownerName: config.ownerName,
-      ownerPhone: config.ownerPhone,
-      ownerAddress: config.ownerAddress,
+      email: config.email,
+      customerCareNumber: config.customerCareNumber,
       subscriptionPrice: config.subscriptionPrice,
     };
   }
@@ -269,17 +268,15 @@ export class ReportService {
   async updateSupportConfig(dto: {
     whatsapp: string;
     videos: { name: string; url: string }[];
-    ownerName?: string;
-    ownerPhone?: string;
-    ownerAddress?: string;
+    email?: string;
+    customerCareNumber?: string;
     subscriptionPrice?: number;
   }) {
     const data = {
       whatsapp: dto.whatsapp,
       videos: dto.videos ?? [],
-      ownerName: dto.ownerName ?? null,
-      ownerPhone: dto.ownerPhone ?? null,
-      ownerAddress: dto.ownerAddress ?? null,
+      email: dto.email ?? null,
+      customerCareNumber: dto.customerCareNumber ?? null,
       ...(dto.subscriptionPrice !== undefined ? { subscriptionPrice: dto.subscriptionPrice } : {}),
     };
     const updated = await this.tenantService.prisma.platformConfig.upsert({
@@ -290,9 +287,8 @@ export class ReportService {
     return {
       whatsapp: updated.whatsapp,
       videos: updated.videos,
-      ownerName: updated.ownerName,
-      ownerPhone: updated.ownerPhone,
-      ownerAddress: updated.ownerAddress,
+      email: updated.email,
+      customerCareNumber: updated.customerCareNumber,
       subscriptionPrice: updated.subscriptionPrice,
     };
   }

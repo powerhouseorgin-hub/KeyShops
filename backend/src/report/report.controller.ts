@@ -72,9 +72,8 @@ export class ReportController {
     @Body() dto: {
       whatsapp: string;
       videos: { name: string; url: string }[];
-      ownerName?: string;
-      ownerPhone?: string;
-      ownerAddress?: string;
+      email?: string;
+      customerCareNumber?: string;
       subscriptionPrice?: number;
     },
   ) {

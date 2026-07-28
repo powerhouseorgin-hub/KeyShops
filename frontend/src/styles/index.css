@@ -4,10 +4,10 @@
 @tailwind utilities;
 
 :root {
-  --bg-0: #FAF6EE;
-  --bg-1: #F7F1E2;
+  --bg-0: #FFFFFF;
+  --bg-1: #FFFFFF;
   --card: #ffffff;
-  --card-2: #FBF2DA;
+  --card-2: #FFFFFF;
   --border: rgba(122, 18, 32, 0.12);
   --border-2: rgba(122, 18, 32, 0.22);
   --gold: #C89416;
@@ -34,7 +34,7 @@
   --jgreen: #27AE60;
   --teal: #12B8B0;
   --skyblue: #2D9CDB;
-  --rose: #EB5757;
+  --rose: #EB3B5A;
   --display: 'Baloo 2', 'Nunito', sans-serif;
   --sans: 'Nunito', 'Baloo 2', sans-serif;
 }
@@ -141,7 +141,6 @@
   font-family: var(--display); font-weight: 700; color: var(--gold); font-size: 13px;
 }
 
-/* sidebar nav (Kee uses a left sidebar rather than top tabs) */
 .sidebar {
   background: var(--bg-1);
   border-right: 1px solid var(--border);
@@ -180,10 +179,10 @@
 .side-link svg { width: 17px; height: 17px; flex-shrink: 0; }
 .side-link:hover { color: var(--text-0); background: var(--card-2); }
 .side-link.active {
-  background: var(--gold-dim); color: var(--gold);
-  border-color: rgba(200, 148, 22, 0.28);
+  background: rgba(37, 99, 235, 0.12); color: #2563EB;
+  border-color: rgba(37, 99, 235, 0.28);
 }
-.side-link.active svg { color: var(--gold); }
+.side-link.active svg { color: #2563EB; }
 .side-link .nav-ico {
   width: 27px; height: 27px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
@@ -211,7 +210,7 @@
 .page-head p { color: var(--text-2); font-size: 14.5px; margin-top: 4px; }
 .eyebrow {
   display: inline-flex; align-items: center; gap: 6px;
-  color: var(--gold); font-family: var(--display); font-weight: 700; font-size: 12px;
+  color: #2563EB; font-family: var(--display); font-weight: 700; font-size: 12px;
   text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px;
 }
 .eyebrow svg { width: 13px; height: 13px; }
@@ -246,13 +245,13 @@
 }
 .btn svg { width: 16px; height: 16px; stroke-width: 2.4; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn-primary { background: linear-gradient(135deg, var(--gold), var(--gold-2)); color: #ffffff; box-shadow: 0 14px 26px rgba(200, 148, 22, 0.32), 0 2px 4px rgba(200, 148, 22, 0.2); }
+.btn-primary { background: #2563EB; color: #ffffff; box-shadow: 0 14px 26px rgba(37, 99, 235, 0.32), 0 2px 4px rgba(37, 99, 235, 0.2); }
 .btn-primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px) scale(1.015); }
 .btn-primary:active:not(:disabled) { transform: translateY(0) scale(.98); }
-.btn-outline { background: transparent; color: var(--gold); border: 1.5px solid rgba(200, 148, 22, 0.45); }
-.btn-outline:hover:not(:disabled) { background: var(--gold-dim); transform: translateY(-1px); }
+.btn-outline { background: transparent; color: #2563EB; border: 1.5px solid rgba(37, 99, 235, 0.45); }
+.btn-outline:hover:not(:disabled) { background: rgba(37, 99, 235, 0.12); transform: translateY(-1px); }
 .btn-ghost { background: var(--card-2); color: var(--text-1); border: 1px solid var(--border-2); }
-.btn-ghost:hover:not(:disabled) { background: #eef0fb; color: var(--text-0); }
+.btn-ghost:hover:not(:disabled) { background: #FFFFFF; color: var(--text-0); }
 .btn-sm { padding: 9px 16px; font-size: 12.5px; }
 .btn-block { width: 100%; }
 .btn-danger-outline { background: transparent; color: var(--red); border: 1.5px solid rgba(220, 38, 38, 0.4); }
@@ -289,8 +288,8 @@
    (never cropped), which in turn makes .dash-card taller since it's a flex
    column that just grows to fit its content. */
 .icon-badge.photo {
-  width: 100%; height: 176px; border-radius: 14px;
-  padding: 3px; overflow: hidden; background: var(--card-2);
+  width: 100%; height: 108px; border-radius: 14px;
+  padding: 1px; overflow: hidden; background: var(--card-2);
   align-self: stretch;
 }
 .icon-badge.photo img {
@@ -298,7 +297,7 @@
   border-radius: 10px; display: block;
 }
 @media (max-width: 640px) {
-  .icon-badge.photo { height: 142px; }
+  .icon-badge.photo { height: 90px; }
 }
 .icon-badge.flat-icon { background: var(--card-2); padding: 5px; }
 .icon-badge.flat-icon svg { width: 100%; height: 100%; }
@@ -308,12 +307,12 @@
    same grid as the product-photo cards at a matching size, per request to
    make all dashboard cards a consistent large size. */
 .icon-badge.big {
-  width: 100%; height: 176px; border-radius: 14px;
-  padding: 6px; background: var(--card-2);
+  width: 100%; height: 108px; border-radius: 14px;
+  padding: 3px; background: var(--card-2);
   align-self: stretch;
 }
-.icon-badge.big svg { width: 56px; height: 56px; stroke-width: 1.8; }
-.icon-badge.big.flat-icon { background: var(--card-2); padding: 16px; }
+.icon-badge.big svg { width: 38px; height: 38px; stroke-width: 1.8; }
+.icon-badge.big.flat-icon { background: var(--card-2); padding: 8px; }
 .icon-badge.big.flat-icon svg { width: 100%; height: 100%; }
 /* Colour tints for plain-icon dashboard tiles (Shops, Search Keys, ...) so
    the shortcut grid reads as a set of distinct, colourful destinations
@@ -329,8 +328,8 @@
 .icon-badge.big.tint-jgreen { background: var(--jgreen); color: #fff; }
 .icon-badge.big.tint-maroon { background: linear-gradient(135deg, var(--maroon), var(--maroon-dark)); color: #fff; }
 @media (max-width: 640px) {
-  .icon-badge.big { height: 142px; }
-  .icon-badge.big svg { width: 44px; height: 44px; }
+  .icon-badge.big { height: 90px; }
+  .icon-badge.big svg { width: 30px; height: 30px; }
 }
 /* Compact variant - used by full-width dashboard shortcut cards (Customer
    Config, Customer Support) that need a noticeably smaller height than the
@@ -495,10 +494,15 @@
 .search-type-trigger {
   display: flex; align-items: center; gap: 6px;
   height: 40px; padding: 0 12px; border-radius: 12px;
-  background: var(--card-2); border: 1.5px solid var(--border-2);
+  background: #F2F3F6; border: 1.5px solid var(--border-2);
   color: var(--text-2); font-size: 12.5px; font-weight: 700;
   white-space: nowrap; flex-shrink: 0; transition: all .18s ease;
 }
+/* Global header search box - deliberately a subtle light-grey rather than
+   plain white so it still reads as an input field against the now-white
+   page/card backgrounds. */
+.input-wrap.global-search-input input { background: #F2F3F6; }
+.input-wrap.global-search-input input:focus { background: #F2F3F6; }
 .search-type-trigger:hover { border-color: rgba(200, 148, 22, 0.4); color: var(--text-0); }
 .search-type-trigger svg { flex-shrink: 0; color: var(--text-3); }
 .search-type-backdrop { position: fixed; inset: 0; z-index: 998; background: transparent; }
@@ -577,7 +581,7 @@
   color: var(--text-0); border-radius: 13px; padding: 13px 15px 13px 42px;
   font-size: 14px; outline: none; transition: border-color .2s ease, background .2s ease;
 }
-.input-wrap input:focus, .input-wrap select:focus { border-color: var(--gold); background: #eef0fb; }
+.input-wrap input:focus, .input-wrap select:focus { border-color: var(--gold); background: #FFFFFF; }
 .input-wrap input::placeholder { color: var(--text-3); }
 .field-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 .remember { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-2); font-weight: 700; }
@@ -624,20 +628,22 @@
    action like capturing GPS location. */
 .reg-field-label .reg-trailing.loc-btn {
   gap: 6px; padding: 7px 12px; font-size: 12px; border-radius: 999px;
-  background: var(--gold-dim); border: 1.5px solid rgba(200, 148, 22, 0.28);
-  min-height: 30px;
+  background: rgba(37, 99, 235, 0.12); border: 1.5px solid rgba(37, 99, 235, 0.32);
+  color: #2563EB; min-height: 30px;
 }
 .reg-field-label .reg-trailing.loc-btn svg { width: 14px !important; height: 14px !important; }
-.reg-field-label .reg-trailing.loc-btn:active { background: var(--gold-dim-2, var(--gold-dim)); transform: scale(0.97); }
+.reg-field-label .reg-trailing.loc-btn:active { background: rgba(37, 99, 235, 0.2); transform: scale(0.97); }
 .reg-field .input-wrap input, .reg-field .input-wrap select { padding-left: 15px; }
 .reg-field .input-wrap > svg { display: none; }
 .reg-field .input-wrap input, .reg-field .input-wrap select { background: var(--card-2); }
 .reg-otp-btn {
-  background: var(--gold); color: var(--maroon-dark); border: none; border-radius: 10px;
+  background: #1D4ED8; color: #ffffff; border: none; border-radius: 10px;
   padding: 0 14px; font-weight: 800; font-size: 11.5px; font-family: var(--display);
   white-space: nowrap; flex-shrink: 0;
 }
-.reg-submit-btn { width: 100%; justify-content: center; border-radius: 14px; padding: 15px; font-size: 14.5px; }
+.reg-otp-btn:hover:not(:disabled) { filter: brightness(1.1); }
+.reg-submit-btn { width: 100%; justify-content: center; border-radius: 14px; padding: 15px; font-size: 14.5px; background: #1D4ED8; box-shadow: 0 14px 26px rgba(29, 78, 216, 0.35), 0 2px 4px rgba(29, 78, 216, 0.2); }
+.reg-submit-btn:hover:not(:disabled) { filter: brightness(1.1); }
 
 .login-divider { display: flex; align-items: center; gap: 12px; margin: 26px 0; color: var(--text-3); font-size: 12px; font-weight: 700; }
 .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-2); }
@@ -697,9 +703,9 @@
    in a single half-width cell. */
 .dash-card-full { grid-column: 1 / -1; }
 .dash-card {
-  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px;
   background: var(--card); border: 1px solid var(--border);
-  border-radius: 16px; padding: 8px;
+  border-radius: 12px; padding: 5px;
   box-shadow: 0 20px 40px rgba(30, 41, 59, 0.1), 0 2px 6px rgba(30, 41, 59, 0.06);
   transition: transform .2s ease, border-color .2s ease, background .2s ease;
   opacity: 0; transform: translateY(16px);
@@ -707,9 +713,23 @@
   cursor: pointer;
   width: 100%;
 }
-.dash-card:hover { transform: translateY(-3px); border-color: rgba(240, 185, 11, 0.4); background: #f4f6fb; }
+.dash-card:hover { transform: translateY(-3px); border-color: rgba(240, 185, 11, 0.4); background: #FFFFFF; }
 .dash-card-title { font-family: var(--display); font-weight: 800; color: var(--text-0); font-size: 13px; line-height: 1.2; width: 100%; }
 .dash-card-desc { font-size: 10.5px; color: var(--text-2); font-weight: 600; line-height: 1.3; width: 100%; }
+/* Solid-color "jewel tile" dashboard cards, matching the reference mockup
+   (New Customer/blue, Search Keys/pink, Used Machines/purple, ...). The
+   accent color is passed per-card via DashCardGrid's `accent` prop and read
+   here through the --tint custom property, so this stays a single reusable
+   variant instead of one CSS class per color. */
+.dash-card.dash-card-tint { background: var(--tint); border-color: transparent; }
+.dash-card.dash-card-tint:hover { background: var(--tint); filter: brightness(1.06); border-color: transparent; }
+.dash-card-tint .dash-card-title { color: #ffffff; }
+.dash-card-tint .dash-card-desc { color: rgba(255, 255, 255, 0.85); }
+.dash-card-tint .icon-badge.big,
+.dash-card-tint .icon-badge.photo,
+.dash-card-tint .icon-badge.flat-icon { background: transparent; }
+.dash-card-tint .icon-badge.big svg,
+.dash-card-tint .icon-badge.flat-icon svg { color: #ffffff; }
 
 /* quick actions */
 .quick-actions { display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
@@ -720,7 +740,7 @@
   border-radius: 18px; padding: 18px;
   transition: transform .2s ease, border-color .2s ease, background .2s ease;
 }
-.qa-btn:hover { transform: translateY(-3px); border-color: rgba(200, 148, 22, 0.35); background: #f4f6fb; }
+.qa-btn:hover { transform: translateY(-3px); border-color: rgba(200, 148, 22, 0.35); background: #FFFFFF; }
 .qa-btn .icon-badge { background: linear-gradient(135deg, var(--gold), var(--gold-2)); color: #ffffff; }
 .qa-btn span { font-family: var(--display); font-weight: 700; color: var(--text-0); font-size: 14.5px; }
 .qa-btn small { display: block; color: var(--text-2); font-size: 11.5px; font-weight: 600; margin-top: 2px; }
@@ -824,7 +844,7 @@ select.sel:focus { border-color: var(--gold); }
   display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
   background: var(--card-2); transition: border-color .2s ease, background .2s ease; cursor: pointer;
 }
-.dropzone:hover { border-color: var(--gold); background: #eef0fb; }
+.dropzone:hover { border-color: var(--gold); background: #FFFFFF; }
 .dropzone .icon-badge { margin-bottom: 4px; }
 .dropzone .dz-title { font-family: var(--display); font-weight: 700; color: var(--text-0); font-size: 14px; }
 .dropzone .dz-sub { font-size: 12px; color: var(--text-3); font-weight: 600; }
@@ -852,7 +872,7 @@ select.sel:focus { border-color: var(--gold); }
 /* store */
 .store-tabs { display: flex; gap: 8px; margin-bottom: 22px; flex-wrap: wrap; }
 .store-tab { padding: 9px 18px; border-radius: 999px; font-family: var(--display); font-weight: 700; font-size: 13px; background: var(--card); border: 1px solid var(--border); color: var(--text-2); transition: all .18s ease; }
-.store-tab.active { background: linear-gradient(135deg, var(--gold), var(--gold-2)); color: #ffffff; border-color: var(--gold); }
+.store-tab.active { background: #2563EB; color: #ffffff; border-color: #2563EB; }
 
 .store-layout { display: grid; grid-template-columns: 1fr 320px; gap: 22px; align-items: start; }
 @media (max-width: 980px) { .store-layout { grid-template-columns: 1fr; } }
@@ -879,7 +899,7 @@ select.sel:focus { border-color: var(--gold); }
 .product-body .pcat { font-size: 11px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
 .product-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
 .price { font-family: var(--display); font-weight: 800; color: var(--gold); font-size: 16px; }
-.add-btn { width: 36px; height: 36px; border-radius: 11px; background: linear-gradient(135deg, var(--gold), var(--gold-2)); color: #ffffff; border: none; display: flex; align-items: center; justify-content: center; transition: transform .15s ease, filter .15s ease; box-shadow: 0 8px 16px rgba(200, 148, 22, 0.28); }
+.add-btn { width: 36px; height: 36px; border-radius: 11px; background: #2563EB; color: #ffffff; border: none; display: flex; align-items: center; justify-content: center; transition: transform .15s ease, filter .15s ease; box-shadow: 0 8px 16px rgba(37, 99, 235, 0.28); }
 .add-btn:hover { transform: scale(1.08); filter: brightness(1.08); }
 .add-btn svg { width: 17px; height: 17px; stroke-width: 2.6; }
 
@@ -901,23 +921,23 @@ select.sel:focus { border-color: var(--gold); }
 .glass-panel { background: #ffffff; border: 1px solid rgba(30, 41, 59, 0.08); }
 .glass-panel-hover { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
 .glass-panel-hover:hover {
-  background: #f4f6fb;
+  background: #FFFFFF;
   border-color: rgba(200, 148, 22, 0.35);
   box-shadow: 0 10px 30px -10px rgba(200, 148, 22, 0.2);
   transform: translateY(-2px);
 }
-.glass-input { background: #f4f6fb; border: 1px solid rgba(30, 41, 59, 0.12); transition: all 0.2s ease-in-out; }
+.glass-input { background: #FFFFFF; border: 1px solid rgba(30, 41, 59, 0.12); transition: all 0.2s ease-in-out; }
 .glass-input:focus {
-  background: #eef0fb;
+  background: #FFFFFF;
   border-color: rgba(200, 148, 22, 0.6);
   box-shadow: 0 0 0 2px rgba(200, 148, 22, 0.25);
   outline: none;
 }
 .glass-button-primary {
-  background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #ffffff; font-weight: 700; border-radius: 9999px;
+  background: #2563EB; color: #ffffff; font-weight: 700; border-radius: 9999px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.glass-button-primary:hover:not(:disabled) { filter: brightness(1.06); box-shadow: 0 0 20px 2px rgba(200, 148, 22, 0.35); transform: scale(1.02); }
+.glass-button-primary:hover:not(:disabled) { filter: brightness(1.06); box-shadow: 0 0 20px 2px rgba(37, 99, 235, 0.35); transform: scale(1.02); }
 .glass-button-primary:active:not(:disabled) { transform: scale(0.98); }
 
 /* Custom Scrollbar */
@@ -978,10 +998,10 @@ select.sel:focus { border-color: var(--gold); }
   --gold: #C89416;
   --gold-2: #F5B800;
   --gold-dim: rgba(245, 184, 0, 0.14);
-  --bg-0: #FAF6EE;
-  --bg-1: #F7F1E2;
+  --bg-0: #FFFFFF;
+  --bg-1: #FFFFFF;
   --card: #ffffff;
-  --card-2: #FBF2DA;
+  --card-2: #FFFFFF;
   --border: rgba(122, 18, 32, 0.12);
   --border-2: rgba(122, 18, 32, 0.22);
   --text-0: #221D16;
@@ -998,7 +1018,7 @@ select.sel:focus { border-color: var(--gold); }
   --green: #27AE60;
   --teal: #12B8B0;
   --skyblue: #2D9CDB;
-  --rose: #EB5757;
+  --rose: #EB3B5A;
   background: var(--bg-0);
 }
 
@@ -1006,10 +1026,10 @@ select.sel:focus { border-color: var(--gold); }
    reading a variable - scoped overrides here so they follow the brand
    palette too, without touching the base rule the authenticated app uses. */
 .public-site .btn-primary, .login-shell .btn-primary {
-  box-shadow: 0 14px 26px rgba(122, 18, 32, 0.28), 0 2px 4px rgba(122, 18, 32, 0.18);
+  box-shadow: 0 14px 26px rgba(37, 99, 235, 0.28), 0 2px 4px rgba(37, 99, 235, 0.18);
 }
 .public-site .btn-outline, .login-shell .btn-outline {
-  border-color: rgba(122, 18, 32, 0.35);
+  border-color: rgba(37, 99, 235, 0.35);
 }
 .public-site .pill-badge, .login-shell .pill-badge {
   border-color: rgba(245, 184, 0, 0.35);
@@ -1021,9 +1041,9 @@ select.sel:focus { border-color: var(--gold); }
 }
 .public-site .input-wrap input:focus, .public-site .input-wrap select:focus,
 .login-shell .input-wrap input:focus, .login-shell .input-wrap select:focus {
-  background: #FCF6E4;
+  background: #FFFFFF;
 }
-.login-shell .dropzone:hover { background: #FCF6E4; }
+.login-shell .dropzone:hover { background: #FFFFFF; }
 
 .public-site { position: relative; overflow-x: clip; }
 
@@ -1169,7 +1189,7 @@ select.sel:focus { border-color: var(--gold); }
   background: var(--black); border: none;
   max-width: 1180px; margin: 0 auto; border-radius: 26px; padding: 56px 48px;
 }
-.public-steps-section .eyebrow { color: var(--gold-2); }
+.public-steps-section .eyebrow { color: #2563EB; }
 .public-steps-section .public-section-head h2 { color: #fff; }
 .public-steps-section .public-section-head p { color: #B8AC97; }
 .public-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; max-width: 1000px; margin: 0 auto; }
@@ -1191,10 +1211,10 @@ select.sel:focus { border-color: var(--gold); }
 }
 .public-cta-banner h2 { font-size: 22px; margin-bottom: 6px; color: var(--maroon-dark); }
 .public-cta-banner p { color: #6B4E00; font-size: 14px; font-weight: 600; }
-.public-cta-banner .btn-primary { background: var(--maroon-dark); color: #fff; box-shadow: none; }
+.public-cta-banner .btn-primary { background: #2563EB; color: #fff; box-shadow: none; }
 .public-cta-banner .btn-primary:hover:not(:disabled) { filter: brightness(1.18); }
-.public-cta-banner .btn-outline { background: #fff; color: var(--maroon-dark); border-color: transparent; }
-.public-cta-banner .btn-outline:hover:not(:disabled) { background: #F7EFD6; }
+.public-cta-banner .btn-outline { background: #fff; color: #2563EB; border-color: transparent; }
+.public-cta-banner .btn-outline:hover:not(:disabled) { background: #FFFFFF; }
 
 /* search page */
 .public-search-box-wrap { max-width: 640px; margin: 0 auto 36px; }
@@ -1231,7 +1251,7 @@ select.sel:focus { border-color: var(--gold); }
   font-size: 14px; outline: none; resize: vertical; font-family: var(--sans);
   transition: border-color .2s ease, background .2s ease;
 }
-.public-contact-textarea:focus { border-color: var(--gold); background: #eef0fb; }
+.public-contact-textarea:focus { border-color: var(--gold); background: #FFFFFF; }
 .public-contact-success { text-align: center; padding: 20px 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .public-contact-success h3 { font-size: 18px; }
 .public-contact-success p { color: var(--text-2); font-size: 13.5px; font-weight: 600; max-width: 360px; }
@@ -1339,7 +1359,7 @@ select.sel:focus { border-color: var(--gold); }
 
   /* dashboard info cards (product shortcuts, quick actions, etc.) */
   .dash-card-grid { gap: 8px; margin-bottom: 4px; }
-  .dash-card { padding: 8px; border-radius: 14px; gap: 4px; }
+  .dash-card { padding: 5px; border-radius: 12px; gap: 3px; }
   .dash-card-title { font-size: 12px; }
   .dash-card-desc { font-size: 10px; }
 

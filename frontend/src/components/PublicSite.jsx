@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Key, ArrowRight, Search, MapPin, Phone, Mail, ShieldCheck, Users,
   Package, BarChart3, Building2, Sparkles, CheckCircle2, Menu, X,
-  RefreshCw, Clock, Store, Star, Send, Download, Tag,
+  RefreshCw, Clock, Store, Star, Send, Download, Tag, MessageCircle,
 } from 'lucide-react';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 
@@ -151,8 +151,8 @@ function PublicFooter({ onNavigate }) {
           </div>
           <div className="public-footer-links">
             <span className="public-footer-heading">Get in touch</span>
-            <span className="public-footer-static"><Mail className="h-3.5 w-3.5" /> support@kee.app</span>
-            <span className="public-footer-static"><Phone className="h-3.5 w-3.5" /> +91 98765 43210</span>
+            <span className="public-footer-static"><Mail className="h-3.5 w-3.5" /> keyshops666@gmail.com</span>
+            <span className="public-footer-static"><Phone className="h-3.5 w-3.5" /> +91 90520 88853</span>
             <span className="public-footer-static"><MapPin className="h-3.5 w-3.5" /> New Delhi, India</span>
           </div>
         </div>
@@ -449,8 +449,8 @@ function AboutPage() {
           <p>Reach out and we&rsquo;ll help you get set up in one call.</p>
         </div>
         <div className="public-hero-ctas">
-          <a href="mailto:support@kee.app" className="btn btn-primary">
-            <Mail className="h-4 w-4" /> support@kee.app
+          <a href="mailto:keyshops666@gmail.com" className="btn btn-primary">
+            <Mail className="h-4 w-4" /> keyshops666@gmail.com
           </a>
         </div>
       </Reveal>
@@ -483,12 +483,17 @@ function ContactPage() {
         <Reveal className="card public-contact-card">
           <div className="icon-badge"><Mail /></div>
           <h3>Email</h3>
-          <p>support@kee.app</p>
+          <p>keyshops666@gmail.com</p>
         </Reveal>
         <Reveal delay={70} className="card public-contact-card">
           <div className="icon-badge"><Phone /></div>
-          <h3>Phone</h3>
-          <p>+91 98765 43210</p>
+          <h3>Customer Care</h3>
+          <p>+91 90520 88853</p>
+        </Reveal>
+        <Reveal delay={110} className="card public-contact-card">
+          <div className="icon-badge"><MessageCircle /></div>
+          <h3>WhatsApp</h3>
+          <p>+91 90520 88853</p>
         </Reveal>
         <Reveal delay={140} className="card public-contact-card">
           <div className="icon-badge"><MapPin /></div>

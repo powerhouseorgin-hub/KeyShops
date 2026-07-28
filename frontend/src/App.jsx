@@ -935,8 +935,11 @@ const LANGUAGES = {
     ownerNamePlaceholderEg: 'e.g. Rajesh Kumar',
     ownerPhonePlaceholderEg: 'e.g. +91 98765 43210',
     ownerAddressPlaceholderEg: 'e.g. 12 MG Road, Bengaluru',
+    customerCareNumberLabel: 'Customer Care Number',
+    customerCareNumberPlaceholderEg: 'e.g. +91 90520 88853',
+    supportConfigEmailPlaceholderEg: 'e.g. keyshops666@gmail.com',
     noContactInfoConfiguredMsg: 'Contact details have not been configured yet.',
-    ownerContactSectionTitle: 'Owner Contact Details',
+    ownerContactSectionTitle: 'Contact Details',
     ownerContactSectionDesc: 'These details are shown to every shop on the Support Contact screen.',
     videoSingularLabel: 'video',
     videoPluralLabel: 'videos',
@@ -1714,8 +1717,11 @@ const LANGUAGES = {
     ownerNamePlaceholderEg: 'उदा. राजेश कुमार',
     ownerPhonePlaceholderEg: 'जैसे +91 98765 43210',
     ownerAddressPlaceholderEg: 'उदा. 12 एमजी रोड, बेंगलुरु',
+    customerCareNumberLabel: 'ग्राहक सेवा नंबर',
+    customerCareNumberPlaceholderEg: 'जैसे +91 90520 88853',
+    supportConfigEmailPlaceholderEg: 'जैसे keyshops666@gmail.com',
     noContactInfoConfiguredMsg: 'संपर्क विवरण अभी तक कॉन्फ़िगर नहीं किया गया है।',
-    ownerContactSectionTitle: 'मालिक संपर्क विवरण',
+    ownerContactSectionTitle: 'संपर्क विवरण',
     ownerContactSectionDesc: 'ये विवरण हर दुकान को सहायता संपर्क स्क्रीन पर दिखाए जाते हैं।',
     videoSingularLabel: 'वीडियो',
     videoPluralLabel: 'वीडियो',
@@ -2493,8 +2499,11 @@ const LANGUAGES = {
     ownerNamePlaceholderEg: 'எ.கா. ராஜேஷ் குமார்',
     ownerPhonePlaceholderEg: 'எ.கா. +91 98765 43210',
     ownerAddressPlaceholderEg: 'எ.கா. 12 எம்ஜி ரோடு, பெங்களூரு',
+    customerCareNumberLabel: 'வாடிக்கையாளர் சேவை எண்',
+    customerCareNumberPlaceholderEg: 'எ.கா. +91 90520 88853',
+    supportConfigEmailPlaceholderEg: 'எ.கா. keyshops666@gmail.com',
     noContactInfoConfiguredMsg: 'தொடர்பு விவரங்கள் இன்னும் கட்டமைக்கப்படவில்லை.',
-    ownerContactSectionTitle: 'உரிமையாளர் தொடர்பு விவரங்கள்',
+    ownerContactSectionTitle: 'தொடர்பு விவரங்கள்',
     ownerContactSectionDesc: 'இந்த விவரங்கள் ஒவ்வொரு கடைக்கும் ஆதரவு தொடர்பு திரையில் காட்டப்படும்.',
     videoSingularLabel: 'வீடியோ',
     videoPluralLabel: 'வீடியோக்கள்',
@@ -3272,8 +3281,11 @@ const LANGUAGES = {
     ownerNamePlaceholderEg: 'ఉదా. రాజేష్ కుమార్',
     ownerPhonePlaceholderEg: 'ఉదా. +91 98765 43210',
     ownerAddressPlaceholderEg: 'ఉదా. 12 ఎంజీ రోడ్, బెంగళూరు',
+    customerCareNumberLabel: 'కస్టమర్ కేర్ నంబర్',
+    customerCareNumberPlaceholderEg: 'ఉదా. +91 90520 88853',
+    supportConfigEmailPlaceholderEg: 'ఉదా. keyshops666@gmail.com',
     noContactInfoConfiguredMsg: 'సంప్రదింపు వివరాలు ఇంకా కాన్ఫిగర్ చేయలేదు.',
-    ownerContactSectionTitle: 'యజమాని సంప్రదింపు వివరాలు',
+    ownerContactSectionTitle: 'సంప్రదింపు వివరాలు',
     ownerContactSectionDesc: 'ఈ వివరాలు ప్రతి దుకాణానికి సపోర్ట్ కాంటాక్ట్ స్క్రీన్‌లో చూపబడతాయి.',
     videoSingularLabel: 'వీడియో',
     videoPluralLabel: 'వీడియోలు',
@@ -4051,8 +4063,11 @@ const LANGUAGES = {
     ownerNamePlaceholderEg: 'ಉದಾ. ರಾಜೇಶ್ ಕುಮಾರ್',
     ownerPhonePlaceholderEg: 'ಉದಾ. +91 98765 43210',
     ownerAddressPlaceholderEg: 'ಉದಾ. 12 ಎಂಜಿ ರೋಡ್, ಬೆಂಗಳೂರು',
+    customerCareNumberLabel: 'ಗ್ರಾಹಕ ಸೇವಾ ಸಂಖ್ಯೆ',
+    customerCareNumberPlaceholderEg: 'ಉದಾ. +91 90520 88853',
+    supportConfigEmailPlaceholderEg: 'ಉದಾ. keyshops666@gmail.com',
     noContactInfoConfiguredMsg: 'ಸಂಪರ್ಕ ವಿವರಗಳನ್ನು ಇನ್ನೂ ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿಲ್ಲ.',
-    ownerContactSectionTitle: 'ಮಾಲೀಕರ ಸಂಪರ್ಕ ವಿವರಗಳು',
+    ownerContactSectionTitle: 'ಸಂಪರ್ಕ ವಿವರಗಳು',
     ownerContactSectionDesc: 'ಈ ವಿವರಗಳನ್ನು ಪ್ರತಿ ಅಂಗಡಿಗೆ ಬೆಂಬಲ ಸಂಪರ್ಕ ಪರದೆಯಲ್ಲಿ ತೋರಿಸಲಾಗುತ್ತದೆ.',
     videoSingularLabel: 'ವೀಡಿಯೊ',
     videoPluralLabel: 'ವೀಡಿಯೊಗಳು',
@@ -4830,8 +4845,11 @@ const LANGUAGES = {
     ownerNamePlaceholderEg: 'ഉദാ. രാജേഷ് കുമാർ',
     ownerPhonePlaceholderEg: 'ഉദാ. +91 98765 43210',
     ownerAddressPlaceholderEg: 'ഉദാ. 12 എംജി റോഡ്, ബെംഗളൂരു',
+    customerCareNumberLabel: 'കസ്റ്റമർ കെയർ നമ്പർ',
+    customerCareNumberPlaceholderEg: 'ഉദാ. +91 90520 88853',
+    supportConfigEmailPlaceholderEg: 'ഉദാ. keyshops666@gmail.com',
     noContactInfoConfiguredMsg: 'കോൺടാക്റ്റ് വിവരങ്ങൾ ഇതുവരെ കോൺഫിഗർ ചെയ്തിട്ടില്ല.',
-    ownerContactSectionTitle: 'ഉടമയുടെ കോൺടാക്റ്റ് വിവരങ്ങൾ',
+    ownerContactSectionTitle: 'കോൺടാക്റ്റ് വിവരങ്ങൾ',
     ownerContactSectionDesc: 'ഈ വിവരങ്ങൾ എല്ലാ ഷോപ്പിനും സപ്പോർട്ട് കോൺടാക്റ്റ് സ്ക്രീനിൽ കാണിക്കും.',
     videoSingularLabel: 'വീഡിയോ',
     videoPluralLabel: 'വീഡിയോകൾ',
@@ -6060,7 +6078,7 @@ export default function App() {
       <div className="flex h-screen items-center justify-center" style={{ background: 'var(--bg-0)' }}>
         <div className="flex flex-col items-center gap-5 animate-fade-in">
           <div className="brand">
-            <img src={keyShopLogo} alt="Key Shop" className="brand-logo-lg" />
+            <img src={keyShopLogo} alt="Key Shop" className="brand-logo-lg" style={{ height: 120, width: 'auto' }} />
           </div>
           <RefreshCw className="h-6 w-6 animate-spin" style={{ color: 'var(--gold)' }} />
           <p style={{ color: 'var(--text-3)' }} className="text-sm font-semibold">{t('bootstrappingWorkspace')}</p>
@@ -7531,16 +7549,16 @@ function SearchKeysIcon() {
 }
 
 const DASHBOARD_PRODUCT_CARDS = [
-  { type: 'Used Machines', icon: Wrench, image: usedMachinesImg, description: 'View and manage used machines' },
-  { type: 'ECM', icon: Cpu, image: ecmServiceImg, description: 'Manage ECM records' },
+  { type: 'Used Machines', icon: Wrench, image: usedMachinesImg, description: 'View and manage used machines', accent: 'var(--purple)' },
+  { type: 'ECM', icon: Cpu, image: ecmServiceImg, description: 'Manage ECM records', accent: 'var(--orange)' },
   // imgScale: the Meter product photo has more transparent padding baked
   // into the source image than the other three, so at the shared
   // .icon-badge.photo size it reads visibly smaller than its siblings even
   // though the box is identical - a small CSS scale-up (applied to the
   // <img> only, box size untouched) compensates for that without affecting
   // Used Machines/ECM/Scanning.
-  { type: 'Meter', icon: Gauge, image: meterServiceImg, description: 'Track and manage meter records', imgScale: 1.14 },
-  { type: 'Scanning', icon: ScanLine, image: scanningServiceImg, description: 'Scan & process compliance entries' },
+  { type: 'Meter', icon: Gauge, image: meterServiceImg, description: 'Track and manage meter records', imgScale: 1.14, accent: 'var(--skyblue)' },
+  { type: 'Scanning', icon: ScanLine, image: scanningServiceImg, description: 'Scan & process compliance entries', accent: 'var(--teal)' },
 ];
 
 // Maps each DASHBOARD_PRODUCT_CARDS.type (a fixed display type, not the
@@ -7570,8 +7588,8 @@ function DashCardGrid({ items }) {
           <button
             key={idx}
             type="button"
-            className={`dash-card animate-fade-in${item.fullWidth ? ' dash-card-full' : ''}`}
-            style={{ animationDelay: `${idx * 0.05}s` }}
+            className={`dash-card animate-fade-in${item.fullWidth ? ' dash-card-full' : ''}${item.accent ? ' dash-card-tint' : ''}`}
+            style={{ animationDelay: `${idx * 0.05}s`, ...(item.accent ? { '--tint': item.accent } : {}) }}
             onClick={item.onClick}
           >
             {item.image ? (
@@ -7689,10 +7707,10 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
             shorter Customer Support card spanning both columns. All cards
             share the same size/spacing via DashCardGrid. */}
         <DashCardGrid items={[
-          { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('super-customers') },
-          { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, onClick: () => setActiveTab('shops') },
-          ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, onClick: () => goToProductType(c.type) })),
-          { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, onClick: () => setActiveTab('support-config') },
+          { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
+          { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
+          ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, imgScale: c.imgScale, accent: c.accent, onClick: () => goToProductType(c.type) })),
+          { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
         ]} />
       </div>
     );
@@ -7710,7 +7728,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           dashboard's card grid on one screen without scrolling. */}
       <div className="page-head" style={{ marginBottom: 10 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <img src={keyShopLogo} alt="Key Shop" style={{ width: 58, height: 58, objectFit: 'contain', flexShrink: 0 }} />
+          <img src={keyShopLogo} alt="Key Shop" style={{ width: 84, height: 84, objectFit: 'contain', flexShrink: 0 }} />
           <div>
             <div className="eyebrow"><Store /> {t('shopTerminal')}</div>
             <h1>{t('namaste')}, {firstName} 👋</h1>
@@ -7743,11 +7761,12 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           4 product-category shortcuts, then a full-width, shorter Customer
           Support card spanning both columns. */}
       <DashCardGrid items={[
-        { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('register') },
-        { title: t('searchKeysCardTitle'), description: t('findDigitizeKeysDesc'), icon: SearchKeysIcon, iconVariant: 'flat-icon', onClick: () => setActiveTab('search-keys') },
-        { title: t('newListingBtn'), description: t('addMachinesCardDesc'), icon: Plus, iconVariant: 'flat-icon', onClick: goToAddMachines },
-        ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, onClick: () => goToProductType(c.type) })),
-        { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, onClick: () => setActiveTab('customer-care') },
+        { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
+        { title: t('searchKeysCardTitle'), description: t('findDigitizeKeysDesc'), icon: SearchKeysIcon, iconVariant: 'flat-icon', accent: 'var(--pink)', onClick: () => setActiveTab('search-keys') },
+        { title: t('newListingBtn'), description: t('addMachinesCardDesc'), icon: Plus, iconVariant: 'flat-icon', accent: 'var(--jgreen)', onClick: goToAddMachines },
+        ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, imgScale: c.imgScale, accent: c.accent, onClick: () => goToProductType(c.type) })),
+        { title: t('offersLabel'), description: t('everyActiveAdOfferDesc'), icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
+        { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
       ]} />
 
       {/* Active Announcements Popup Modal - shows 2-3 ads/banners/offers together
@@ -12547,9 +12566,9 @@ export function CustomerCareView({ t, api }) {
 // COMPONENT 11.55: SUPPORT CONTACT VIEW (SHOP ADMIN - OWNER CONTACT DETAILS)
 // ============================================================================
 // Reached via the mobile bottom-nav "Customer Service" icon for Shop Admins.
-// Shows the Super-Admin-managed owner contact details (name, phone,
-// WhatsApp, address) - distinct from CustomerCareView above, which only
-// shows training videos.
+// Shows the Super-Admin-managed support contact details (customer care
+// number, WhatsApp, email) - distinct from CustomerCareView above, which
+// only shows training videos.
 export function SupportContactView({ t, api }) {
   const [config, setConfig] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12575,12 +12594,11 @@ export function SupportContactView({ t, api }) {
     );
   }
 
-  const hasContactInfo = !!(config?.ownerName || config?.ownerPhone || config?.whatsapp || config?.ownerAddress);
+  const hasContactInfo = !!(config?.customerCareNumber || config?.whatsapp || config?.email);
   const rows = [
-    { icon: User, color: 'purple', label: t('ownerNameLabel'), value: config?.ownerName },
-    { icon: Phone, color: 'maroon', label: t('ownerPhoneLabel'), value: config?.ownerPhone },
+    { icon: Phone, color: 'maroon', label: t('customerCareNumberLabel'), value: config?.customerCareNumber },
     { icon: MessageCircle, color: 'jgreen', label: t('whatsappNumberLabel'), value: config?.whatsapp },
-    { icon: MapPin, color: 'teal', label: t('addressLabel'), value: config?.ownerAddress },
+    { icon: Mail, color: 'purple', label: t('emailAddressLabel'), value: config?.email },
   ].filter(r => r.value);
 
   return (
@@ -12623,9 +12641,8 @@ export function SupportContactView({ t, api }) {
 // ============================================================================
 export function SupportConfigView({ t, api }) {
   const [whatsapp, setWhatsapp] = useState('');
-  const [ownerName, setOwnerName] = useState('');
-  const [ownerPhone, setOwnerPhone] = useState('');
-  const [ownerAddress, setOwnerAddress] = useState('');
+  const [email, setEmail] = useState('');
+  const [customerCareNumber, setCustomerCareNumber] = useState('');
   const [videos, setVideos] = useState([]);
   const [subscriptionPrice, setSubscriptionPrice] = useState(999);
   const [loading, setLoading] = useState(true);
@@ -12665,9 +12682,8 @@ export function SupportConfigView({ t, api }) {
     try {
       const res = await api.getSupportConfig();
       setWhatsapp(res.whatsapp || '');
-      setOwnerName(res.ownerName || '');
-      setOwnerPhone(res.ownerPhone || '');
-      setOwnerAddress(res.ownerAddress || '');
+      setEmail(res.email || '');
+      setCustomerCareNumber(res.customerCareNumber || '');
       setVideos(res.videos || []);
       setSubscriptionPrice(res.subscriptionPrice ?? 999);
     } catch (e) {
@@ -12681,7 +12697,7 @@ export function SupportConfigView({ t, api }) {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.updateSupportConfig({ whatsapp, videos, ownerName, ownerPhone, ownerAddress, subscriptionPrice: Number(subscriptionPrice) });
+      await api.updateSupportConfig({ whatsapp, videos, email, customerCareNumber, subscriptionPrice: Number(subscriptionPrice) });
       alert(t('supportConfigUpdatedMsg'));
     } catch (e) {
       alert(t('saveFailedTemplate').split('{msg}')[0] + e.message);
@@ -12876,29 +12892,20 @@ export function SupportConfigView({ t, api }) {
               <span className="sub" style={{ marginLeft: 'auto' }}>{t('ownerContactSectionDesc')}</span>
             </div>
             <div className="reg-field">
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('ownerNameLabel')}</b></div>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
               <div className="input-wrap">
                 <input
-                  type="text" value={ownerName} onChange={(e) => setOwnerName(e.target.value)}
-                  placeholder={t('ownerNamePlaceholderEg')}
-                />
-              </div>
-            </div>
-            <div className="reg-field">
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Phone /></div><b>{t('ownerPhoneLabel')}</b></div>
-              <div className="input-wrap">
-                <input
-                  type="text" value={ownerPhone} onChange={(e) => setOwnerPhone(e.target.value)}
-                  placeholder={t('ownerPhonePlaceholderEg')}
+                  type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                  placeholder={t('supportConfigEmailPlaceholderEg')}
                 />
               </div>
             </div>
             <div className="reg-field" style={{ marginBottom: 0 }}>
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>{t('addressLabel')}</b></div>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Phone /></div><b>{t('customerCareNumberLabel')}</b></div>
               <div className="input-wrap">
                 <input
-                  type="text" value={ownerAddress} onChange={(e) => setOwnerAddress(e.target.value)}
-                  placeholder={t('ownerAddressPlaceholderEg')}
+                  type="text" value={customerCareNumber} onChange={(e) => setCustomerCareNumber(e.target.value)}
+                  placeholder={t('customerCareNumberPlaceholderEg')}
                 />
               </div>
             </div>

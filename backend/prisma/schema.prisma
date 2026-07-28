@@ -451,9 +451,8 @@ model PlatformConfig {
   // Super Admin contact details shown on the shop-facing "Support Contact"
   // screen (reached from the bottom nav's Customer Service icon). Nullable so
   // existing deployments aren't required to backfill them immediately.
-  ownerName    String?
-  ownerPhone   String?
-  ownerAddress String?
+  email               String?
+  customerCareNumber  String?
 
   updatedAt DateTime @updatedAt
 }
