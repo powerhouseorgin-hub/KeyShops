@@ -21,7 +21,7 @@ import {
   Tag, Package, Boxes, Percent, Image as ImageIcon, Megaphone, BadgePercent,
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
   Download, Fingerprint, Palette, Menu, Home, Languages,
-  Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy
+  Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save
 } from 'lucide-react';
 
 // Product photos shown on the Dashboard's product-type cards instead of the
@@ -834,7 +834,6 @@ const LANGUAGES = {
     documentsStepLabel: 'Documents',
     reviewStepLabel: 'Review',
     newCustomerEyebrow: 'New Customer',
-    multiStepComplianceDesc: 'Compliance onboarding — key issuance, identity capture & GPS-stamped address, all on one screen.',
     stepLabel: 'Step',
     ofLabel: 'of',
     contactKeyCredentialsTitle: 'Contact & Key Credentials',
@@ -1644,7 +1643,6 @@ const LANGUAGES = {
     documentsStepLabel: 'दस्तावेज़',
     reviewStepLabel: 'समीक्षा',
     newCustomerEyebrow: 'नया ग्राहक',
-    multiStepComplianceDesc: 'अनुपालन ऑनबोर्डिंग — की जारी करना, पहचान कैप्चर और जीपीएस-स्टैम्प्ड पता, सभी एक ही स्क्रीन पर।',
     stepLabel: 'चरण',
     ofLabel: 'में से',
     contactKeyCredentialsTitle: 'संपर्क और की क्रेडेंशियल्स',
@@ -2454,7 +2452,6 @@ const LANGUAGES = {
     documentsStepLabel: 'ஆவணங்கள்',
     reviewStepLabel: 'மதிப்பாய்வு',
     newCustomerEyebrow: 'புதிய வாடிக்கையாளர்',
-    multiStepComplianceDesc: 'இணக்க ஆன்போர்டிங் — சாவி வழங்குதல், அடையாள சேகரிப்பு & ஜிபிஎஸ்-முத்திரையிடப்பட்ட முகவரி, அனைத்தும் ஒரே திரையில்.',
     stepLabel: 'படி',
     ofLabel: 'இல்',
     contactKeyCredentialsTitle: 'தொடர்பு & சாவி நற்சான்றுகள்',
@@ -3264,7 +3261,6 @@ const LANGUAGES = {
     documentsStepLabel: 'పత్రాలు',
     reviewStepLabel: 'సమీక్ష',
     newCustomerEyebrow: 'కొత్త కస్టమర్',
-    multiStepComplianceDesc: 'కంప్లయన్స్ ఆన్‌బోర్డింగ్ — కీ జారీ, గుర్తింపు క్యాప్చర్ & GPS-స్టాంప్డ్ చిరునామా, అన్నీ ఒకే స్క్రీన్‌లో.',
     stepLabel: 'దశ',
     ofLabel: 'లో',
     contactKeyCredentialsTitle: 'సంప్రదింపు & కీ ఆధారాలు',
@@ -4074,7 +4070,6 @@ const LANGUAGES = {
     documentsStepLabel: 'ದಾಖಲೆಗಳು',
     reviewStepLabel: 'ಪರಿಶೀಲನೆ',
     newCustomerEyebrow: 'ಹೊಸ ಗ್ರಾಹಕ',
-    multiStepComplianceDesc: 'ಅನುಸರಣೆ ಆನ್‌ಬೋರ್ಡಿಂಗ್ — ಕೀ ವಿತರಣೆ, ಗುರುತಿನ ಸೆರೆಹಿಡಿಯುವಿಕೆ & GPS-ಸ್ಟ್ಯಾಂಪ್ ಮಾಡಿದ ವಿಳಾಸ, ಎಲ್ಲವೂ ಒಂದೇ ಪರದೆಯಲ್ಲಿ.',
     stepLabel: 'ಹಂತ',
     ofLabel: 'ರಲ್ಲಿ',
     contactKeyCredentialsTitle: 'ಸಂಪರ್ಕ & ಕೀ ರುಜುವಾತುಗಳು',
@@ -4884,7 +4879,6 @@ const LANGUAGES = {
     documentsStepLabel: 'ഡോക്യുമെന്റുകൾ',
     reviewStepLabel: 'അവലോകനം',
     newCustomerEyebrow: 'പുതിയ ഉപഭോക്താവ്',
-    multiStepComplianceDesc: 'കംപ്ലയൻസ് ഓൺബോർഡിംഗ് — കീ വിതരണം, ഐഡന്റിറ്റി ക്യാപ്‌ചർ & GPS-സ്റ്റാമ്പ്ഡ് വിലാസം, എല്ലാം ഒരൊറ്റ സ്ക്രീനിൽ.',
     stepLabel: 'ഘട്ടം',
     ofLabel: 'ൽ',
     contactKeyCredentialsTitle: 'ബന്ധപ്പെടൽ & കീ ക്രെഡൻഷ്യലുകൾ',
@@ -11937,13 +11931,30 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         <div>
           <div className="eyebrow"><UserPlus /> {t('newCustomerEyebrow')}</div>
           <h1>{t('register')}</h1>
-          <p>{t('multiStepComplianceDesc')}</p>
         </div>
-        {superAdminMode && onCancel && (
-          <button type="button" onClick={onCancel} className="btn btn-ghost">
-            <X className="h-4 w-4" /><span>{t('btnCancel')}</span>
+        <div className="reg-header-actions">
+          {superAdminMode && onCancel && (
+            <button type="button" onClick={onCancel} className="btn btn-ghost">
+              <X className="h-4 w-4" /><span>{t('btnCancel')}</span>
+            </button>
+          )}
+          <button
+            type="button" className="reg-action-btn save"
+            disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
+            onClick={handleFinalSubmit}
+            title={t('saveRecordBtn')}
+          >
+            <Save />
           </button>
-        )}
+          <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="reg-action-btn download" title={t('downloadBtn')}>
+            {pdfAction === 'download' ? <RefreshCw className="animate-spin" /> : <Download />}
+          </button>
+          <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="reg-action-btn share" title={t('shareViaWhatsAppBtn')}>
+            {pdfAction === 'share' ? <RefreshCw className="animate-spin" /> : (
+              <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
+            )}
+          </button>
+        </div>
       </div>
 
       <div className="card wizard-card">
@@ -12187,22 +12198,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         <div className="wizard-foot">
           <span />
           <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <button
-              type="button" className="btn btn-primary-deep"
-              disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
-              onClick={handleFinalSubmit}
-              style={{ minWidth: 180 }}
-            >
-              {t('saveRecordBtn')} <Check style={{ width: 20, height: 20 }} />
-            </button>
-            <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="btn btn-outline" style={{ padding: 16 }} title={t('downloadBtn')}>
-              {pdfAction === 'download' ? <RefreshCw className="animate-spin" style={{ width: 20, height: 20 }} /> : <Download style={{ width: 20, height: 20 }} />}
-            </button>
-            <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="btn btn-outline" style={{ padding: 16 }} title={t('shareViaWhatsAppBtn')}>
-              {pdfAction === 'share' ? <RefreshCw className="animate-spin" style={{ width: 20, height: 20 }} /> : (
-                <svg viewBox="0 0 24 24" style={{ width: 20, height: 20 }} fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
-              )}
-            </button>
             <button type="button" onClick={() => setShowReviewModal(true)} className="btn btn-primary" style={{ minWidth: 150 }}>
               <Eye style={{ width: 20, height: 20 }} /> {t('reviewStepLabel')}
             </button>
