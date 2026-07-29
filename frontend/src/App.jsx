@@ -4,6 +4,9 @@ import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { useAuth } from './context/AuthContext';
 import { getAssetUrl, downloadAsset, filenameForAsset, API_BASE } from './apiConfig';
+import { buildRegistrationPdf } from './utils/registrationPdf';
+import { buildCustomerReportPdf } from './utils/customerReportPdf';
+import { downloadPdf, sharePdf } from './utils/pdfDelivery';
 import PublicSite from './components/PublicSite';
 import CustomSelect from './components/CustomSelect';
 import {
@@ -832,7 +835,7 @@ const LANGUAGES = {
     documentsStepLabel: 'Documents',
     reviewStepLabel: 'Review',
     newCustomerEyebrow: 'New Customer',
-    multiStepComplianceDesc: 'Multi-step compliance onboarding — key issuance, identity capture & GPS-stamped address, in five quick steps.',
+    multiStepComplianceDesc: 'Multi-step compliance onboarding — key issuance, identity capture & GPS-stamped address, in two quick steps.',
     stepLabel: 'Step',
     ofLabel: 'of',
     contactKeyCredentialsTitle: 'Contact & Key Credentials',
@@ -851,7 +854,7 @@ const LANGUAGES = {
     smsToPhoneLabel: 'SMS to phone',
     emailTestingLabel: 'Email (testing)',
     testEmailPlaceholder: 'test@email.com — for OTP only, not saved',
-    addressLineLabel: 'Address Line',
+    addressLineLabel: 'Address',
     locatingLabel: 'Locating…',
     currentLocationBtn: 'Current Location',
     addressLinePlaceholderEg: 'e.g. Flat 101, Park Avenue',
@@ -862,7 +865,7 @@ const LANGUAGES = {
     countryLabel: 'Country',
     gpsCapturedTemplate: 'GPS captured: {lat}, {long}',
     enterOtpCodeSentToEmailTemplate: 'Enter the 4-digit code sent to {email}',
-    enterOtpCodeSentToPhoneMsg: "Enter the 4-digit code sent to the customer's phone",
+    enterOtpCodeSentToPhoneTemplate: "We've sent a 4-digit verification code to {phone}. Enter it below to continue.",
     testingModeNoProviderTemplate: 'Testing mode — no {provider} provider configured',
     verifyOtpBtn: 'Verify OTP',
     otpVerifiedSuccessEmailMsg: 'Customer email OTP verified successfully.',
@@ -975,6 +978,33 @@ const LANGUAGES = {
     failedUpdateProductTypeTemplate: 'Failed to update product type: {msg}',
     deleteProductTypeConfirmTemplate: 'Delete the "{name}" product type? Listings already using it keep it, but it will no longer be offered on the Inventory Product Creation form.',
     failedDeleteProductTypeTemplate: 'Failed to delete product type: {msg}',
+
+    keyTypeLabel: 'Key Type',
+    selectKeyTypePlaceholder: 'Select key type…',
+    keyTypesTitle: 'Key Types',
+    manageKeyTypesDesc: 'Manage the Key Type options offered next to the Key Code field on Customer Registration.',
+    enterKeyTypePlaceholder: 'Enter key type',
+    noKeyTypesYetMsg: 'No key types yet. Add one above - the Key Type dropdown will be empty until you do.',
+    pleaseEnterKeyTypeNameMsg: 'Please enter a key type name.',
+    failedAddKeyTypeTemplate: 'Failed to add key type: {msg}',
+    failedUpdateKeyTypeTemplate: 'Failed to update key type: {msg}',
+    deleteKeyTypeConfirmTemplate: 'Delete the "{name}" key type? Customers already using it keep it, but it will no longer be offered on the Customer Registration form.',
+    failedDeleteKeyTypeTemplate: 'Failed to delete key type: {msg}',
+    downloadBtn: 'Download',
+    shareBtn: 'Share',
+    downloadReportBtn: 'Download Report',
+    shareViaWhatsAppBtn: 'Share via WhatsApp',
+    okBtn: 'OK',
+    tryAgainBtn: 'Try Again',
+    registrationSuccessTitle: 'Customer Registered!',
+    registrationSuccessDesc: 'The customer has been registered successfully.',
+    verifyOtpModalTitle: 'Verify Mobile Number',
+    locationPermissionRequiredTitle: 'Location Permission Required',
+    locationPermissionRequiredMsg: 'Location permission is required to capture your current location. Please grant permission to continue.',
+    locationServicesDisabledTitle: 'Enable Location Services',
+    locationServicesDisabledMsg: "Your device's location services (GPS) are turned off. Please enable them to capture your current location.",
+    locationUnavailableTitle: 'Location Unavailable',
+    locationUnavailableMsg: 'Unable to fetch your current location. Please ensure that location services are enabled and location permission has been granted.',
     loadingWorkspaceSettingsMsg: 'Loading workspace settings…',
     workspaceConfigurationEyebrow: 'Workspace Configuration',
     manageShopProfileDesc: 'Manage your shop profile, branding, verification documents, and account security.',
@@ -1614,7 +1644,7 @@ const LANGUAGES = {
     documentsStepLabel: 'दस्तावेज़',
     reviewStepLabel: 'समीक्षा',
     newCustomerEyebrow: 'नया ग्राहक',
-    multiStepComplianceDesc: 'बहु-चरण अनुपालन ऑनबोर्डिंग — की जारी करना, पहचान कैप्चर और जीपीएस-स्टैम्प्ड पता, पांच त्वरित चरणों में।',
+    multiStepComplianceDesc: 'बहु-चरण अनुपालन ऑनबोर्डिंग — की जारी करना, पहचान कैप्चर और जीपीएस-स्टैम्प्ड पता, दो त्वरित चरणों में।',
     stepLabel: 'चरण',
     ofLabel: 'में से',
     contactKeyCredentialsTitle: 'संपर्क और की क्रेडेंशियल्स',
@@ -1633,7 +1663,7 @@ const LANGUAGES = {
     smsToPhoneLabel: 'फ़ोन पर SMS',
     emailTestingLabel: 'ईमेल (परीक्षण)',
     testEmailPlaceholder: 'test@email.com — केवल OTP के लिए, सहेजा नहीं जाएगा',
-    addressLineLabel: 'पता पंक्ति',
+    addressLineLabel: 'पता',
     locatingLabel: 'स्थान खोजा जा रहा है…',
     currentLocationBtn: 'वर्तमान स्थान',
     addressLinePlaceholderEg: 'जैसे फ्लैट 101, पार्क एवेन्यू',
@@ -1644,7 +1674,7 @@ const LANGUAGES = {
     countryLabel: 'देश',
     gpsCapturedTemplate: 'जीपीएस कैप्चर किया गया: {lat}, {long}',
     enterOtpCodeSentToEmailTemplate: '{email} पर भेजा गया 4-अंकीय कोड दर्ज करें',
-    enterOtpCodeSentToPhoneMsg: 'ग्राहक के फ़ोन पर भेजा गया 4-अंकीय कोड दर्ज करें',
+    enterOtpCodeSentToPhoneTemplate: 'हमने {phone} पर एक 4-अंकीय सत्यापन कोड भेजा है। जारी रखने के लिए इसे नीचे दर्ज करें।',
     testingModeNoProviderTemplate: 'परीक्षण मोड — कोई {provider} प्रदाता कॉन्फ़िगर नहीं किया गया',
     verifyOtpBtn: 'OTP सत्यापित करें',
     otpVerifiedSuccessEmailMsg: 'ग्राहक का ईमेल OTP सफलतापूर्वक सत्यापित हो गया।',
@@ -1757,6 +1787,33 @@ const LANGUAGES = {
     failedUpdateProductTypeTemplate: 'उत्पाद प्रकार अपडेट करने में विफल: {msg}',
     deleteProductTypeConfirmTemplate: '"{name}" उत्पाद प्रकार हटाएं? पहले से इसका उपयोग करने वाली लिस्टिंग इसे बनाए रखेंगी, लेकिन यह अब इन्वेंटरी उत्पाद निर्माण फ़ॉर्म पर उपलब्ध नहीं होगा।',
     failedDeleteProductTypeTemplate: 'उत्पाद प्रकार हटाने में विफल: {msg}',
+
+    keyTypeLabel: 'की प्रकार',
+    selectKeyTypePlaceholder: 'की प्रकार चुनें…',
+    keyTypesTitle: 'की प्रकार',
+    manageKeyTypesDesc: 'ग्राहक पंजीकरण में की कोड फ़ील्ड के बगल में दिखाए जाने वाले की प्रकार विकल्पों को प्रबंधित करें।',
+    enterKeyTypePlaceholder: 'की प्रकार दर्ज करें',
+    noKeyTypesYetMsg: 'अभी तक कोई की प्रकार नहीं है। ऊपर एक जोड़ें - जब तक आप ऐसा नहीं करेंगे तब तक की प्रकार ड्रॉपडाउन खाली रहेगा।',
+    pleaseEnterKeyTypeNameMsg: 'कृपया एक की प्रकार नाम दर्ज करें।',
+    failedAddKeyTypeTemplate: 'की प्रकार जोड़ने में विफल: {msg}',
+    failedUpdateKeyTypeTemplate: 'की प्रकार अपडेट करने में विफल: {msg}',
+    deleteKeyTypeConfirmTemplate: '"{name}" की प्रकार हटाएं? पहले से इसका उपयोग करने वाले ग्राहक इसे बनाए रखेंगे, लेकिन यह अब ग्राहक पंजीकरण फ़ॉर्म पर उपलब्ध नहीं होगा।',
+    failedDeleteKeyTypeTemplate: 'की प्रकार हटाने में विफल: {msg}',
+    downloadBtn: 'डाउनलोड करें',
+    shareBtn: 'साझा करें',
+    downloadReportBtn: 'रिपोर्ट डाउनलोड करें',
+    shareViaWhatsAppBtn: 'व्हाट्सएप पर साझा करें',
+    okBtn: 'ठीक है',
+    tryAgainBtn: 'पुनः प्रयास करें',
+    registrationSuccessTitle: 'ग्राहक पंजीकृत हो गया!',
+    registrationSuccessDesc: 'ग्राहक सफलतापूर्वक पंजीकृत हो गया है।',
+    verifyOtpModalTitle: 'मोबाइल नंबर सत्यापित करें',
+    locationPermissionRequiredTitle: 'लोकेशन अनुमति आवश्यक है',
+    locationPermissionRequiredMsg: 'आपकी वर्तमान लोकेशन प्राप्त करने के लिए लोकेशन अनुमति आवश्यक है। कृपया जारी रखने के लिए अनुमति दें।',
+    locationServicesDisabledTitle: 'लोकेशन सेवाएं सक्षम करें',
+    locationServicesDisabledMsg: 'आपके डिवाइस की लोकेशन सेवाएं (जीपीएस) बंद हैं। कृपया अपनी वर्तमान लोकेशन प्राप्त करने के लिए उन्हें सक्षम करें।',
+    locationUnavailableTitle: 'लोकेशन उपलब्ध नहीं है',
+    locationUnavailableMsg: 'आपकी वर्तमान लोकेशन प्राप्त करने में असमर्थ। कृपया सुनिश्चित करें कि लोकेशन सेवाएं सक्षम हैं और लोकेशन अनुमति दी गई है।',
     loadingWorkspaceSettingsMsg: 'वर्कस्पेस सेटिंग्स लोड हो रही हैं…',
     workspaceConfigurationEyebrow: 'वर्कस्पेस कॉन्फ़िगरेशन',
     manageShopProfileDesc: 'अपनी दुकान की प्रोफ़ाइल, ब्रांडिंग, सत्यापन दस्तावेज़ और खाता सुरक्षा प्रबंधित करें।',
@@ -2396,7 +2453,7 @@ const LANGUAGES = {
     documentsStepLabel: 'ஆவணங்கள்',
     reviewStepLabel: 'மதிப்பாய்வு',
     newCustomerEyebrow: 'புதிய வாடிக்கையாளர்',
-    multiStepComplianceDesc: 'பல-படி இணக்க ஆன்போர்டிங் — சாவி வழங்குதல், அடையாள சேகரிப்பு & ஜிபிஎஸ்-முத்திரையிடப்பட்ட முகவரி, ஐந்து விரைவான படிகளில்.',
+    multiStepComplianceDesc: 'பல-படி இணக்க ஆன்போர்டிங் — சாவி வழங்குதல், அடையாள சேகரிப்பு & ஜிபிஎஸ்-முத்திரையிடப்பட்ட முகவரி, இரண்டு விரைவான படிகளில்.',
     stepLabel: 'படி',
     ofLabel: 'இல்',
     contactKeyCredentialsTitle: 'தொடர்பு & சாவி நற்சான்றுகள்',
@@ -2415,7 +2472,7 @@ const LANGUAGES = {
     smsToPhoneLabel: 'ஃபோனுக்கு SMS',
     emailTestingLabel: 'மின்னஞ்சல் (சோதனை)',
     testEmailPlaceholder: 'test@email.com — OTP மட்டும், சேமிக்கப்படாது',
-    addressLineLabel: 'முகவரி வரி',
+    addressLineLabel: 'முகவரி',
     locatingLabel: 'இருப்பிடம் கண்டறியப்படுகிறது…',
     currentLocationBtn: 'தற்போதைய இருப்பிடம்',
     addressLinePlaceholderEg: 'எ.கா. ஃபிளாட் 101, பார்க் அவென்யூ',
@@ -2426,7 +2483,7 @@ const LANGUAGES = {
     countryLabel: 'நாடு',
     gpsCapturedTemplate: 'ஜிபிஎஸ் பிடிக்கப்பட்டது: {lat}, {long}',
     enterOtpCodeSentToEmailTemplate: '{email} க்கு அனுப்பப்பட்ட 4-இலக்க குறியீட்டை உள்ளிடவும்',
-    enterOtpCodeSentToPhoneMsg: 'வாடிக்கையாளரின் தொலைபேசிக்கு அனுப்பப்பட்ட 4-இலக்க குறியீட்டை உள்ளிடவும்',
+    enterOtpCodeSentToPhoneTemplate: 'நாங்கள் {phone} க்கு 4-இலக்க சரிபார்ப்புக் குறியீட்டை அனுப்பியுள்ளோம். தொடர கீழே உள்ளிடவும்.',
     testingModeNoProviderTemplate: 'சோதனை பயன்முறை — {provider} வழங்குநர் கட்டமைக்கப்படவில்லை',
     verifyOtpBtn: 'OTP சரிபார்க்கவும்',
     otpVerifiedSuccessEmailMsg: 'வாடிக்கையாளரின் மின்னஞ்சல் OTP வெற்றிகரமாக சரிபார்க்கப்பட்டது.',
@@ -2539,6 +2596,33 @@ const LANGUAGES = {
     failedUpdateProductTypeTemplate: 'தயாரிப்பு வகையைப் புதுப்பிக்க முடியவில்லை: {msg}',
     deleteProductTypeConfirmTemplate: '"{name}" தயாரிப்பு வகையை நீக்கவா? ஏற்கனவே இதைப் பயன்படுத்தும் பட்டியல்கள் அதை வைத்திருக்கும், ஆனால் அது இனி இருப்பு தயாரிப்பு உருவாக்க படிவத்தில் வழங்கப்படாது.',
     failedDeleteProductTypeTemplate: 'தயாரிப்பு வகையை நீக்க முடியவில்லை: {msg}',
+
+    keyTypeLabel: 'சாவி வகை',
+    selectKeyTypePlaceholder: 'சாவி வகையைத் தேர்ந்தெடுக்கவும்…',
+    keyTypesTitle: 'சாவி வகைகள்',
+    manageKeyTypesDesc: 'வாடிக்கையாளர் பதிவில் சாவி குறியீடு புலத்திற்கு அடுத்ததாக வழங்கப்படும் சாவி வகை விருப்பங்களை நிர்வகிக்கவும்.',
+    enterKeyTypePlaceholder: 'சாவி வகையை உள்ளிடவும்',
+    noKeyTypesYetMsg: 'இதுவரை சாவி வகைகள் இல்லை. மேலே ஒன்றைச் சேர்க்கவும் - நீங்கள் அவ்வாறு செய்யும் வரை சாவி வகை கீழ்தோன்றல் காலியாக இருக்கும்.',
+    pleaseEnterKeyTypeNameMsg: 'தயவுசெய்து ஒரு சாவி வகை பெயரை உள்ளிடவும்.',
+    failedAddKeyTypeTemplate: 'சாவி வகையைச் சேர்க்க முடியவில்லை: {msg}',
+    failedUpdateKeyTypeTemplate: 'சாவி வகையைப் புதுப்பிக்க முடியவில்லை: {msg}',
+    deleteKeyTypeConfirmTemplate: '"{name}" சாவி வகையை நீக்கவா? ஏற்கனவே இதைப் பயன்படுத்தும் வாடிக்கையாளர்கள் அதை வைத்திருப்பார்கள், ஆனால் அது இனி வாடிக்கையாளர் பதிவு படிவத்தில் வழங்கப்படாது.',
+    failedDeleteKeyTypeTemplate: 'சாவி வகையை நீக்க முடியவில்லை: {msg}',
+    downloadBtn: 'பதிவிறக்கவும்',
+    shareBtn: 'பகிரவும்',
+    downloadReportBtn: 'அறிக்கையைப் பதிவிறக்கவும்',
+    shareViaWhatsAppBtn: 'வாட்ஸ்அப் வழியாகப் பகிரவும்',
+    okBtn: 'சரி',
+    tryAgainBtn: 'மீண்டும் முயற்சிக்கவும்',
+    registrationSuccessTitle: 'வாடிக்கையாளர் பதிவு செய்யப்பட்டார்!',
+    registrationSuccessDesc: 'வாடிக்கையாளர் வெற்றிகரமாக பதிவு செய்யப்பட்டுள்ளார்.',
+    verifyOtpModalTitle: 'மொபைல் எண்ணை சரிபார்க்கவும்',
+    locationPermissionRequiredTitle: 'இருப்பிட அனுமதி தேவை',
+    locationPermissionRequiredMsg: 'உங்கள் தற்போதைய இருப்பிடத்தைப் பெற இருப்பிட அனுமதி தேவை. தொடர அனுமதி வழங்கவும்.',
+    locationServicesDisabledTitle: 'இருப்பிட சேவைகளை இயக்கவும்',
+    locationServicesDisabledMsg: 'உங்கள் சாதனத்தின் இருப்பிட சேவைகள் (ஜிபிஎஸ்) அணைக்கப்பட்டுள்ளன. உங்கள் தற்போதைய இருப்பிடத்தைப் பெற அவற்றை இயக்கவும்.',
+    locationUnavailableTitle: 'இருப்பிடம் கிடைக்கவில்லை',
+    locationUnavailableMsg: 'உங்கள் தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை. இருப்பிட சேவைகள் இயக்கப்பட்டு, இருப்பிட அனுமதி வழங்கப்பட்டுள்ளதா என்பதை உறுதிப்படுத்தவும்.',
     loadingWorkspaceSettingsMsg: 'பணிமனை அமைப்புகள் ஏற்றப்படுகின்றன…',
     workspaceConfigurationEyebrow: 'பணிமனை உள்ளமைவு',
     manageShopProfileDesc: 'உங்கள் கடையின் சுயவிவரம், பிராண்டிங், சரிபார்ப்பு ஆவணங்கள் மற்றும் கணக்கு பாதுகாப்பை நிர்வகிக்கவும்.',
@@ -3178,7 +3262,7 @@ const LANGUAGES = {
     documentsStepLabel: 'పత్రాలు',
     reviewStepLabel: 'సమీక్ష',
     newCustomerEyebrow: 'కొత్త కస్టమర్',
-    multiStepComplianceDesc: 'బహుళ-దశల కంప్లయన్స్ ఆన్‌బోర్డింగ్ — కీ జారీ, గుర్తింపు క్యాప్చర్ & GPS-స్టాంప్డ్ చిరునామా, ఐదు శీఘ్ర దశల్లో.',
+    multiStepComplianceDesc: 'బహుళ-దశల కంప్లయన్స్ ఆన్‌బోర్డింగ్ — కీ జారీ, గుర్తింపు క్యాప్చర్ & GPS-స్టాంప్డ్ చిరునామా, రెండు శీఘ్ర దశల్లో.',
     stepLabel: 'దశ',
     ofLabel: 'లో',
     contactKeyCredentialsTitle: 'సంప్రదింపు & కీ ఆధారాలు',
@@ -3197,7 +3281,7 @@ const LANGUAGES = {
     smsToPhoneLabel: 'ఫోన్‌కు SMS',
     emailTestingLabel: 'ఇమెయిల్ (పరీక్ష)',
     testEmailPlaceholder: 'test@email.com — OTP కోసం మాత్రమే, సేవ్ చేయబడదు',
-    addressLineLabel: 'చిరునామా లైన్',
+    addressLineLabel: 'చిరునామా',
     locatingLabel: 'గుర్తిస్తోంది…',
     currentLocationBtn: 'ప్రస్తుత స్థానం',
     addressLinePlaceholderEg: 'ఉదా. ఫ్లాట్ 101, పార్క్ అవెన్యూ',
@@ -3208,7 +3292,7 @@ const LANGUAGES = {
     countryLabel: 'దేశం',
     gpsCapturedTemplate: 'GPS క్యాప్చర్ చేయబడింది: {lat}, {long}',
     enterOtpCodeSentToEmailTemplate: '{email}కు పంపిన 4-అంకెల కోడ్‌ను నమోదు చేయండి',
-    enterOtpCodeSentToPhoneMsg: 'కస్టమర్ ఫోన్‌కు పంపిన 4-అంకెల కోడ్‌ను నమోదు చేయండి',
+    enterOtpCodeSentToPhoneTemplate: 'మేము {phone}కి 4-అంకెల ధృవీకరణ కోడ్‌ను పంపాము. కొనసాగించడానికి దీన్ని క్రింద నమోదు చేయండి.',
     testingModeNoProviderTemplate: 'పరీక్షా మోడ్ — {provider} ప్రొవైడర్ కాన్ఫిగర్ చేయబడలేదు',
     verifyOtpBtn: 'OTPని ధృవీకరించండి',
     otpVerifiedSuccessEmailMsg: 'కస్టమర్ ఇమెయిల్ OTP విజయవంతంగా ధృవీకరించబడింది.',
@@ -3321,6 +3405,33 @@ const LANGUAGES = {
     failedUpdateProductTypeTemplate: 'ఉత్పత్తి రకాన్ని నవీకరించడంలో విఫలమైంది: {msg}',
     deleteProductTypeConfirmTemplate: '"{name}" ఉత్పత్తి రకాన్ని తొలగించాలా? దీన్ని ఇప్పటికే ఉపయోగిస్తున్న లిస్టింగ్‌లు దాన్ని కలిగి ఉంటాయి, కానీ ఇది ఇకపై ఇన్వెంటరీ ఉత్పత్తి సృష్టి ఫారమ్‌లో అందించబడదు.',
     failedDeleteProductTypeTemplate: 'ఉత్పత్తి రకాన్ని తొలగించడంలో విఫలమైంది: {msg}',
+
+    keyTypeLabel: 'కీ రకం',
+    selectKeyTypePlaceholder: 'కీ రకాన్ని ఎంచుకోండి…',
+    keyTypesTitle: 'కీ రకాలు',
+    manageKeyTypesDesc: 'కస్టమర్ రిజిస్ట్రేషన్‌లో కీ కోడ్ ఫీల్డ్ పక్కన అందించే కీ రకం ఎంపికలను నిర్వహించండి.',
+    enterKeyTypePlaceholder: 'కీ రకాన్ని నమోదు చేయండి',
+    noKeyTypesYetMsg: 'ఇంకా కీ రకాలు లేవు. పైన ఒకటి జోడించండి - మీరు అలా చేసే వరకు కీ రకం డ్రాప్‌డౌన్ ఖాళీగా ఉంటుంది.',
+    pleaseEnterKeyTypeNameMsg: 'దయచేసి కీ రకం పేరును నమోదు చేయండి.',
+    failedAddKeyTypeTemplate: 'కీ రకాన్ని జోడించడంలో విఫలమైంది: {msg}',
+    failedUpdateKeyTypeTemplate: 'కీ రకాన్ని నవీకరించడంలో విఫలమైంది: {msg}',
+    deleteKeyTypeConfirmTemplate: '"{name}" కీ రకాన్ని తొలగించాలా? దీన్ని ఇప్పటికే ఉపయోగిస్తున్న కస్టమర్‌లు దాన్ని కలిగి ఉంటారు, కానీ ఇది ఇకపై కస్టమర్ రిజిస్ట్రేషన్ ఫారమ్‌లో అందించబడదు.',
+    failedDeleteKeyTypeTemplate: 'కీ రకాన్ని తొలగించడంలో విఫలమైంది: {msg}',
+    downloadBtn: 'డౌన్‌లోడ్ చేయండి',
+    shareBtn: 'షేర్ చేయండి',
+    downloadReportBtn: 'నివేదికను డౌన్‌లోడ్ చేయండి',
+    shareViaWhatsAppBtn: 'వాట్సాప్ ద్వారా షేర్ చేయండి',
+    okBtn: 'సరే',
+    tryAgainBtn: 'మళ్ళీ ప్రయత్నించండి',
+    registrationSuccessTitle: 'కస్టమర్ నమోదు అయ్యారు!',
+    registrationSuccessDesc: 'కస్టమర్ విజయవంతంగా నమోదు చేయబడ్డారు.',
+    verifyOtpModalTitle: 'మొబైల్ నంబర్‌ను ధృవీకరించండి',
+    locationPermissionRequiredTitle: 'లొకేషన్ అనుమతి అవసరం',
+    locationPermissionRequiredMsg: 'మీ ప్రస్తుత లొకేషన్‌ను పొందడానికి లొకేషన్ అనుమతి అవసరం. కొనసాగించడానికి దయచేసి అనుమతి ఇవ్వండి.',
+    locationServicesDisabledTitle: 'లొకేషన్ సేవలను ప్రారంభించండి',
+    locationServicesDisabledMsg: 'మీ పరికరం యొక్క లొకేషన్ సేవలు (జీపీఎస్) ఆఫ్‌లో ఉన్నాయి. మీ ప్రస్తుత లొకేషన్‌ను పొందడానికి వాటిని ప్రారంభించండి.',
+    locationUnavailableTitle: 'లొకేషన్ అందుబాటులో లేదు',
+    locationUnavailableMsg: 'మీ ప్రస్తుత లొకేషన్‌ను పొందడం సాధ్యం కాలేదు. లొకేషన్ సేవలు ప్రారంభించబడ్డాయని మరియు లొకేషన్ అనుమతి మంజూరు చేయబడిందని నిర్ధారించుకోండి.',
     loadingWorkspaceSettingsMsg: 'వర్క్‌స్పేస్ సెట్టింగ్‌లు లోడ్ అవుతున్నాయి…',
     workspaceConfigurationEyebrow: 'వర్క్‌స్పేస్ కాన్ఫిగరేషన్',
     manageShopProfileDesc: 'మీ షాప్ ప్రొఫైల్, బ్రాండింగ్, ధృవీకరణ పత్రాలు మరియు ఖాతా భద్రతను నిర్వహించండి.',
@@ -3960,7 +4071,7 @@ const LANGUAGES = {
     documentsStepLabel: 'ದಾಖಲೆಗಳು',
     reviewStepLabel: 'ಪರಿಶೀಲನೆ',
     newCustomerEyebrow: 'ಹೊಸ ಗ್ರಾಹಕ',
-    multiStepComplianceDesc: 'ಬಹು-ಹಂತದ ಅನುಸರಣೆ ಆನ್‌ಬೋರ್ಡಿಂಗ್ — ಕೀ ವಿತರಣೆ, ಗುರುತಿನ ಸೆರೆಹಿಡಿಯುವಿಕೆ & GPS-ಸ್ಟ್ಯಾಂಪ್ ಮಾಡಿದ ವಿಳಾಸ, ಐದು ತ್ವರಿತ ಹಂತಗಳಲ್ಲಿ.',
+    multiStepComplianceDesc: 'ಬಹು-ಹಂತದ ಅನುಸರಣೆ ಆನ್‌ಬೋರ್ಡಿಂಗ್ — ಕೀ ವಿತರಣೆ, ಗುರುತಿನ ಸೆರೆಹಿಡಿಯುವಿಕೆ & GPS-ಸ್ಟ್ಯಾಂಪ್ ಮಾಡಿದ ವಿಳಾಸ, ಎರಡು ತ್ವರಿತ ಹಂತಗಳಲ್ಲಿ.',
     stepLabel: 'ಹಂತ',
     ofLabel: 'ರಲ್ಲಿ',
     contactKeyCredentialsTitle: 'ಸಂಪರ್ಕ & ಕೀ ರುಜುವಾತುಗಳು',
@@ -3979,7 +4090,7 @@ const LANGUAGES = {
     smsToPhoneLabel: 'ಫೋನ್‌ಗೆ SMS',
     emailTestingLabel: 'ಇಮೇಲ್ (ಪರೀಕ್ಷೆ)',
     testEmailPlaceholder: 'test@email.com — OTP ಗಾಗಿ ಮಾತ್ರ, ಉಳಿಸಲಾಗುವುದಿಲ್ಲ',
-    addressLineLabel: 'ವಿಳಾಸ ಸಾಲು',
+    addressLineLabel: 'ವಿಳಾಸ',
     locatingLabel: 'ಪತ್ತೆ ಹಚ್ಚಲಾಗುತ್ತಿದೆ…',
     currentLocationBtn: 'ಪ್ರಸ್ತುತ ಸ್ಥಳ',
     addressLinePlaceholderEg: 'ಉದಾ. ಫ್ಲಾಟ್ 101, ಪಾರ್ಕ್ ಅವೆನ್ಯೂ',
@@ -3990,7 +4101,7 @@ const LANGUAGES = {
     countryLabel: 'ದೇಶ',
     gpsCapturedTemplate: 'GPS ಸೆರೆಹಿಡಿಯಲಾಗಿದೆ: {lat}, {long}',
     enterOtpCodeSentToEmailTemplate: '{email} ಗೆ ಕಳುಹಿಸಿದ 4-ಅಂಕಿಯ ಕೋಡ್ ನಮೂದಿಸಿ',
-    enterOtpCodeSentToPhoneMsg: 'ಗ್ರಾಹಕರ ಫೋನ್‌ಗೆ ಕಳುಹಿಸಿದ 4-ಅಂಕಿಯ ಕೋಡ್ ನಮೂದಿಸಿ',
+    enterOtpCodeSentToPhoneTemplate: 'ನಾವು {phone} ಗೆ 4-ಅಂಕಿಯ ಪರಿಶೀಲನಾ ಕೋಡ್ ಕಳುಹಿಸಿದ್ದೇವೆ. ಮುಂದುವರಿಯಲು ಇದನ್ನು ಕೆಳಗೆ ನಮೂದಿಸಿ.',
     testingModeNoProviderTemplate: 'ಪರೀಕ್ಷಾ ಮೋಡ್ — {provider} ಪೂರೈಕೆದಾರರನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಲಾಗಿಲ್ಲ',
     verifyOtpBtn: 'OTP ಪರಿಶೀಲಿಸಿ',
     otpVerifiedSuccessEmailMsg: 'ಗ್ರಾಹಕರ ಇಮೇಲ್ OTP ಯಶಸ್ವಿಯಾಗಿ ಪರಿಶೀಲಿಸಲಾಗಿದೆ.',
@@ -4103,6 +4214,33 @@ const LANGUAGES = {
     failedUpdateProductTypeTemplate: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
     deleteProductTypeConfirmTemplate: '"{name}" ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ಅಳಿಸುವುದೇ? ಇದನ್ನು ಈಗಾಗಲೇ ಬಳಸುತ್ತಿರುವ ಪಟ್ಟಿಗಳು ಅದನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತವೆ, ಆದರೆ ಅದು ಇನ್ನು ಮುಂದೆ ಇನ್ವೆಂಟರಿ ಉತ್ಪನ್ನ ರಚನೆ ಫಾರ್ಮ್‌ನಲ್ಲಿ ನೀಡಲಾಗುವುದಿಲ್ಲ.',
     failedDeleteProductTypeTemplate: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+
+    keyTypeLabel: 'ಕೀ ಪ್ರಕಾರ',
+    selectKeyTypePlaceholder: 'ಕೀ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ…',
+    keyTypesTitle: 'ಕೀ ಪ್ರಕಾರಗಳು',
+    manageKeyTypesDesc: 'ಗ್ರಾಹಕ ನೋಂದಣಿಯಲ್ಲಿ ಕೀ ಕೋಡ್ ಕ್ಷೇತ್ರದ ಪಕ್ಕದಲ್ಲಿ ನೀಡಲಾಗುವ ಕೀ ಪ್ರಕಾರ ಆಯ್ಕೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ.',
+    enterKeyTypePlaceholder: 'ಕೀ ಪ್ರಕಾರವನ್ನು ನಮೂದಿಸಿ',
+    noKeyTypesYetMsg: 'ಇನ್ನೂ ಯಾವುದೇ ಕೀ ಪ್ರಕಾರಗಳಿಲ್ಲ. ಮೇಲೆ ಒಂದನ್ನು ಸೇರಿಸಿ - ನೀವು ಹಾಗೆ ಮಾಡುವವರೆಗೆ ಕೀ ಪ್ರಕಾರ ಡ್ರಾಪ್‌ಡೌನ್ ಖಾಲಿ ಇರುತ್ತದೆ.',
+    pleaseEnterKeyTypeNameMsg: 'ದಯವಿಟ್ಟು ಕೀ ಪ್ರಕಾರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ.',
+    failedAddKeyTypeTemplate: 'ಕೀ ಪ್ರಕಾರವನ್ನು ಸೇರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    failedUpdateKeyTypeTemplate: 'ಕೀ ಪ್ರಕಾರವನ್ನು ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    deleteKeyTypeConfirmTemplate: '"{name}" ಕೀ ಪ್ರಕಾರವನ್ನು ಅಳಿಸುವುದೇ? ಈಗಾಗಲೇ ಇದನ್ನು ಬಳಸುತ್ತಿರುವ ಗ್ರಾಹಕರು ಅದನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತಾರೆ, ಆದರೆ ಇದು ಇನ್ನು ಮುಂದೆ ಗ್ರಾಹಕ ನೋಂದಣಿ ಫಾರ್ಮ್‌ನಲ್ಲಿ ನೀಡಲಾಗುವುದಿಲ್ಲ.',
+    failedDeleteKeyTypeTemplate: 'ಕೀ ಪ್ರಕಾರವನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    downloadBtn: 'ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+    shareBtn: 'ಹಂಚಿಕೊಳ್ಳಿ',
+    downloadReportBtn: 'ವರದಿಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+    shareViaWhatsAppBtn: 'ವಾಟ್ಸ್ಆ್ಯಪ್ ಮೂಲಕ ಹಂಚಿಕೊಳ್ಳಿ',
+    okBtn: 'ಸರಿ',
+    tryAgainBtn: 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
+    registrationSuccessTitle: 'ಗ್ರಾಹಕರು ನೋಂದಣಿಯಾಗಿದ್ದಾರೆ!',
+    registrationSuccessDesc: 'ಗ್ರಾಹಕರನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನೋಂದಾಯಿಸಲಾಗಿದೆ.',
+    verifyOtpModalTitle: 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ',
+    locationPermissionRequiredTitle: 'ಸ್ಥಳ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ',
+    locationPermissionRequiredMsg: 'ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ಸ್ಥಳ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ. ಮುಂದುವರಿಯಲು ದಯವಿಟ್ಟು ಅನುಮತಿ ನೀಡಿ.',
+    locationServicesDisabledTitle: 'ಸ್ಥಳ ಸೇವೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ',
+    locationServicesDisabledMsg: 'ನಿಮ್ಮ ಸಾಧನದ ಸ್ಥಳ ಸೇವೆಗಳು (ಜಿಪಿಎಸ್) ಆಫ್ ಆಗಿವೆ. ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ದಯವಿಟ್ಟು ಅವುಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.',
+    locationUnavailableTitle: 'ಸ್ಥಳ ಲಭ್ಯವಿಲ್ಲ',
+    locationUnavailableMsg: 'ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಸ್ಥಳ ಸೇವೆಗಳು ಸಕ್ರಿಯವಾಗಿವೆ ಮತ್ತು ಸ್ಥಳ ಅನುಮತಿ ನೀಡಲಾಗಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.',
     loadingWorkspaceSettingsMsg: 'ಕಾರ್ಯಸ್ಥಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…',
     workspaceConfigurationEyebrow: 'ಕಾರ್ಯಸ್ಥಳ ಕಾನ್ಫಿಗರೇಶನ್',
     manageShopProfileDesc: 'ನಿಮ್ಮ ಅಂಗಡಿಯ ಪ್ರೊಫೈಲ್, ಬ್ರಾಂಡಿಂಗ್, ಪರಿಶೀಲನಾ ದಾಖಲೆಗಳು ಮತ್ತು ಖಾತೆ ಭದ್ರತೆಯನ್ನು ನಿರ್ವಹಿಸಿ.',
@@ -4742,7 +4880,7 @@ const LANGUAGES = {
     documentsStepLabel: 'ഡോക്യുമെന്റുകൾ',
     reviewStepLabel: 'അവലോകനം',
     newCustomerEyebrow: 'പുതിയ ഉപഭോക്താവ്',
-    multiStepComplianceDesc: 'മൾട്ടി-സ്റ്റെപ്പ് കംപ്ലയൻസ് ഓൺബോർഡിംഗ് — കീ വിതരണം, ഐഡന്റിറ്റി ക്യാപ്‌ചർ & GPS-സ്റ്റാമ്പ്ഡ് വിലാസം, അഞ്ച് പെട്ടെന്നുള്ള ഘട്ടങ്ങളിൽ.',
+    multiStepComplianceDesc: 'മൾട്ടി-സ്റ്റെപ്പ് കംപ്ലയൻസ് ഓൺബോർഡിംഗ് — കീ വിതരണം, ഐഡന്റിറ്റി ക്യാപ്‌ചർ & GPS-സ്റ്റാമ്പ്ഡ് വിലാസം, രണ്ട് പെട്ടെന്നുള്ള ഘട്ടങ്ങളിൽ.',
     stepLabel: 'ഘട്ടം',
     ofLabel: 'ൽ',
     contactKeyCredentialsTitle: 'ബന്ധപ്പെടൽ & കീ ക്രെഡൻഷ്യലുകൾ',
@@ -4761,7 +4899,7 @@ const LANGUAGES = {
     smsToPhoneLabel: 'ഫോണിലേക്ക് SMS',
     emailTestingLabel: 'ഇമെയിൽ (ടെസ്റ്റിംഗ്)',
     testEmailPlaceholder: 'test@email.com — OTP-ക്ക് മാത്രം, സേവ് ചെയ്യില്ല',
-    addressLineLabel: 'വിലാസ വരി',
+    addressLineLabel: 'വിലാസം',
     locatingLabel: 'കണ്ടെത്തുന്നു…',
     currentLocationBtn: 'നിലവിലെ സ്ഥാനം',
     addressLinePlaceholderEg: 'ഉദാ. ഫ്ലാറ്റ് 101, പാർക്ക് അവന്യൂ',
@@ -4772,7 +4910,7 @@ const LANGUAGES = {
     countryLabel: 'രാജ്യം',
     gpsCapturedTemplate: 'GPS ക്യാപ്‌ചർ ചെയ്തു: {lat}, {long}',
     enterOtpCodeSentToEmailTemplate: '{email} എന്നതിലേക്ക് അയച്ച 4-അക്ക കോഡ് നൽകുക',
-    enterOtpCodeSentToPhoneMsg: 'ഉപഭോക്താവിന്റെ ഫോണിലേക്ക് അയച്ച 4-അക്ക കോഡ് നൽകുക',
+    enterOtpCodeSentToPhoneTemplate: 'ഞങ്ങൾ {phone} എന്ന നമ്പറിലേക്ക് 4-അക്ക പരിശോധന കോഡ് അയച്ചിട്ടുണ്ട്. തുടരാൻ ഇത് താഴെ നൽകുക.',
     testingModeNoProviderTemplate: 'ടെസ്റ്റിംഗ് മോഡ് — {provider} പ്രൊവൈഡർ കോൺഫിഗർ ചെയ്തിട്ടില്ല',
     verifyOtpBtn: 'OTP പരിശോധിക്കുക',
     otpVerifiedSuccessEmailMsg: 'ഉപഭോക്തൃ ഇമെയിൽ OTP വിജയകരമായി പരിശോധിച്ചു.',
@@ -4885,6 +5023,33 @@ const LANGUAGES = {
     failedUpdateProductTypeTemplate: 'ഉൽപ്പന്ന തരം അപ്ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
     deleteProductTypeConfirmTemplate: '"{name}" ഉൽപ്പന്ന തരം ഇല്ലാതാക്കണോ? ഇത് ഇതിനകം ഉപയോഗിക്കുന്ന ലിസ്റ്റിംഗുകൾ അത് നിലനിർത്തും, പക്ഷേ ഇത് ഇനി ഇൻവെന്ററി ഉൽപ്പന്ന സൃഷ്ടി ഫോമിൽ നൽകില്ല.',
     failedDeleteProductTypeTemplate: 'ഉൽപ്പന്ന തരം ഇല്ലാതാക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+
+    keyTypeLabel: 'കീ തരം',
+    selectKeyTypePlaceholder: 'കീ തരം തിരഞ്ഞെടുക്കുക…',
+    keyTypesTitle: 'കീ തരങ്ങൾ',
+    manageKeyTypesDesc: 'കസ്റ്റമർ രജിസ്ട്രേഷനിൽ കീ കോഡ് ഫീൽഡിന് അടുത്തായി നൽകുന്ന കീ തരം ഓപ്ഷനുകൾ നിയന്ത്രിക്കുക.',
+    enterKeyTypePlaceholder: 'കീ തരം നൽകുക',
+    noKeyTypesYetMsg: 'ഇതുവരെ കീ തരങ്ങളൊന്നുമില്ല. മുകളിൽ ഒന്ന് ചേർക്കുക - നിങ്ങൾ അങ്ങനെ ചെയ്യുന്നത് വരെ കീ തരം ഡ്രോപ്ഡൗൺ ശൂന്യമായിരിക്കും.',
+    pleaseEnterKeyTypeNameMsg: 'ദയവായി ഒരു കീ തരത്തിന്റെ പേര് നൽകുക.',
+    failedAddKeyTypeTemplate: 'കീ തരം ചേർക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    failedUpdateKeyTypeTemplate: 'കീ തരം അപ്ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    deleteKeyTypeConfirmTemplate: '"{name}" കീ തരം ഇല്ലാതാക്കണോ? ഇത് ഇതിനകം ഉപയോഗിക്കുന്ന ഉപഭോക്താക്കൾ അത് നിലനിർത്തും, പക്ഷേ ഇത് ഇനി കസ്റ്റമർ രജിസ്ട്രേഷൻ ഫോമിൽ നൽകില്ല.',
+    failedDeleteKeyTypeTemplate: 'കീ തരം ഇല്ലാതാക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    downloadBtn: 'ഡൗൺലോഡ് ചെയ്യുക',
+    shareBtn: 'പങ്കിടുക',
+    downloadReportBtn: 'റിപ്പോർട്ട് ഡൗൺലോഡ് ചെയ്യുക',
+    shareViaWhatsAppBtn: 'വാട്ട്‌സ്ആപ്പ് വഴി പങ്കിടുക',
+    okBtn: 'ശരി',
+    tryAgainBtn: 'വീണ്ടും ശ്രമിക്കുക',
+    registrationSuccessTitle: 'ഉപഭോക്താവിനെ രജിസ്റ്റർ ചെയ്തു!',
+    registrationSuccessDesc: 'ഉപഭോക്താവിനെ വിജയകരമായി രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്.',
+    verifyOtpModalTitle: 'മൊബൈൽ നമ്പർ പരിശോധിക്കുക',
+    locationPermissionRequiredTitle: 'ലൊക്കേഷൻ അനുമതി ആവശ്യമാണ്',
+    locationPermissionRequiredMsg: 'നിങ്ങളുടെ നിലവിലെ ലൊക്കേഷൻ ലഭ്യമാക്കാൻ ലൊക്കേഷൻ അനുമതി ആവശ്യമാണ്. തുടരാൻ ദയവായി അനുമതി നൽകുക.',
+    locationServicesDisabledTitle: 'ലൊക്കേഷൻ സേവനങ്ങൾ പ്രവർത്തനക്ഷമമാക്കുക',
+    locationServicesDisabledMsg: 'നിങ്ങളുടെ ഉപകരണത്തിന്റെ ലൊക്കേഷൻ സേവനങ്ങൾ (ജിപിഎസ്) ഓഫാണ്. നിങ്ങളുടെ നിലവിലെ ലൊക്കേഷൻ ലഭ്യമാക്കാൻ അവ പ്രവർത്തനക്ഷമമാക്കുക.',
+    locationUnavailableTitle: 'ലൊക്കേഷൻ ലഭ്യമല്ല',
+    locationUnavailableMsg: 'നിങ്ങളുടെ നിലവിലെ ലൊക്കേഷൻ ലഭ്യമാക്കാൻ കഴിഞ്ഞില്ല. ലൊക്കേഷൻ സേവനങ്ങൾ പ്രവർത്തനക്ഷമമാണെന്നും ലൊക്കേഷൻ അനുമതി നൽകിയിട്ടുണ്ടെന്നും ഉറപ്പാക്കുക.',
     loadingWorkspaceSettingsMsg: 'വർക്ക്‌സ്‌പേസ് ക്രമീകരണങ്ങൾ ലോഡ് ചെയ്യുന്നു…',
     workspaceConfigurationEyebrow: 'വർക്ക്‌സ്‌പേസ് കോൺഫിഗറേഷൻ',
     manageShopProfileDesc: 'നിങ്ങളുടെ ഷോപ്പ് പ്രൊഫൈൽ, ബ്രാൻഡിംഗ്, സ്ഥിരീകരണ രേഖകൾ, അക്കൗണ്ട് സുരക്ഷ എന്നിവ കൈകാര്യം ചെയ്യുക.',
@@ -9058,6 +9223,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
                 <td>
                   <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
+                  {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
                 </td>
                 <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
                   {new Date(c.createdAt).toLocaleDateString()}
@@ -9130,6 +9296,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyBlankCodeLabel')}</b></div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="badge badge-active"><span className="dot" />{viewCust.keyNumber}</span>
+                    {viewCust.keyType && <span className="badge" style={{ background: 'var(--purple-dim, rgba(124,77,255,0.12))', color: 'var(--purple)' }}>{viewCust.keyType}</span>}
                   </div>
                 </div>
               </div>
@@ -11064,6 +11231,12 @@ function KeysSearchView({ t, api, searchDispatch }) {
                           <div className="icon-badge skyblue" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><Car style={{ width: 10, height: 10 }} /></div>
                           <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>{t('vehicleNoPrefix')} <strong style={{ color: 'var(--green)' }}>{r.customer.vehicleNumber || 'N/A'}</strong></p>
                         </div>
+                        {r.customer.keyType && (
+                          <div className="flex items-center gap-2" style={{ marginTop: 4 }}>
+                            <div className="icon-badge purple" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><KeyRound style={{ width: 10, height: 10 }} /></div>
+                            <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>{t('keyTypeLabel')}: <strong style={{ color: 'var(--text-0)' }}>{r.customer.keyType}</strong></p>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -11129,6 +11302,12 @@ function KeysSearchView({ t, api, searchDispatch }) {
                         <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Calendar /></div><b>{t('registryDateLabel')}</b></div>
                         <span style={{ color: 'var(--text-1)', fontWeight: 600, fontSize: 12.5 }}>{new Date(selectedResult.customer.createdAt).toLocaleDateString()}</span>
                       </div>
+                      {selectedResult.customer.keyType && (
+                        <div className="reg-field">
+                          <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>{t('keyTypeLabel')}</b></div>
+                          <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.keyType}</span>
+                        </div>
+                      )}
                     </div>
 
                     <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 14, borderRadius: 14, marginTop: 4 }}>
@@ -11260,12 +11439,20 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [idProofNumber, setIdProofNumber] = useState('N/A');
   const [reason, setReason] = useState('N/A');
   const [keyNumber, setKeyNumber] = useState('');
+  const [keyType, setKeyType] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [addressLine, setAddressLine] = useState('');
+  // Internal-only (not shown as their own fields) - resolved from the reverse
+  // geocode on "Current Location" purely to build the single Address field's
+  // full text; India is the only country this app operates in.
   const [stateVal, setStateVal] = useState('Tamil Nadu');
   const [district, setDistrict] = useState('Chennai');
-  const [country, setCountry] = useState('India');
+  const [country] = useState('India');
   const [masterKeyId, setMasterKeyId] = useState('');
+
+  // Super-Admin-managed list of key types (see KeyType model / api.getKeyTypes)
+  // that powers the Key Type dropdown next to the Key Code field below.
+  const [keyTypes, setKeyTypes] = useState([]);
 
   // Inline OTP states
   const [otpSent, setOtpSent] = useState(false);
@@ -11291,7 +11478,13 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [gpsError, setGpsError] = useState('');
   const [gpsErrorKind, setGpsErrorKind] = useState('');
   const [isCapturingGps, setIsCapturingGps] = useState(false);
+  // Review step Download/Share - tracks which action is currently building
+  // the PDF so both buttons can show a spinner and stay disabled mid-build.
+  const [pdfAction, setPdfAction] = useState(null); // null | 'download' | 'share'
   const [capturedAddress, setCapturedAddress] = useState('');
+  // Post-submit confirmation - shown instead of a plain alert() so the
+  // success state reads as part of the app's UI rather than a native dialog.
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // Shop Admin: fetch their own shop's key catalog once on mount. Super Admin:
   // wait until a shop has been selected (Step 1's required dropdown), then
@@ -11321,13 +11514,24 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     fetchKeys();
   }, [superAdminMode, selectedShopId]);
 
+  // The single Address field IS the address now - district/state are resolved
+  // internally (see captureCustomerLocation below) purely to help compose its
+  // text on "Current Location", not tracked as separate fields anymore.
   useEffect(() => {
-    if (addressLine || district || stateVal) {
-      const finalAddress = `${addressLine}, ${district}, ${stateVal}, ${country}`;
-      setAddress(finalAddress);
-      setCapturedAddress(finalAddress);
+    if (addressLine) {
+      setAddress(addressLine);
+      setCapturedAddress(addressLine);
     }
-  }, [addressLine, district, stateVal, country]);
+  }, [addressLine]);
+
+  useEffect(() => {
+    api.getKeyTypes()
+      .then((res) => {
+        setKeyTypes(res || []);
+        setKeyType((prev) => prev || res?.[0]?.name || '');
+      })
+      .catch((e) => console.error('Failed to load key types:', e));
+  }, []);
 
   // "Current Location" button for the Contact & Key step - captures the device's
   // real GPS position and reverse-geocodes it to best-effort prefill the address
@@ -11352,13 +11556,10 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setGpsTimestamp(new Date().toISOString());
     const data = await reverseGeocode(lat, lng);
     if (data) {
-      // Prefer the actual street (house number + road) for the editable
-      // address line - this is the street-level detail that was missing
-      // when this only pulled locality/city. Falls back to locality/city
-      // for points without a mapped street (rural areas).
-      const streetLine = data.street || data.locality || data.city;
-      if (streetLine) setAddressLine(streetLine);
-
+      // District/state are resolved here purely as internal state (not
+      // rendered as their own fields anymore) - matching against
+      // INDIAN_STATES_DISTRICTS is kept only to normalize the state name the
+      // same way it always has, in case it's needed elsewhere later.
       const matchedState = Object.keys(INDIAN_STATES_DISTRICTS).find(
         st => st.toLowerCase() === (data.state || '').toLowerCase()
       );
@@ -11369,11 +11570,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         // "Tehsil" suffix (e.g. "Chennai District") that our district list
         // doesn't, so strip that before comparing. Try an exact match first,
         // then fall back to a loose substring match (handles minor naming
-        // differences like "Bengaluru" vs "Bengaluru Urban"). Previously
-        // this fell back to `list[0]` (the alphabetically-first district in
-        // the state) whenever nothing matched, which silently populated a
-        // wrong district instead of leaving the field for the user to
-        // confirm/correct - removed that fallback.
+        // differences like "Bengaluru" vs "Bengaluru Urban").
         const rawDistrict = (data.district || data.city || '')
           .replace(/\s+(district|taluk|tehsil|mandal)$/i, '')
           .trim()
@@ -11385,12 +11582,44 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         if (matchedDistrict) setDistrict(matchedDistrict);
       }
       // Nominatim's display_name is already a fully formatted address
-      // (street, locality, city, state, postcode, country in order) - use it
-      // directly for the read-only captured-address summary.
-      if (data.displayName) setCapturedAddress(data.displayName);
+      // (street, locality, city, district, state, postcode, country in
+      // order) - use it directly to fill the single Address field, falling
+      // back to the street/locality/city if a full formatted string wasn't
+      // available for this point.
+      const fullAddress = data.displayName || data.street || data.locality || data.city;
+      if (fullAddress) {
+        setAddressLine(fullAddress);
+        setCapturedAddress(fullAddress);
+      }
     }
     setIsCapturingGps(false);
   };
+
+  // Auto-retry "Current Location" once the user comes back to this screen
+  // after granting permission / turning on GPS from the location-error popup's
+  // action button (Settings apps don't hand control back with any event of
+  // their own, so app-resume / tab-visible is the only signal available that
+  // "the user might have just fixed it"). Only wired up while an error is
+  // actually pending - closing the popup clears gpsError, which stops this
+  // from firing again until "Current Location" is tapped once more.
+  useEffect(() => {
+    if (!gpsError) return;
+    const retry = () => captureCustomerLocation();
+
+    if (IS_NATIVE_APP) {
+      let handle;
+      CapacitorApp.addListener('appStateChange', (state) => {
+        if (state.isActive) retry();
+      }).then((h) => { handle = h; });
+      return () => { handle?.remove(); };
+    }
+
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'visible') retry();
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, [gpsError]);
 
   const handleDocumentFile = (file) => {
     setUploadError('');
@@ -11499,6 +11728,15 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
   };
 
+  // Cancel/Close on the OTP modal - aborts verification back to the initial
+  // "Send OTP" state without touching the typed phone number.
+  const handleCancelOtpModal = () => {
+    setOtpSent(false);
+    setEnteredOtp('');
+    setOtpError('');
+    setOtpDevCode('');
+  };
+
   const handleFinalSubmit = async () => {
     try {
       // Only send real, device-captured coordinates. This used to fall back
@@ -11532,7 +11770,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
       const payload = {
         name, phone, address, idProofType, idProofNumber, reason,
-        keyNumber, vehicleNumber, masterKeyId: finalMasterKeyId, manualKey,
+        keyNumber, keyType, vehicleNumber, masterKeyId: finalMasterKeyId, manualKey,
         latitude: finalLat,
         longitude: finalLng,
         mapsLink: (finalLat && finalLng) ? `https://www.google.com/maps?q=${finalLat},${finalLng}` : null,
@@ -11547,14 +11785,20 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         await api.uploadDocument(customer.id, doc.type, doc.file);
       }
 
-      alert(t('complianceRecordLoggedMsg'));
-      if (superAdminMode && onDone) {
-        onDone();
-      } else {
-        resetWizard();
-      }
+      setShowSuccessModal(true);
     } catch (e) {
       alert(t('submissionFailedTemplate').replace('{message}', e.message));
+    }
+  };
+
+  // OK on the post-submit success modal - runs the same follow-up the old
+  // alert()'s dismissal used to trigger immediately.
+  const handleSuccessModalOk = () => {
+    setShowSuccessModal(false);
+    if (superAdminMode && onDone) {
+      onDone();
+    } else {
+      resetWizard();
     }
   };
 
@@ -11567,11 +11811,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setIdProofNumber('N/A');
     setReason('N/A');
     setKeyNumber('');
+    setKeyType('');
     setVehicleNumber('');
     setAddressLine('');
     setDistrict('');
     setStateVal('');
-    setCountry('India');
     setOtpSent(false);
     setOtpVerified(false);
     setEnteredOtp('');
@@ -11585,9 +11829,53 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setStep(1);
   };
 
+  // Review step: writes the generated PDF to the device's Downloads folder,
+  // reusing the exact same native save flow apiConfig.js's downloadAsset()
+  // uses for remote files (write to cache -> SaveToDownloads plugin -> share
+  // sheet fallback) since it's the already-proven way to get a file out of
+  // this app's sandbox into a place the user can find it.
+  const handleDownloadRegistration = async () => {
+    setPdfAction('download');
+    try {
+      const pdf = await buildRegistrationPdf({
+        name, phone, vehicleNumber, keyNumber, keyType, address: addressLine,
+        latitude, longitude, uploadedDocs,
+      });
+      const safeName = `${(name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Registration.pdf`;
+      await downloadPdf(pdf, safeName);
+    } catch (err) {
+      console.error('Failed to generate registration PDF:', err);
+      window.alert('Could not generate the registration PDF. Please try again.');
+    } finally {
+      setPdfAction(null);
+    }
+  };
+
+  const handleShareRegistration = async () => {
+    setPdfAction('share');
+    try {
+      const pdf = await buildRegistrationPdf({
+        name, phone, vehicleNumber, keyNumber, keyType, address: addressLine,
+        latitude, longitude, uploadedDocs,
+      });
+      const safeName = `${(name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Registration.pdf`;
+      await sharePdf(pdf, safeName, {
+        title: 'Customer Registration',
+        fallbackText: `${name} - Key: ${keyNumber}${keyType ? ` (${keyType})` : ''} - Phone: ${phone}`,
+      });
+    } catch (err) {
+      // A cancelled share sheet also rejects the promise - not a real error.
+      if (err && err.name !== 'AbortError') {
+        console.error('Failed to share registration PDF:', err);
+        window.alert('Could not share the registration PDF. Please try again.');
+      }
+    } finally {
+      setPdfAction(null);
+    }
+  };
+
   const WIZARD_STEPS = [
     { name: t('contactKeyStepLabel') },
-    { name: t('documentsStepLabel') },
     { name: t('reviewStepLabel') },
   ];
 
@@ -11675,6 +11963,14 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                       />
                     </div>
                   </div>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>{t('keyTypeLabel')}</b></div>
+                    <CustomSelect
+                      value={keyType} onChange={setKeyType}
+                      placeholder={t('selectKeyTypePlaceholder')}
+                      options={keyTypes.map(kt => ({ value: kt.name, label: kt.name }))}
+                    />
+                  </div>
                 </div>
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
@@ -11740,93 +12036,59 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <div className="input-wrap">
                     <input type="text" required value={addressLine} onChange={(e) => setAddressLine(e.target.value)} placeholder={t('addressLinePlaceholderEg')} />
                   </div>
-                  {gpsError && (
-                    <div style={{ marginTop: 6 }}>
-                      <p style={{ fontSize: 11, color: 'var(--amber)', fontWeight: 700 }}>{gpsError}</p>
-                      {gpsErrorKind === 'disabled' && (
-                        <button
-                          type="button"
-                          onClick={openDeviceLocationSettings}
-                          className="cursor-pointer select-none"
-                          style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
-                        >
-                          {t('openLocationSettingsBtn')}
-                        </button>
-                      )}
-                      {gpsErrorKind === 'permission' && IS_NATIVE_APP && (
-                        <button
-                          type="button"
-                          onClick={openAppSettings}
-                          className="cursor-pointer select-none"
-                          style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
-                        >
-                          {t('openAppSettingsBtn')}
-                        </button>
-                      )}
-                    </div>
-                  )}
                   {latitude && longitude && !gpsError && (
                     <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>{t('gpsCapturedTemplate').split('{lat}')[0]}{latitude.toFixed(5)}{t('gpsCapturedTemplate').split('{lat}')[1].split('{long}')[0]}{longitude.toFixed(5)}</p>
                   )}
                 </div>
-
-                <div className="form-grid" style={{ marginBottom: 13 }}>
-                  <div className="reg-field" style={{ marginBottom: 0 }}>
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Navigation /></div><b>{t('stateLabel')}</b></div>
-                    <CustomSelect
-                      value={stateVal}
-                      onChange={(selected) => {
-                        setStateVal(selected);
-                        const list = INDIAN_STATES_DISTRICTS[selected] || [];
-                        setDistrict(list[0] || '');
-                      }}
-                      options={Object.keys(INDIAN_STATES_DISTRICTS)}
-                    />
-                  </div>
-                  <div className="reg-field" style={{ marginBottom: 0 }}>
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><MapPin /></div><b>{t('districtLabel')}</b></div>
-                    <CustomSelect
-                      value={district} onChange={setDistrict}
-                      options={INDIAN_STATES_DISTRICTS[stateVal] || []}
-                    />
-                  </div>
-                </div>
-                <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Building2 /></div><b>{t('countryLabel')}</b></div>
-                  <div className="input-wrap" style={{ opacity: 0.65 }}>
-                    <input type="text" readOnly value={country} style={{ cursor: 'not-allowed' }} />
-                  </div>
-                </div>
               </div>
 
-              {otpSent && !otpVerified && (
-                <div className="animate-fade-in" style={{ background: 'var(--card-2)', border: '1.5px solid var(--border-2)', borderRadius: 16, padding: 18, marginTop: 20 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 14 }}>
-                    <span style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600 }}>
-                      {otpMethod === 'email' ? t('enterOtpCodeSentToEmailTemplate').replace('{email}', otpTestEmail) : t('enterOtpCodeSentToPhoneMsg')}
-                    </span>
-                  </div>
-                  {otpDevCode && (
-                    <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
-                      <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                        {t('testingModeNoProviderTemplate').split('{provider}')[0]}{otpMethod === 'email' ? 'SMTP' : 'SMS'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
-                      </p>
-                      <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{otpDevCode}</p>
+              {otpSent && !otpVerified && createPortal(
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
+                  <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 420, padding: 28 }}>
+                    <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
+                      <div className="icon-badge orange" style={{ width: 44, height: 44, borderRadius: '50%' }}>
+                        <ShieldCheck style={{ width: 21, height: 21 }} />
+                      </div>
+                      <button type="button" onClick={handleCancelOtpModal} className="icon-btn" title={t('btnClose')}>
+                        <X className="h-4 w-4" />
+                      </button>
                     </div>
-                  )}
-                  <div style={{ display: 'flex', gap: 10, maxWidth: 280 }}>
+                    <h3 style={{ marginTop: 12, marginBottom: 4 }}>{t('verifyOtpModalTitle')}</h3>
+                    <p className="desc" style={{ marginBottom: 18 }}>
+                      {otpMethod === 'email' ? t('enterOtpCodeSentToEmailTemplate').replace('{email}', otpTestEmail) : t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', phone)}
+                    </p>
+
+                    {otpDevCode && (
+                      <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 16 }}>
+                        <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
+                          {t('testingModeNoProviderTemplate').split('{provider}')[0]}{otpMethod === 'email' ? 'SMTP' : 'SMS'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
+                        </p>
+                        <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{otpDevCode}</p>
+                      </div>
+                    )}
+
                     <input
                       type="text" maxLength={4} value={enteredOtp}
                       onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
                       placeholder="1234"
-                      style={{ ...plainInputStyle, textAlign: 'center', fontWeight: 800, letterSpacing: 4 }}
+                      style={{ ...plainInputStyle, textAlign: 'center', fontWeight: 800, letterSpacing: 8, fontSize: 20, marginBottom: 12 }}
                     />
-                    <button type="button" onClick={handleVerifyOtp} className="btn btn-primary btn-sm" style={{ whiteSpace: 'nowrap' }}>
+                    {otpError && <p style={{ color: 'var(--red)', fontSize: 11.5, fontWeight: 700, marginBottom: 12 }}>{otpError}</p>}
+
+                    <button type="button" onClick={handleVerifyOtp} className="btn btn-primary" style={{ width: '100%', marginBottom: 10 }}>
                       {t('verifyOtpBtn')}
                     </button>
+                    <div className="flex items-center justify-between" style={{ gap: 10 }}>
+                      <button type="button" onClick={handleSendOtp} className="btn btn-ghost btn-sm">
+                        {t('resendBtn')}
+                      </button>
+                      <button type="button" onClick={handleCancelOtpModal} className="btn btn-ghost btn-sm">
+                        {t('btnCancel')}
+                      </button>
+                    </div>
                   </div>
-                  {otpError && <p style={{ color: 'var(--red)', fontSize: 11, fontWeight: 700, marginTop: 10 }}>{otpError}</p>}
-                </div>
+                </div>,
+                document.body
               )}
 
               {otpVerified && (
@@ -11835,12 +12097,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <span style={{ color: 'var(--green)', fontSize: 12.5, fontWeight: 700 }}>{otpMethod === 'email' ? t('otpVerifiedSuccessEmailMsg') : t('otpVerifiedSuccessPhoneMsg')}</span>
                 </div>
               )}
-            </div>
-          )}
 
-          {step === 2 && (
-            <div className="animate-fade-in">
-              <h3>{t('complianceDocUploadTitle')}</h3>
+              <h3 style={{ marginTop: 28 }}>{t('complianceDocUploadTitle')}</h3>
               <p className="desc">{t('uploadGovIdDesc')}</p>
 
               <div className="reg-section">
@@ -11897,12 +12155,24 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
             </div>
           )}
 
-          {step === 3 && (
+          {step === 2 && (
             <div className="animate-fade-in">
-              <h3>{t('reviewStepLabel')}</h3>
-              <p className="desc">{t('verifyDetailsBeforeSubmitDesc')}</p>
+              <div className="flex items-center justify-between flex-wrap" style={{ gap: 12 }}>
+                <div>
+                  <h3>{t('reviewStepLabel')}</h3>
+                  <p className="desc" style={{ marginBottom: 0 }}>{t('verifyDetailsBeforeSubmitDesc')}</p>
+                </div>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="btn btn-outline btn-sm">
+                    {pdfAction === 'download' ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />} {t('downloadBtn')}
+                  </button>
+                  <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="btn btn-outline btn-sm">
+                    {pdfAction === 'share' ? <RefreshCw className="animate-spin h-4 w-4" /> : <Share2 className="h-4 w-4" />} {t('shareBtn')}
+                  </button>
+                </div>
+              </div>
 
-              <div className="reg-section">
+              <div className="reg-section" style={{ marginTop: 20 }}>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center gap-3">
                     <div className="icon-badge purple" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><User style={{ width: 16, height: 16 }} /></div>
@@ -11929,7 +12199,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     <div className="icon-badge pink" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><KeyRound style={{ width: 16, height: 16 }} /></div>
                     <div>
                       <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('keyBlankLabel')}</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}</div>
+                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}{keyType ? ` (${keyType})` : ''}</div>
                     </div>
                   </div>
                 </div>
@@ -11937,7 +12207,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <div className="icon-badge teal" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><MapPin style={{ width: 16, height: 16 }} /></div>
                   <div>
                     <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('registeredAddressLabel')}</div>
-                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{addressLine}, {district}, {stateVal}, India</div>
+                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{addressLine}</div>
                   </div>
                 </div>
               </div>
@@ -12003,18 +12273,13 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
             {step === 1 && (
               <button
                 type="button" className="btn btn-primary"
-                disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || !district || !stateVal || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
+                disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
                 onClick={() => setStep(2)}
               >
                 {t('btnContinue')} <ArrowRight className="h-4 w-4" />
               </button>
             )}
             {step === 2 && (
-              <button type="button" className="btn btn-primary" onClick={() => setStep(3)}>
-                {t('btnContinue')} <ArrowRight className="h-4 w-4" />
-              </button>
-            )}
-            {step === 3 && (
               <button type="button" className="btn btn-primary" onClick={handleFinalSubmit}>
                 {t('submitComplianceRecordBtn')} <Check className="h-4 w-4" />
               </button>
@@ -12022,6 +12287,72 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
           </div>
         </div>
       </div>
+
+      {gpsError && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
+          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 400, padding: 28, textAlign: 'center' }}>
+            <div
+              className={`icon-badge ${gpsErrorKind === 'disabled' ? 'skyblue' : gpsErrorKind === 'permission' ? 'orange' : 'rose'}`}
+              style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 18px' }}
+            >
+              {gpsErrorKind === 'disabled' ? <Navigation style={{ width: 26, height: 26 }} /> : gpsErrorKind === 'permission' ? <Lock style={{ width: 26, height: 26 }} /> : <AlertTriangle style={{ width: 26, height: 26 }} />}
+            </div>
+            <h3 style={{ marginBottom: 8 }}>
+              {gpsErrorKind === 'disabled' ? t('locationServicesDisabledTitle') : gpsErrorKind === 'permission' ? t('locationPermissionRequiredTitle') : t('locationUnavailableTitle')}
+            </h3>
+            <p className="desc" style={{ marginBottom: 22 }}>
+              {gpsErrorKind === 'disabled' ? t('locationServicesDisabledMsg') : gpsErrorKind === 'permission' ? t('locationPermissionRequiredMsg') : t('locationUnavailableMsg')}
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {gpsErrorKind === 'disabled' && (
+                <button type="button" onClick={openDeviceLocationSettings} className="btn btn-primary" style={{ width: '100%' }}>
+                  {t('openLocationSettingsBtn')}
+                </button>
+              )}
+              {gpsErrorKind === 'permission' && IS_NATIVE_APP && (
+                <button type="button" onClick={openAppSettings} className="btn btn-primary" style={{ width: '100%' }}>
+                  {t('openAppSettingsBtn')}
+                </button>
+              )}
+              {gpsErrorKind !== 'disabled' && (
+                <button type="button" onClick={captureCustomerLocation} className={gpsErrorKind === 'permission' && IS_NATIVE_APP ? 'btn btn-outline' : 'btn btn-primary'} style={{ width: '100%' }}>
+                  {t('tryAgainBtn')}
+                </button>
+              )}
+              {gpsErrorKind === 'disabled' && (
+                <button type="button" onClick={captureCustomerLocation} className="btn btn-outline" style={{ width: '100%' }}>
+                  {t('tryAgainBtn')}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => { setGpsError(''); setGpsErrorKind(''); }}
+                className="btn btn-ghost" style={{ width: '100%' }}
+              >
+                {t('btnClose')}
+              </button>
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
+
+      {showSuccessModal && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
+          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 380, padding: 28, textAlign: 'center' }}>
+            <div className="icon-badge jgreen" style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 18px' }}>
+              <CheckCircle2 style={{ width: 28, height: 28 }} />
+            </div>
+            <h3 style={{ marginBottom: 8 }}>{t('registrationSuccessTitle')}</h3>
+            <p className="desc" style={{ marginBottom: 22 }}>{t('registrationSuccessDesc')}</p>
+            <button type="button" onClick={handleSuccessModalOk} className="btn btn-primary" style={{ width: '100%' }}>
+              {t('okBtn')}
+            </button>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
@@ -12030,10 +12361,71 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 // COMPONENT 10: CUSTOMER HISTORY LOOKUP (SHOP ADMIN ONLY)
 // ============================================================================
 function CustomerHistoryView({ t, api, searchDispatch }) {
+  const { user } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [selectedCust, setSelectedCust] = useState(null);
+
+  // Customer report (Download/WhatsApp buttons on each row) - shop details
+  // are fetched once and cached since every report for this Shop Admin's
+  // customers uses the same shop info. reportBusyId tracks "<customerId>:
+  // <download|share>" so only the button that's mid-generation shows a
+  // spinner instead of disabling the whole table.
+  const [shopInfo, setShopInfo] = useState(null);
+  const [reportBusyId, setReportBusyId] = useState(null);
+
+  const ensureShopInfo = async () => {
+    if (shopInfo) return shopInfo;
+    const res = await api.getSettings();
+    let address = 'N/A';
+    let phone = 'N/A';
+    if (res.companyDetails) {
+      try {
+        const details = JSON.parse(res.companyDetails);
+        address = details.address || 'N/A';
+        phone = details.phone || 'N/A';
+      } catch (e) { /* leave defaults */ }
+    }
+    const info = { name: res.name, address, phone };
+    setShopInfo(info);
+    return info;
+  };
+
+  const handleDownloadCustomerReport = async (c) => {
+    setReportBusyId(`${c.id}:download`);
+    try {
+      const shop = await ensureShopInfo();
+      const pdf = await buildCustomerReportPdf({ customer: c, shop, registeredByName: user?.name });
+      const safeName = `${(c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Key_Registration_Report.pdf`;
+      await downloadPdf(pdf, safeName);
+    } catch (err) {
+      console.error('Failed to generate customer report PDF:', err);
+      window.alert('Could not generate the report PDF. Please try again.');
+    } finally {
+      setReportBusyId(null);
+    }
+  };
+
+  const handleShareCustomerReportViaWhatsApp = async (c) => {
+    setReportBusyId(`${c.id}:whatsapp`);
+    try {
+      const shop = await ensureShopInfo();
+      const pdf = await buildCustomerReportPdf({ customer: c, shop, registeredByName: user?.name });
+      const safeName = `${(c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Key_Registration_Report.pdf`;
+      await sharePdf(pdf, safeName, {
+        title: 'Customer Key Registration Report',
+        fallbackText: `${c.name} - Key: ${c.keyNumber}${c.keyType ? ` (${c.keyType})` : ''} - Phone: ${c.phone}`,
+      });
+    } catch (err) {
+      if (err && err.name !== 'AbortError') {
+        console.error('Failed to share customer report PDF:', err);
+        window.alert('Could not share the report PDF. Please try again.');
+      }
+    } finally {
+      setReportBusyId(null);
+    }
+  };
 
   // Picks up a query dispatched from the global header search panel
   // (filter = "Customer").
@@ -12201,6 +12593,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                     <td className="cell-sub" data-label={t('vehicleCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.vehicleNumber || 'N/A'}</td>
                     <td data-label={t('keyCodeCol')}>
                       <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
+                      {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
                     </td>
                     <td className="cell-sub" data-label={t('locationCol')} style={{ fontWeight: 700, color: 'var(--text-2)', maxWidth: 180 }}>
                       <span className="flex items-center gap-1" style={{ overflow: 'hidden' }}>
@@ -12213,6 +12606,22 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                       <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
                         <button onClick={(e) => { e.stopPropagation(); setSelectedCust(c); }} className="icon-btn" title={t('viewComplianceFile')}>
                           <Eye />
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDownloadCustomerReport(c); }}
+                          disabled={reportBusyId === `${c.id}:download`}
+                          className="icon-btn" title={t('downloadReportBtn')}
+                        >
+                          {reportBusyId === `${c.id}:download` ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
+                        </button>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleShareCustomerReportViaWhatsApp(c); }}
+                          disabled={reportBusyId === `${c.id}:whatsapp`}
+                          className="icon-btn" title={t('shareViaWhatsAppBtn')}
+                        >
+                          {reportBusyId === `${c.id}:whatsapp` ? <RefreshCw className="animate-spin h-4 w-4" /> : (
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
+                          )}
                         </button>
                       </div>
                     </td>
@@ -12258,6 +12667,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyBlankCodeLabel')}</b></div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="badge badge-active"><span className="dot" />{selectedCust.keyNumber}</span>
+                        {selectedCust.keyType && <span className="badge" style={{ background: 'var(--purple-dim, rgba(124,77,255,0.12))', color: 'var(--purple)' }}>{selectedCust.keyType}</span>}
                       </div>
                     </div>
                   </div>
@@ -12691,10 +13101,22 @@ export function SupportConfigView({ t, api }) {
   const [editingPtName, setEditingPtName] = useState('');
   const [savingPtId, setSavingPtId] = useState(null);
 
+  // Key Types management - the Super-Admin-curated list of key "types" (e.g.
+  // Vehicle Key) that populates the Key Type dropdown on the Customer
+  // Registration form. Mirrors the Shop Categories/Product Types blocks above.
+  const [keyTypes, setKeyTypes] = useState([]);
+  const [ktLoading, setKtLoading] = useState(true);
+  const [newKeyTypeName, setNewKeyTypeName] = useState('');
+  const [addingKeyType, setAddingKeyType] = useState(false);
+  const [editingKtId, setEditingKtId] = useState(null);
+  const [editingKtName, setEditingKtName] = useState('');
+  const [savingKtId, setSavingKtId] = useState(null);
+
   useEffect(() => {
     fetchConfig();
     fetchCategories();
     fetchProductTypes();
+    fetchKeyTypes();
   }, []);
 
   const fetchConfig = async () => {
@@ -12854,6 +13276,72 @@ export function SupportConfigView({ t, api }) {
       alert(t('failedDeleteProductTypeTemplate').split('{msg}')[0] + e.message);
     } finally {
       setSavingPtId(null);
+    }
+  };
+
+  const fetchKeyTypes = async () => {
+    try {
+      const res = await api.getKeyTypes();
+      setKeyTypes(res || []);
+    } catch (e) {
+      console.error('Failed to load key types:', e);
+    } finally {
+      setKtLoading(false);
+    }
+  };
+
+  const handleAddKeyType = async () => {
+    const name = newKeyTypeName.trim();
+    if (!name) {
+      alert(t('pleaseEnterKeyTypeNameMsg'));
+      return;
+    }
+    setAddingKeyType(true);
+    try {
+      await api.createKeyType(name);
+      setNewKeyTypeName('');
+      await fetchKeyTypes();
+    } catch (e) {
+      alert(t('failedAddKeyTypeTemplate').split('{msg}')[0] + e.message);
+    } finally {
+      setAddingKeyType(false);
+    }
+  };
+
+  const handleStartEditKeyType = (kt) => {
+    setEditingKtId(kt.id);
+    setEditingKtName(kt.name);
+  };
+
+  const handleSaveEditKeyType = async (id) => {
+    const name = editingKtName.trim();
+    if (!name) {
+      alert(t('pleaseEnterKeyTypeNameMsg'));
+      return;
+    }
+    setSavingKtId(id);
+    try {
+      await api.updateKeyType(id, name);
+      setEditingKtId(null);
+      await fetchKeyTypes();
+    } catch (e) {
+      alert(t('failedUpdateKeyTypeTemplate').split('{msg}')[0] + e.message);
+    } finally {
+      setSavingKtId(null);
+    }
+  };
+
+  const handleDeleteKeyType = async (kt) => {
+    const [confirmPre, confirmPost] = t('deleteKeyTypeConfirmTemplate').split('{name}');
+    if (!confirm(confirmPre + kt.name + confirmPost)) return;
+    setSavingKtId(kt.id);
+    try {
+      await api.deleteKeyType(kt.id);
+      await fetchKeyTypes();
+    } catch (e) {
+      alert(t('failedDeleteKeyTypeTemplate').split('{msg}')[0] + e.message);
+    } finally {
+      setSavingKtId(null);
     }
   };
 
@@ -13146,6 +13634,80 @@ export function SupportConfigView({ t, api }) {
                         className="icon-btn" style={{ color: 'var(--red)' }} title={t('btnDelete')}
                       >
                         {savingPtId === pt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
+                      </button>
+                    </>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
+        <div className="reg-section" style={{ marginBottom: 0 }}>
+          <div className="reg-section-head">
+            <div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div>
+            <h3>{t('keyTypesTitle')}</h3>
+            <span className="sub" style={{ marginLeft: 'auto' }}>{keyTypes.length} {keyTypes.length === 1 ? t('typeSingularLabel') : t('typePluralLabel')}</span>
+          </div>
+          <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
+            {t('manageKeyTypesDesc')}
+          </p>
+
+          <div className="reg-field" style={{ marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <div className="input-wrap" style={{ flex: 1 }}>
+                <input
+                  type="text" value={newKeyTypeName} onChange={(e) => setNewKeyTypeName(e.target.value)}
+                  placeholder={t('enterKeyTypePlaceholder')}
+                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddKeyType(); } }}
+                />
+              </div>
+              <button type="button" onClick={handleAddKeyType} disabled={addingKeyType} className="btn btn-outline btn-sm">
+                {addingKeyType ? <RefreshCw className="animate-spin" /> : <Plus />} {t('addBtnLabel')}
+              </button>
+            </div>
+          </div>
+
+          {ktLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
+              <RefreshCw className="animate-spin" style={{ width: 22, height: 22, color: 'var(--gold)' }} />
+            </div>
+          ) : keyTypes.length === 0 ? (
+            <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
+              {t('noKeyTypesYetMsg')}
+            </p>
+          ) : (
+            <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
+              {keyTypes.map((kt) => (
+                <div key={kt.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
+                  {editingKtId === kt.id ? (
+                    <>
+                      <input
+                        type="text" value={editingKtName} onChange={(e) => setEditingKtName(e.target.value)}
+                        style={{ flex: 1 }} autoFocus
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSaveEditKeyType(kt.id); } }}
+                      />
+                      <button type="button" onClick={() => handleSaveEditKeyType(kt.id)} disabled={savingKtId === kt.id} className="icon-btn" title={t('btnSave')} style={{ color: 'var(--jgreen)' }}>
+                        {savingKtId === kt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4" />}
+                      </button>
+                      <button type="button" onClick={() => setEditingKtId(null)} className="icon-btn" title={t('btnCancel')}>
+                        <X className="h-4 w-4" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <KeyRound style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
+                      <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{kt.name}</span>
+                      <button type="button" onClick={() => handleStartEditKeyType(kt)} className="icon-btn" title={t('btnEdit')}>
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        type="button" onClick={() => handleDeleteKeyType(kt)} disabled={savingKtId === kt.id}
+                        className="icon-btn" style={{ color: 'var(--red)' }} title={t('btnDelete')}
+                      >
+                        {savingKtId === kt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
                       </button>
                     </>
                   )}

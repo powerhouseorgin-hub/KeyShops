@@ -2,8 +2,10 @@ import { Capacitor, registerPlugin } from '@capacitor/core';
 
 // Native bridge to SaveToDownloadsPlugin.java - see downloadAsset() below
 // for why this exists (Capacitor's built-in Filesystem plugin can't write
-// to the public Downloads folder on Android 10+ scoped storage).
-const SaveToDownloads = registerPlugin('SaveToDownloads');
+// to the public Downloads folder on Android 10+ scoped storage). Exported so
+// other locally-generated files (e.g. the registration summary PDF) can reuse
+// the same native save flow instead of only remote-URL downloads.
+export const SaveToDownloads = registerPlugin('SaveToDownloads');
 
 // Base URL for the NestJS backend. In local dev this stays empty, so
 // requests go to relative paths like /api/... which Vite's dev server

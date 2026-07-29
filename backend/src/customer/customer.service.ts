@@ -67,6 +67,7 @@ export class CustomerService {
           idProofNumber: encryptedIdNumber,
           reason: dto.reason || null,
           keyNumber: dto.keyNumber,
+          keyType: dto.keyType || null,
           vehicleNumber: dto.vehicleNumber || null,
           masterKeyId: finalMasterKeyId,
           latitude: finalLat,
@@ -123,6 +124,7 @@ export class CustomerService {
       idProofType: dto.idProofType,
       reason: dto.reason,
       keyNumber: dto.keyNumber,
+      keyType: dto.keyType || null,
       vehicleNumber: dto.vehicleNumber || null,
       masterKeyId: dto.masterKeyId || null,
       latitude: dto.latitude || null,
@@ -169,7 +171,10 @@ export class CustomerService {
     const customers = await this.tenantService.prisma.customer.findMany({
       where: whereClause,
       orderBy: { createdAt: 'desc' },
-      include: { documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } } },
+      include: {
+        documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
+        masterKey: { select: { category: true } },
+      },
     });
 
     return customers.map(c => this.decryptCustomerPII(c));
@@ -276,7 +281,8 @@ export class CustomerService {
       orderBy: { createdAt: 'desc' },
       include: {
         documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
-        shop: { select: { name: true } }
+        shop: { select: { name: true } },
+        masterKey: { select: { category: true } },
       },
     });
     return customers.map(c => this.decryptCustomerPII(c));
@@ -298,6 +304,7 @@ export class CustomerService {
       idProofType: dto.idProofType,
       reason: dto.reason,
       keyNumber: dto.keyNumber,
+      keyType: dto.keyType || null,
       masterKeyId: dto.masterKeyId || null,
       latitude: dto.latitude || null,
       longitude: dto.longitude || null,
