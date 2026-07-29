@@ -8035,6 +8035,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const [provisionPhone, setProvisionPhone] = useState('');
   const [provisionWhatsapp, setProvisionWhatsapp] = useState('');
   const [provisionLocation, setProvisionLocation] = useState('');
+  const [provisionLocLoading, setProvisionLocLoading] = useState(false);
+  const [provisionLocError, setProvisionLocError] = useState('');
   const [provisionSameAsPhone, setProvisionSameAsPhone] = useState(false);
   const [provisionShopPhoto, setProvisionShopPhoto] = useState('');
   const [provisionShopLicense, setProvisionShopLicense] = useState('');
@@ -8116,6 +8118,26 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       setErrorMsg(err.message || t('failedToCreateShop'));
       throw err;
     }
+  };
+
+  // "Current Location" for the Create Shop dialog's single Shop Address field -
+  // mirrors captureShopLocation in the public self-registration wizard, minus
+  // the city/state/pinCode side effects since this dialog has no such fields.
+  const captureProvisionLocation = async () => {
+    setProvisionLocError('');
+    setProvisionLocLoading(true);
+    let lat, lng;
+    try {
+      ({ lat, lng } = await resolveCurrentLocation());
+    } catch (e) {
+      setProvisionLocError(e.message);
+      setProvisionLocLoading(false);
+      return;
+    }
+    const data = await reverseGeocode(lat, lng);
+    const fullAddress = data?.displayName || [data?.street, data?.locality].filter(Boolean).join(', ');
+    setProvisionLocation(fullAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+    setProvisionLocLoading(false);
   };
 
   const handleCreateShopSubmit = async (e) => {
@@ -8210,6 +8232,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     setProvisionPhone('');
     setProvisionWhatsapp('');
     setProvisionLocation('');
+    setProvisionLocError('');
     setProvisionSameAsPhone(false);
     setProvisionShopPhoto('');
     setProvisionShopLicense('');
@@ -8484,13 +8507,26 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   </div>
                 </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>{t('shopAddressLabel')} <span className="req">*</span></b></div>
+                  <div className="reg-field-label">
+                    <div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div>
+                    <b>{t('shopAddressLabel')} <span className="req">*</span></b>
+                    <button
+                      type="button" onClick={captureProvisionLocation} disabled={provisionLocLoading}
+                      className="reg-trailing loc-btn"
+                    >
+                      <Crosshair className={provisionLocLoading ? 'animate-spin' : ''} />
+                      <span>{provisionLocLoading ? t('locatingLabel') : t('currentLocationBtn')}</span>
+                    </button>
+                  </div>
                   <div className="input-wrap">
                     <input
                       type="text" required value={provisionLocation} onChange={(e) => setProvisionLocation(e.target.value)}
                       placeholder={t('shopAddressPlaceholder')}
                     />
                   </div>
+                  {provisionLocError && (
+                    <p style={{ marginTop: 6, fontSize: 11, color: 'var(--amber)', fontWeight: 700 }}>{provisionLocError}</p>
+                  )}
                 </div>
               </div>
 
