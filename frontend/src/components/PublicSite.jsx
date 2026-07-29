@@ -153,7 +153,7 @@ function PublicFooter({ onNavigate }) {
             <span className="public-footer-heading">Get in touch</span>
             <span className="public-footer-static"><Mail className="h-3.5 w-3.5" /> keyshops666@gmail.com</span>
             <span className="public-footer-static"><Phone className="h-3.5 w-3.5" /> +91 90520 88853</span>
-            <span className="public-footer-static"><MapPin className="h-3.5 w-3.5" /> New Delhi, India</span>
+            <span className="public-footer-static"><MapPin className="h-3.5 w-3.5" /> Erode, Tamil Nadu, India</span>
           </div>
         </div>
       </div>
@@ -498,7 +498,7 @@ function ContactPage() {
         <Reveal delay={140} className="card public-contact-card">
           <div className="icon-badge"><MapPin /></div>
           <h3>Office</h3>
-          <p>New Delhi, India</p>
+          <p>Erode, Tamil Nadu, India</p>
         </Reveal>
       </div>
 

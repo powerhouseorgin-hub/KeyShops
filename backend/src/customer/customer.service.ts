@@ -174,6 +174,10 @@ export class CustomerService {
       include: {
         documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
         masterKey: { select: { category: true } },
+        // Mirrors getSuperCustomers()'s shape - the shared KeysSearchView
+        // detail panel reads customer.shop.name/companyDetails regardless of
+        // which role's endpoint supplied the result.
+        shop: { select: { name: true, companyDetails: true } },
       },
     });
 

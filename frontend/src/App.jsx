@@ -835,7 +835,7 @@ const LANGUAGES = {
     documentsStepLabel: 'Documents',
     reviewStepLabel: 'Review',
     newCustomerEyebrow: 'New Customer',
-    multiStepComplianceDesc: 'Multi-step compliance onboarding — key issuance, identity capture & GPS-stamped address, in two quick steps.',
+    multiStepComplianceDesc: 'Compliance onboarding — key issuance, identity capture & GPS-stamped address, all on one screen.',
     stepLabel: 'Step',
     ofLabel: 'of',
     contactKeyCredentialsTitle: 'Contact & Key Credentials',
@@ -993,6 +993,7 @@ const LANGUAGES = {
     downloadBtn: 'Download',
     shareBtn: 'Share',
     downloadReportBtn: 'Download Report',
+    saveRecordBtn: 'Save Record',
     shareViaWhatsAppBtn: 'Share via WhatsApp',
     okBtn: 'OK',
     tryAgainBtn: 'Try Again',
@@ -1644,7 +1645,7 @@ const LANGUAGES = {
     documentsStepLabel: 'दस्तावेज़',
     reviewStepLabel: 'समीक्षा',
     newCustomerEyebrow: 'नया ग्राहक',
-    multiStepComplianceDesc: 'बहु-चरण अनुपालन ऑनबोर्डिंग — की जारी करना, पहचान कैप्चर और जीपीएस-स्टैम्प्ड पता, दो त्वरित चरणों में।',
+    multiStepComplianceDesc: 'अनुपालन ऑनबोर्डिंग — की जारी करना, पहचान कैप्चर और जीपीएस-स्टैम्प्ड पता, सभी एक ही स्क्रीन पर।',
     stepLabel: 'चरण',
     ofLabel: 'में से',
     contactKeyCredentialsTitle: 'संपर्क और की क्रेडेंशियल्स',
@@ -1802,6 +1803,7 @@ const LANGUAGES = {
     downloadBtn: 'डाउनलोड करें',
     shareBtn: 'साझा करें',
     downloadReportBtn: 'रिपोर्ट डाउनलोड करें',
+    saveRecordBtn: 'रिकॉर्ड सहेजें',
     shareViaWhatsAppBtn: 'व्हाट्सएप पर साझा करें',
     okBtn: 'ठीक है',
     tryAgainBtn: 'पुनः प्रयास करें',
@@ -2453,7 +2455,7 @@ const LANGUAGES = {
     documentsStepLabel: 'ஆவணங்கள்',
     reviewStepLabel: 'மதிப்பாய்வு',
     newCustomerEyebrow: 'புதிய வாடிக்கையாளர்',
-    multiStepComplianceDesc: 'பல-படி இணக்க ஆன்போர்டிங் — சாவி வழங்குதல், அடையாள சேகரிப்பு & ஜிபிஎஸ்-முத்திரையிடப்பட்ட முகவரி, இரண்டு விரைவான படிகளில்.',
+    multiStepComplianceDesc: 'இணக்க ஆன்போர்டிங் — சாவி வழங்குதல், அடையாள சேகரிப்பு & ஜிபிஎஸ்-முத்திரையிடப்பட்ட முகவரி, அனைத்தும் ஒரே திரையில்.',
     stepLabel: 'படி',
     ofLabel: 'இல்',
     contactKeyCredentialsTitle: 'தொடர்பு & சாவி நற்சான்றுகள்',
@@ -2611,6 +2613,7 @@ const LANGUAGES = {
     downloadBtn: 'பதிவிறக்கவும்',
     shareBtn: 'பகிரவும்',
     downloadReportBtn: 'அறிக்கையைப் பதிவிறக்கவும்',
+    saveRecordBtn: 'பதிவைச் சேமிக்கவும்',
     shareViaWhatsAppBtn: 'வாட்ஸ்அப் வழியாகப் பகிரவும்',
     okBtn: 'சரி',
     tryAgainBtn: 'மீண்டும் முயற்சிக்கவும்',
@@ -3262,7 +3265,7 @@ const LANGUAGES = {
     documentsStepLabel: 'పత్రాలు',
     reviewStepLabel: 'సమీక్ష',
     newCustomerEyebrow: 'కొత్త కస్టమర్',
-    multiStepComplianceDesc: 'బహుళ-దశల కంప్లయన్స్ ఆన్‌బోర్డింగ్ — కీ జారీ, గుర్తింపు క్యాప్చర్ & GPS-స్టాంప్డ్ చిరునామా, రెండు శీఘ్ర దశల్లో.',
+    multiStepComplianceDesc: 'కంప్లయన్స్ ఆన్‌బోర్డింగ్ — కీ జారీ, గుర్తింపు క్యాప్చర్ & GPS-స్టాంప్డ్ చిరునామా, అన్నీ ఒకే స్క్రీన్‌లో.',
     stepLabel: 'దశ',
     ofLabel: 'లో',
     contactKeyCredentialsTitle: 'సంప్రదింపు & కీ ఆధారాలు',
@@ -3420,6 +3423,7 @@ const LANGUAGES = {
     downloadBtn: 'డౌన్‌లోడ్ చేయండి',
     shareBtn: 'షేర్ చేయండి',
     downloadReportBtn: 'నివేదికను డౌన్‌లోడ్ చేయండి',
+    saveRecordBtn: 'రికార్డ్‌ను సేవ్ చేయండి',
     shareViaWhatsAppBtn: 'వాట్సాప్ ద్వారా షేర్ చేయండి',
     okBtn: 'సరే',
     tryAgainBtn: 'మళ్ళీ ప్రయత్నించండి',
@@ -4071,7 +4075,7 @@ const LANGUAGES = {
     documentsStepLabel: 'ದಾಖಲೆಗಳು',
     reviewStepLabel: 'ಪರಿಶೀಲನೆ',
     newCustomerEyebrow: 'ಹೊಸ ಗ್ರಾಹಕ',
-    multiStepComplianceDesc: 'ಬಹು-ಹಂತದ ಅನುಸರಣೆ ಆನ್‌ಬೋರ್ಡಿಂಗ್ — ಕೀ ವಿತರಣೆ, ಗುರುತಿನ ಸೆರೆಹಿಡಿಯುವಿಕೆ & GPS-ಸ್ಟ್ಯಾಂಪ್ ಮಾಡಿದ ವಿಳಾಸ, ಎರಡು ತ್ವರಿತ ಹಂತಗಳಲ್ಲಿ.',
+    multiStepComplianceDesc: 'ಅನುಸರಣೆ ಆನ್‌ಬೋರ್ಡಿಂಗ್ — ಕೀ ವಿತರಣೆ, ಗುರುತಿನ ಸೆರೆಹಿಡಿಯುವಿಕೆ & GPS-ಸ್ಟ್ಯಾಂಪ್ ಮಾಡಿದ ವಿಳಾಸ, ಎಲ್ಲವೂ ಒಂದೇ ಪರದೆಯಲ್ಲಿ.',
     stepLabel: 'ಹಂತ',
     ofLabel: 'ರಲ್ಲಿ',
     contactKeyCredentialsTitle: 'ಸಂಪರ್ಕ & ಕೀ ರುಜುವಾತುಗಳು',
@@ -4229,6 +4233,7 @@ const LANGUAGES = {
     downloadBtn: 'ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
     shareBtn: 'ಹಂಚಿಕೊಳ್ಳಿ',
     downloadReportBtn: 'ವರದಿಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
+    saveRecordBtn: 'ದಾಖಲೆಯನ್ನು ಉಳಿಸಿ',
     shareViaWhatsAppBtn: 'ವಾಟ್ಸ್ಆ್ಯಪ್ ಮೂಲಕ ಹಂಚಿಕೊಳ್ಳಿ',
     okBtn: 'ಸರಿ',
     tryAgainBtn: 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
@@ -4880,7 +4885,7 @@ const LANGUAGES = {
     documentsStepLabel: 'ഡോക്യുമെന്റുകൾ',
     reviewStepLabel: 'അവലോകനം',
     newCustomerEyebrow: 'പുതിയ ഉപഭോക്താവ്',
-    multiStepComplianceDesc: 'മൾട്ടി-സ്റ്റെപ്പ് കംപ്ലയൻസ് ഓൺബോർഡിംഗ് — കീ വിതരണം, ഐഡന്റിറ്റി ക്യാപ്‌ചർ & GPS-സ്റ്റാമ്പ്ഡ് വിലാസം, രണ്ട് പെട്ടെന്നുള്ള ഘട്ടങ്ങളിൽ.',
+    multiStepComplianceDesc: 'കംപ്ലയൻസ് ഓൺബോർഡിംഗ് — കീ വിതരണം, ഐഡന്റിറ്റി ക്യാപ്‌ചർ & GPS-സ്റ്റാമ്പ്ഡ് വിലാസം, എല്ലാം ഒരൊറ്റ സ്ക്രീനിൽ.',
     stepLabel: 'ഘട്ടം',
     ofLabel: 'ൽ',
     contactKeyCredentialsTitle: 'ബന്ധപ്പെടൽ & കീ ക്രെഡൻഷ്യലുകൾ',
@@ -5038,6 +5043,7 @@ const LANGUAGES = {
     downloadBtn: 'ഡൗൺലോഡ് ചെയ്യുക',
     shareBtn: 'പങ്കിടുക',
     downloadReportBtn: 'റിപ്പോർട്ട് ഡൗൺലോഡ് ചെയ്യുക',
+    saveRecordBtn: 'റെക്കോർഡ് സേവ് ചെയ്യുക',
     shareViaWhatsAppBtn: 'വാട്ട്‌സ്ആപ്പ് വഴി പങ്കിടുക',
     okBtn: 'ശരി',
     tryAgainBtn: 'വീണ്ടും ശ്രമിക്കുക',
@@ -5249,8 +5255,10 @@ const IS_NATIVE_APP = Capacitor.isNativePlatform();
 
 // Public landing page shared in referral invites (see the header Refer
 // button and the Shop Settings referral card) - the same domain already
-// used for the subscription payment QR code below.
-const KEE_LANDING_PAGE_URL = 'https://kee.platform';
+// used for the subscription payment QR code below. Must be the real deployed
+// Firebase Hosting URL (not a placeholder) since recipients actually need to
+// be able to open it.
+const KEE_LANDING_PAGE_URL = 'https://keee-7d6cb.web.app';
 
 const TERMS_AND_CONDITIONS_TITLE = 'Terms and Conditions';
 const TERMS_AND_CONDITIONS_BODY = `By creating an account and using this application, you agree to the following:
@@ -11417,14 +11425,13 @@ function KeysSearchView({ t, api, searchDispatch }) {
 }
 
 function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = [], onDone, onCancel }) {
-  const [step, setStep] = useState(1);
-  // While mid-wizard (step > 1), hardware Back steps back one stage at a
-  // time instead of skipping straight past the whole wizard. At step 1
-  // there's nothing left to step back to here, so no handler is registered -
-  // Back falls through to whatever is above this wizard (closes the
-  // superAdminMode overlay via its own useBackHandler(showCreateWizard, ...),
-  // or pops the screen stack when this is the plain 'register' tab).
-  useBackHandler(step > 1, () => setStep((s) => Math.max(1, s - 1)));
+  // Single-page form now (Review is a modal, not a separate step) - hardware
+  // Back closes the Review modal if it's open; otherwise it falls through to
+  // whatever is above this wizard (closes the superAdminMode overlay via its
+  // own useBackHandler(showCreateWizard, ...), or pops the screen stack when
+  // this is the plain 'register' tab).
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  useBackHandler(showReviewModal, () => setShowReviewModal(false));
   const [keysList, setKeysList] = useState([]);
 
   // Super Admin only: which shop this customer is being registered under.
@@ -11826,7 +11833,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setGpsTimestamp(null);
     setGpsError('');
     setCapturedAddress('');
-    setStep(1);
+    setShowReviewModal(false);
   };
 
   // Review step: writes the generated PDF to the device's Downloads folder,
@@ -11874,11 +11881,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
   };
 
-  const WIZARD_STEPS = [
-    { name: t('contactKeyStepLabel') },
-    { name: t('reviewStepLabel') },
-  ];
-
   const plainInputStyle = {
     width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)',
     color: 'var(--text-0)', borderRadius: 13, padding: '13px 15px', fontSize: 14, outline: 'none'
@@ -11900,12 +11902,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       </div>
 
       <div className="card wizard-card">
-        <div className="wizard-body">
-          {step === 1 && (
-            <div className="animate-fade-in">
-              <h3>{t('contactKeyCredentialsTitle')}</h3>
-              <p className="desc">{t('registerContactDetailsDesc')}</p>
-
+        <div className="wizard-body reg-compact">
               {superAdminMode && (
                 <div className="reg-section">
                   <div className="reg-field">
@@ -11949,9 +11946,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="reg-section">
                 <div className="form-grid">
                   <div className="reg-field">
                     <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyCodeKeyNumberLabel')} <span className="req">*</span></b></div>
@@ -12016,10 +12010,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     </div>
                   )}
                 </div>
-              </div>
-
-              <div className="reg-section">
-                <div className="reg-field">
+                <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label">
                     <div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div>
                     <b>{t('addressLineLabel')} <span className="req">*</span></b>
@@ -12098,9 +12089,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 </div>
               )}
 
-              <h3 style={{ marginTop: 28 }}>{t('complianceDocUploadTitle')}</h3>
-              <p className="desc">{t('uploadGovIdDesc')}</p>
-
               <div className="reg-section">
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>{t('documentTypeLabel')}</b></div>
@@ -12114,9 +12102,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     ]}
                   />
                 </div>
-              </div>
-
-              <div className="reg-section">
                 {IS_NATIVE_APP && (
                   <button type="button" onClick={handleCaptureDocumentPhoto} className="btn btn-outline btn-sm" style={{ marginBottom: 12 }}>
                     <Camera className="h-4 w-4" /> {t('useCameraBtn')}
@@ -12152,24 +12137,44 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   </div>
                 )}
               </div>
-            </div>
-          )}
+        </div>
 
-          {step === 2 && (
-            <div className="animate-fade-in">
+        <div className="wizard-foot">
+          <span />
+          <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <button
+              type="button" className="btn btn-primary"
+              disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
+              onClick={handleFinalSubmit}
+            >
+              {t('saveRecordBtn')} <Check className="h-4 w-4" />
+            </button>
+            <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="btn btn-outline" style={{ padding: 12 }} title={t('downloadBtn')}>
+              {pdfAction === 'download' ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
+            </button>
+            <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="btn btn-outline" style={{ padding: 12 }} title={t('shareViaWhatsAppBtn')}>
+              {pdfAction === 'share' ? <RefreshCw className="animate-spin h-4 w-4" /> : (
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
+              )}
+            </button>
+            <button type="button" onClick={() => setShowReviewModal(true)} className="btn btn-outline">
+              <Eye className="h-4 w-4" /> {t('reviewStepLabel')}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showReviewModal && createPortal(
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
+          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
               <div className="flex items-center justify-between flex-wrap" style={{ gap: 12 }}>
                 <div>
                   <h3>{t('reviewStepLabel')}</h3>
                   <p className="desc" style={{ marginBottom: 0 }}>{t('verifyDetailsBeforeSubmitDesc')}</p>
                 </div>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="btn btn-outline btn-sm">
-                    {pdfAction === 'download' ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />} {t('downloadBtn')}
-                  </button>
-                  <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="btn btn-outline btn-sm">
-                    {pdfAction === 'share' ? <RefreshCw className="animate-spin h-4 w-4" /> : <Share2 className="h-4 w-4" />} {t('shareBtn')}
-                  </button>
-                </div>
+                <button type="button" onClick={() => setShowReviewModal(false)} className="icon-btn" title={t('btnClose')}>
+                  <X className="h-4 w-4" />
+                </button>
               </div>
 
               <div className="reg-section" style={{ marginTop: 20 }}>
@@ -12256,37 +12261,10 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <span>{capturedAddress}</span>
                 </div>
               )}
-            </div>
-          )}
-        </div>
-
-        <div className="wizard-foot">
-          {step > 1 ? (
-            <button type="button" className="btn btn-ghost" onClick={() => setStep(step - 1)}>
-              <ArrowLeft className="h-4 w-4" /> {t('btnBack')}
-            </button>
-          ) : <span />}
-
-          <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            <span className="wizard-foot-steplabel" style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 700 }}>{t('stepLabel')} {step} {t('ofLabel')} {WIZARD_STEPS.length}</span>
-
-            {step === 1 && (
-              <button
-                type="button" className="btn btn-primary"
-                disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
-                onClick={() => setStep(2)}
-              >
-                {t('btnContinue')} <ArrowRight className="h-4 w-4" />
-              </button>
-            )}
-            {step === 2 && (
-              <button type="button" className="btn btn-primary" onClick={handleFinalSubmit}>
-                {t('submitComplianceRecordBtn')} <Check className="h-4 w-4" />
-              </button>
-            )}
           </div>
-        </div>
-      </div>
+        </div>,
+        document.body
+      )}
 
       {gpsError && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>

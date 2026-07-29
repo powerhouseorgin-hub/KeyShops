@@ -23,9 +23,16 @@ export class CustomerController {
     return this.customerService.getCustomers(req.user.shopId, search);
   }
 
+  // Despite the route name, this powers the Shop Admin's own dashboard
+  // global-search bar (see App.jsx's KeysSearchView) - it must stay scoped to
+  // the caller's own shop like every other route on this controller. It used
+  // to call the Super Admin's unscoped getSuperCustomers(), which leaked
+  // every shop's customer PII (including decrypted ID proof numbers) to any
+  // Shop Admin token - see getCustomers() below for the correctly-scoped
+  // equivalent this now reuses.
   @Get('global-search')
-  async getGlobalCustomers(@Query('search') search?: string) {
-    return this.customerService.getSuperCustomers(search);
+  async getGlobalCustomers(@Request() req, @Query('search') search?: string) {
+    return this.customerService.getCustomers(req.user.shopId, search);
   }
 
   @Post(':id/docs')

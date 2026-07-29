@@ -610,6 +610,15 @@
 .reg-section-head h3 { font-size: 14px; color: var(--text-0); font-family: var(--display); font-weight: 800; margin: 0; }
 .reg-field { margin-bottom: 13px; }
 .reg-field:last-child { margin-bottom: 0; }
+
+/* Compact variant - Customer Registration's single-page layout (scoped so
+   it never affects the many other .reg-section/.reg-field forms in the app:
+   Shop self-registration, Shop Settings, Support Config, etc.). Tighter
+   padding/margins reduce scrolling while keeping each section's card
+   boundary for readability. */
+.reg-compact .reg-section { padding: 12px 16px; margin-bottom: 10px; }
+.reg-compact .reg-field { margin-bottom: 9px; }
+.reg-compact .form-grid { gap: 14px; }
 .reg-field-label { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
 .reg-ico {
   width: 27px; height: 27px; border-radius: 9px; display: flex; align-items: center;
@@ -779,7 +788,7 @@
 .step-line .fill { height: 100%; background: var(--gold); transition: width .5s ease; }
 @media (max-width: 900px) { .step-label .name { display: none; } .step-line { width: 22px; } }
 
-.wizard-body { padding: 34px; }
+.wizard-body { padding: 24px 34px; }
 .wizard-body h3 { font-size: 19px; margin-bottom: 6px; }
 .wizard-body .desc { color: var(--text-2); font-size: 13.5px; font-weight: 600; margin-bottom: 26px; }
 
