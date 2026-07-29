@@ -119,4 +119,10 @@ export class ShopController {
   async generateReferralCode(@Request() req, @Query('shopId') shopId?: string) {
     return { referralCode: await this.shopService.getOrCreateReferralCode(this.resolveShopId(req, shopId)) };
   }
+
+  @Get('shop/referral')
+  @Roles(Role.SHOP_ADMIN, Role.SUPER_ADMIN)
+  async getReferralOverview(@Request() req, @Query('shopId') shopId?: string) {
+    return this.shopService.getReferralOverview(this.resolveShopId(req, shopId));
+  }
 }

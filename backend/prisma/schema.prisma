@@ -103,16 +103,26 @@ model Shop {
   categoryId String?
   category   ShopCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
 
-  // This shop's own shareable referral code, lazily generated the first time
-  // the Shop Admin taps "Refer" in Shop Settings (see ShopService.getOrCreateReferralCode).
-  // Null until generated. Unique so it can be looked up unambiguously when another
-  // shop enters it during self-registration.
+  // This shop's own shareable referral code - simply its admin's registered
+  // mobile number (not a random string), set for every shop at registration
+  // time (see AuthService.registerShop) since phone numbers are already
+  // guaranteed unique across shops. Pre-existing shops created before this
+  // existed fall back to lazy generation the first time they open Shop
+  // Settings or tap "Refer" (see ShopService.getOrCreateReferralCode).
+  // Unique so it can be looked up unambiguously when another shop enters it
+  // during self-registration.
   referralCode String? @unique
 
   // The referral code (if any) THIS shop entered during its own self-registration,
   // i.e. whose shop referred them. Plain string, not a FK, so history survives even
   // if the referring shop's code later changes - mirrors Customer.keyType's pattern.
   referredByCode String?
+
+  // Running points balance earned by referring other shops - incremented by
+  // AuthService.registerShop when a new shop signs up with this shop's
+  // referralCode. Kept as a simple balance separate from the Referral ledger
+  // below so future redemption features can debit it without rewriting history.
+  referralPoints Int @default(0)
 
   users         User[]
   subscriptions Subscription[]
@@ -123,6 +133,11 @@ model Shop {
   documents     ShopDocument[]
   promotions    Promotion[]
 
+  // Referrals this shop has made (as the referrer) and, if it was itself
+  // referred, the single Referral row recording that.
+  referralsMade  Referral[] @relation("ReferralsMade")
+  referredByRow  Referral?  @relation("ReferralsReceived")
+
   deletedAt DateTime?
 
   createdAt DateTime @default(now())
@@ -130,6 +145,27 @@ model Shop {
 
   @@index([deletedAt])
   @@index([categoryId])
+}
+
+// Append-only ledger recording each successful referral: one row per
+// referred shop (referredShopId is unique), created atomically alongside the
+// referrer's +1 referralPoints credit in AuthService.registerShop.transaction.
+// The unique constraint on referredShopId is what guarantees a shop can only
+// ever award its referrer once, however many times this code path runs.
+model Referral {
+  id String @id @default(uuid())
+
+  referrerShopId String
+  referrerShop   Shop   @relation("ReferralsMade", fields: [referrerShopId], references: [id], onDelete: Cascade)
+
+  referredShopId String @unique
+  referredShop   Shop   @relation("ReferralsReceived", fields: [referredShopId], references: [id], onDelete: Cascade)
+
+  pointsAwarded Int @default(1)
+
+  createdAt DateTime @default(now())
+
+  @@index([referrerShopId])
 }
 
 // Super-Admin-managed reference list of shop "types" (e.g. Dealers) offered

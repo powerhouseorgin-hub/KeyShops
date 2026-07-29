@@ -21,7 +21,7 @@ import {
   Tag, Package, Boxes, Percent, Image as ImageIcon, Megaphone, BadgePercent,
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
   Download, Fingerprint, Palette, Menu, Home, Languages,
-  Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save
+  Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2
 } from 'lucide-react';
 
 // Product photos shown on the Dashboard's product-type cards instead of the
@@ -1048,10 +1048,14 @@ const LANGUAGES = {
     fromDateLabel: 'From Date',
     toDateLabel: 'To Date',
     generatingEllipsisLabel: 'Generating…',
-    referralProgramTitle: 'Referral Program',
-    referralProgramDesc: 'Share your code with other shop owners and earn rewards.',
+    referralProgramTitle: 'Referral & Rewards',
+    referralProgramDesc: 'Share your code with other shop owners and earn points for every successful referral.',
+    totalReferralPointsLabel: 'Total Referral Points',
+    totalSuccessfulReferralsLabel: 'Total Successful Referrals',
+    referralHistoryTitle: 'Referral History',
+    noReferralsYetMsg: 'No referrals yet — share your code to start earning points.',
+    copyLinkBtn: 'Copy Link',
     copyTitle: 'Copy',
-    shareReferralCodeBtn: 'Share Referral Code',
     generateReferralCodeBtn: 'Generate Referral Code',
     failedGenerateReferralCodeMsg: 'Failed to generate referral code. Please try again.',
     referralShareMessageTemplate: 'Use my referral code {code} when you register on Key Shop! Download the app: {url}',
@@ -1087,7 +1091,7 @@ const LANGUAGES = {
     cvvLabel: 'CVV',
     digitAadhaarOptionalPlaceholder: '12-digit Aadhaar number (optional)',
     referralCodeLabel: 'Referral Code (Optional)',
-    referralCodePlaceholder: 'Enter referral code, if you have one',
+    referralCodePlaceholder: "Referrer's mobile number, if you have one",
     agreeToTermsPrefix: 'I have read and agree to the',
     termsAndConditionsLinkLabel: 'Terms and Conditions',
     pleaseAcceptTermsMsg: 'Please read and accept the Terms and Conditions to continue.',
@@ -1853,10 +1857,14 @@ const LANGUAGES = {
     fromDateLabel: 'प्रारंभ तिथि',
     toDateLabel: 'अंतिम तिथि',
     generatingEllipsisLabel: 'बनाई जा रही है…',
-    referralProgramTitle: 'रेफ़रल प्रोग्राम',
-    referralProgramDesc: 'अन्य दुकान मालिकों के साथ अपना कोड साझा करें और इनाम पाएं।',
+    referralProgramTitle: 'रेफ़रल और रिवॉर्ड्स',
+    referralProgramDesc: 'अन्य दुकान मालिकों के साथ अपना कोड साझा करें और हर सफल रेफ़रल पर पॉइंट पाएं।',
+    totalReferralPointsLabel: 'कुल रेफ़रल पॉइंट',
+    totalSuccessfulReferralsLabel: 'कुल सफल रेफ़रल',
+    referralHistoryTitle: 'रेफ़रल इतिहास',
+    noReferralsYetMsg: 'अभी तक कोई रेफ़रल नहीं — पॉइंट कमाने के लिए अपना कोड साझा करें।',
+    copyLinkBtn: 'लिंक कॉपी करें',
     copyTitle: 'कॉपी करें',
-    shareReferralCodeBtn: 'रेफ़रल कोड साझा करें',
     generateReferralCodeBtn: 'रेफ़रल कोड बनाएं',
     failedGenerateReferralCodeMsg: 'रेफ़रल कोड बनाने में विफल। कृपया पुनः प्रयास करें।',
     referralShareMessageTemplate: 'Key Shop पर रजिस्टर करते समय मेरा रेफ़रल कोड {code} इस्तेमाल करें! ऐप डाउनलोड करें: {url}',
@@ -1892,7 +1900,7 @@ const LANGUAGES = {
     cvvLabel: 'CVV',
     digitAadhaarOptionalPlaceholder: '12-अंकीय आधार नंबर (वैकल्पिक)',
     referralCodeLabel: 'रेफ़रल कोड (वैकल्पिक)',
-    referralCodePlaceholder: 'यदि आपके पास है तो रेफ़रल कोड दर्ज करें',
+    referralCodePlaceholder: 'रेफ़र करने वाले का मोबाइल नंबर, यदि आपके पास है',
     agreeToTermsPrefix: 'मैंने नियम और शर्तें पढ़ ली हैं और सहमत हूं',
     termsAndConditionsLinkLabel: 'नियम और शर्तें',
     pleaseAcceptTermsMsg: 'कृपया आगे बढ़ने के लिए नियम और शर्तें पढ़ें और स्वीकार करें।',
@@ -2658,10 +2666,14 @@ const LANGUAGES = {
     fromDateLabel: 'தொடக்க தேதி',
     toDateLabel: 'முடிவு தேதி',
     generatingEllipsisLabel: 'உருவாக்கப்படுகிறது…',
-    referralProgramTitle: 'பரிந்துரை திட்டம்',
-    referralProgramDesc: 'உங்கள் குறியீட்டை மற்ற கடை உரிமையாளர்களுடன் பகிர்ந்து வெகுமதிகளைப் பெறுங்கள்.',
+    referralProgramTitle: 'பரிந்துரை & வெகுமதிகள்',
+    referralProgramDesc: 'உங்கள் குறியீட்டை மற்ற கடை உரிமையாளர்களுடன் பகிர்ந்து ஒவ்வொரு வெற்றிகரமான பரிந்துரைக்கும் புள்ளிகளைப் பெறுங்கள்.',
+    totalReferralPointsLabel: 'மொத்த பரிந்துரை புள்ளிகள்',
+    totalSuccessfulReferralsLabel: 'மொத்த வெற்றிகரமான பரிந்துரைகள்',
+    referralHistoryTitle: 'பரிந்துரை வரலாறு',
+    noReferralsYetMsg: 'இதுவரை பரிந்துரைகள் இல்லை — புள்ளிகளைப் பெற உங்கள் குறியீட்டைப் பகிரவும்.',
+    copyLinkBtn: 'இணைப்பை நகலெடு',
     copyTitle: 'நகலெடு',
-    shareReferralCodeBtn: 'பரிந்துரை குறியீட்டைப் பகிரவும்',
     generateReferralCodeBtn: 'பரிந்துரை குறியீட்டை உருவாக்கு',
     failedGenerateReferralCodeMsg: 'பரிந்துரை குறியீட்டை உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.',
     referralShareMessageTemplate: 'Key Shop-ல் பதிவு செய்யும்போது எனது பரிந்துரை குறியீடு {code} ஐப் பயன்படுத்தவும்! ஆப்ஸை பதிவிறக்கவும்: {url}',
@@ -2697,7 +2709,7 @@ const LANGUAGES = {
     cvvLabel: 'CVV',
     digitAadhaarOptionalPlaceholder: '12-இலக்க ஆதார் எண் (விருப்பமானது)',
     referralCodeLabel: 'பரிந்துரை குறியீடு (விருப்பமானது)',
-    referralCodePlaceholder: 'உங்களிடம் இருந்தால் பரிந்துரை குறியீட்டை உள்ளிடவும்',
+    referralCodePlaceholder: 'பரிந்துரைத்தவரின் மொபைல் எண், உங்களிடம் இருந்தால்',
     agreeToTermsPrefix: 'நான் விதிமுறைகள் மற்றும் நிபந்தனைகளைப் படித்து ஒப்புக்கொள்கிறேன்',
     termsAndConditionsLinkLabel: 'விதிமுறைகள் மற்றும் நிபந்தனைகள்',
     pleaseAcceptTermsMsg: 'தொடர விதிமுறைகள் மற்றும் நிபந்தனைகளைப் படித்து ஏற்கவும்.',
@@ -3463,10 +3475,14 @@ const LANGUAGES = {
     fromDateLabel: 'ప్రారంభ తేదీ',
     toDateLabel: 'ముగింపు తేదీ',
     generatingEllipsisLabel: 'రూపొందిస్తోంది…',
-    referralProgramTitle: 'రెఫరల్ ప్రోగ్రామ్',
-    referralProgramDesc: 'మీ కోడ్‌ను ఇతర దుకాణ యజమానులతో పంచుకుని రివార్డులు పొందండి.',
+    referralProgramTitle: 'రెఫరల్ & రివార్డులు',
+    referralProgramDesc: 'మీ కోడ్‌ను ఇతర దుకాణ యజమానులతో పంచుకుని ప్రతి విజయవంతమైన రెఫరల్‌కు పాయింట్లు పొందండి.',
+    totalReferralPointsLabel: 'మొత్తం రెఫరల్ పాయింట్లు',
+    totalSuccessfulReferralsLabel: 'మొత్తం విజయవంతమైన రెఫరల్స్',
+    referralHistoryTitle: 'రెఫరల్ చరిత్ర',
+    noReferralsYetMsg: 'ఇంకా రెఫరల్స్ లేవు — పాయింట్లు సంపాదించడానికి మీ కోడ్‌ను షేర్ చేయండి.',
+    copyLinkBtn: 'లింక్ కాపీ చేయండి',
     copyTitle: 'కాపీ చేయండి',
-    shareReferralCodeBtn: 'రెఫరల్ కోడ్ షేర్ చేయండి',
     generateReferralCodeBtn: 'రెఫరల్ కోడ్ సృష్టించండి',
     failedGenerateReferralCodeMsg: 'రెఫరల్ కోడ్ సృష్టించడంలో విఫలమైంది. దయచేసి మళ్లీ ప్రయత్నించండి.',
     referralShareMessageTemplate: 'Key Shop‌లో నమోదు చేసేటప్పుడు నా రెఫరల్ కోడ్ {code} ఉపయోగించండి! యాప్‌ను డౌన్‌లోడ్ చేయండి: {url}',
@@ -3502,7 +3518,7 @@ const LANGUAGES = {
     cvvLabel: 'CVV',
     digitAadhaarOptionalPlaceholder: '12-అంకెల ఆధార్ నంబర్ (ఐచ్ఛికం)',
     referralCodeLabel: 'రెఫరల్ కోడ్ (ఐచ్ఛికం)',
-    referralCodePlaceholder: 'మీ వద్ద ఉంటే రెఫరల్ కోడ్‌ను నమోదు చేయండి',
+    referralCodePlaceholder: 'రెఫర్ చేసినవారి మొబైల్ నంబర్, మీ వద్ద ఉంటే',
     agreeToTermsPrefix: 'నేను నిబంధనలు మరియు షరతులను చదివి అంగీకరిస్తున్నాను',
     termsAndConditionsLinkLabel: 'నిబంధనలు మరియు షరతులు',
     pleaseAcceptTermsMsg: 'కొనసాగించడానికి దయచేసి నిబంధనలు మరియు షరతులను చదివి అంగీకరించండి.',
@@ -4268,10 +4284,14 @@ const LANGUAGES = {
     fromDateLabel: 'ಆರಂಭ ದಿನಾಂಕ',
     toDateLabel: 'ಅಂತಿಮ ದಿನಾಂಕ',
     generatingEllipsisLabel: 'ರಚಿಸಲಾಗುತ್ತಿದೆ…',
-    referralProgramTitle: 'ರೆಫರಲ್ ಪ್ರೋಗ್ರಾಂ',
-    referralProgramDesc: 'ನಿಮ್ಮ ಕೋಡ್ ಅನ್ನು ಇತರ ಅಂಗಡಿ ಮಾಲೀಕರೊಂದಿಗೆ ಹಂಚಿಕೊಂಡು ಬಹುಮಾನಗಳನ್ನು ಗಳಿಸಿ.',
+    referralProgramTitle: 'ರೆಫರಲ್ ಮತ್ತು ರಿವಾರ್ಡ್‌ಗಳು',
+    referralProgramDesc: 'ನಿಮ್ಮ ಕೋಡ್ ಅನ್ನು ಇತರ ಅಂಗಡಿ ಮಾಲೀಕರೊಂದಿಗೆ ಹಂಚಿಕೊಂಡು ಪ್ರತಿ ಯಶಸ್ವಿ ರೆಫರಲ್‌ಗೆ ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಗಳಿಸಿ.',
+    totalReferralPointsLabel: 'ಒಟ್ಟು ರೆಫರಲ್ ಪಾಯಿಂಟ್‌ಗಳು',
+    totalSuccessfulReferralsLabel: 'ಒಟ್ಟು ಯಶಸ್ವಿ ರೆಫರಲ್‌ಗಳು',
+    referralHistoryTitle: 'ರೆಫರಲ್ ಇತಿಹಾಸ',
+    noReferralsYetMsg: 'ಇನ್ನೂ ಯಾವುದೇ ರೆಫರಲ್‌ಗಳಿಲ್ಲ — ಪಾಯಿಂಟ್‌ಗಳನ್ನು ಗಳಿಸಲು ನಿಮ್ಮ ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಿ.',
+    copyLinkBtn: 'ಲಿಂಕ್ ನಕಲಿಸಿ',
     copyTitle: 'ನಕಲಿಸಿ',
-    shareReferralCodeBtn: 'ರೆಫರಲ್ ಕೋಡ್ ಹಂಚಿಕೊಳ್ಳಿ',
     generateReferralCodeBtn: 'ರೆಫರಲ್ ಕೋಡ್ ರಚಿಸಿ',
     failedGenerateReferralCodeMsg: 'ರೆಫರಲ್ ಕೋಡ್ ರಚಿಸಲು ವಿಫಲವಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
     referralShareMessageTemplate: 'Key Shop ನಲ್ಲಿ ನೋಂದಾಯಿಸುವಾಗ ನನ್ನ ರೆಫರಲ್ ಕೋಡ್ {code} ಬಳಸಿ! ಆ್ಯಪ್ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ: {url}',
@@ -4307,7 +4327,7 @@ const LANGUAGES = {
     cvvLabel: 'CVV',
     digitAadhaarOptionalPlaceholder: '12-ಅಂಕಿಯ ಆಧಾರ್ ಸಂಖ್ಯೆ (ಐಚ್ಛಿಕ)',
     referralCodeLabel: 'ರೆಫರಲ್ ಕೋಡ್ (ಐಚ್ಛಿಕ)',
-    referralCodePlaceholder: 'ನಿಮ್ಮ ಬಳಿ ಇದ್ದರೆ ರೆಫರಲ್ ಕೋಡ್ ನಮೂದಿಸಿ',
+    referralCodePlaceholder: 'ರೆಫರ್ ಮಾಡಿದವರ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ, ನಿಮ್ಮ ಬಳಿ ಇದ್ದರೆ',
     agreeToTermsPrefix: 'ನಾನು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿದ್ದೇನೆ ಮತ್ತು ಒಪ್ಪುತ್ತೇನೆ',
     termsAndConditionsLinkLabel: 'ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳು',
     pleaseAcceptTermsMsg: 'ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿ ಒಪ್ಪಿಕೊಳ್ಳಿ.',
@@ -5073,10 +5093,14 @@ const LANGUAGES = {
     fromDateLabel: 'ആരംഭ തീയതി',
     toDateLabel: 'അവസാന തീയതി',
     generatingEllipsisLabel: 'സൃഷ്ടിക്കുന്നു…',
-    referralProgramTitle: 'റഫറൽ പ്രോഗ്രാം',
-    referralProgramDesc: 'നിങ്ങളുടെ കോഡ് മറ്റ് കട ഉടമകളുമായി പങ്കിട്ട് റിവാർഡുകൾ നേടുക.',
+    referralProgramTitle: 'റഫറൽ & റിവാർഡുകൾ',
+    referralProgramDesc: 'നിങ്ങളുടെ കോഡ് മറ്റ് കട ഉടമകളുമായി പങ്കിട്ട് ഓരോ വിജയകരമായ റഫറലിനും പോയിന്റുകൾ നേടുക.',
+    totalReferralPointsLabel: 'ആകെ റഫറൽ പോയിന്റുകൾ',
+    totalSuccessfulReferralsLabel: 'ആകെ വിജയകരമായ റഫറലുകൾ',
+    referralHistoryTitle: 'റഫറൽ ചരിത്രം',
+    noReferralsYetMsg: 'ഇതുവരെ റഫറലുകൾ ഇല്ല — പോയിന്റുകൾ നേടാൻ നിങ്ങളുടെ കോഡ് പങ്കിടുക.',
+    copyLinkBtn: 'ലിങ്ക് പകർത്തുക',
     copyTitle: 'പകർത്തുക',
-    shareReferralCodeBtn: 'റഫറൽ കോഡ് പങ്കിടുക',
     generateReferralCodeBtn: 'റഫറൽ കോഡ് സൃഷ്ടിക്കുക',
     failedGenerateReferralCodeMsg: 'റഫറൽ കോഡ് സൃഷ്ടിക്കുന്നതിൽ പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.',
     referralShareMessageTemplate: 'Key Shop-ൽ രജിസ്റ്റർ ചെയ്യുമ്പോൾ എന്റെ റഫറൽ കോഡ് {code} ഉപയോഗിക്കുക! ആപ്പ് ഡൗൺലോഡ് ചെയ്യുക: {url}',
@@ -5112,7 +5136,7 @@ const LANGUAGES = {
     cvvLabel: 'CVV',
     digitAadhaarOptionalPlaceholder: '12-അക്ക ആധാർ നമ്പർ (ഓപ്ഷണൽ)',
     referralCodeLabel: 'റഫറൽ കോഡ് (ഓപ്ഷണൽ)',
-    referralCodePlaceholder: 'നിങ്ങളുടെ പക്കൽ ഉണ്ടെങ്കിൽ റഫറൽ കോഡ് നൽകുക',
+    referralCodePlaceholder: 'റഫർ ചെയ്തയാളുടെ മൊബൈൽ നമ്പർ, നിങ്ങളുടെ പക്കൽ ഉണ്ടെങ്കിൽ',
     agreeToTermsPrefix: 'ഞാൻ നിബന്ധനകളും വ്യവസ്ഥകളും വായിക്കുകയും അംഗീകരിക്കുകയും ചെയ്യുന്നു',
     termsAndConditionsLinkLabel: 'നിബന്ധനകളും വ്യവസ്ഥകളും',
     pleaseAcceptTermsMsg: 'തുടരുന്നതിന് ദയവായി നിബന്ധനകളും വ്യവസ്ഥകളും വായിച്ച് അംഗീകരിക്കുക.',
@@ -6726,7 +6750,8 @@ export default function App() {
                               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><BadgePercent /></div><b>{t('referralCodeLabel')}</b></div>
                               <div className="input-wrap">
                                 <input
-                                  type="text" value={regReferralCode} onChange={(e) => setRegReferralCode(e.target.value.toUpperCase())}
+                                  type="tel" inputMode="numeric" maxLength={10} value={regReferralCode}
+                                  onChange={(e) => setRegReferralCode(e.target.value.replace(/\D/g, ''))}
                                   placeholder={t('referralCodePlaceholder')}
                                 />
                               </div>
@@ -13708,6 +13733,11 @@ function ShopSettingsView({ t, api, shopId }) {
   const [referralCode, setReferralCode] = useState(null);
   const [referralGenerating, setReferralGenerating] = useState(false);
   const [referralCopied, setReferralCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [referralPoints, setReferralPoints] = useState(0);
+  const [totalReferrals, setTotalReferrals] = useState(0);
+  const [referralHistory, setReferralHistory] = useState([]);
+  const [referralOverviewLoading, setReferralOverviewLoading] = useState(true);
 
   // Verification states
   const [revealPassword, setRevealPassword] = useState(false);
@@ -13737,6 +13767,7 @@ function ShopSettingsView({ t, api, shopId }) {
 
   useEffect(() => {
     fetchSettings();
+    fetchReferralOverview();
   }, []);
 
   // Single unified verification document type for Shop Settings uploads (see
@@ -13750,7 +13781,6 @@ function ShopSettingsView({ t, api, shopId }) {
     try {
       const res = await api.getSettings(shopId);
       setShopName(res.name);
-      setReferralCode(res.referralCode || null);
 
       if (res.companyDetails) {
         try {
@@ -13856,6 +13886,21 @@ function ShopSettingsView({ t, api, shopId }) {
     }
   };
 
+  const fetchReferralOverview = async () => {
+    setReferralOverviewLoading(true);
+    try {
+      const res = await api.getReferralOverview(shopId);
+      setReferralCode(res.referralCode || null);
+      setReferralPoints(res.referralPoints || 0);
+      setTotalReferrals(res.totalReferrals || 0);
+      setReferralHistory(res.history || []);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setReferralOverviewLoading(false);
+    }
+  };
+
   const handleGenerateReferralCode = async () => {
     setReferralGenerating(true);
     try {
@@ -13880,16 +13925,22 @@ function ShopSettingsView({ t, api, shopId }) {
     }
   };
 
-  const handleShareReferralCode = async () => {
+  const referralShareMessage = () => t('referralShareMessageTemplate').replace('{code}', referralCode || '').replace('{url}', KEE_LANDING_PAGE_URL);
+
+  const handleShareReferralWhatsApp = () => {
     if (!referralCode) return;
-    const message = t('referralShareMessageTemplate').replace('{code}', referralCode).replace('{url}', KEE_LANDING_PAGE_URL);
-    if (Capacitor.isNativePlatform()) {
-      const { Share } = await import('@capacitor/share');
-      await Share.share({ text: message });
-    } else if (navigator.share) {
-      await navigator.share({ text: message });
-    } else {
-      handleCopyReferralCode();
+    const url = `https://wa.me/?text=${encodeURIComponent(referralShareMessage())}`;
+    window.open(url, '_blank');
+  };
+
+  const handleCopyReferralLink = async () => {
+    if (!referralCode) return;
+    try {
+      await navigator.clipboard.writeText(referralShareMessage());
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch (err) {
+      // Clipboard API unavailable - nothing further to fall back to here.
     }
   };
 
@@ -14178,7 +14229,7 @@ function ShopSettingsView({ t, api, shopId }) {
             </div>
           )}
 
-          {/* Referral Program Block */}
+          {/* Referral & Rewards Block */}
           <div className="card" style={{ marginTop: shopId ? 0 : 20 }}>
             <div className="section-title">
               <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -14190,16 +14241,55 @@ function ShopSettingsView({ t, api, shopId }) {
 
             {referralCode ? (
               <div>
-                <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px', marginBottom: 12 }}>
+                <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px', marginBottom: 14 }}>
                   <span style={{ color: 'var(--gold)', fontFamily: 'monospace', fontWeight: 800, fontSize: 16, letterSpacing: '.1em' }}>{referralCode}</span>
                   <button onClick={handleCopyReferralCode} className="icon-btn" title={t('copyTitle')}>
                     {referralCopied ? <CheckCircle2 style={{ color: 'var(--green)' }} /> : <Copy />}
                   </button>
                 </div>
-                <button onClick={handleShareReferralCode} className="btn btn-primary btn-block">
-                  <Share2 />
-                  <span>{t('shareReferralCodeBtn')}</span>
-                </button>
+
+                <div className="grid grid-cols-2 gap-3" style={{ marginBottom: 14 }}>
+                  <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '14px 16px', textAlign: 'center' }}>
+                    <Award style={{ width: 15, height: 15, color: 'var(--gold)' }} />
+                    <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'var(--display)', color: 'var(--text-0)', marginTop: 4 }}>{referralPoints}</div>
+                    <div style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em', marginTop: 2 }}>{t('totalReferralPointsLabel')}</div>
+                  </div>
+                  <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '14px 16px', textAlign: 'center' }}>
+                    <Users style={{ width: 15, height: 15, color: 'var(--blue)' }} />
+                    <div style={{ fontSize: 22, fontWeight: 800, fontFamily: 'var(--display)', color: 'var(--text-0)', marginTop: 4 }}>{totalReferrals}</div>
+                    <div style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em', marginTop: 2 }}>{t('totalSuccessfulReferralsLabel')}</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2" style={{ marginBottom: 16 }}>
+                  <button onClick={handleShareReferralWhatsApp} className="btn btn-primary">
+                    <svg viewBox="0 0 24 24" style={{ width: 16, height: 16 }} fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
+                    <span>{t('shareViaWhatsAppBtn')}</span>
+                  </button>
+                  <button onClick={handleCopyReferralLink} className="btn btn-outline">
+                    {linkCopied ? <CheckCircle2 style={{ width: 16, height: 16, color: 'var(--green)' }} /> : <Link2 style={{ width: 16, height: 16 }} />}
+                    <span>{t('copyLinkBtn')}</span>
+                  </button>
+                </div>
+
+                <div>
+                  <span className="side-section-label" style={{ padding: 0, marginBottom: 8, display: 'block' }}>{t('referralHistoryTitle')}</span>
+                  {referralHistory.length === 0 ? (
+                    <p style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600 }}>{t('noReferralsYetMsg')}</p>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {referralHistory.map((r, idx) => (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '10px 14px' }}>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-0)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.shopName}</div>
+                            <div style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, marginTop: 2 }}>{new Date(r.registeredAt).toLocaleDateString()}</div>
+                          </div>
+                          <span style={{ flexShrink: 0, background: 'var(--gold-dim)', color: 'var(--gold)', fontSize: 11, fontWeight: 800, borderRadius: 999, padding: '4px 10px' }}>+{r.pointsEarned} pt</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             ) : (
               <button onClick={handleGenerateReferralCode} disabled={referralGenerating} className="btn btn-primary btn-block">

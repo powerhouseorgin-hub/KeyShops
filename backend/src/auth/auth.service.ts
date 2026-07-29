@@ -354,6 +354,39 @@ export class AuthService implements OnModuleInit {
   // both stored as login identifiers on the User record - either can be
   // used to sign in afterwards with the same password (see AuthService.login).
   async registerShop(dto: RegisterShopDto) {
+    // Referral code is optional, but if the owner entered one it must match
+    // another shop's referralCode - which is that shop's own registered
+    // mobile number (see below - not a random code), so the lookup is
+    // normalized to digits-only to tolerate spaces/dashes/+91 prefixes typed
+    // or pasted in. That shop must not be the new owner's own (matched by
+    // email/phone, since the new shop doesn't exist yet so it has no code of
+    // its own to compare against) - prevents self-referral point farming.
+    // Checked BEFORE the generic duplicate-account check below so a
+    // self-referral attempt (which necessarily reuses the referrer's own
+    // email or phone) gets this specific message rather than being masked by
+    // the generic "already registered" one.
+    let referredByCode: string | null = null;
+    let referrerShopId: string | null = null;
+    if (dto.referralCode) {
+      // Strip everything but digits, then keep only the last 10 - tolerates
+      // a leading +91/91/0 country/trunk prefix the owner may have pasted
+      // in, since referralCode is always stored as the bare 10-digit number.
+      const enteredCode = dto.referralCode.replace(/\D/g, '').slice(-10);
+      const referrer = await this.tenantService.prisma.shop.findFirst({
+        where: { referralCode: enteredCode, deletedAt: null },
+        include: { users: { select: { email: true, phone: true } } },
+      });
+      if (!referrer) {
+        throw new BadRequestException('Invalid referral code');
+      }
+      const isSelfReferral = referrer.users.some((u) => u.email === dto.email || u.phone === dto.phone);
+      if (isSelfReferral) {
+        throw new BadRequestException('You cannot use your own referral code');
+      }
+      referredByCode = referrer.referralCode;
+      referrerShopId = referrer.id;
+    }
+
     // Re-check uniqueness at submit time (in addition to the check already
     // done when the OTP was sent) since time may have passed and another
     // registration could have raced in between.
@@ -376,21 +409,15 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException('Please select a valid shop category');
     }
 
-    // Referral code is optional, but if the owner entered one it must match
-    // another shop's generated referralCode (see ShopService.getOrCreateReferralCode).
-    let referredByCode: string | null = null;
-    if (dto.referralCode) {
-      const referrer = await this.tenantService.prisma.shop.findFirst({
-        where: { referralCode: dto.referralCode.trim().toUpperCase(), deletedAt: null },
-      });
-      if (!referrer) {
-        throw new BadRequestException('Invalid referral code');
-      }
-      referredByCode = referrer.referralCode;
-    }
-
     const salt = await bcrypt.genSalt(12);
     const passwordHash = await bcrypt.hash(dto.password, salt);
+
+    // Every new shop's shareable referral code is simply its own registered
+    // mobile number - already guaranteed unique across all shops by the
+    // existingUser check above, so no separate random-code generation/retry
+    // is needed here (see ShopService.getOrCreateReferralCode for the
+    // equivalent fallback on shops created before this existed).
+    const newShopReferralCode = dto.phone;
 
     return this.tenantService.prisma.$transaction(async (tx) => {
       // 1. Create Shop, automatically active - no manual Super Admin approval
@@ -419,6 +446,7 @@ export class AuthService implements OnModuleInit {
           // Type of shop being registered, picked from the Super-Admin-curated
           // dropdown (see ShopCategoryService).
           categoryId: dto.categoryId,
+          referralCode: newShopReferralCode,
           referredByCode,
         },
       });
@@ -451,7 +479,26 @@ export class AuthService implements OnModuleInit {
         },
       });
 
-      // 4. Notify Super Admin of the new shop (informational only - no action required)
+      // 4. Credit the referring shop, only after this shop's account creation
+      // and (simulated) payment above have both succeeded. The Referral row's
+      // unique referredShopId means this can only ever run once for this shop
+      // - re-running registerShop for the same shop isn't possible since the
+      // email/phone uniqueness check above would already have rejected it.
+      if (referrerShopId) {
+        await tx.referral.create({
+          data: {
+            referrerShopId,
+            referredShopId: shop.id,
+            pointsAwarded: 1,
+          },
+        });
+        await tx.shop.update({
+          where: { id: referrerShopId },
+          data: { referralPoints: { increment: 1 } },
+        });
+      }
+
+      // 5. Notify Super Admin of the new shop (informational only - no action required)
       await tx.notification.create({
         data: {
           title: 'New Shop Registered',

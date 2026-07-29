@@ -262,6 +262,13 @@ export const AuthProvider = ({ children }) => {
       return request(`/api/shop/settings/referral${qs}`, 'POST');
     },
 
+    // Full Referral & Rewards overview for Shop Settings: code, points
+    // balance and referral history (see ShopService.getReferralOverview).
+    getReferralOverview: async (shopId) => {
+      const qs = shopId ? `?shopId=${encodeURIComponent(shopId)}` : '';
+      return request(`/api/shop/referral${qs}`);
+    },
+
     // --- VISUAL ADS ---
     getAdvertisements: async () => {
       const url = user.role === 'SUPER_ADMIN' ? '/api/super/advertisements' : '/api/shop/advertisements';

@@ -279,30 +279,57 @@ export class ShopService {
     });
   }
 
-  // SHOP ADMIN: Get or lazily generate this shop's shareable referral code.
-  // Idempotent - repeated taps of the "Refer" button return the same code
-  // rather than minting a new one each time.
+  // SHOP ADMIN: Get or lazily generate this shop's shareable referral code -
+  // which is simply the shop admin's own registered mobile number, matching
+  // AuthService.registerShop's newShopReferralCode for shops created going
+  // forward. This fallback exists only for shops created before referral
+  // codes existed at all (referralCode still null on their row).
   async getOrCreateReferralCode(shopId: string): Promise<string> {
-    const shop = await this.tenantService.prisma.shop.findUnique({ where: { id: shopId } });
+    const shop = await this.tenantService.prisma.shop.findUnique({
+      where: { id: shopId },
+      include: { users: { where: { role: Role.SHOP_ADMIN }, take: 1, select: { phone: true } } },
+    });
     if (!shop) throw new NotFoundException('Shop not found');
     if (shop.referralCode) return shop.referralCode;
 
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous 0/O/1/I characters
-    for (let attempt = 0; attempt < 5; attempt++) {
-      let code = '';
-      for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
-      try {
-        const updated = await this.tenantService.prisma.shop.update({
-          where: { id: shopId },
-          data: { referralCode: code },
-        });
-        return updated.referralCode!;
-      } catch (err) {
-        if (err.code === 'P2002') continue; // unique clash - retry with a new code
-        throw err;
-      }
-    }
-    throw new BadRequestException('Failed to generate a unique referral code, please try again');
+    const phone = shop.users[0]?.phone;
+    if (!phone) throw new BadRequestException('No admin phone number found for this shop');
+
+    const updated = await this.tenantService.prisma.shop.update({
+      where: { id: shopId },
+      data: { referralCode: phone },
+    });
+    return updated.referralCode!;
+  }
+
+  // SHOP ADMIN: Referral & Rewards overview for Shop Settings - the code
+  // (auto-generated if this is a pre-existing shop that predates
+  // AuthService.registerShop generating one at signup), the running points
+  // balance, and the full history of shops referred so far. Points and
+  // history come from the Referral ledger (see AuthService.registerShop),
+  // never recomputed here - this is a read-only view of that ledger.
+  async getReferralOverview(shopId: string) {
+    const referralCode = await this.getOrCreateReferralCode(shopId);
+
+    const [shop, referrals] = await Promise.all([
+      this.tenantService.prisma.shop.findUnique({ where: { id: shopId }, select: { referralPoints: true } }),
+      this.tenantService.prisma.referral.findMany({
+        where: { referrerShopId: shopId },
+        include: { referredShop: { select: { name: true, createdAt: true } } },
+        orderBy: { createdAt: 'desc' },
+      }),
+    ]);
+
+    return {
+      referralCode,
+      referralPoints: shop?.referralPoints ?? 0,
+      totalReferrals: referrals.length,
+      history: referrals.map((r) => ({
+        shopName: r.referredShop.name,
+        registeredAt: r.referredShop.createdAt,
+        pointsEarned: r.pointsAwarded,
+      })),
+    };
   }
 
   // SHOP ADMIN: Remove a verification document
