@@ -84,193 +84,193 @@ export function cleanGoogleImageUrl(url) {
 
 export const INDIAN_STATES_DISTRICTS = {
   "Andhra Pradesh": [
-    "Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool", 
-    "Nellore", "Prakasam", "Srikakulam", "Visakhapatnam", "Vizianagaram", 
-    "West Godavari", "YSR Kadapa", "Manyam", "Alluri Sitharama Raju", "Anakapalli", 
-    "Kakinada", "Konaseema", "Eluru", "NTR", "Bapatla", "Palnadu", "Nandyal", 
+    "Anantapur", "Chittoor", "East Godavari", "Guntur", "Krishna", "Kurnool",
+    "Nellore", "Prakasam", "Srikakulam", "Visakhapatnam", "Vizianagaram",
+    "West Godavari", "YSR Kadapa", "Manyam", "Alluri Sitharama Raju", "Anakapalli",
+    "Kakinada", "Konaseema", "Eluru", "NTR", "Bapatla", "Palnadu", "Nandyal",
     "Sri Sathya Sai", "Tirupati", "Annamayya"
   ],
   "Arunachal Pradesh": [
-    "Tawang", "West Kameng", "East Kameng", "Papum Pare", "Kurung Kumey", 
-    "Kra Daadi", "Lower Subansiri", "Upper Subansiri", "West Siang", "East Siang", 
-    "Siang", "Upper Siang", "Lower Siang", "Lower Dibang Valley", "Dibang Valley", 
+    "Tawang", "West Kameng", "East Kameng", "Papum Pare", "Kurung Kumey",
+    "Kra Daadi", "Lower Subansiri", "Upper Subansiri", "West Siang", "East Siang",
+    "Siang", "Upper Siang", "Lower Siang", "Lower Dibang Valley", "Dibang Valley",
     "Anjaw", "Lohit", "Namsai", "Changlang", "Tirap", "Longding", "Kamle", "Pakke Kessang", "Leparada", "Shi Yomi"
   ],
   "Assam": [
-    "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo", 
-    "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao", 
-    "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup Metropolitan", 
-    "Kamrup", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli", 
-    "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar", 
+    "Baksa", "Barpeta", "Biswanath", "Bongaigaon", "Cachar", "Charaideo",
+    "Chirang", "Darrang", "Dhemaji", "Dhubri", "Dibrugarh", "Dima Hasao",
+    "Goalpara", "Golaghat", "Hailakandi", "Hojai", "Jorhat", "Kamrup Metropolitan",
+    "Kamrup", "Karbi Anglong", "Karimganj", "Kokrajhar", "Lakhimpur", "Majuli",
+    "Morigaon", "Nagaon", "Nalbari", "Sivasagar", "Sonitpur", "South Salmara-Mankachar",
     "Tinsukia", "Udalguri", "West Karbi Anglong", "Tamulpur", "Bajali"
   ],
   "Bihar": [
-    "Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur", 
-    "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj", 
-    "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj", 
-    "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda", 
-    "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur", 
-    "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul", 
+    "Araria", "Arwal", "Aurangabad", "Banka", "Begusarai", "Bhagalpur",
+    "Bhojpur", "Buxar", "Darbhanga", "East Champaran", "Gaya", "Gopalganj",
+    "Jamui", "Jehanabad", "Kaimur", "Katihar", "Khagaria", "Kishanganj",
+    "Lakhisarai", "Madhepura", "Madhubani", "Munger", "Muzaffarpur", "Nalanda",
+    "Nawada", "Patna", "Purnia", "Rohtas", "Saharsa", "Samastipur",
+    "Saran", "Sheikhpura", "Sheohar", "Sitamarhi", "Siwan", "Supaul",
     "Vaishali", "West Champaran"
   ],
   "Chhattisgarh": [
-    "Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur", 
-    "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Jashpur", 
-    "Kabirdham", "Kanker", "Kondagaon", "Korba", "Koriya", "Mahasamund", 
-    "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma", 
-    "Surajpur", "Surguja", "Gaurela-Pendra-Marwahi", "Manendragarh-Chirmiri-Bharatpur", 
+    "Balod", "Baloda Bazar", "Balrampur", "Bastar", "Bemetara", "Bijapur",
+    "Bilaspur", "Dantewada", "Dhamtari", "Durg", "Gariaband", "Jashpur",
+    "Kabirdham", "Kanker", "Kondagaon", "Korba", "Koriya", "Mahasamund",
+    "Mungeli", "Narayanpur", "Raigarh", "Raipur", "Rajnandgaon", "Sukma",
+    "Surajpur", "Surguja", "Gaurela-Pendra-Marwahi", "Manendragarh-Chirmiri-Bharatpur",
     "Mohla-Manpur-Ambagarh Chowki", "Sakti", "Sarangarh-Bilaigarh", "Khairagarh-Chhuikhadan-Gandai"
   ],
   "Goa": ["North Goa", "South Goa"],
   "Gujarat": [
-    "Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch", 
-    "Bhavnagar", "Botad", "Chhota Udepur", "Dahod", "Dang", "Devbhumi Dwarka", 
-    "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch", 
-    "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal", 
-    "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar", 
+    "Ahmedabad", "Amreli", "Anand", "Aravalli", "Banaskantha", "Bharuch",
+    "Bhavnagar", "Botad", "Chhota Udepur", "Dahod", "Dang", "Devbhumi Dwarka",
+    "Gandhinagar", "Gir Somnath", "Jamnagar", "Junagadh", "Kheda", "Kutch",
+    "Mahisagar", "Mehsana", "Morbi", "Narmada", "Navsari", "Panchmahal",
+    "Patan", "Porbandar", "Rajkot", "Sabarkantha", "Surat", "Surendranagar",
     "Tapi", "Vadodara", "Valsad"
   ],
   "Haryana": [
-    "Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram", 
-    "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra", 
-    "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari", 
+    "Ambala", "Bhiwani", "Charkhi Dadri", "Faridabad", "Fatehabad", "Gurugram",
+    "Hisar", "Jhajjar", "Jind", "Kaithal", "Karnal", "Kurukshetra",
+    "Mahendragarh", "Nuh", "Palwal", "Panchkula", "Panipat", "Rewari",
     "Rohtak", "Sirsa", "Sonipat", "Yamunanagar"
   ],
   "Himachal Pradesh": [
-    "Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu", 
+    "Bilaspur", "Chamba", "Hamirpur", "Kangra", "Kinnaur", "Kullu",
     "Lahaul and Spiti", "Mandi", "Shimla", "Sirmaur", "Solan", "Una"
   ],
   "Jharkhand": [
-    "Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum", 
-    "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara", 
-    "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu", 
+    "Bokaro", "Chatra", "Deoghar", "Dhanbad", "Dumka", "East Singhbhum",
+    "Garhwa", "Giridih", "Godda", "Gumla", "Hazaribagh", "Jamtara",
+    "Khunti", "Koderma", "Latehar", "Lohardaga", "Pakur", "Palamu",
     "Ramgarh", "Ranchi", "Sahibganj", "Seraikela Kharsawan", "Simdega", "West Singhbhum"
   ],
   "Karnataka": [
-    "Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban", 
-    "Bidar", "Chamarajanagar", "Chikkaballapur", "Chikkamagaluru", "Chitradurga", 
-    "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan", 
-    "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya", 
-    "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi", 
+    "Bagalkot", "Ballari", "Belagavi", "Bengaluru Rural", "Bengaluru Urban",
+    "Bidar", "Chamarajanagar", "Chikkaballapur", "Chikkamagaluru", "Chitradurga",
+    "Dakshina Kannada", "Davanagere", "Dharwad", "Gadag", "Hassan",
+    "Haveri", "Kalaburagi", "Kodagu", "Kolar", "Koppal", "Mandya",
+    "Mysuru", "Raichur", "Ramanagara", "Shivamogga", "Tumakuru", "Udupi",
     "Uttara Kannada", "Vijayapura", "Yadgir", "Vijayanagara"
   ],
   "Kerala": [
-    "Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam", 
-    "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta", 
+    "Alappuzha", "Ernakulam", "Idukki", "Kannur", "Kasaragod", "Kollam",
+    "Kottayam", "Kozhikode", "Malappuram", "Palakkad", "Pathanamthitta",
     "Thiruvananthapuram", "Thrissur", "Wayanad"
   ],
   "Madhya Pradesh": [
-    "Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani", 
-    "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara", 
-    "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior", 
-    "Harda", "Narmadapuram", "Indore", "Jabalpur", "Jhabua", "Katni", 
-    "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur", 
-    "Neemuch", "Niwari", "Panna", "Raisen", "Rajgarh", "Ratlam", 
-    "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur", 
-    "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain", 
+    "Agar Malwa", "Alirajpur", "Anuppur", "Ashoknagar", "Balaghat", "Barwani",
+    "Betul", "Bhind", "Bhopal", "Burhanpur", "Chhatarpur", "Chhindwara",
+    "Damoh", "Datia", "Dewas", "Dhar", "Dindori", "Guna", "Gwalior",
+    "Harda", "Narmadapuram", "Indore", "Jabalpur", "Jhabua", "Katni",
+    "Khandwa", "Khargone", "Mandla", "Mandsaur", "Morena", "Narsinghpur",
+    "Neemuch", "Niwari", "Panna", "Raisen", "Rajgarh", "Ratlam",
+    "Rewa", "Sagar", "Satna", "Sehore", "Seoni", "Shahdol", "Shajapur",
+    "Sheopur", "Shivpuri", "Sidhi", "Singrauli", "Tikamgarh", "Ujjain",
     "Umaria", "Vidisha", "Mauganj"
   ],
   "Maharashtra": [
-    "Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara", 
-    "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli", 
-    "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban", 
-    "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar", 
-    "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara", 
+    "Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bhandara",
+    "Buldhana", "Chandrapur", "Dhule", "Gadchiroli", "Gondia", "Hingoli",
+    "Jalgaon", "Jalna", "Kolhapur", "Latur", "Mumbai City", "Mumbai Suburban",
+    "Nagpur", "Nanded", "Nandurbar", "Nashik", "Osmanabad", "Palghar",
+    "Parbhani", "Pune", "Raigad", "Ratnagiri", "Sangli", "Satara",
     "Sindhudurg", "Solapur", "Thane", "Wardha", "Washim", "Yavatmal"
   ],
   "Manipur": [
-    "Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West", 
-    "Senapati", "Tamenglong", "Thoubal", "Ukhrul", "Kangpokpi", "Tengnoupal", 
+    "Bishnupur", "Chandel", "Churachandpur", "Imphal East", "Imphal West",
+    "Senapati", "Tamenglong", "Thoubal", "Ukhrul", "Kangpokpi", "Tengnoupal",
     "Pherzawl", "Noney", "Kamjong", "Kakching", "Jiribam"
   ],
   "Meghalaya": [
-    "East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills", 
-    "Ri Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills", 
+    "East Garo Hills", "East Jaintia Hills", "East Khasi Hills", "North Garo Hills",
+    "Ri Bhoi", "South Garo Hills", "South West Garo Hills", "South West Khasi Hills",
     "West Garo Hills", "West Jaintia Hills", "West Khasi Hills", "Eastern West Khasi Hills"
   ],
   "Mizoram": [
-    "Aizawl", "Champhai", "Kolasib", "Lawngtlai", "Lunglei", "Mamit", 
+    "Aizawl", "Champhai", "Kolasib", "Lawngtlai", "Lunglei", "Mamit",
     "Saiha", "Serchhip", "Hnahthial", "Khawzawl", "Saitual"
   ],
   "Nagaland": [
-    "Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon", 
-    "Peren", "Phek", "Tuensang", "Wokha", "Zunheboto", "Noklak", 
+    "Dimapur", "Kiphire", "Kohima", "Longleng", "Mokokchung", "Mon",
+    "Peren", "Phek", "Tuensang", "Wokha", "Zunheboto", "Noklak",
     "Chümoukedima", "Tseminyu", "Niuland", "Shamator"
   ],
   "Odisha": [
-    "Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh", 
-    "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur", 
-    "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Keonjhar", 
-    "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh", 
+    "Angul", "Balangir", "Balasore", "Bargarh", "Bhadrak", "Boudh",
+    "Cuttack", "Deogarh", "Dhenkanal", "Gajapati", "Ganjam", "Jagatsinghpur",
+    "Jajpur", "Jharsuguda", "Kalahandi", "Kandhamal", "Kendrapara", "Keonjhar",
+    "Khordha", "Koraput", "Malkangiri", "Mayurbhanj", "Nabarangpur", "Nayagarh",
     "Nuapada", "Puri", "Rayagada", "Sambalpur", "Subarnapur", "Sundargarh"
   ],
   "Punjab": [
-    "Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka", 
-    "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala", 
-    "Ludhiana", "Malerakotla", "Mansa", "Moga", "Muktsar", "Pathankot", 
-    "Patiala", "Rupnagar", "Sahibzada Ajit Singh Nagar", "Sangrur", 
+    "Amritsar", "Barnala", "Bathinda", "Faridkot", "Fatehgarh Sahib", "Fazilka",
+    "Ferozepur", "Gurdaspur", "Hoshiarpur", "Jalandhar", "Kapurthala",
+    "Ludhiana", "Malerakotla", "Mansa", "Moga", "Muktsar", "Pathankot",
+    "Patiala", "Rupnagar", "Sahibzada Ajit Singh Nagar", "Sangrur",
     "Shahid Bhagat Singh Nagar", "Tarn Taran"
   ],
   "Rajasthan": [
-    "Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur", 
-    "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa", 
-    "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore", 
-    "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur", 
-    "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi", 
-    "Sri Ganganagar", "Tonk", "Udaipur", "Anoopgarh", "Balotra", "Beawar", 
-    "Deeg", "Didwana-Kuchaman", "Dudu", "Gangapur City", "Kekri", 
-    "Kotputli-Behror", "Khairthal-Tijara", "Neem Ka Thana", "Phalodi", 
+    "Ajmer", "Alwar", "Banswara", "Baran", "Barmer", "Bharatpur",
+    "Bhilwara", "Bikaner", "Bundi", "Chittorgarh", "Churu", "Dausa",
+    "Dholpur", "Dungarpur", "Hanumangarh", "Jaipur", "Jaisalmer", "Jalore",
+    "Jhalawar", "Jhunjhunu", "Jodhpur", "Karauli", "Kota", "Nagaur",
+    "Pali", "Pratapgarh", "Rajsamand", "Sawai Madhopur", "Sikar", "Sirohi",
+    "Sri Ganganagar", "Tonk", "Udaipur", "Anoopgarh", "Balotra", "Beawar",
+    "Deeg", "Didwana-Kuchaman", "Dudu", "Gangapur City", "Kekri",
+    "Kotputli-Behror", "Khairthal-Tijara", "Neem Ka Thana", "Phalodi",
     "Salumber", "Sanchore", "Shahpura"
   ],
   "Sikkim": ["East Sikkim", "North Sikkim", "South Sikkim", "West Sikkim", "Pakyong", "Soreng"],
   "Tamil Nadu": [
-    "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri", 
-    "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur", 
-    "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris", 
-    "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga", 
-    "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli", 
-    "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", 
+    "Ariyalur", "Chengalpattu", "Chennai", "Coimbatore", "Cuddalore", "Dharmapuri",
+    "Dindigul", "Erode", "Kallakurichi", "Kanchipuram", "Kanyakumari", "Karur",
+    "Krishnagiri", "Madurai", "Mayiladuthurai", "Nagapattinam", "Namakkal", "Nilgiris",
+    "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet", "Salem", "Sivaganga",
+    "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli",
+    "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore",
     "Viluppuram", "Virudhunagar"
   ],
   "Telangana": [
-    "Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon", 
-    "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar", 
-    "Khammam", "Kumuram Bheem", "Mahabubabad", "Mahabubnagar", "Mancherial", 
-    "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda", 
-    "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla", 
-    "Rangareddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad", 
+    "Adilabad", "Bhadradri Kothagudem", "Hyderabad", "Jagtial", "Jangaon",
+    "Jayashankar Bhupalpally", "Jogulamba Gadwal", "Kamareddy", "Karimnagar",
+    "Khammam", "Kumuram Bheem", "Mahabubabad", "Mahabubnagar", "Mancherial",
+    "Medak", "Medchal-Malkajgiri", "Mulugu", "Nagarkurnool", "Nalgonda",
+    "Narayanpet", "Nirmal", "Nizamabad", "Peddapalli", "Rajanna Sircilla",
+    "Rangareddy", "Sangareddy", "Siddipet", "Suryapet", "Vikarabad",
     "Wanaparthy", "Warangal", "Hanamkonda", "Yadadri Bhuvanagiri"
   ],
   "Tripura": [
-    "Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura", 
+    "Dhalai", "Gomati", "Khowai", "North Tripura", "Sepahijala", "South Tripura",
     "Unakoti", "West Tripura"
   ],
   "Uttar Pradesh": [
-    "Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya", 
-    "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur", 
-    "Banda", "Bara Banki", "Bareilly", "Basti", "Bhadohi", "Bijnor", 
-    "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah", 
-    "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar", 
-    "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur", 
-    "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj", 
-    "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri", 
-    "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri", 
-    "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar", 
-    "Pilibhit", "Pratapgarh", "Prayagraj", "Rae Bareli", "Rampur", 
-    "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli", 
-    "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur", 
+    "Agra", "Aligarh", "Ambedkar Nagar", "Amethi", "Amroha", "Auraiya",
+    "Ayodhya", "Azamgarh", "Baghpat", "Bahraich", "Ballia", "Balrampur",
+    "Banda", "Bara Banki", "Bareilly", "Basti", "Bhadohi", "Bijnor",
+    "Budaun", "Bulandshahr", "Chandauli", "Chitrakoot", "Deoria", "Etah",
+    "Etawah", "Farrukhabad", "Fatehpur", "Firozabad", "Gautam Buddha Nagar",
+    "Ghaziabad", "Ghazipur", "Gonda", "Gorakhpur", "Hamirpur", "Hapur",
+    "Hardoi", "Hathras", "Jalaun", "Jaunpur", "Jhansi", "Kannauj",
+    "Kanpur Dehat", "Kanpur Nagar", "Kasganj", "Kaushambi", "Kheri",
+    "Kushinagar", "Lalitpur", "Lucknow", "Maharajganj", "Mahoba", "Mainpuri",
+    "Mathura", "Mau", "Meerut", "Mirzapur", "Moradabad", "Muzaffarnagar",
+    "Pilibhit", "Pratapgarh", "Prayagraj", "Rae Bareli", "Rampur",
+    "Saharanpur", "Sambhal", "Sant Kabir Nagar", "Shahjahanpur", "Shamli",
+    "Shravasti", "Siddharthnagar", "Sitapur", "Sonbhadra", "Sultanpur",
     "Unnao", "Varanasi"
   ],
   "Uttarakhand": [
-    "Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar", 
-    "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal", 
+    "Almora", "Bageshwar", "Chamoli", "Champawat", "Dehradun", "Haridwar",
+    "Nainital", "Pauri Garhwal", "Pithoragarh", "Rudraprayag", "Tehri Garhwal",
     "Udham Singh Nagar", "Uttarkashi"
   ],
   "West Bengal": [
-    "Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur", 
-    "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram", 
-    "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas", 
-    "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur", 
+    "Alipurduar", "Bankura", "Birbhum", "Cooch Behar", "Dakshin Dinajpur",
+    "Darjeeling", "Hooghly", "Howrah", "Jalpaiguri", "Jhargram",
+    "Kalimpong", "Kolkata", "Malda", "Murshidabad", "Nadia", "North 24 Parganas",
+    "Paschim Bardhaman", "Paschim Medinipur", "Purba Bardhaman", "Purba Medinipur",
     "Purulia", "South 24 Parganas", "Uttar Dinajpur"
   ]
 };
@@ -1077,14 +1077,11 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'Showing up to first 4 columns in browser preview. Export to view all detailed data columns.',
     aadhaarMustBe12DigitsMsg: 'Aadhaar number must be exactly 12 digits.',
     aadhaarNumberLabel: 'Aadhaar Number',
-    autoFilledFromGpsPlaceholder: 'Auto-filled from GPS',
     backToHomeLink: 'Back to home',
     canLogInWithEitherMsg: 'You can log in with either',
     cardholderNameLabel: 'Cardholder Name',
     cardNumberLabel: 'Card Number',
     choosePaymentChannelLabel: 'Choose payment channel',
-    chooseSubscriptionPlanLabel: 'Choose subscription plan',
-    cityLabel: 'City',
     createShopAccountBtn: 'Create shop account',
     customersStatLabel: 'Customers',
     cvvLabel: 'CVV',
@@ -1095,7 +1092,6 @@ const LANGUAGES = {
     termsAndConditionsLinkLabel: 'Terms and Conditions',
     pleaseAcceptTermsMsg: 'Please read and accept the Terms and Conditions to continue.',
     digitMobilePlaceholder: '10-digit mobile',
-    digitPinCodePlaceholder: '6-digit PIN code',
     emailOrMobileLabel: 'Email or Mobile Number',
     emailOrMobilePlaceholder: 'Email address or mobile number',
     emailOtpLabel: 'Email OTP',
@@ -1114,10 +1110,10 @@ const LANGUAGES = {
     payableAmountLabel: 'Payable amount',
     paySettleSetupBtn: 'Pay & settle setup',
     phoneOtpLabel: 'Phone OTP',
-    pinCodeLabel: 'PIN Code',
     pinCodeMustBe6DigitsMsg: 'PIN code must be exactly 6 digits.',
     pleaseEnterValidEmailMsg: 'Please enter a valid email address.',
     pleaseFillRequiredRegFieldsMsg: 'Please fill out all required registration fields.',
+    pleaseUseCurrentLocationMsg: 'Please tap "Current Location" to auto-fill your shop address details.',
     pleaseVerifyMobileOtpMsg: 'Please verify your mobile number with the OTP before continuing.',
     registeredEmailLabel: 'Registered Email',
     registerYourKeyShopTitle: 'Register your key shop',
@@ -1886,14 +1882,11 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'ब्राउज़र पूर्वावलोकन में पहले 4 कॉलम तक दिखाए जा रहे हैं। सभी विस्तृत डेटा कॉलम देखने के लिए निर्यात करें।',
     aadhaarMustBe12DigitsMsg: 'आधार नंबर बिल्कुल 12 अंकों का होना चाहिए।',
     aadhaarNumberLabel: 'आधार नंबर',
-    autoFilledFromGpsPlaceholder: 'GPS से स्वतः भरा गया',
     backToHomeLink: 'होम पर वापस जाएं',
     canLogInWithEitherMsg: 'आप इनमें से किसी से भी लॉग इन कर सकते हैं',
     cardholderNameLabel: 'कार्डधारक का नाम',
     cardNumberLabel: 'कार्ड नंबर',
     choosePaymentChannelLabel: 'भुगतान चैनल चुनें',
-    chooseSubscriptionPlanLabel: 'सदस्यता योजना चुनें',
-    cityLabel: 'शहर',
     createShopAccountBtn: 'दुकान खाता बनाएं',
     customersStatLabel: 'ग्राहक',
     cvvLabel: 'CVV',
@@ -1904,7 +1897,6 @@ const LANGUAGES = {
     termsAndConditionsLinkLabel: 'नियम और शर्तें',
     pleaseAcceptTermsMsg: 'कृपया आगे बढ़ने के लिए नियम और शर्तें पढ़ें और स्वीकार करें।',
     digitMobilePlaceholder: '10-अंकीय मोबाइल',
-    digitPinCodePlaceholder: '6-अंकीय पिन कोड',
     emailOrMobileLabel: 'ईमेल या मोबाइल नंबर',
     emailOrMobilePlaceholder: 'ईमेल पता या मोबाइल नंबर',
     emailOtpLabel: 'ईमेल OTP',
@@ -1923,10 +1915,10 @@ const LANGUAGES = {
     payableAmountLabel: 'देय राशि',
     paySettleSetupBtn: 'भुगतान करें और सेटअप पूरा करें',
     phoneOtpLabel: 'फोन OTP',
-    pinCodeLabel: 'पिन कोड',
     pinCodeMustBe6DigitsMsg: 'पिन कोड बिल्कुल 6 अंकों का होना चाहिए।',
     pleaseEnterValidEmailMsg: 'कृपया एक मान्य ईमेल पता दर्ज करें।',
     pleaseFillRequiredRegFieldsMsg: 'कृपया सभी आवश्यक पंजीकरण फ़ील्ड भरें।',
+    pleaseUseCurrentLocationMsg: 'कृपया अपने दुकान के पते का विवरण अपने आप भरने के लिए "वर्तमान स्थान" पर टैप करें।',
     pleaseVerifyMobileOtpMsg: 'जारी रखने से पहले कृपया OTP से अपना मोबाइल नंबर सत्यापित करें।',
     registeredEmailLabel: 'पंजीकृत ईमेल',
     registerYourKeyShopTitle: 'अपनी की शॉप पंजीकृत करें',
@@ -2695,14 +2687,11 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'உலாவி முன்னோட்டத்தில் முதல் 4 நெடுவரிசைகள் வரை காட்டப்படுகின்றன. அனைத்து விரிவான தரவு நெடுவரிசைகளையும் காண ஏற்றுமதி செய்யவும்.',
     aadhaarMustBe12DigitsMsg: 'ஆதார் எண் சரியாக 12 இலக்கங்களாக இருக்க வேண்டும்.',
     aadhaarNumberLabel: 'ஆதார் எண்',
-    autoFilledFromGpsPlaceholder: 'GPS இலிருந்து தானாக நிரப்பப்பட்டது',
     backToHomeLink: 'முகப்புக்குத் திரும்பு',
     canLogInWithEitherMsg: 'நீங்கள் இவற்றில் ஏதேனும் ஒன்றைப் பயன்படுத்தி உள்நுழையலாம்',
     cardholderNameLabel: 'கார்டுதாரர் பெயர்',
     cardNumberLabel: 'கார்டு எண்',
     choosePaymentChannelLabel: 'கட்டண முறையைத் தேர்ந்தெடுக்கவும்',
-    chooseSubscriptionPlanLabel: 'சந்தா திட்டத்தைத் தேர்ந்தெடுக்கவும்',
-    cityLabel: 'நகரம்',
     createShopAccountBtn: 'கடை கணக்கை உருவாக்கவும்',
     customersStatLabel: 'வாடிக்கையாளர்கள்',
     cvvLabel: 'CVV',
@@ -2713,7 +2702,6 @@ const LANGUAGES = {
     termsAndConditionsLinkLabel: 'விதிமுறைகள் மற்றும் நிபந்தனைகள்',
     pleaseAcceptTermsMsg: 'தொடர விதிமுறைகள் மற்றும் நிபந்தனைகளைப் படித்து ஏற்கவும்.',
     digitMobilePlaceholder: '10-இலக்க மொபைல்',
-    digitPinCodePlaceholder: '6-இலக்க பின் கோட்',
     emailOrMobileLabel: 'மின்னஞ்சல் அல்லது மொபைல் எண்',
     emailOrMobilePlaceholder: 'மின்னஞ்சல் முகவரி அல்லது மொபைல் எண்',
     emailOtpLabel: 'மின்னஞ்சல் OTP',
@@ -2732,10 +2720,10 @@ const LANGUAGES = {
     payableAmountLabel: 'செலுத்த வேண்டிய தொகை',
     paySettleSetupBtn: 'செலுத்தி அமைப்பை முடிக்கவும்',
     phoneOtpLabel: 'தொலைபேசி OTP',
-    pinCodeLabel: 'பின் கோட்',
     pinCodeMustBe6DigitsMsg: 'பின் கோட் சரியாக 6 இலக்கங்களாக இருக்க வேண்டும்.',
     pleaseEnterValidEmailMsg: 'சரியான மின்னஞ்சல் முகவரியை உள்ளிடவும்.',
     pleaseFillRequiredRegFieldsMsg: 'தேவையான அனைத்து பதிவு புலங்களையும் நிரப்பவும்.',
+    pleaseUseCurrentLocationMsg: 'உங்கள் கடை முகவரி விவரங்களை தானாக நிரப்ப "தற்போதைய இருப்பிடம்" என்பதைத் தட்டவும்.',
     pleaseVerifyMobileOtpMsg: 'தொடர்வதற்கு முன் OTP மூலம் உங்கள் மொபைல் எண்ணைச் சரிபார்க்கவும்.',
     registeredEmailLabel: 'பதிவு செய்யப்பட்ட மின்னஞ்சல்',
     registerYourKeyShopTitle: 'உங்கள் கீ ஷாப்பைப் பதிவு செய்யவும்',
@@ -3504,14 +3492,11 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'బ్రౌజర్ ప్రివ్యూలో మొదటి 4 కాలమ్‌ల వరకు చూపబడుతున్నాయి. అన్ని వివరణాత్మక డేటా కాలమ్‌లను చూడటానికి ఎగుమతి చేయండి.',
     aadhaarMustBe12DigitsMsg: 'ఆధార్ నంబర్ ఖచ్చితంగా 12 అంకెలు ఉండాలి.',
     aadhaarNumberLabel: 'ఆధార్ నంబర్',
-    autoFilledFromGpsPlaceholder: 'GPS నుండి స్వయంచాలకంగా నింపబడింది',
     backToHomeLink: 'హోమ్‌కు తిరిగి వెళ్ళండి',
     canLogInWithEitherMsg: 'మీరు వీటిలో దేనితోనైనా లాగిన్ కావచ్చు',
     cardholderNameLabel: 'కార్డుదారు పేరు',
     cardNumberLabel: 'కార్డు నంబర్',
     choosePaymentChannelLabel: 'చెల్లింపు మార్గాన్ని ఎంచుకోండి',
-    chooseSubscriptionPlanLabel: 'సబ్‌స్క్రిప్షన్ ప్లాన్‌ను ఎంచుకోండి',
-    cityLabel: 'నగరం',
     createShopAccountBtn: 'దుకాణం ఖాతాను సృష్టించండి',
     customersStatLabel: 'కస్టమర్లు',
     cvvLabel: 'CVV',
@@ -3522,7 +3507,6 @@ const LANGUAGES = {
     termsAndConditionsLinkLabel: 'నిబంధనలు మరియు షరతులు',
     pleaseAcceptTermsMsg: 'కొనసాగించడానికి దయచేసి నిబంధనలు మరియు షరతులను చదివి అంగీకరించండి.',
     digitMobilePlaceholder: '10-అంకెల మొబైల్',
-    digitPinCodePlaceholder: '6-అంకెల పిన్ కోడ్',
     emailOrMobileLabel: 'ఇమెయిల్ లేదా మొబైల్ నంబర్',
     emailOrMobilePlaceholder: 'ఇమెయిల్ చిరునామా లేదా మొబైల్ నంబర్',
     emailOtpLabel: 'ఇమెయిల్ OTP',
@@ -3541,10 +3525,10 @@ const LANGUAGES = {
     payableAmountLabel: 'చెల్లించవలసిన మొత్తం',
     paySettleSetupBtn: 'చెల్లించి సెటప్ పూర్తి చేయండి',
     phoneOtpLabel: 'ఫోన్ OTP',
-    pinCodeLabel: 'పిన్ కోడ్',
     pinCodeMustBe6DigitsMsg: 'పిన్ కోడ్ ఖచ్చితంగా 6 అంకెలు ఉండాలి.',
     pleaseEnterValidEmailMsg: 'దయచేసి చెల్లుబాటు అయ్యే ఇమెయిల్ చిరునామాను నమోదు చేయండి.',
     pleaseFillRequiredRegFieldsMsg: 'దయచేసి అవసరమైన అన్ని నమోదు ఫీల్డ్‌లను పూరించండి.',
+    pleaseUseCurrentLocationMsg: 'మీ షాప్ చిరునామా వివరాలను స్వయంచాలకంగా నింపడానికి దయచేసి "కరెంట్ లొకేషన్" నొక్కండి.',
     pleaseVerifyMobileOtpMsg: 'కొనసాగించే ముందు దయచేసి OTPతో మీ మొబైల్ నంబర్‌ను ధృవీకరించండి.',
     registeredEmailLabel: 'నమోదిత ఇమెయిల్',
     registerYourKeyShopTitle: 'మీ కీ షాప్‌ను నమోదు చేయండి',
@@ -4313,14 +4297,11 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'ಬ್ರೌಸರ್ ಪೂರ್ವವೀಕ್ಷಣೆಯಲ್ಲಿ ಮೊದಲ 4 ಕಾಲಮ್‌ಗಳವರೆಗೆ ತೋರಿಸಲಾಗುತ್ತಿದೆ. ಎಲ್ಲಾ ವಿವರವಾದ ಡೇಟಾ ಕಾಲಮ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಲು ರಫ್ತು ಮಾಡಿ.',
     aadhaarMustBe12DigitsMsg: 'ಆಧಾರ್ ಸಂಖ್ಯೆ ನಿಖರವಾಗಿ 12 ಅಂಕೆಗಳಾಗಿರಬೇಕು.',
     aadhaarNumberLabel: 'ಆಧಾರ್ ಸಂಖ್ಯೆ',
-    autoFilledFromGpsPlaceholder: 'GPS ನಿಂದ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಭರ್ತಿಯಾಗಿದೆ',
     backToHomeLink: 'ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ',
     canLogInWithEitherMsg: 'ನೀವು ಇವುಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಬಳಸಿ ಲಾಗಿನ್ ಆಗಬಹುದು',
     cardholderNameLabel: 'ಕಾರ್ಡ್‌ದಾರರ ಹೆಸರು',
     cardNumberLabel: 'ಕಾರ್ಡ್ ಸಂಖ್ಯೆ',
     choosePaymentChannelLabel: 'ಪಾವತಿ ಚಾನೆಲ್ ಆಯ್ಕೆಮಾಡಿ',
-    chooseSubscriptionPlanLabel: 'ಚಂದಾದಾರಿಕೆ ಯೋಜನೆ ಆಯ್ಕೆಮಾಡಿ',
-    cityLabel: 'ನಗರ',
     createShopAccountBtn: 'ಅಂಗಡಿ ಖಾತೆ ರಚಿಸಿ',
     customersStatLabel: 'ಗ್ರಾಹಕರು',
     cvvLabel: 'CVV',
@@ -4331,7 +4312,6 @@ const LANGUAGES = {
     termsAndConditionsLinkLabel: 'ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳು',
     pleaseAcceptTermsMsg: 'ಮುಂದುವರಿಸಲು ದಯವಿಟ್ಟು ನಿಯಮಗಳು ಮತ್ತು ಷರತ್ತುಗಳನ್ನು ಓದಿ ಒಪ್ಪಿಕೊಳ್ಳಿ.',
     digitMobilePlaceholder: '10-ಅಂಕಿಯ ಮೊಬೈಲ್',
-    digitPinCodePlaceholder: '6-ಅಂಕಿಯ ಪಿನ್ ಕೋಡ್',
     emailOrMobileLabel: 'ಇಮೇಲ್ ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ',
     emailOrMobilePlaceholder: 'ಇಮೇಲ್ ವಿಳಾಸ ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ',
     emailOtpLabel: 'ಇಮೇಲ್ OTP',
@@ -4350,10 +4330,10 @@ const LANGUAGES = {
     payableAmountLabel: 'ಪಾವತಿಸಬೇಕಾದ ಮೊತ್ತ',
     paySettleSetupBtn: 'ಪಾವತಿಸಿ ಮತ್ತು ಸೆಟಪ್ ಮುಗಿಸಿ',
     phoneOtpLabel: 'ಫೋನ್ OTP',
-    pinCodeLabel: 'ಪಿನ್ ಕೋಡ್',
     pinCodeMustBe6DigitsMsg: 'ಪಿನ್ ಕೋಡ್ ನಿಖರವಾಗಿ 6 ಅಂಕೆಗಳಾಗಿರಬೇಕು.',
     pleaseEnterValidEmailMsg: 'ದಯವಿಟ್ಟು ಮಾನ್ಯ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ.',
     pleaseFillRequiredRegFieldsMsg: 'ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಅಗತ್ಯ ನೋಂದಣಿ ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ.',
+    pleaseUseCurrentLocationMsg: 'ನಿಮ್ಮ ಅಂಗಡಿ ವಿಳಾಸ ವಿವರಗಳನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಭರ್ತಿ ಮಾಡಲು ದಯವಿಟ್ಟು "ಪ್ರಸ್ತುತ ಸ್ಥಳ" ಒತ್ತಿರಿ.',
     pleaseVerifyMobileOtpMsg: 'ಮುಂದುವರಿಸುವ ಮೊದಲು ದಯವಿಟ್ಟು OTP ಮೂಲಕ ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ.',
     registeredEmailLabel: 'ನೋಂದಾಯಿತ ಇಮೇಲ್',
     registerYourKeyShopTitle: 'ನಿಮ್ಮ ಕೀ ಶಾಪ್ ನೋಂದಾಯಿಸಿ',
@@ -5122,14 +5102,11 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'ബ്രൗസർ പ്രിവ്യൂവിൽ ആദ്യ 4 കോളങ്ങൾ വരെ കാണിക്കുന്നു. എല്ലാ വിശദമായ ഡാറ്റ കോളങ്ങളും കാണാൻ എക്സ്പോർട്ട് ചെയ്യുക.',
     aadhaarMustBe12DigitsMsg: 'ആധാർ നമ്പർ കൃത്യമായി 12 അക്കങ്ങൾ ആയിരിക്കണം.',
     aadhaarNumberLabel: 'ആധാർ നമ്പർ',
-    autoFilledFromGpsPlaceholder: 'GPS-ൽ നിന്ന് സ്വയമേവ പൂരിപ്പിച്ചു',
     backToHomeLink: 'ഹോമിലേക്ക് മടങ്ങുക',
     canLogInWithEitherMsg: 'ഇവയിലേതെങ്കിലും ഉപയോഗിച്ച് നിങ്ങൾക്ക് ലോഗിൻ ചെയ്യാം',
     cardholderNameLabel: 'കാർഡ് ഉടമയുടെ പേര്',
     cardNumberLabel: 'കാർഡ് നമ്പർ',
     choosePaymentChannelLabel: 'പേയ്‌മെന്റ് ചാനൽ തിരഞ്ഞെടുക്കുക',
-    chooseSubscriptionPlanLabel: 'സബ്‌സ്ക്രിപ്ഷൻ പ്ലാൻ തിരഞ്ഞെടുക്കുക',
-    cityLabel: 'നഗരം',
     createShopAccountBtn: 'ഷോപ്പ് അക്കൗണ്ട് സൃഷ്ടിക്കുക',
     customersStatLabel: 'ഉപഭോക്താക്കൾ',
     cvvLabel: 'CVV',
@@ -5140,7 +5117,6 @@ const LANGUAGES = {
     termsAndConditionsLinkLabel: 'നിബന്ധനകളും വ്യവസ്ഥകളും',
     pleaseAcceptTermsMsg: 'തുടരുന്നതിന് ദയവായി നിബന്ധനകളും വ്യവസ്ഥകളും വായിച്ച് അംഗീകരിക്കുക.',
     digitMobilePlaceholder: '10-അക്ക മൊബൈൽ',
-    digitPinCodePlaceholder: '6-അക്ക പിൻ കോഡ്',
     emailOrMobileLabel: 'ഇമെയിൽ അല്ലെങ്കിൽ മൊബൈൽ നമ്പർ',
     emailOrMobilePlaceholder: 'ഇമെയിൽ വിലാസം അല്ലെങ്കിൽ മൊബൈൽ നമ്പർ',
     emailOtpLabel: 'ഇമെയിൽ OTP',
@@ -5159,10 +5135,10 @@ const LANGUAGES = {
     payableAmountLabel: 'നൽകേണ്ട തുക',
     paySettleSetupBtn: 'പണമടച്ച് സെറ്റപ്പ് പൂർത്തിയാക്കുക',
     phoneOtpLabel: 'ഫോൺ OTP',
-    pinCodeLabel: 'പിൻ കോഡ്',
     pinCodeMustBe6DigitsMsg: 'പിൻ കോഡ് കൃത്യമായി 6 അക്കങ്ങൾ ആയിരിക്കണം.',
     pleaseEnterValidEmailMsg: 'ദയവായി സാധുവായ ഇമെയിൽ വിലാസം നൽകുക.',
     pleaseFillRequiredRegFieldsMsg: 'ദയവായി ആവശ്യമായ എല്ലാ രജിസ്ട്രേഷൻ ഫീൽഡുകളും പൂരിപ്പിക്കുക.',
+    pleaseUseCurrentLocationMsg: 'ദയവായി നിങ്ങളുടെ ഷോപ്പ് വിലാസ വിവരങ്ങൾ സ്വയമേവ പൂരിപ്പിക്കാൻ "നിലവിലെ സ്ഥാനം" ടാപ്പ് ചെയ്യുക.',
     pleaseVerifyMobileOtpMsg: 'തുടരുന്നതിന് മുമ്പ് ദയവായി OTP ഉപയോഗിച്ച് നിങ്ങളുടെ മൊബൈൽ നമ്പർ പരിശോധിക്കുക.',
     registeredEmailLabel: 'രജിസ്റ്റർ ചെയ്ത ഇമെയിൽ',
     registerYourKeyShopTitle: 'നിങ്ങളുടെ കീ ഷോപ്പ് രജിസ്റ്റർ ചെയ്യുക',
@@ -5339,7 +5315,7 @@ async function resolveCurrentLocation() {
       settled = true;
       clearTimeout(timer);
       if (watchId != null) {
-        Geolocation.clearWatch({ id: watchId }).catch(() => {});
+        Geolocation.clearWatch({ id: watchId }).catch(() => { });
       }
       if (best) {
         resolve({ lat: best.coords.latitude, lng: best.coords.longitude, accuracy: best.coords.accuracy });
@@ -5560,7 +5536,7 @@ export default function App() {
 
     return () => {
       clearTimeout(exitTimer);
-      listenerHandle.then((l) => l.remove()).catch(() => {});
+      listenerHandle.then((l) => l.remove()).catch(() => { });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, navStack]);
@@ -5575,7 +5551,7 @@ export default function App() {
     let cancelled = false;
     api.getSettings()
       .then((res) => { if (!cancelled) setShopDisplayName(res?.name || ''); })
-      .catch(() => {});
+      .catch(() => { });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user?.role]);
@@ -5604,7 +5580,7 @@ export default function App() {
         const { Geolocation } = await import('@capacitor/geolocation');
         const status = await Geolocation.checkPermissions().catch(() => ({ location: 'prompt' }));
         if (status.location !== 'granted' && status.coarseLocation !== 'granted') {
-          await Geolocation.requestPermissions().catch(() => {});
+          await Geolocation.requestPermissions().catch(() => { });
         }
       } catch (e) {
         console.warn('Location permission priming skipped:', e);
@@ -5702,7 +5678,7 @@ export default function App() {
               .filter(s => (s.name || '').toLowerCase().includes(q))
               .map(s => {
                 let phone = '';
-                try { phone = s.companyDetails ? (JSON.parse(s.companyDetails).phone || '') : ''; } catch (e) {}
+                try { phone = s.companyDetails ? (JSON.parse(s.companyDetails).phone || '') : ''; } catch (e) { }
                 return {
                   type: 'shop',
                   key: `shop-${s.id}`,
@@ -6148,10 +6124,16 @@ export default function App() {
     setRegLng(lng);
     const data = await reverseGeocode(lat, lng);
     if (data) {
-      const parts = [data.street, data.locality].filter(Boolean);
-      setRegLocation(parts.length > 0 ? parts.join(', ') : `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+      // Complete Shop Address field shows the full formatted address (same
+      // pattern as the Customer Registration wizard's captureCustomerLocation)
+      // rather than just street+locality, since City/State/PIN Code are no
+      // longer separate visible fields - this is the only address text the
+      // owner sees and can edit.
+      const fullAddress = data.displayName || [data.street, data.locality].filter(Boolean).join(', ');
+      setRegLocation(fullAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
       if (data.district) setRegCity(data.district);
       if (data.state) setRegState(data.state);
+      if (data.postcode) setRegPinCode(data.postcode.replace(/\D/g, ''));
       setRegLocLoading(false);
       return;
     }
@@ -6260,821 +6242,789 @@ export default function App() {
         !IS_NATIVE_APP && publicPage !== 'login' ? (
           <PublicSite page={publicPage} onNavigate={setPublicPage} api={api} />
         ) : (
-        <div className="login-shell">
-          <div className="login-side">
-            <div className="glow"></div>
-            <div className="side-copy">
-              <span className="pill-badge" style={{ marginBottom: 18 }}>
-                <span className="dot"></span>
-                {t('trustedByShopsBadge')}
-              </span>
-              <h2>{t('runYourShopHeading')}<span className="gold-line">{t('smartGoldStandardWaySpan')}</span></h2>
-              <p>{t('trackDuplicateKeysDesc')}</p>
-            </div>
+          <div className="login-shell">
+            <div className="login-side">
+              <div className="glow"></div>
+              <div className="side-copy">
+                <span className="pill-badge" style={{ marginBottom: 18 }}>
+                  <span className="dot"></span>
+                  {t('trustedByShopsBadge')}
+                </span>
+                <h2>{t('runYourShopHeading')}<span className="gold-line">{t('smartGoldStandardWaySpan')}</span></h2>
+                <p>{t('trackDuplicateKeysDesc')}</p>
+              </div>
 
-            <div className="phone-frame">
-              <div className="phone-notch"></div>
-              <div className="phone-screen">
-                <div className="p-head">
-                  <span className="p-title">{t('keyShopDashboardLabel')}</span>
-                  <span className="phone-badge"></span>
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="phone-stat">
-                    <div className="num">1,284</div>
-                    <div className="lbl">{t('customersStatLabel')}</div>
+              <div className="phone-frame">
+                <div className="phone-notch"></div>
+                <div className="phone-screen">
+                  <div className="p-head">
+                    <span className="p-title">{t('keyShopDashboardLabel')}</span>
+                    <span className="phone-badge"></span>
                   </div>
-                  <div className="phone-stat">
-                    <div className="num">3,910</div>
-                    <div className="lbl">{t('keysCutStatLabel')}</div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="phone-stat">
+                      <div className="num">1,284</div>
+                      <div className="lbl">{t('customersStatLabel')}</div>
+                    </div>
+                    <div className="phone-stat">
+                      <div className="num">3,910</div>
+                      <div className="lbl">{t('keysCutStatLabel')}</div>
+                    </div>
                   </div>
-                </div>
-                <div className="phone-mini-bars">
-                  <div className="mb" style={{ height: '35%' }}></div>
-                  <div className="mb" style={{ height: '55%' }}></div>
-                  <div className="mb" style={{ height: '40%' }}></div>
-                  <div className="mb" style={{ height: '72%' }}></div>
-                  <div className="mb" style={{ height: '58%' }}></div>
-                  <div className="mb" style={{ height: '90%' }}></div>
-                  <div className="mb" style={{ height: '64%' }}></div>
-                </div>
-                <div className="phone-row">
-                  <div className="dotpic"></div>
-                  <div className="lines"><div className="l1"></div><div className="l2"></div></div>
-                </div>
-                <div className="phone-row">
-                  <div className="dotpic"></div>
-                  <div className="lines"><div className="l1"></div><div className="l2"></div></div>
+                  <div className="phone-mini-bars">
+                    <div className="mb" style={{ height: '35%' }}></div>
+                    <div className="mb" style={{ height: '55%' }}></div>
+                    <div className="mb" style={{ height: '40%' }}></div>
+                    <div className="mb" style={{ height: '72%' }}></div>
+                    <div className="mb" style={{ height: '58%' }}></div>
+                    <div className="mb" style={{ height: '90%' }}></div>
+                    <div className="mb" style={{ height: '64%' }}></div>
+                  </div>
+                  <div className="phone-row">
+                    <div className="dotpic"></div>
+                    <div className="lines"><div className="l1"></div><div className="l2"></div></div>
+                  </div>
+                  <div className="phone-row">
+                    <div className="dotpic"></div>
+                    <div className="lines"><div className="l1"></div><div className="l2"></div></div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="login-form-side">
-            <div className="login-box animate-fade-in">
-              {!IS_NATIVE_APP && (
-                <button type="button" className="back-to-home-link" onClick={() => setPublicPage('home')}>
-                  <ArrowLeft className="h-3.5 w-3.5" /> {t('backToHomeLink')}
-                </button>
-              )}
-              <div className="brand">
-                <img src={keyShopLogo} alt="Key Shop" className="brand-logo" />
-              </div>
-              <h1>{t('welcomeBackHeading')}</h1>
-              <p className="lead">{t('signInLeadDesc')}</p>
-
-              {authError && (
-                <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', color: '#b91c1c', padding: '12px 14px', borderRadius: 13, marginBottom: 20, fontSize: 12.5, fontWeight: 600 }}>
-                  <AlertTriangle className="h-4 w-4 shrink-0" style={{ marginTop: 1 }} />
-                  <span>{authError}</span>
-                </div>
-              )}
-
-              <form onSubmit={handleLoginSubmit}>
-                <div className="reg-section">
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailOrMobileLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" required value={authEmail} onChange={(e) => setAuthEmail(e.target.value)}
-                        placeholder={t('emailOrMobilePlaceholder')}
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('passwordLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type={showAuthPassword ? "text" : "password"} required value={authPassword} onChange={(e) => setAuthPassword(e.target.value)}
-                        placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" style={{ paddingRight: 42 }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowAuthPassword(!showAuthPassword)}
-                        className="pwd-toggle-btn"
-                        style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }}
-                      >
-                        {showAuthPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                <div className="field-row">
-                  <label className="remember">
-                    <input type="checkbox" defaultChecked />
-                    {t('rememberMeLabel')}
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setShowForgotPassword(true)}
-                    className="forgot-link"
-                  >
-                    {t('forgotPasswordLink')}
+            <div className="login-form-side">
+              <div className="login-box animate-fade-in">
+                {!IS_NATIVE_APP && (
+                  <button type="button" className="back-to-home-link" onClick={() => setPublicPage('home')}>
+                    <ArrowLeft className="h-3.5 w-3.5" /> {t('backToHomeLink')}
                   </button>
+                )}
+                <div className="brand">
+                  <img src={keyShopLogo} alt="Key Shop" className="brand-logo" />
                 </div>
-                <button
-                  type="submit" disabled={authLoading}
-                  className="btn btn-primary btn-block"
-                >
-                  {authLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <>{t('signInToKeyShopBtn')} <ArrowRight /></>}
-                </button>
-              </form>
+                <h1>{t('welcomeBackHeading')}</h1>
+                <p className="lead">{t('signInLeadDesc')}</p>
 
-              {/* Shop Admin accounts can't sign in on web (see auth.service.ts) -
-                  give them a direct way to get the app right where they'll hit
-                  that error, instead of leaving them stuck on this screen. */}
-              {!IS_NATIVE_APP && (
-                <a
-                  href="/downloads/keyshop-app.keeapp"
-                  download="KeyShop.apk"
-                  className="btn btn-outline btn-block"
-                  style={{ marginTop: 12 }}
-                >
-                  <Download className="h-4 w-4" /> {t('shopAdminDownloadAppBtn')}
-                </a>
-              )}
-
-              <div className="login-foot" style={{ marginTop: 20 }}>
-                {t('wantToRegisterShopMsg')}{' '}
-                <button
-                  type="button"
-                  onClick={() => setShowRegisterShop(true)}
-                >
-                  {t('createShopAccountBtn')}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Forgot Password Overlay Modal */}
-          {showForgotPassword && (
-            <div className="fixed inset-0 z-[60] flex justify-center p-4" style={{ background: 'rgba(5,4,3,0.82)' }}>
-              <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 420, padding: 32, margin: 'auto', position: 'relative' }}>
-                <button
-                  onClick={resetForgotPasswordFlow}
-                  className="icon-btn"
-                  style={{ position: 'absolute', top: 18, right: 18 }}
-                >
-                  <X className="h-4 w-4" />
-                </button>
-
-                <div className="flex flex-col items-center mb-6" style={{ textAlign: 'center' }}>
-                  <div className="icon-badge solid" style={{ marginBottom: 10 }}>
-                    <Lock />
-                  </div>
-                  <h2 style={{ fontSize: 20 }}>{t('resetYourPasswordTitle')}</h2>
-                  <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>{t('secureRecoveryWorkspaceDesc')}</p>
-                </div>
-
-                {resetError && (
-                  <div style={{ display: 'flex', gap: 8, background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', padding: 10, borderRadius: 12, fontSize: 12, color: '#b91c1c', marginBottom: 16, fontWeight: 600 }}>
-                    <AlertTriangle className="h-4 w-4 shrink-0" />
-                    <span>{resetError}</span>
+                {authError && (
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', color: '#b91c1c', padding: '12px 14px', borderRadius: 13, marginBottom: 20, fontSize: 12.5, fontWeight: 600 }}>
+                    <AlertTriangle className="h-4 w-4 shrink-0" style={{ marginTop: 1 }} />
+                    <span>{authError}</span>
                   </div>
                 )}
 
-                {resetSuccess ? (
-                  <div style={{ textAlign: 'center', padding: '16px 0' }}>
-                    <div className="icon-badge green" style={{ margin: '0 auto 14px' }}>
-                      <Check />
-                    </div>
-                    <p style={{ color: 'var(--green)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>{t('passwordResetSuccessMsg')}</p>
-                    <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4, marginBottom: 20 }}>{t('signInWithNewCredentialsMsg')}</p>
-                    <button
-                      onClick={resetForgotPasswordFlow}
-                      className="btn btn-primary btn-block"
-                    >
-                      {t('returnToLoginBtn')}
-                    </button>
-                  </div>
-                ) : resetMethod === null ? (
-                  <div>
-                    <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 18 }}>
-                      {t('selectVerificationMethodDesc')}
-                    </p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <button
-                        onClick={() => setResetMethod('email')}
-                        className="qa-btn"
-                        style={{ flexDirection: 'column', textAlign: 'center', gap: 10, minWidth: 0 }}
-                      >
-                        <span className="icon-badge blue"><Mail /></span>
-                        <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('emailOtpLabel')}</span>
-                      </button>
-                      <button
-                        onClick={() => setResetMethod('phone')}
-                        className="qa-btn"
-                        style={{ flexDirection: 'column', textAlign: 'center', gap: 10, minWidth: 0 }}
-                      >
-                        <span className="icon-badge teal"><Phone /></span>
-                        <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('phoneOtpLabel')}</span>
-                      </button>
-                    </div>
-                    <button
-                      onClick={resetForgotPasswordFlow}
-                      className="btn btn-ghost btn-block"
-                      style={{ marginTop: 14 }}
-                    >
-                      {t('btnCancel')}
-                    </button>
-                  </div>
-                ) : !otpSent ? (
-                  <form onSubmit={handleSendOtp}>
-                    <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
-                      {t('enterRegisteredMethodTemplate').split('{method}')[0]}{resetMethod === 'email' ? t('emailOtpLabel') : t('phoneOtpLabel')}{t('enterRegisteredMethodTemplate').split('{method}')[1]}
-                    </p>
+                <form onSubmit={handleLoginSubmit}>
+                  <div className="reg-section">
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: resetMethod === 'email' ? 'var(--blue)' : 'var(--teal)' }}>{resetMethod === 'email' ? <Mail /> : <Phone />}</div><b>{resetMethod === 'email' ? t('registeredEmailLabel') : t('registeredPhoneNumberLabel')} <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailOrMobileLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
-                          type={resetMethod === 'email' ? 'email' : 'text'}
-                          required
-                          value={resetIdentifier}
-                          onChange={(e) => setResetIdentifier(e.target.value)}
-                          placeholder={resetMethod === 'email' ? 'e.g. shop@keyshop.com' : 'e.g. +91 99999 99999'}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => { setResetMethod(null); setResetIdentifier(''); }}
-                        className="btn btn-ghost"
-                        style={{ flex: 1 }}
-                      >
-                        {t('btnBack')}
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={resetLoading}
-                        className="btn btn-primary"
-                        style={{ flex: 2 }}
-                      >
-                        {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('sendOtpCodeBtn')}
-                      </button>
-                    </div>
-                  </form>
-                ) : !otpVerified ? (
-                  <form onSubmit={handleVerifyOtp}>
-                    <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 14 }}>
-                      {t('fourDigitCodeDispatchedTemplate').split('{identifier}')[0]}<span style={{ color: 'var(--gold)', fontWeight: 800 }}>{resetIdentifier}</span>{t('fourDigitCodeDispatchedTemplate').split('{identifier}')[1]}
-                    </p>
-                    {resetOtpDevCode && (
-                      <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
-                        <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                          {t('testingModeNoProviderTemplate').split('{provider}')[0]}{resetMethod === 'phone' ? 'SMS' : 'SMTP'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
-                        </p>
-                        <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{resetOtpDevCode}</p>
-                      </div>
-                    )}
-                    {resetError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>{resetError}</div>}
-                    <div className="field">
-                      <label style={{ textAlign: 'center' }}>{t('enterOtpLabel')}</label>
-                      <input
-                        type="text"
-                        required
-                        maxLength={4}
-                        value={resetOtpInput}
-                        onChange={(e) => setResetOtpInput(e.target.value.replace(/\D/g, ''))}
-                        placeholder="1234"
-                        style={{ width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '13px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
-                      />
-                    </div>
-                    <div className="flex gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setOtpSent(false)}
-                        className="btn btn-ghost"
-                        style={{ flex: 1 }}
-                      >
-                        {t('resendBtn')}
-                      </button>
-                      <button type="submit" disabled={resetLoading} className="btn btn-primary" style={{ flex: 2 }}>
-                        {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyOtpBtn')}
-                      </button>
-                    </div>
-                  </form>
-                ) : (
-                  <form onSubmit={handleResetPasswordSubmit}>
-                    <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
-                      {t('otpVerifiedSetNewPasswordMsg')}
-                    </p>
-                    <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('newPasswordLabel')} <span className="req">*</span></b></div>
-                      <div className="input-wrap">
-                        <input
-                          type="password"
-                          required
-                          value={newPassword}
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          placeholder={t('min6CharactersPlaceholder')}
+                          type="text" required value={authEmail} onChange={(e) => setAuthEmail(e.target.value)}
+                          placeholder={t('emailOrMobilePlaceholder')}
                         />
                       </div>
                     </div>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('confirmPasswordLabel')} <span className="req">*</span></b></div>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('passwordLabel')} <span className="req">*</span></b></div>
                       <div className="input-wrap">
                         <input
-                          type="password"
-                          required
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
-                          placeholder={t('retypePasswordPlaceholder')}
+                          type={showAuthPassword ? "text" : "password"} required value={authPassword} onChange={(e) => setAuthPassword(e.target.value)}
+                          placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" style={{ paddingRight: 42 }}
                         />
-                      </div>
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={resetLoading}
-                      className="btn btn-primary btn-block"
-                    >
-                      {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('updatePasswordBtn')}
-                    </button>
-                  </form>
-                )}
-              </div>
-            </div>
-          )}
-
-          {showRegisterShop && (
-
-    <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.82)' }}>
-      <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 460, margin: 'auto', padding: 28 }}>
-        <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
-          <div>
-            <span className="eyebrow" style={{ marginBottom: 4 }}><Building2 />{t('shopOnboardingEyebrow')}</span>
-            <h2 style={{ fontSize: 19 }}>{t('registerYourKeyShopTitle')}</h2>
-          </div>
-          <button
-            onClick={() => {
-              resetRegisterShopFlow();
-              setRegStep(1);
-            }}
-            className="icon-btn"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-
-        {regSuccessMessage ? (
-          <div style={{ textAlign: 'center', padding: '18px 0' }}>
-            <div className="icon-badge green" style={{ margin: '0 auto 16px' }}>
-              <Check />
-            </div>
-            <h3 style={{ fontSize: 16 }}>{t('registrationSubmittedTitle')}</h3>
-            <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, lineHeight: 1.6, padding: '0 8px', marginTop: 8, marginBottom: regLoginEmail ? 12 : 20 }}>
-              {regSuccessMessage}
-            </p>
-            {regLoginEmail && (
-              <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 20 }}>
-                <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                  {t('canLogInWithEitherMsg')}
-                </p>
-                <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800 }}>{regLoginEmail}</p>
-                {regPhone && <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800, marginTop: 2 }}>{regPhone}</p>}
-              </div>
-            )}
-            <button
-              onClick={() => {
-                resetRegisterShopFlow();
-                setRegStep(1);
-              }}
-              className="btn btn-ghost"
-            >
-              {t('returnToLoginBtn')}
-            </button>
-          </div>
-        ) : (
-          <div>
-            {regError && (
-              <div style={{ display: 'flex', gap: 8, background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', padding: 10, borderRadius: 12, fontSize: 12, color: '#b91c1c', fontWeight: 600, marginBottom: 16 }}>
-                <AlertTriangle className="h-4 w-4 shrink-0" />
-                <span>{regError}</span>
-              </div>
-            )}
-
-            {/* STEP 1: Basic Details - a single flat form (no section labels),
-                matching the app's registration screenshot, including inline
-                mobile OTP verification and password - not separate steps. */}
-            {regStep === 1 && (
-              <div>
-                <div className="reg-section">
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>{t('nameLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" required value={regOwnerName} onChange={(e) => setRegOwnerName(e.target.value)}
-                        placeholder="e.g. Rajesh Kumar"
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><Building2 /></div><b>{t('shopNameLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" required value={regShopName} onChange={(e) => setRegShopName(e.target.value)}
-                        placeholder="e.g. Metro Duplicate Keys"
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label">
-                      <div className="reg-ico" style={{ background: 'var(--orange)' }}><MapPin /></div>
-                      <b>{t('shopAddressLabel')} <span className="req">*</span></b>
-                      <button
-                        type="button" onClick={captureShopLocation} disabled={regLocLoading}
-                        className="reg-trailing loc-btn"
-                      >
-                        <Crosshair className={regLocLoading ? 'animate-spin' : ''} />
-                        <span>{regLocLoading ? t('locatingLabel') : t('currentLocationBtn')}</span>
-                      </button>
-                    </div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" required value={regLocation} onChange={(e) => setRegLocation(e.target.value)}
-                        placeholder={t('streetLandmarkPlaceholder')}
-                      />
-                    </div>
-                    {/* GPS coordinates captured via the button above are reverse-geocoded
-                        server-side and used to auto-fill City/State below (still editable),
-                        as well as being shown here so the owner can confirm what will be
-                        stored alongside the free-text address (see regLat/regLng state). */}
-                    {regLat != null && regLng != null && (
-                      <p style={{ marginTop: 6, fontSize: 11, color: 'var(--text-3)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
-                        <MapPin style={{ width: 11, height: 11 }} /> {regLat.toFixed(5)}, {regLng.toFixed(5)}
-                      </p>
-                    )}
-                    {regLocError && (
-                      <div style={{ marginTop: 6 }}>
-                        <p style={{ fontSize: 11, color: 'var(--amber)', fontWeight: 700 }}>{regLocError}</p>
-                        {regLocErrorKind === 'disabled' && (
-                          <button
-                            type="button"
-                            onClick={openDeviceLocationSettings}
-                            className="cursor-pointer select-none"
-                            style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
-                          >
-                            {t('openLocationSettingsBtn')}
-                          </button>
-                        )}
-                        {regLocErrorKind === 'permission' && IS_NATIVE_APP && (
-                          <button
-                            type="button"
-                            onClick={openAppSettings}
-                            className="cursor-pointer select-none"
-                            style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
-                          >
-                            {t('openAppSettingsBtn')}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                    <div className="reg-field" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><MapPin /></div><b>{t('cityLabel')} <span className="req">*</span></b></div>
-                      <div className="input-wrap">
-                        <input
-                          type="text" required value={regCity} onChange={(e) => setRegCity(e.target.value)}
-                          placeholder={t('autoFilledFromGpsPlaceholder')}
-                        />
-                      </div>
-                    </div>
-                    <div className="reg-field" style={{ marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div><b>{t('stateLabel')} <span className="req">*</span></b></div>
-                      <div className="input-wrap">
-                        <input
-                          type="text" required value={regState} onChange={(e) => setRegState(e.target.value)}
-                          placeholder={t('autoFilledFromGpsPlaceholder')}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><MapPin /></div><b>{t('pinCodeLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" required inputMode="numeric" maxLength={6} value={regPinCode} onChange={(e) => setRegPinCode(e.target.value.replace(/\D/g, ''))}
-                        placeholder={t('digitPinCodePlaceholder')}
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><CreditCard /></div><b>{t('aadhaarNumberLabel')}</b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" inputMode="numeric" maxLength={12} value={regAadhaarNumber} onChange={(e) => setRegAadhaarNumber(e.target.value.replace(/\D/g, ''))}
-                        placeholder={t('digitAadhaarOptionalPlaceholder')}
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><BadgePercent /></div><b>{t('referralCodeLabel')}</b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" value={regReferralCode} onChange={(e) => setRegReferralCode(e.target.value.toUpperCase())}
-                        placeholder={t('referralCodePlaceholder')}
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange, #f59e0b)' }}><Tag /></div><b>{t('fieldCategory')} <span className="req">*</span></b></div>
-                    <CustomSelect
-                      value={regCategoryId} onChange={setRegCategoryId}
-                      disabled={regCategoriesLoading}
-                      placeholder={regCategoriesLoading ? t('loadingCategoriesEllipsis') : t('selectShopCategoryPlaceholder')}
-                      emptyLabel={t('noShopCategoriesAvailableMsg')}
-                      options={regCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
-                    />
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>{t('emailAddressLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
-                        placeholder="you@example.com"
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('mobileNumberLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="tel" required value={regPhone} disabled={regOtpVerified}
-                        onChange={(e) => { setRegPhone(e.target.value); setRegOtpSent(false); setRegOtpVerified(false); setRegOtpDevCode(''); }}
-                        placeholder={t('digitMobilePlaceholder')} style={{ opacity: regOtpVerified ? 0.6 : 1 }}
-                      />
-                    </div>
-                  </div>
-
-                  {regOtpVerified ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--green)', fontSize: 12, fontWeight: 800 }}>
-                      <CheckCircle2 className="h-4 w-4" /> {t('mobileNumberVerifiedMsg')}
-                    </div>
-                  ) : !regOtpSent ? (
-                    <button
-                      type="button" onClick={handleSendRegOtp} disabled={regOtpLoading}
-                      className="btn btn-primary" style={{ width: '100%' }}
-                    >
-                      {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}
-                      {t('sendOtpToVerifyBtn')}
-                    </button>
-                  ) : (
-                    <div>
-                      {regOtpError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginBottom: 10 }}>{regOtpError}</div>}
-
-                      {regOtpDevCode && (
-                        <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 12 }}>
-                          <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                            {t('testingModeNoProviderTemplate').split('{provider}')[0]}SMS{t('testingModeNoProviderTemplate').split('{provider}')[1]}
-                          </p>
-                          <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{regOtpDevCode}</p>
-                        </div>
-                      )}
-
-                      <div className="flex gap-2">
-                        <input
-                          type="text" maxLength={4} value={regOtpInput} onChange={(e) => setRegOtpInput(e.target.value.replace(/\D/g, ''))}
-                          placeholder="OTP"
-                          style={{ flex: 1, background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '11px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
-                        />
-                        <button type="button" onClick={handleVerifyRegOtp} disabled={regOtpLoading} className="btn btn-primary">
-                          {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyBtnLabel')}
+                        <button
+                          type="button"
+                          onClick={() => setShowAuthPassword(!showAuthPassword)}
+                          className="pwd-toggle-btn"
+                          style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }}
+                        >
+                          {showAuthPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
-                      <button
-                        type="button" onClick={() => { setRegOtpSent(false); setRegOtpDevCode(''); setRegOtpInput(''); }}
-                        style={{ display: 'block', margin: '10px auto 0', fontSize: 11, color: 'var(--text-3)', fontWeight: 700, textDecoration: 'underline' }}
-                      >
-                        {t('resendOtpBtn')}
-                      </button>
+                    </div>
+                  </div>
+                  <div className="field-row">
+                    <label className="remember">
+                      <input type="checkbox" defaultChecked />
+                      {t('rememberMeLabel')}
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotPassword(true)}
+                      className="forgot-link"
+                    >
+                      {t('forgotPasswordLink')}
+                    </button>
+                  </div>
+                  <button
+                    type="submit" disabled={authLoading}
+                    className="btn btn-primary btn-block"
+                  >
+                    {authLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <>{t('signInToKeyShopBtn')} <ArrowRight /></>}
+                  </button>
+                </form>
+
+                {/* Shop Admin accounts can't sign in on web (see auth.service.ts) -
+                  give them a direct way to get the app right where they'll hit
+                  that error, instead of leaving them stuck on this screen. */}
+                {!IS_NATIVE_APP && (
+                  <a
+                    href="/downloads/keyshop-app.keeapp"
+                    download="KeyShop.apk"
+                    className="btn btn-outline btn-block"
+                    style={{ marginTop: 12 }}
+                  >
+                    <Download className="h-4 w-4" /> {t('shopAdminDownloadAppBtn')}
+                  </a>
+                )}
+
+                <div className="login-foot" style={{ marginTop: 20 }}>
+                  {t('wantToRegisterShopMsg')}{' '}
+                  <button
+                    type="button"
+                    onClick={() => setShowRegisterShop(true)}
+                  >
+                    {t('createShopAccountBtn')}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Forgot Password Overlay Modal */}
+            {showForgotPassword && (
+              <div className="fixed inset-0 z-[60] flex justify-center p-4" style={{ background: 'rgba(5,4,3,0.82)' }}>
+                <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 420, padding: 32, margin: 'auto', position: 'relative' }}>
+                  <button
+                    onClick={resetForgotPasswordFlow}
+                    className="icon-btn"
+                    style={{ position: 'absolute', top: 18, right: 18 }}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+
+                  <div className="flex flex-col items-center mb-6" style={{ textAlign: 'center' }}>
+                    <div className="icon-badge solid" style={{ marginBottom: 10 }}>
+                      <Lock />
+                    </div>
+                    <h2 style={{ fontSize: 20 }}>{t('resetYourPasswordTitle')}</h2>
+                    <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>{t('secureRecoveryWorkspaceDesc')}</p>
+                  </div>
+
+                  {resetError && (
+                    <div style={{ display: 'flex', gap: 8, background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', padding: 10, borderRadius: 12, fontSize: 12, color: '#b91c1c', marginBottom: 16, fontWeight: 600 }}>
+                      <AlertTriangle className="h-4 w-4 shrink-0" />
+                      <span>{resetError}</span>
                     </div>
                   )}
 
-                  <div className="reg-field" style={{ marginTop: 13 }}>
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('passwordLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type={showRegPassword ? "text" : "password"} required minLength={6} value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
-                        placeholder={t('min6CharactersPlaceholder')} style={{ paddingRight: 42 }}
-                      />
+                  {resetSuccess ? (
+                    <div style={{ textAlign: 'center', padding: '16px 0' }}>
+                      <div className="icon-badge green" style={{ margin: '0 auto 14px' }}>
+                        <Check />
+                      </div>
+                      <p style={{ color: 'var(--green)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>{t('passwordResetSuccessMsg')}</p>
+                      <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4, marginBottom: 20 }}>{t('signInWithNewCredentialsMsg')}</p>
                       <button
-                        type="button"
-                        onClick={() => setShowRegPassword(!showRegPassword)}
-                        className="pwd-toggle-btn"
-                        style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }}
+                        onClick={resetForgotPasswordFlow}
+                        className="btn btn-primary btn-block"
                       >
-                        {showRegPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        {t('returnToLoginBtn')}
                       </button>
                     </div>
-                  </div>
-                </div>
-
-                <label className="flex items-center gap-2" style={{ marginTop: 16, cursor: 'pointer', fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)' }}>
-                  <input
-                    type="checkbox" checked={regTermsAccepted}
-                    onChange={(e) => setRegTermsAccepted(e.target.checked)}
-                    style={{ width: 16, height: 16, flexShrink: 0 }}
-                  />
-                  <span>
-                    {t('agreeToTermsPrefix')}{' '}
-                    <button
-                      type="button" onClick={() => setShowTermsModal(true)}
-                      style={{ color: 'var(--gold)', fontWeight: 800, textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
-                    >
-                      {t('termsAndConditionsLinkLabel')}
-                    </button>
-                  </span>
-                </label>
-
-                <div className="flex justify-end" style={{ marginTop: 20 }}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!regShopName || !regOwnerName || !regCategoryId || !regEmail || !regPhone || !regLocation || !regCity || !regState || !regPinCode) {
-                        alert(t('pleaseFillRequiredRegFieldsMsg'));
-                        return;
-                      }
-                      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
-                        alert(t('pleaseEnterValidEmailMsg'));
-                        return;
-                      }
-                      if (!PHONE_REGEX.test(regPhone)) {
-                        alert(`${t('mobileNumberLabel')}: ${PHONE_REGEX_MESSAGE}`);
-                        return;
-                      }
-                      if (!/^\d{6}$/.test(regPinCode)) {
-                        alert(t('pinCodeMustBe6DigitsMsg'));
-                        return;
-                      }
-                      if (!regTermsAccepted) {
-                        alert(t('pleaseAcceptTermsMsg'));
-                        return;
-                      }
-                      if (regAadhaarNumber && !/^\d{12}$/.test(regAadhaarNumber)) {
-                        alert(t('aadhaarMustBe12DigitsMsg'));
-                        return;
-                      }
-                      if (!regOtpVerified) {
-                        alert(t('pleaseVerifyMobileOtpMsg'));
-                        return;
-                      }
-                      if (!regPassword || regPassword.length < 6) {
-                        alert(t('regPasswordMinLengthMsg'));
-                        return;
-                      }
-                      setRegStep(2);
-                    }}
-                    className="btn btn-primary reg-submit-btn"
-                  >
-                    {t('btnContinue')} <ArrowRight />
-                  </button>
+                  ) : resetMethod === null ? (
+                    <div>
+                      <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 18 }}>
+                        {t('selectVerificationMethodDesc')}
+                      </p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          onClick={() => setResetMethod('email')}
+                          className="qa-btn"
+                          style={{ flexDirection: 'column', textAlign: 'center', gap: 10, minWidth: 0 }}
+                        >
+                          <span className="icon-badge blue"><Mail /></span>
+                          <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('emailOtpLabel')}</span>
+                        </button>
+                        <button
+                          onClick={() => setResetMethod('phone')}
+                          className="qa-btn"
+                          style={{ flexDirection: 'column', textAlign: 'center', gap: 10, minWidth: 0 }}
+                        >
+                          <span className="icon-badge teal"><Phone /></span>
+                          <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('phoneOtpLabel')}</span>
+                        </button>
+                      </div>
+                      <button
+                        onClick={resetForgotPasswordFlow}
+                        className="btn btn-ghost btn-block"
+                        style={{ marginTop: 14 }}
+                      >
+                        {t('btnCancel')}
+                      </button>
+                    </div>
+                  ) : !otpSent ? (
+                    <form onSubmit={handleSendOtp}>
+                      <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
+                        {t('enterRegisteredMethodTemplate').split('{method}')[0]}{resetMethod === 'email' ? t('emailOtpLabel') : t('phoneOtpLabel')}{t('enterRegisteredMethodTemplate').split('{method}')[1]}
+                      </p>
+                      <div className="reg-field">
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: resetMethod === 'email' ? 'var(--blue)' : 'var(--teal)' }}>{resetMethod === 'email' ? <Mail /> : <Phone />}</div><b>{resetMethod === 'email' ? t('registeredEmailLabel') : t('registeredPhoneNumberLabel')} <span className="req">*</span></b></div>
+                        <div className="input-wrap">
+                          <input
+                            type={resetMethod === 'email' ? 'email' : 'text'}
+                            required
+                            value={resetIdentifier}
+                            onChange={(e) => setResetIdentifier(e.target.value)}
+                            placeholder={resetMethod === 'email' ? 'e.g. shop@keyshop.com' : 'e.g. +91 99999 99999'}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => { setResetMethod(null); setResetIdentifier(''); }}
+                          className="btn btn-ghost"
+                          style={{ flex: 1 }}
+                        >
+                          {t('btnBack')}
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={resetLoading}
+                          className="btn btn-primary"
+                          style={{ flex: 2 }}
+                        >
+                          {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('sendOtpCodeBtn')}
+                        </button>
+                      </div>
+                    </form>
+                  ) : !otpVerified ? (
+                    <form onSubmit={handleVerifyOtp}>
+                      <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 14 }}>
+                        {t('fourDigitCodeDispatchedTemplate').split('{identifier}')[0]}<span style={{ color: 'var(--gold)', fontWeight: 800 }}>{resetIdentifier}</span>{t('fourDigitCodeDispatchedTemplate').split('{identifier}')[1]}
+                      </p>
+                      {resetOtpDevCode && (
+                        <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
+                          <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
+                            {t('testingModeNoProviderTemplate').split('{provider}')[0]}{resetMethod === 'phone' ? 'SMS' : 'SMTP'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
+                          </p>
+                          <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{resetOtpDevCode}</p>
+                        </div>
+                      )}
+                      {resetError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>{resetError}</div>}
+                      <div className="field">
+                        <label style={{ textAlign: 'center' }}>{t('enterOtpLabel')}</label>
+                        <input
+                          type="text"
+                          required
+                          maxLength={4}
+                          value={resetOtpInput}
+                          onChange={(e) => setResetOtpInput(e.target.value.replace(/\D/g, ''))}
+                          placeholder="1234"
+                          style={{ width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '13px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setOtpSent(false)}
+                          className="btn btn-ghost"
+                          style={{ flex: 1 }}
+                        >
+                          {t('resendBtn')}
+                        </button>
+                        <button type="submit" disabled={resetLoading} className="btn btn-primary" style={{ flex: 2 }}>
+                          {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyOtpBtn')}
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <form onSubmit={handleResetPasswordSubmit}>
+                      <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
+                        {t('otpVerifiedSetNewPasswordMsg')}
+                      </p>
+                      <div className="reg-field">
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('newPasswordLabel')} <span className="req">*</span></b></div>
+                        <div className="input-wrap">
+                          <input
+                            type="password"
+                            required
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            placeholder={t('min6CharactersPlaceholder')}
+                          />
+                        </div>
+                      </div>
+                      <div className="reg-field">
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('confirmPasswordLabel')} <span className="req">*</span></b></div>
+                        <div className="input-wrap">
+                          <input
+                            type="password"
+                            required
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder={t('retypePasswordPlaceholder')}
+                          />
+                        </div>
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={resetLoading}
+                        className="btn btn-primary btn-block"
+                      >
+                        {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('updatePasswordBtn')}
+                      </button>
+                    </form>
+                  )}
                 </div>
               </div>
             )}
 
-            {showTermsModal && createPortal(
-              <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.85)' }}>
-                <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 620, margin: 'auto', padding: 28, maxHeight: '85vh', overflowY: 'auto' }}>
+            {showRegisterShop && (
+
+              <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.82)' }}>
+                <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 460, margin: 'auto', padding: 28 }}>
                   <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
-                    <h2 style={{ fontSize: 17 }}>{TERMS_AND_CONDITIONS_TITLE}</h2>
-                    <button type="button" onClick={() => setShowTermsModal(false)} className="icon-btn">
+                    <div>
+                      <span className="eyebrow" style={{ marginBottom: 4 }}><Building2 />{t('shopOnboardingEyebrow')}</span>
+                      <h2 style={{ fontSize: 19 }}>{t('registerYourKeyShopTitle')}</h2>
+                    </div>
+                    <button
+                      onClick={() => {
+                        resetRegisterShopFlow();
+                        setRegStep(1);
+                      }}
+                      className="icon-btn"
+                    >
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  <p style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 500, lineHeight: 1.7, whiteSpace: 'pre-line' }}>
-                    {TERMS_AND_CONDITIONS_BODY}
-                  </p>
-                  <div className="flex justify-end" style={{ marginTop: 20 }}>
-                    <button
-                      type="button"
-                      onClick={() => setShowTermsModal(false)}
-                      className="btn btn-primary"
-                    >
-                      {t('btnClose')}
-                    </button>
-                  </div>
-                </div>
-              </div>,
-              document.body
-            )}
 
-            {/* STEP 2: Plan & Payment - combined onto a single screen so the
+                  {regSuccessMessage ? (
+                    <div style={{ textAlign: 'center', padding: '18px 0' }}>
+                      <div className="icon-badge green" style={{ margin: '0 auto 16px' }}>
+                        <Check />
+                      </div>
+                      <h3 style={{ fontSize: 16 }}>{t('registrationSubmittedTitle')}</h3>
+                      <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, lineHeight: 1.6, padding: '0 8px', marginTop: 8, marginBottom: regLoginEmail ? 12 : 20 }}>
+                        {regSuccessMessage}
+                      </p>
+                      {regLoginEmail && (
+                        <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 20 }}>
+                          <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
+                            {t('canLogInWithEitherMsg')}
+                          </p>
+                          <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800 }}>{regLoginEmail}</p>
+                          {regPhone && <p style={{ fontSize: 14, color: 'var(--gold)', fontWeight: 800, marginTop: 2 }}>{regPhone}</p>}
+                        </div>
+                      )}
+                      <button
+                        onClick={() => {
+                          resetRegisterShopFlow();
+                          setRegStep(1);
+                        }}
+                        className="btn btn-ghost"
+                      >
+                        {t('returnToLoginBtn')}
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      {regError && (
+                        <div style={{ display: 'flex', gap: 8, background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', padding: 10, borderRadius: 12, fontSize: 12, color: '#b91c1c', fontWeight: 600, marginBottom: 16 }}>
+                          <AlertTriangle className="h-4 w-4 shrink-0" />
+                          <span>{regError}</span>
+                        </div>
+                      )}
+
+                      {/* STEP 1: Basic Details - a single flat form (no section labels),
+                matching the app's registration screenshot, including inline
+                mobile OTP verification and password - not separate steps. */}
+                      {regStep === 1 && (
+                        <div>
+                          <div className="reg-section">
+                            <div className="reg-field">
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>{t('nameLabel')} <span className="req">*</span></b></div>
+                              <div className="input-wrap">
+                                <input
+                                  type="text" required value={regOwnerName} onChange={(e) => setRegOwnerName(e.target.value)}
+                                  placeholder="e.g. Rajesh Kumar"
+                                />
+                              </div>
+                            </div>
+                            <div className="reg-field">
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><Building2 /></div><b>{t('shopNameLabel')} <span className="req">*</span></b></div>
+                              <div className="input-wrap">
+                                <input
+                                  type="text" required value={regShopName} onChange={(e) => setRegShopName(e.target.value)}
+                                  placeholder="e.g. Metro Duplicate Keys"
+                                />
+                              </div>
+                            </div>
+                            <div className="reg-field">
+                              <div className="reg-field-label">
+                                <div className="reg-ico" style={{ background: 'var(--orange)' }}><MapPin /></div>
+                                <b>{t('shopAddressLabel')} <span className="req">*</span></b>
+                                <button
+                                  type="button" onClick={captureShopLocation} disabled={regLocLoading}
+                                  className="reg-trailing loc-btn"
+                                >
+                                  <Crosshair className={regLocLoading ? 'animate-spin' : ''} />
+                                  <span>{regLocLoading ? t('locatingLabel') : t('currentLocationBtn')}</span>
+                                </button>
+                              </div>
+                              <div className="input-wrap">
+                                <input
+                                  type="text" required value={regLocation} onChange={(e) => setRegLocation(e.target.value)}
+                                  placeholder={t('streetLandmarkPlaceholder')}
+                                />
+                              </div>
+                              {/* GPS coordinates captured via the button above are reverse-geocoded
+                        server-side and used to silently fill City/State/PIN Code (regCity/
+                        regState/regPinCode - required by the backend but no longer shown as
+                        separate fields), as well as being shown here so the owner can confirm
+                        what will be stored alongside the free-text address. */}
+                              {regLat != null && regLng != null && (
+                                <p style={{ marginTop: 6, fontSize: 11, color: 'var(--text-3)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+                                  <MapPin style={{ width: 11, height: 11 }} /> {regLat.toFixed(5)}, {regLng.toFixed(5)}
+                                </p>
+                              )}
+                              {regLocError && (
+                                <div style={{ marginTop: 6 }}>
+                                  <p style={{ fontSize: 11, color: 'var(--amber)', fontWeight: 700 }}>{regLocError}</p>
+                                  {regLocErrorKind === 'disabled' && (
+                                    <button
+                                      type="button"
+                                      onClick={openDeviceLocationSettings}
+                                      className="cursor-pointer select-none"
+                                      style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
+                                    >
+                                      {t('openLocationSettingsBtn')}
+                                    </button>
+                                  )}
+                                  {regLocErrorKind === 'permission' && IS_NATIVE_APP && (
+                                    <button
+                                      type="button"
+                                      onClick={openAppSettings}
+                                      className="cursor-pointer select-none"
+                                      style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800, background: 'none', border: 'none', padding: 0, textDecoration: 'underline', marginTop: 2 }}
+                                    >
+                                      {t('openAppSettingsBtn')}
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                            <div className="reg-field">
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><CreditCard /></div><b>{t('aadhaarNumberLabel')}</b></div>
+                              <div className="input-wrap">
+                                <input
+                                  type="text" inputMode="numeric" maxLength={12} value={regAadhaarNumber} onChange={(e) => setRegAadhaarNumber(e.target.value.replace(/\D/g, ''))}
+                                  placeholder={t('digitAadhaarOptionalPlaceholder')}
+                                />
+                              </div>
+                            </div>
+                            <div className="reg-field">
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><BadgePercent /></div><b>{t('referralCodeLabel')}</b></div>
+                              <div className="input-wrap">
+                                <input
+                                  type="text" value={regReferralCode} onChange={(e) => setRegReferralCode(e.target.value.toUpperCase())}
+                                  placeholder={t('referralCodePlaceholder')}
+                                />
+                              </div>
+                            </div>
+                            <div className="reg-field">
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange, #f59e0b)' }}><Tag /></div><b>{t('fieldCategory')} <span className="req">*</span></b></div>
+                              <CustomSelect
+                                value={regCategoryId} onChange={setRegCategoryId}
+                                disabled={regCategoriesLoading}
+                                placeholder={regCategoriesLoading ? t('loadingCategoriesEllipsis') : t('selectShopCategoryPlaceholder')}
+                                emptyLabel={t('noShopCategoriesAvailableMsg')}
+                                options={regCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
+                              />
+                            </div>
+                            <div className="reg-field">
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>{t('emailAddressLabel')} <span className="req">*</span></b></div>
+                              <div className="input-wrap">
+                                <input
+                                  type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
+                                  placeholder="you@example.com"
+                                />
+                              </div>
+                            </div>
+                            <div className="reg-field">
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('mobileNumberLabel')} <span className="req">*</span></b></div>
+                              <div className="input-wrap">
+                                <input
+                                  type="tel" required value={regPhone} disabled={regOtpVerified}
+                                  onChange={(e) => { setRegPhone(e.target.value); setRegOtpSent(false); setRegOtpVerified(false); setRegOtpDevCode(''); }}
+                                  placeholder={t('digitMobilePlaceholder')} style={{ opacity: regOtpVerified ? 0.6 : 1 }}
+                                />
+                              </div>
+                            </div>
+
+                            {regOtpVerified ? (
+                              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--green)', fontSize: 12, fontWeight: 800 }}>
+                                <CheckCircle2 className="h-4 w-4" /> {t('mobileNumberVerifiedMsg')}
+                              </div>
+                            ) : !regOtpSent ? (
+                              <button
+                                type="button" onClick={handleSendRegOtp} disabled={regOtpLoading}
+                                className="btn btn-primary" style={{ width: '100%' }}
+                              >
+                                {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}
+                                {t('sendOtpToVerifyBtn')}
+                              </button>
+                            ) : (
+                              <div>
+                                {regOtpError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginBottom: 10 }}>{regOtpError}</div>}
+
+                                {regOtpDevCode && (
+                                  <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 12 }}>
+                                    <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
+                                      {t('testingModeNoProviderTemplate').split('{provider}')[0]}SMS{t('testingModeNoProviderTemplate').split('{provider}')[1]}
+                                    </p>
+                                    <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{regOtpDevCode}</p>
+                                  </div>
+                                )}
+
+                                <div className="flex gap-2">
+                                  <input
+                                    type="text" maxLength={4} value={regOtpInput} onChange={(e) => setRegOtpInput(e.target.value.replace(/\D/g, ''))}
+                                    placeholder="OTP"
+                                    style={{ flex: 1, background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '11px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
+                                  />
+                                  <button type="button" onClick={handleVerifyRegOtp} disabled={regOtpLoading} className="btn btn-primary">
+                                    {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyBtnLabel')}
+                                  </button>
+                                </div>
+                                <button
+                                  type="button" onClick={() => { setRegOtpSent(false); setRegOtpDevCode(''); setRegOtpInput(''); }}
+                                  style={{ display: 'block', margin: '10px auto 0', fontSize: 11, color: 'var(--text-3)', fontWeight: 700, textDecoration: 'underline' }}
+                                >
+                                  {t('resendOtpBtn')}
+                                </button>
+                              </div>
+                            )}
+
+                            <div className="reg-field" style={{ marginTop: 13 }}>
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('passwordLabel')} <span className="req">*</span></b></div>
+                              <div className="input-wrap">
+                                <input
+                                  type={showRegPassword ? "text" : "password"} required minLength={6} value={regPassword} onChange={(e) => setRegPassword(e.target.value)}
+                                  placeholder={t('min6CharactersPlaceholder')} style={{ paddingRight: 42 }}
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => setShowRegPassword(!showRegPassword)}
+                                  className="pwd-toggle-btn"
+                                  style={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-3)' }}
+                                >
+                                  {showRegPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+
+                          <label className="flex items-center gap-2" style={{ marginTop: 16, cursor: 'pointer', fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)' }}>
+                            <input
+                              type="checkbox" checked={regTermsAccepted}
+                              onChange={(e) => setRegTermsAccepted(e.target.checked)}
+                              style={{ width: 16, height: 16, flexShrink: 0 }}
+                            />
+                            <span>
+                              {t('agreeToTermsPrefix')}{' '}
+                              <button
+                                type="button" onClick={() => setShowTermsModal(true)}
+                                style={{ color: 'var(--gold)', fontWeight: 800, textDecoration: 'underline', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
+                              >
+                                {t('termsAndConditionsLinkLabel')}
+                              </button>
+                            </span>
+                          </label>
+
+                          <div className="flex justify-end" style={{ marginTop: 20 }}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!regShopName || !regOwnerName || !regCategoryId || !regEmail || !regPhone || !regLocation) {
+                                  alert(t('pleaseFillRequiredRegFieldsMsg'));
+                                  return;
+                                }
+                                if (!regCity || !regState || !regPinCode) {
+                                  alert(t('pleaseUseCurrentLocationMsg'));
+                                  return;
+                                }
+                                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
+                                  alert(t('pleaseEnterValidEmailMsg'));
+                                  return;
+                                }
+                                if (!PHONE_REGEX.test(regPhone)) {
+                                  alert(`${t('mobileNumberLabel')}: ${PHONE_REGEX_MESSAGE}`);
+                                  return;
+                                }
+                                if (!/^\d{6}$/.test(regPinCode)) {
+                                  alert(t('pinCodeMustBe6DigitsMsg'));
+                                  return;
+                                }
+                                if (!regTermsAccepted) {
+                                  alert(t('pleaseAcceptTermsMsg'));
+                                  return;
+                                }
+                                if (regAadhaarNumber && !/^\d{12}$/.test(regAadhaarNumber)) {
+                                  alert(t('aadhaarMustBe12DigitsMsg'));
+                                  return;
+                                }
+                                if (!regOtpVerified) {
+                                  alert(t('pleaseVerifyMobileOtpMsg'));
+                                  return;
+                                }
+                                if (!regPassword || regPassword.length < 6) {
+                                  alert(t('regPasswordMinLengthMsg'));
+                                  return;
+                                }
+                                setRegStep(2);
+                              }}
+                              className="btn btn-primary reg-submit-btn"
+                            >
+                              {t('btnContinue')} <ArrowRight />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {showTermsModal && createPortal(
+                        <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.85)' }}>
+                          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 620, margin: 'auto', padding: 28, maxHeight: '85vh', overflowY: 'auto' }}>
+                            <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
+                              <h2 style={{ fontSize: 17 }}>{TERMS_AND_CONDITIONS_TITLE}</h2>
+                              <button type="button" onClick={() => setShowTermsModal(false)} className="icon-btn">
+                                <X className="h-4 w-4" />
+                              </button>
+                            </div>
+                            <p style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 500, lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+                              {TERMS_AND_CONDITIONS_BODY}
+                            </p>
+                            <div className="flex justify-end" style={{ marginTop: 20 }}>
+                              <button
+                                type="button"
+                                onClick={() => setShowTermsModal(false)}
+                                className="btn btn-primary"
+                              >
+                                {t('btnClose')}
+                              </button>
+                            </div>
+                          </div>
+                        </div>,
+                        document.body
+                      )}
+
+                      {/* STEP 2: Plan & Payment - combined onto a single screen so the
                 shop owner picks a subscription plan and settles payment
                 without an extra "Continue to payment" click/screen. */}
-            {regStep === 2 && (
-              <form onSubmit={handleRegCheckout} className="animate-fade-in relative overflow-hidden">
-                {regPayProcessing && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: 'rgba(10,9,8,0.92)', zIndex: 20 }}>
-                    <div className="relative w-12 h-12 flex items-center justify-center">
-                      <span className="absolute inset-0 rounded-full" style={{ border: '4px solid var(--gold-dim)' }}></span>
-                      <span className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid transparent', borderTopColor: 'var(--gold)' }}></span>
+                      {regStep === 2 && (
+                        <form onSubmit={handleRegCheckout} className="animate-fade-in relative overflow-hidden">
+                          {regPayProcessing && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: 'rgba(10,9,8,0.92)', zIndex: 20 }}>
+                              <div className="relative w-12 h-12 flex items-center justify-center">
+                                <span className="absolute inset-0 rounded-full" style={{ border: '4px solid var(--gold-dim)' }}></span>
+                                <span className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid transparent', borderTopColor: 'var(--gold)' }}></span>
+                              </div>
+                              <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('settlingPaymentEllipsis')}</h3>
+                            </div>
+                          )}
+
+                          <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', padding: 14, borderRadius: 14, border: '1px solid var(--border-2)', marginBottom: 18, fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>
+                            <span>{t('payableAmountLabel')}</span>
+                            <span style={{ fontWeight: 800, color: 'var(--gold)', fontSize: 16, fontFamily: 'var(--display)' }}>
+                              Rs. {Number(regSubscriptionPrice).toFixed(2)}
+                            </span>
+                          </div>
+
+                          <div style={{ marginBottom: 18 }}>
+                            <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>{t('choosePaymentChannelLabel')}</label>
+                            <div className="grid grid-cols-2 gap-2">
+                              <button
+                                type="button" onClick={() => setRegPayMethod('card')}
+                                className={`store-tab ${regPayMethod === 'card' ? 'active' : ''}`}
+                                style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
+                              >
+                                <CreditCard className="h-4 w-4" />
+                                <span style={{ fontSize: 10 }}>{t('creditCardLabel')}</span>
+                              </button>
+                              <button
+                                type="button" onClick={() => setRegPayMethod('upi')}
+                                className={`store-tab ${regPayMethod === 'upi' ? 'active' : ''}`}
+                                style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
+                              >
+                                <QrCode className="h-4 w-4" />
+                                <span style={{ fontSize: 10 }}>{t('upiQrScanLabel')}</span>
+                              </button>
+                            </div>
+                          </div>
+
+                          {regPayMethod === 'card' ? (
+                            <div className="animate-fade-in reg-section">
+                              <div className="reg-field">
+                                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>{t('cardNumberLabel')} <span className="req">*</span></b></div>
+                                <div className="input-wrap">
+                                  <input
+                                    type="text" required maxLength={16} placeholder="4111 2222 3333 4444" value={regCardNumber} onChange={(e) => setRegCardNumber(e.target.value.replace(/\D/g, ''))}
+                                    style={{ fontFamily: 'monospace' }}
+                                  />
+                                </div>
+                              </div>
+                              <div className="reg-field">
+                                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>{t('cardholderNameLabel')} <span className="req">*</span></b></div>
+                                <div className="input-wrap">
+                                  <input
+                                    type="text" required placeholder="RAJESH KUMAR" value={regCardHolder} onChange={(e) => setRegCardHolder(e.target.value.toUpperCase())}
+                                  />
+                                </div>
+                              </div>
+                              <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                                <div className="reg-field" style={{ marginBottom: 0 }}>
+                                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Calendar /></div><b>{t('expiryLabel')} <span className="req">*</span></b></div>
+                                  <div className="input-wrap">
+                                    <input
+                                      type="text" required maxLength={5} placeholder="MM/YY" value={regCardExpiry} onChange={(e) => setRegCardExpiry(e.target.value)}
+                                      style={{ textAlign: 'center' }}
+                                    />
+                                  </div>
+                                </div>
+                                <div className="reg-field" style={{ marginBottom: 0 }}>
+                                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('cvvLabel')} <span className="req">*</span></b></div>
+                                  <div className="input-wrap">
+                                    <input
+                                      type="password" required maxLength={3} placeholder="***" value={regCardCvv} onChange={(e) => setRegCardCvv(e.target.value.replace(/\D/g, ''))}
+                                      style={{ textAlign: 'center', fontFamily: 'monospace' }}
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="animate-fade-in" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 24, borderRadius: 16, textAlign: 'center' }}>
+                              <QrCode className="h-12 w-12" style={{ color: 'var(--gold)', margin: '0 auto 12px' }} />
+                              <p style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 600, marginBottom: 8 }}>{t('scanQrCodeAppsDesc')}</p>
+                              <span style={{ fontWeight: 800, fontSize: 13, fontFamily: 'monospace', color: 'var(--text-0)' }}>UPI: keeplace.register@icici</span>
+                            </div>
+                          )}
+
+                          <div className="flex gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
+                            <button type="button" onClick={() => setRegStep(1)} className="btn btn-ghost" style={{ flex: 1 }}>
+                              {t('btnBack')}
+                            </button>
+                            <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>
+                              {t('paySettleSetupBtn')}
+                            </button>
+                          </div>
+                        </form>
+                      )}
                     </div>
-                    <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('settlingPaymentEllipsis')}</h3>
-                  </div>
-                )}
-
-                <div style={{ marginBottom: 20 }}>
-                  <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>{t('chooseSubscriptionPlanLabel')}</label>
-                  <div className="store-tab active" style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '10px 8px' }}>
-                    <span>{t('yearlyPlan')}</span>
-                    <span style={{ fontSize: 9, opacity: 0.75 }}>Rs. {regSubscriptionPrice}/yr</span>
-                  </div>
+                  )}
                 </div>
-
-                <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', padding: 14, borderRadius: 14, border: '1px solid var(--border-2)', marginBottom: 18, fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>
-                  <span>{t('payableAmountLabel')}</span>
-                  <span style={{ fontWeight: 800, color: 'var(--gold)', fontSize: 16, fontFamily: 'var(--display)' }}>
-                    Rs. {Number(regSubscriptionPrice).toFixed(2)}
-                  </span>
-                </div>
-
-                <div style={{ marginBottom: 18 }}>
-                  <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>{t('choosePaymentChannelLabel')}</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button" onClick={() => setRegPayMethod('card')}
-                      className={`store-tab ${regPayMethod === 'card' ? 'active' : ''}`}
-                      style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
-                    >
-                      <CreditCard className="h-4 w-4" />
-                      <span style={{ fontSize: 10 }}>{t('creditCardLabel')}</span>
-                    </button>
-                    <button
-                      type="button" onClick={() => setRegPayMethod('upi')}
-                      className={`store-tab ${regPayMethod === 'upi' ? 'active' : ''}`}
-                      style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
-                    >
-                      <QrCode className="h-4 w-4" />
-                      <span style={{ fontSize: 10 }}>{t('upiQrScanLabel')}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {regPayMethod === 'card' ? (
-                  <div className="animate-fade-in reg-section">
-                    <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>{t('cardNumberLabel')} <span className="req">*</span></b></div>
-                      <div className="input-wrap">
-                        <input
-                          type="text" required maxLength={16} placeholder="4111 2222 3333 4444" value={regCardNumber} onChange={(e) => setRegCardNumber(e.target.value.replace(/\D/g, ''))}
-                          style={{ fontFamily: 'monospace' }}
-                        />
-                      </div>
-                    </div>
-                    <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>{t('cardholderNameLabel')} <span className="req">*</span></b></div>
-                      <div className="input-wrap">
-                        <input
-                          type="text" required placeholder="RAJESH KUMAR" value={regCardHolder} onChange={(e) => setRegCardHolder(e.target.value.toUpperCase())}
-                        />
-                      </div>
-                    </div>
-                    <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                      <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Calendar /></div><b>{t('expiryLabel')} <span className="req">*</span></b></div>
-                        <div className="input-wrap">
-                          <input
-                            type="text" required maxLength={5} placeholder="MM/YY" value={regCardExpiry} onChange={(e) => setRegCardExpiry(e.target.value)}
-                            style={{ textAlign: 'center' }}
-                          />
-                        </div>
-                      </div>
-                      <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('cvvLabel')} <span className="req">*</span></b></div>
-                        <div className="input-wrap">
-                          <input
-                            type="password" required maxLength={3} placeholder="***" value={regCardCvv} onChange={(e) => setRegCardCvv(e.target.value.replace(/\D/g, ''))}
-                            style={{ textAlign: 'center', fontFamily: 'monospace' }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="animate-fade-in" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 24, borderRadius: 16, textAlign: 'center' }}>
-                    <QrCode className="h-12 w-12" style={{ color: 'var(--gold)', margin: '0 auto 12px' }} />
-                    <p style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 600, marginBottom: 8 }}>{t('scanQrCodeAppsDesc')}</p>
-                    <span style={{ fontWeight: 800, fontSize: 13, fontFamily: 'monospace', color: 'var(--text-0)' }}>UPI: keeplace.register@icici</span>
-                  </div>
-                )}
-
-                <div className="flex gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
-                  <button type="button" onClick={() => setRegStep(1)} className="btn btn-ghost" style={{ flex: 1 }}>
-                    {t('btnBack')}
-                  </button>
-                  <button type="submit" className="btn btn-primary" style={{ flex: 2 }}>
-                    {t('paySettleSetupBtn')}
-                  </button>
-                </div>
-              </form>
+              </div>
             )}
           </div>
-        )}
-      </div>
-    </div>
-  )}
-        </div>
         )
       ) : (
         <div className="min-h-[calc(100vh-40px)] flex flex-col md:flex-row">
@@ -7938,9 +7888,9 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           Support card spanning both columns. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: t('searchKeysCardTitle'), description: t('findDigitizeKeysDesc'), icon: SearchKeysIcon, iconVariant: 'flat-icon', accent: 'var(--pink)', onClick: () => setActiveTab('search-keys') },
         { title: t('newListingBtn'), description: t('addMachinesCardDesc'), icon: Plus, iconVariant: 'flat-icon', accent: 'var(--jgreen)', onClick: goToAddMachines },
         ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, imgScale: c.imgScale, accent: c.accent, onClick: () => goToProductType(c.type) })),
+        { title: t('searchKeysCardTitle'), description: t('findDigitizeKeysDesc'), icon: SearchKeysIcon, iconVariant: 'flat-icon', accent: 'var(--pink)', onClick: () => setActiveTab('search-keys') },
         { title: t('offersLabel'), description: t('everyActiveAdOfferDesc'), icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
         { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
       ]} />
@@ -8388,87 +8338,87 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           }
 
           return (
-          <table className="kee-table">
-            <thead>
-              <tr>
-                <th>{t('shopDetails')}</th>
-                <th>{t('adminContact')}</th>
-                <th>{t('activePlan')}</th>
-                <th>{t('validUntil')}</th>
-                <th>{t('diskStorage')}</th>
-                <th style={{ textAlign: 'center' }}>{t('status')}</th>
-                <th style={{ textAlign: 'right' }}>{t('actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredShops.map(s => (
-                <tr key={s.id}>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div className={`icon-badge ${s.isActive ? 'jgreen' : 'rose'}`} style={{ width: 34, height: 34, borderRadius: 10 }}>
-                        <Store style={{ width: 16, height: 16 }} />
-                      </div>
-                      <div>
-                        <div className="cell-primary">{s.name}</div>
-                        <div className="cell-sub">ID: {s.id}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="cell-primary" style={{ fontSize: 13 }}>{s.users?.[0]?.name || 'N/A'}</div>
-                    <div className="cell-sub">{s.users?.[0]?.email || ''}</div>
-                  </td>
-                  <td>
-                    <span className="badge badge-gold"><span className="dot" />{s.subscriptions?.[0]?.plan || 'N/A'}</span>
-                  </td>
-                  <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
-                    {s.subscriptions?.[0]?.endDate ? new Date(s.subscriptions[0].endDate).toLocaleDateString() : 'N/A'}
-                  </td>
-                  <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
-                    {(Number(s.storageUsed || 0) / (1024 * 1024)).toFixed(2)} MB
-                  </td>
-                  <td style={{ textAlign: 'center' }}>
-                    <button
-                      onClick={() => toggleShopStatus(s)}
-                      title={t('toggleShopActiveStatusTitle')}
-                      className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`}
-                      style={{ border: 'none', cursor: 'pointer' }}
-                    >
-                      <span className="dot" />{s.isActive ? t('active') : t('suspended')}
-                    </button>
-                  </td>
-                  <td>
-                    <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
-                      <button
-                        onClick={() => handleEditShopClick(s)}
-                        className="icon-btn"
-                        title={t('editWorkspace')}
-                      >
-                        <Settings />
-                      </button>
-                      <button
-                        onClick={() => {
-                          setSelectedShop(s);
-                          setShowSubModal(true);
-                        }}
-                        className="icon-btn"
-                        title={t('managePlan')}
-                      >
-                        <DollarSign />
-                      </button>
-                      <button
-                        onClick={() => setFullSettingsShopId(s.id)}
-                        className="icon-btn"
-                        title={t('manageShopSettingsTitle')}
-                      >
-                        <ShieldCheck />
-                      </button>
-                    </div>
-                  </td>
+            <table className="kee-table">
+              <thead>
+                <tr>
+                  <th>{t('shopDetails')}</th>
+                  <th>{t('adminContact')}</th>
+                  <th>{t('activePlan')}</th>
+                  <th>{t('validUntil')}</th>
+                  <th>{t('diskStorage')}</th>
+                  <th style={{ textAlign: 'center' }}>{t('status')}</th>
+                  <th style={{ textAlign: 'right' }}>{t('actions')}</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredShops.map(s => (
+                  <tr key={s.id}>
+                    <td>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div className={`icon-badge ${s.isActive ? 'jgreen' : 'rose'}`} style={{ width: 34, height: 34, borderRadius: 10 }}>
+                          <Store style={{ width: 16, height: 16 }} />
+                        </div>
+                        <div>
+                          <div className="cell-primary">{s.name}</div>
+                          <div className="cell-sub">ID: {s.id}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="cell-primary" style={{ fontSize: 13 }}>{s.users?.[0]?.name || 'N/A'}</div>
+                      <div className="cell-sub">{s.users?.[0]?.email || ''}</div>
+                    </td>
+                    <td>
+                      <span className="badge badge-gold"><span className="dot" />{s.subscriptions?.[0]?.plan || 'N/A'}</span>
+                    </td>
+                    <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
+                      {s.subscriptions?.[0]?.endDate ? new Date(s.subscriptions[0].endDate).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
+                      {(Number(s.storageUsed || 0) / (1024 * 1024)).toFixed(2)} MB
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <button
+                        onClick={() => toggleShopStatus(s)}
+                        title={t('toggleShopActiveStatusTitle')}
+                        className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`}
+                        style={{ border: 'none', cursor: 'pointer' }}
+                      >
+                        <span className="dot" />{s.isActive ? t('active') : t('suspended')}
+                      </button>
+                    </td>
+                    <td>
+                      <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
+                        <button
+                          onClick={() => handleEditShopClick(s)}
+                          className="icon-btn"
+                          title={t('editWorkspace')}
+                        >
+                          <Settings />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedShop(s);
+                            setShowSubModal(true);
+                          }}
+                          className="icon-btn"
+                          title={t('managePlan')}
+                        >
+                          <DollarSign />
+                        </button>
+                        <button
+                          onClick={() => setFullSettingsShopId(s.id)}
+                          className="icon-btn"
+                          title={t('manageShopSettingsTitle')}
+                        >
+                          <ShieldCheck />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           );
         })()}
       </div>
@@ -9195,52 +9145,52 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             {t('noCustomerRecordsMatch')}
           </p>
         ) : (
-        <table className="kee-table">
-          <thead>
-            <tr>
-              <th>{t('tenantWorkspaceCol')}</th>
-              <th>{t('customerCol')}</th>
-              <th>{t('phoneCol')}</th>
-              <th>{t('keyCodeCol')}</th>
-              <th>{t('registeredCol')}</th>
-              <th style={{ textAlign: 'right' }}>{t('actions')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {customers.map(c => (
-              <tr key={c.id}>
-                <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.shop ? c.shop.name : t('shopWorkspaceFallback')}</td>
-                <td>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div className={`icon-badge ${c.photoUrl ? 'jgreen' : 'rose'}`} style={{ width: 34, height: 34, borderRadius: 10 }}>
-                      <User style={{ width: 16, height: 16 }} />
-                    </div>
-                    <div>
-                      <div className="cell-primary">{c.name}</div>
-                      <div className="cell-sub">{c.photoUrl ? t('photoOnFile') : t('photoPending')}</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
-                <td>
-                  <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
-                  {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
-                </td>
-                <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
-                  {new Date(c.createdAt).toLocaleDateString()}
-                  <div className="cell-sub">{new Date(c.createdAt).toLocaleTimeString()}</div>
-                </td>
-                <td>
-                  <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
-                    <button onClick={() => setViewCust(c)} className="icon-btn" title={t('viewComplianceFile')}>
-                      <Eye />
-                    </button>
-                  </div>
-                </td>
+          <table className="kee-table">
+            <thead>
+              <tr>
+                <th>{t('tenantWorkspaceCol')}</th>
+                <th>{t('customerCol')}</th>
+                <th>{t('phoneCol')}</th>
+                <th>{t('keyCodeCol')}</th>
+                <th>{t('registeredCol')}</th>
+                <th style={{ textAlign: 'right' }}>{t('actions')}</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {customers.map(c => (
+                <tr key={c.id}>
+                  <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.shop ? c.shop.name : t('shopWorkspaceFallback')}</td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <div className={`icon-badge ${c.photoUrl ? 'jgreen' : 'rose'}`} style={{ width: 34, height: 34, borderRadius: 10 }}>
+                        <User style={{ width: 16, height: 16 }} />
+                      </div>
+                      <div>
+                        <div className="cell-primary">{c.name}</div>
+                        <div className="cell-sub">{c.photoUrl ? t('photoOnFile') : t('photoPending')}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
+                  <td>
+                    <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
+                    {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
+                  </td>
+                  <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
+                    {new Date(c.createdAt).toLocaleDateString()}
+                    <div className="cell-sub">{new Date(c.createdAt).toLocaleTimeString()}</div>
+                  </td>
+                  <td>
+                    <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
+                      <button onClick={() => setViewCust(c)} className="icon-btn" title={t('viewComplianceFile')}>
+                        <Eye />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
 
@@ -11114,7 +11064,7 @@ function KeysSearchView({ t, api, searchDispatch }) {
     setLoading(true);
     try {
       const allMasterKeys = await api.getMasterKeys();
-      
+
       let matchedKeys = allMasterKeys;
       if (query) {
         const q = query.toLowerCase();
@@ -11384,7 +11334,7 @@ function KeysSearchView({ t, api, searchDispatch }) {
                                   ? JSON.parse(selectedResult.customer.shop.companyDetails)
                                   : selectedResult.customer.shop.companyDetails;
                                 shopMobile = details?.phone || selectedResult.customer.shop.phone || 'N/A';
-                              } catch(e) {
+                              } catch (e) {
                                 shopMobile = selectedResult.customer.shop.phone || 'N/A';
                               }
                             }
@@ -11583,7 +11533,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
           .toLowerCase();
         const matchedDistrict = rawDistrict
           ? list.find(dt => dt.toLowerCase() === rawDistrict)
-            || list.find(dt => dt.toLowerCase().includes(rawDistrict) || rawDistrict.includes(dt.toLowerCase()))
+          || list.find(dt => dt.toLowerCase().includes(rawDistrict) || rawDistrict.includes(dt.toLowerCase()))
           : null;
         if (matchedDistrict) setDistrict(matchedDistrict);
       }
@@ -11941,240 +11891,240 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
       <div className="card wizard-card">
         <div className="wizard-body reg-compact">
-              {superAdminMode && (
-                <div className="reg-section">
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Store /></div><b>{t('shopFieldLabel')} <span className="req">*</span></b></div>
-                    <CustomSelect
-                      value={selectedShopId} onChange={setSelectedShopId}
-                      placeholder={t('selectShopPlaceholder')}
-                      options={shops.map(s => ({ value: s.id, label: s.name }))}
-                    />
-                    <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 8 }}>
-                      {t('customerRegisteredUnderShopMsg')}
-                    </p>
-                  </div>
-                </div>
-              )}
+          {superAdminMode && (
+            <div className="reg-section">
+              <div className="reg-field">
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><Store /></div><b>{t('shopFieldLabel')} <span className="req">*</span></b></div>
+                <CustomSelect
+                  value={selectedShopId} onChange={setSelectedShopId}
+                  placeholder={t('selectShopPlaceholder')}
+                  options={shops.map(s => ({ value: s.id, label: s.name }))}
+                />
+                <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 8 }}>
+                  {t('customerRegisteredUnderShopMsg')}
+                </p>
+              </div>
+            </div>
+          )}
 
-              {duplicateKeyWarning && (
-                <div className="animate-fade-in" style={{ display: 'flex', gap: 12, background: 'var(--red-dim)', border: '1px solid rgba(242,86,77,0.3)', borderRadius: 16, padding: 16, marginBottom: 20 }}>
-                  <div className="icon-badge red" style={{ width: 36, height: 36, borderRadius: 11 }}><AlertTriangle className="h-4 w-4" /></div>
-                  <div>
-                    <div style={{ color: 'var(--red)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>{t('duplicateKeyDetectedLabel')}</div>
-                    <p style={{ color: 'var(--text-2)', fontSize: 12, fontWeight: 600, marginTop: 4, lineHeight: 1.5 }}>
-                      {t('duplicateKeyDetectedDescTemplate').split('{code}')[0]}<b style={{ color: 'var(--text-0)' }}>{keyNumber}</b>{t('duplicateKeyDetectedDescTemplate').split('{code}')[1]}
-                    </p>
-                  </div>
-                </div>
-              )}
+          {duplicateKeyWarning && (
+            <div className="animate-fade-in" style={{ display: 'flex', gap: 12, background: 'var(--red-dim)', border: '1px solid rgba(242,86,77,0.3)', borderRadius: 16, padding: 16, marginBottom: 20 }}>
+              <div className="icon-badge red" style={{ width: 36, height: 36, borderRadius: 11 }}><AlertTriangle className="h-4 w-4" /></div>
+              <div>
+                <div style={{ color: 'var(--red)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>{t('duplicateKeyDetectedLabel')}</div>
+                <p style={{ color: 'var(--text-2)', fontSize: 12, fontWeight: 600, marginTop: 4, lineHeight: 1.5 }}>
+                  {t('duplicateKeyDetectedDescTemplate').split('{code}')[0]}<b style={{ color: 'var(--text-0)' }}>{keyNumber}</b>{t('duplicateKeyDetectedDescTemplate').split('{code}')[1]}
+                </p>
+              </div>
+            </div>
+          )}
 
-              <div className="reg-section">
-                <div className="form-grid">
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('fullCustomerNameLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder={t('customerNamePlaceholderEg')} />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>{t('vehicleNumberLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input type="text" required value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder={t('vehicleNumberPlaceholderEg')} />
-                    </div>
-                  </div>
-                </div>
-                <div className="form-grid">
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyCodeKeyNumberLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" required value={keyNumber}
-                        onChange={(e) => { setKeyNumber(e.target.value); setDuplicateKeyWarning(false); }}
-                        placeholder={t('keyCodeEnterPlaceholderEg')}
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>{t('keyTypeLabel')}</b></div>
-                    <CustomSelect
-                      value={keyType} onChange={setKeyType}
-                      placeholder={t('selectKeyTypePlaceholder')}
-                      options={keyTypes.map(kt => ({ value: kt.name, label: kt.name }))}
-                    />
-                  </div>
-                </div>
-                <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
-                  <div style={{ display: 'flex', gap: 10 }}>
-                    <div className="input-wrap" style={{ flex: 1 }}>
-                      <input
-                        type="tel" required value={phone}
-                        onChange={(e) => { setPhone(e.target.value); setOtpVerified(false); setOtpSent(false); setOtpDevCode(''); }}
-                        placeholder={t('phoneNumberPlaceholderEg')}
-                      />
-                    </div>
-                    {!otpVerified && (
-                      <button
-                        type="button" onClick={handleSendOtp}
-                        disabled={!phone || !keyNumber || (otpMethod === 'email' && !otpTestEmail)}
-                        className="btn btn-primary btn-sm"
-                      >
-                        {otpSent ? t('resendBtn') : t('sendOtpBtn')}
-                      </button>
-                    )}
-                  </div>
-                  {!otpVerified && !otpSent && (
-                    <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                      <button
-                        type="button" onClick={() => setOtpMethod('phone')}
-                        className={`store-tab ${otpMethod === 'phone' ? 'active' : ''}`}
-                      >
-                        <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('smsToPhoneLabel')}</span>
-                      </button>
-                      <button
-                        type="button" onClick={() => setOtpMethod('email')}
-                        className={`store-tab ${otpMethod === 'email' ? 'active' : ''}`}
-                      >
-                        <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('emailTestingLabel')}</span>
-                      </button>
-                      {otpMethod === 'email' && (
-                        <input
-                          type="email" value={otpTestEmail} onChange={(e) => setOtpTestEmail(e.target.value)}
-                          placeholder={t('testEmailPlaceholder')}
-                          style={{ flex: '1 1 220px', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 10, padding: '8px 12px', fontSize: 12, outline: 'none' }}
-                        />
-                      )}
-                    </div>
-                  )}
-                </div>
-                <div className="reg-field" style={{ marginBottom: 0 }}>
-                  <div className="reg-field-label">
-                    <div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div>
-                    <b>{t('addressLineLabel')} <span className="req">*</span></b>
-                    <button
-                      type="button"
-                      onClick={captureCustomerLocation}
-                      disabled={isCapturingGps}
-                      className="reg-trailing loc-btn"
-                    >
-                      <Crosshair className={isCapturingGps ? 'animate-spin' : ''} />
-                      <span>{isCapturingGps ? t('locatingLabel') : t('currentLocationBtn')}</span>
-                    </button>
-                  </div>
-                  <div className="input-wrap">
-                    <input type="text" required value={addressLine} onChange={(e) => setAddressLine(e.target.value)} placeholder={t('addressLinePlaceholderEg')} />
-                  </div>
-                  {latitude && longitude && !gpsError && (
-                    <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>{t('gpsCapturedTemplate').split('{lat}')[0]}{latitude.toFixed(5)}{t('gpsCapturedTemplate').split('{lat}')[1].split('{long}')[0]}{longitude.toFixed(5)}</p>
-                  )}
+          <div className="reg-section">
+            <div className="form-grid">
+              <div className="reg-field">
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('fullCustomerNameLabel')} <span className="req">*</span></b></div>
+                <div className="input-wrap">
+                  <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder={t('customerNamePlaceholderEg')} />
                 </div>
               </div>
+              <div className="reg-field">
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>{t('vehicleNumberLabel')} <span className="req">*</span></b></div>
+                <div className="input-wrap">
+                  <input type="text" required value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder={t('Vehicle Number')} />
+                </div>
+              </div>
+            </div>
+            <div className="form-grid">
+              <div className="reg-field">
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyCodeKeyNumberLabel')} <span className="req">*</span></b></div>
+                <div className="input-wrap">
+                  <input
+                    type="text" required value={keyNumber}
+                    onChange={(e) => { setKeyNumber(e.target.value); setDuplicateKeyWarning(false); }}
+                    placeholder={t('keyCodeEnterPlaceholderEg')}
+                  />
+                </div>
+              </div>
+              <div className="reg-field">
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>{t('keyTypeLabel')}</b></div>
+                <CustomSelect
+                  value={keyType} onChange={setKeyType}
+                  placeholder={t('selectKeyTypePlaceholder')}
+                  options={keyTypes.map(kt => ({ value: kt.name, label: kt.name }))}
+                />
+              </div>
+            </div>
+            <div className="reg-field">
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <div className="input-wrap" style={{ flex: 1 }}>
+                  <input
+                    type="tel" required value={phone}
+                    onChange={(e) => { setPhone(e.target.value); setOtpVerified(false); setOtpSent(false); setOtpDevCode(''); }}
+                    placeholder={t('phoneNumberPlaceholderEg')}
+                  />
+                </div>
+                {!otpVerified && (
+                  <button
+                    type="button" onClick={handleSendOtp}
+                    disabled={!phone || !keyNumber || (otpMethod === 'email' && !otpTestEmail)}
+                    className="btn btn-primary btn-sm"
+                  >
+                    {otpSent ? t('resendBtn') : t('sendOtpBtn')}
+                  </button>
+                )}
+              </div>
+              {!otpVerified && !otpSent && (
+                <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <button
+                    type="button" onClick={() => setOtpMethod('phone')}
+                    className={`store-tab ${otpMethod === 'phone' ? 'active' : ''}`}
+                  >
+                    <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('smsToPhoneLabel')}</span>
+                  </button>
+                  <button
+                    type="button" onClick={() => setOtpMethod('email')}
+                    className={`store-tab ${otpMethod === 'email' ? 'active' : ''}`}
+                  >
+                    <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('emailTestingLabel')}</span>
+                  </button>
+                  {otpMethod === 'email' && (
+                    <input
+                      type="email" value={otpTestEmail} onChange={(e) => setOtpTestEmail(e.target.value)}
+                      placeholder={t('testEmailPlaceholder')}
+                      style={{ flex: '1 1 220px', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 10, padding: '8px 12px', fontSize: 12, outline: 'none' }}
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="reg-field" style={{ marginBottom: 0 }}>
+              <div className="reg-field-label">
+                <div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div>
+                <b>{t('addressLineLabel')} <span className="req">*</span></b>
+                <button
+                  type="button"
+                  onClick={captureCustomerLocation}
+                  disabled={isCapturingGps}
+                  className="reg-trailing loc-btn"
+                >
+                  <Crosshair className={isCapturingGps ? 'animate-spin' : ''} />
+                  <span>{isCapturingGps ? t('locatingLabel') : t('currentLocationBtn')}</span>
+                </button>
+              </div>
+              <div className="input-wrap">
+                <input type="text" required value={addressLine} onChange={(e) => setAddressLine(e.target.value)} placeholder={t('addressLinePlaceholderEg')} />
+              </div>
+              {latitude && longitude && !gpsError && (
+                <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>{t('gpsCapturedTemplate').split('{lat}')[0]}{latitude.toFixed(5)}{t('gpsCapturedTemplate').split('{lat}')[1].split('{long}')[0]}{longitude.toFixed(5)}</p>
+              )}
+            </div>
+          </div>
 
-              {otpSent && !otpVerified && createPortal(
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
-                  <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 420, padding: 28 }}>
-                    <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
-                      <div className="icon-badge orange" style={{ width: 44, height: 44, borderRadius: '50%' }}>
-                        <ShieldCheck style={{ width: 21, height: 21 }} />
+          {otpSent && !otpVerified && createPortal(
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
+              <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 420, padding: 28 }}>
+                <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
+                  <div className="icon-badge orange" style={{ width: 44, height: 44, borderRadius: '50%' }}>
+                    <ShieldCheck style={{ width: 21, height: 21 }} />
+                  </div>
+                  <button type="button" onClick={handleCancelOtpModal} className="icon-btn" title={t('btnClose')}>
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+                <h3 style={{ marginTop: 12, marginBottom: 4 }}>{t('verifyOtpModalTitle')}</h3>
+                <p className="desc" style={{ marginBottom: 18 }}>
+                  {otpMethod === 'email' ? t('enterOtpCodeSentToEmailTemplate').replace('{email}', otpTestEmail) : t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', phone)}
+                </p>
+
+                {otpDevCode && (
+                  <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 16 }}>
+                    <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
+                      {t('testingModeNoProviderTemplate').split('{provider}')[0]}{otpMethod === 'email' ? 'SMTP' : 'SMS'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
+                    </p>
+                    <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{otpDevCode}</p>
+                  </div>
+                )}
+
+                <input
+                  type="text" maxLength={4} value={enteredOtp}
+                  onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
+                  placeholder="1234"
+                  style={{ ...plainInputStyle, textAlign: 'center', fontWeight: 800, letterSpacing: 8, fontSize: 20, marginBottom: 12 }}
+                />
+                {otpError && <p style={{ color: 'var(--red)', fontSize: 11.5, fontWeight: 700, marginBottom: 12 }}>{otpError}</p>}
+
+                <button type="button" onClick={handleVerifyOtp} className="btn btn-primary" style={{ width: '100%', marginBottom: 10 }}>
+                  {t('verifyOtpBtn')}
+                </button>
+                <div className="flex items-center justify-between" style={{ gap: 10 }}>
+                  <button type="button" onClick={handleSendOtp} className="btn btn-ghost btn-sm">
+                    {t('resendBtn')}
+                  </button>
+                  <button type="button" onClick={handleCancelOtpModal} className="btn btn-ghost btn-sm">
+                    {t('btnCancel')}
+                  </button>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
+
+          {otpVerified && (
+            <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--green-dim)', border: '1px solid rgba(62,207,106,0.3)', borderRadius: 14, padding: '12px 16px', marginTop: 20 }}>
+              <Check className="h-4 w-4" style={{ color: 'var(--green)' }} />
+              <span style={{ color: 'var(--green)', fontSize: 12.5, fontWeight: 700 }}>{otpMethod === 'email' ? t('otpVerifiedSuccessEmailMsg') : t('otpVerifiedSuccessPhoneMsg')}</span>
+            </div>
+          )}
+
+          <div className="reg-section">
+            <div className="reg-field">
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>{t('documentTypeLabel')}</b></div>
+              <CustomSelect
+                value={idProofType} onChange={setIdProofType}
+                options={[
+                  { value: 'Aadhaar Card', label: t('aadhaarCardLabel'), disabled: uploadedDocs.some(d => d.type === 'Aadhaar Card') },
+                  { value: 'Driving License', label: t('drivingLicenseLabel'), disabled: uploadedDocs.some(d => d.type === 'Driving License') },
+                  { value: 'PAN Card', label: t('panCardLabel'), disabled: uploadedDocs.some(d => d.type === 'PAN Card') },
+                  { value: 'Voter ID', label: t('voterIdLabel'), disabled: uploadedDocs.some(d => d.type === 'Voter ID') },
+                ]}
+              />
+            </div>
+            {IS_NATIVE_APP && (
+              <button type="button" onClick={handleCaptureDocumentPhoto} className="btn btn-outline btn-sm" style={{ marginBottom: 12 }}>
+                <Camera className="h-4 w-4" /> {t('useCameraBtn')}
+              </button>
+            )}
+            <label htmlFor="docUploadInput" className="dropzone">
+              <div className="icon-badge orange"><UploadCloud className="h-5 w-5" /></div>
+              <div className="dz-title">{t('dropOrBrowseCopyTemplate').replace('{type}', idProofType)}</div>
+              <div className="dz-sub">{t('jpegPngPdfUpTo5MbLabel')}</div>
+              <input type="file" id="docUploadInput" onClick={primeStoragePermission} onChange={handleFileChange} style={{ display: 'none' }} accept="image/jpeg, image/png, application/pdf" />
+            </label>
+            {uploadError && <p style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginTop: 12, textAlign: 'center' }}>{uploadError}</p>}
+
+            {uploadedDocs.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
+                <span className="side-section-label" style={{ padding: 0 }}>{t('stagedIdCopiesTemplate').replace('{count}', uploadedDocs.length)}</span>
+                {uploadedDocs.map((doc, idx) => {
+                  const docColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
+                  const docColor = docColors[idx % docColors.length];
+                  return (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div className={`icon-badge ${docColor}`} style={{ width: 26, height: 26, borderRadius: 8 }}><FileCheck style={{ width: 13, height: 13 }} /></div>
+                        <span style={{ color: 'var(--gold)', fontWeight: 800, fontSize: 12.5, fontFamily: 'var(--display)' }}>{doc.type}</span>
                       </div>
-                      <button type="button" onClick={handleCancelOtpModal} className="icon-btn" title={t('btnClose')}>
+                      <span style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.file.name}</span>
+                      <button type="button" onClick={() => setUploadedDocs(uploadedDocs.filter((_, i) => i !== idx))} className="icon-btn">
                         <X className="h-4 w-4" />
                       </button>
                     </div>
-                    <h3 style={{ marginTop: 12, marginBottom: 4 }}>{t('verifyOtpModalTitle')}</h3>
-                    <p className="desc" style={{ marginBottom: 18 }}>
-                      {otpMethod === 'email' ? t('enterOtpCodeSentToEmailTemplate').replace('{email}', otpTestEmail) : t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', phone)}
-                    </p>
-
-                    {otpDevCode && (
-                      <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 16 }}>
-                        <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                          {t('testingModeNoProviderTemplate').split('{provider}')[0]}{otpMethod === 'email' ? 'SMTP' : 'SMS'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
-                        </p>
-                        <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{otpDevCode}</p>
-                      </div>
-                    )}
-
-                    <input
-                      type="text" maxLength={4} value={enteredOtp}
-                      onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
-                      placeholder="1234"
-                      style={{ ...plainInputStyle, textAlign: 'center', fontWeight: 800, letterSpacing: 8, fontSize: 20, marginBottom: 12 }}
-                    />
-                    {otpError && <p style={{ color: 'var(--red)', fontSize: 11.5, fontWeight: 700, marginBottom: 12 }}>{otpError}</p>}
-
-                    <button type="button" onClick={handleVerifyOtp} className="btn btn-primary" style={{ width: '100%', marginBottom: 10 }}>
-                      {t('verifyOtpBtn')}
-                    </button>
-                    <div className="flex items-center justify-between" style={{ gap: 10 }}>
-                      <button type="button" onClick={handleSendOtp} className="btn btn-ghost btn-sm">
-                        {t('resendBtn')}
-                      </button>
-                      <button type="button" onClick={handleCancelOtpModal} className="btn btn-ghost btn-sm">
-                        {t('btnCancel')}
-                      </button>
-                    </div>
-                  </div>
-                </div>,
-                document.body
-              )}
-
-              {otpVerified && (
-                <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--green-dim)', border: '1px solid rgba(62,207,106,0.3)', borderRadius: 14, padding: '12px 16px', marginTop: 20 }}>
-                  <Check className="h-4 w-4" style={{ color: 'var(--green)' }} />
-                  <span style={{ color: 'var(--green)', fontSize: 12.5, fontWeight: 700 }}>{otpMethod === 'email' ? t('otpVerifiedSuccessEmailMsg') : t('otpVerifiedSuccessPhoneMsg')}</span>
-                </div>
-              )}
-
-              <div className="reg-section">
-                <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>{t('documentTypeLabel')}</b></div>
-                  <CustomSelect
-                    value={idProofType} onChange={setIdProofType}
-                    options={[
-                      { value: 'Aadhaar Card', label: t('aadhaarCardLabel'), disabled: uploadedDocs.some(d => d.type === 'Aadhaar Card') },
-                      { value: 'Driving License', label: t('drivingLicenseLabel'), disabled: uploadedDocs.some(d => d.type === 'Driving License') },
-                      { value: 'PAN Card', label: t('panCardLabel'), disabled: uploadedDocs.some(d => d.type === 'PAN Card') },
-                      { value: 'Voter ID', label: t('voterIdLabel'), disabled: uploadedDocs.some(d => d.type === 'Voter ID') },
-                    ]}
-                  />
-                </div>
-                {IS_NATIVE_APP && (
-                  <button type="button" onClick={handleCaptureDocumentPhoto} className="btn btn-outline btn-sm" style={{ marginBottom: 12 }}>
-                    <Camera className="h-4 w-4" /> {t('useCameraBtn')}
-                  </button>
-                )}
-                <label htmlFor="docUploadInput" className="dropzone">
-                  <div className="icon-badge orange"><UploadCloud className="h-5 w-5" /></div>
-                  <div className="dz-title">{t('dropOrBrowseCopyTemplate').replace('{type}', idProofType)}</div>
-                  <div className="dz-sub">{t('jpegPngPdfUpTo5MbLabel')}</div>
-                  <input type="file" id="docUploadInput" onClick={primeStoragePermission} onChange={handleFileChange} style={{ display: 'none' }} accept="image/jpeg, image/png, application/pdf" />
-                </label>
-                {uploadError && <p style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginTop: 12, textAlign: 'center' }}>{uploadError}</p>}
-
-                {uploadedDocs.length > 0 && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
-                    <span className="side-section-label" style={{ padding: 0 }}>{t('stagedIdCopiesTemplate').replace('{count}', uploadedDocs.length)}</span>
-                    {uploadedDocs.map((doc, idx) => {
-                      const docColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
-                      const docColor = docColors[idx % docColors.length];
-                      return (
-                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                            <div className={`icon-badge ${docColor}`} style={{ width: 26, height: 26, borderRadius: 8 }}><FileCheck style={{ width: 13, height: 13 }} /></div>
-                            <span style={{ color: 'var(--gold)', fontWeight: 800, fontSize: 12.5, fontFamily: 'var(--display)' }}>{doc.type}</span>
-                          </div>
-                          <span style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.file.name}</span>
-                          <button type="button" onClick={() => setUploadedDocs(uploadedDocs.filter((_, i) => i !== idx))} className="icon-btn">
-                            <X className="h-4 w-4" />
-                          </button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                  );
+                })}
               </div>
+            )}
+          </div>
         </div>
 
         <div className="wizard-foot">
@@ -12193,7 +12143,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
             </button>
             <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="reg-action-btn share" title={t('shareViaWhatsAppBtn')}>
               {pdfAction === 'share' ? <RefreshCw className="animate-spin" /> : (
-                <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
+                <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z" /></svg>
               )}
             </button>
             <button type="button" onClick={() => setShowReviewModal(true)} className="btn btn-primary" style={{ minWidth: 150 }}>
@@ -12206,100 +12156,100 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       {showReviewModal && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 620, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
-              <div className="flex items-center justify-between flex-wrap" style={{ gap: 12 }}>
+            <div className="flex items-center justify-between flex-wrap" style={{ gap: 12 }}>
+              <div>
+                <h3>{t('reviewStepLabel')}</h3>
+                <p className="desc" style={{ marginBottom: 0 }}>{t('verifyDetailsBeforeSubmitDesc')}</p>
+              </div>
+              <button type="button" onClick={() => setShowReviewModal(false)} className="icon-btn" title={t('btnClose')}>
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="reg-section" style={{ marginTop: 20 }}>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="icon-badge purple" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><User style={{ width: 16, height: 16 }} /></div>
+                  <div>
+                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('reviewCustomerLabel')}</div>
+                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{name}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="icon-badge blue" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Phone style={{ width: 16, height: 16 }} /></div>
+                  <div>
+                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('reviewPhoneLabel')}</div>
+                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{phone}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="icon-badge orange" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Car style={{ width: 16, height: 16 }} /></div>
+                  <div>
+                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('vehicleNumberLabel')}</div>
+                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{vehicleNumber}</div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="icon-badge pink" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><KeyRound style={{ width: 16, height: 16 }} /></div>
+                  <div>
+                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('keyBlankLabel')}</div>
+                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}{keyType ? ` (${keyType})` : ''}</div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3" style={{ marginTop: 16 }}>
+                <div className="icon-badge teal" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><MapPin style={{ width: 16, height: 16 }} /></div>
                 <div>
-                  <h3>{t('reviewStepLabel')}</h3>
-                  <p className="desc" style={{ marginBottom: 0 }}>{t('verifyDetailsBeforeSubmitDesc')}</p>
-                </div>
-                <button type="button" onClick={() => setShowReviewModal(false)} className="icon-btn" title={t('btnClose')}>
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-
-              <div className="reg-section" style={{ marginTop: 20 }}>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="icon-badge purple" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><User style={{ width: 16, height: 16 }} /></div>
-                    <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('reviewCustomerLabel')}</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{name}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="icon-badge blue" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Phone style={{ width: 16, height: 16 }} /></div>
-                    <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('reviewPhoneLabel')}</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{phone}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="icon-badge orange" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Car style={{ width: 16, height: 16 }} /></div>
-                    <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('vehicleNumberLabel')}</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{vehicleNumber}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="icon-badge pink" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><KeyRound style={{ width: 16, height: 16 }} /></div>
-                    <div>
-                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('keyBlankLabel')}</div>
-                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}{keyType ? ` (${keyType})` : ''}</div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3" style={{ marginTop: 16 }}>
-                  <div className="icon-badge teal" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><MapPin style={{ width: 16, height: 16 }} /></div>
-                  <div>
-                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('registeredAddressLabel')}</div>
-                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{addressLine}</div>
-                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('registeredAddressLabel')}</div>
+                  <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{addressLine}</div>
                 </div>
               </div>
+            </div>
 
-              <div className="reg-section">
-                <div className="flex items-center gap-3" style={{ marginBottom: uploadedDocs.length > 0 ? 14 : 0 }}>
-                  <div className="icon-badge rose" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><FileCheck style={{ width: 16, height: 16 }} /></div>
-                  <div>
-                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('uploadedDocumentsLabel')}</div>
-                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{uploadedDocs.length > 0 ? t('filesAttachedTemplate').replace('{count}', uploadedDocs.length) : t('noneAttachedLabel')}</div>
-                  </div>
+            <div className="reg-section">
+              <div className="flex items-center gap-3" style={{ marginBottom: uploadedDocs.length > 0 ? 14 : 0 }}>
+                <div className="icon-badge rose" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><FileCheck style={{ width: 16, height: 16 }} /></div>
+                <div>
+                  <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('uploadedDocumentsLabel')}</div>
+                  <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{uploadedDocs.length > 0 ? t('filesAttachedTemplate').replace('{count}', uploadedDocs.length) : t('noneAttachedLabel')}</div>
                 </div>
-                {uploadedDocs.length > 0 && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {uploadedDocs.map((doc, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '10px 14px' }}>
-                        <span style={{ color: 'var(--gold)', fontWeight: 800, fontSize: 12.5, fontFamily: 'var(--display)' }}>{doc.type}</span>
-                        <span style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.file.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
-
-              <span className="side-section-label" style={{ padding: 0, display: 'block', marginBottom: 12 }}>{t('reviewLocationLabel')}</span>
-              {latitude && longitude ? (
-                <div className="loc-box">
-                  <div className="loc-info">
-                    <div className="icon-badge green"><Crosshair className="h-5 w-5" /></div>
-                    <div className="loc-text">
-                      <div className="t1">{t('gpsCapturedHeadingLabel')}</div>
-                      <div className="t2">{t('latLongMiddotTemplate').split('{lat}')[0]}{Number(latitude).toFixed(5)}{t('latLongMiddotTemplate').split('{lat}')[1].split('{long}')[0]}{Number(longitude).toFixed(5)}</div>
+              {uploadedDocs.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {uploadedDocs.map((doc, idx) => (
+                    <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '10px 14px' }}>
+                      <span style={{ color: 'var(--gold)', fontWeight: 800, fontSize: 12.5, fontFamily: 'var(--display)' }}>{doc.type}</span>
+                      <span style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.file.name}</span>
                     </div>
-                  </div>
-                </div>
-              ) : (
-                <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 16, padding: 16 }}>
-                  <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
-                    {t('noGpsLocationCapturedDesc')}
-                  </p>
+                  ))}
                 </div>
               )}
-              {capturedAddress && (
-                <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 12 }}>
-                  <MapPin className="h-4 w-4" style={{ color: 'var(--green)', flexShrink: 0, marginTop: 2 }} />
-                  <span>{capturedAddress}</span>
+            </div>
+
+            <span className="side-section-label" style={{ padding: 0, display: 'block', marginBottom: 12 }}>{t('reviewLocationLabel')}</span>
+            {latitude && longitude ? (
+              <div className="loc-box">
+                <div className="loc-info">
+                  <div className="icon-badge green"><Crosshair className="h-5 w-5" /></div>
+                  <div className="loc-text">
+                    <div className="t1">{t('gpsCapturedHeadingLabel')}</div>
+                    <div className="t2">{t('latLongMiddotTemplate').split('{lat}')[0]}{Number(latitude).toFixed(5)}{t('latLongMiddotTemplate').split('{lat}')[1].split('{long}')[0]}{Number(longitude).toFixed(5)}</div>
+                  </div>
                 </div>
-              )}
+              </div>
+            ) : (
+              <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 16, padding: 16 }}>
+                <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
+                  {t('noGpsLocationCapturedDesc')}
+                </p>
+              </div>
+            )}
+            {capturedAddress && (
+              <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 12 }}>
+                <MapPin className="h-4 w-4" style={{ color: 'var(--green)', flexShrink: 0, marginTop: 2 }} />
+                <span>{capturedAddress}</span>
+              </div>
+            )}
           </div>
         </div>,
         document.body
@@ -12482,7 +12432,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
       }
       setEditIdProofNumber(selectedCust.idProofNumber || '');
       setEditReason(selectedCust.reason || '');
-      
+
       const addr = selectedCust.capturedAddress || selectedCust.address || '';
       const parts = addr.split(',').map(p => p.trim());
       setEditAddressLine(parts[0] || '');
@@ -12579,75 +12529,75 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
             {t('noComplianceRecordsMatchMsg')}
           </p>
         ) : (
-        <table className="kee-table history-table">
-          <thead>
-            <tr>
-              <th>{t('customerCol')}</th>
-              <th>{t('phoneCol')}</th>
-              <th>{t('vehicleCol')}</th>
-              <th>{t('keyCodeCol')}</th>
-              <th>{t('locationCol')}</th>
-              <th>{t('loggedCol')}</th>
-              <th style={{ textAlign: 'right' }}>{t('actionsCol')}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(() => {
-              const rowColors = ['purple', 'blue', 'pink', 'orange', 'teal', 'jgreen', 'skyblue', 'rose', 'maroon'];
-              return customers.map((c, idx) => {
-                const rowColor = rowColors[idx % rowColors.length];
-                return (
-                  <tr key={c.id} onClick={() => setSelectedCust(c)} style={{ cursor: 'pointer' }}>
-                    <td data-label={t('customerCol')}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div className={`icon-badge ${rowColor}`} style={{ width: 32, height: 32, borderRadius: 10, flexShrink: 0 }}>
-                          <User style={{ width: 15, height: 15 }} />
+          <table className="kee-table history-table">
+            <thead>
+              <tr>
+                <th>{t('customerCol')}</th>
+                <th>{t('phoneCol')}</th>
+                <th>{t('vehicleCol')}</th>
+                <th>{t('keyCodeCol')}</th>
+                <th>{t('locationCol')}</th>
+                <th>{t('loggedCol')}</th>
+                <th style={{ textAlign: 'right' }}>{t('actionsCol')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(() => {
+                const rowColors = ['purple', 'blue', 'pink', 'orange', 'teal', 'jgreen', 'skyblue', 'rose', 'maroon'];
+                return customers.map((c, idx) => {
+                  const rowColor = rowColors[idx % rowColors.length];
+                  return (
+                    <tr key={c.id} onClick={() => setSelectedCust(c)} style={{ cursor: 'pointer' }}>
+                      <td data-label={t('customerCol')}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                          <div className={`icon-badge ${rowColor}`} style={{ width: 32, height: 32, borderRadius: 10, flexShrink: 0 }}>
+                            <User style={{ width: 15, height: 15 }} />
+                          </div>
+                          <div className="cell-primary">{c.name}</div>
                         </div>
-                        <div className="cell-primary">{c.name}</div>
-                      </div>
-                    </td>
-                    <td className="cell-sub" data-label={t('phoneCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
-                    <td className="cell-sub" data-label={t('vehicleCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.vehicleNumber || 'N/A'}</td>
-                    <td data-label={t('keyCodeCol')}>
-                      <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
-                      {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
-                    </td>
-                    <td className="cell-sub" data-label={t('locationCol')} style={{ fontWeight: 700, color: 'var(--text-2)', maxWidth: 180 }}>
-                      <span className="flex items-center gap-1" style={{ overflow: 'hidden' }}>
-                        <MapPin style={{ width: 13, height: 13, color: 'var(--green)', flexShrink: 0 }} />
-                        <span className="truncate">{c.capturedAddress || 'N/A'}</span>
-                      </span>
-                    </td>
-                    <td className="cell-sub" data-label={t('loggedCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
-                    <td data-label={t('actionsCol')}>
-                      <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
-                        <button onClick={(e) => { e.stopPropagation(); setSelectedCust(c); }} className="icon-btn" title={t('viewComplianceFile')}>
-                          <Eye />
-                        </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleDownloadCustomerReport(c); }}
-                          disabled={reportBusyId === `${c.id}:download`}
-                          className="icon-btn" title={t('downloadReportBtn')}
-                        >
-                          {reportBusyId === `${c.id}:download` ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
-                        </button>
-                        <button
-                          onClick={(e) => { e.stopPropagation(); handleShareCustomerReportViaWhatsApp(c); }}
-                          disabled={reportBusyId === `${c.id}:whatsapp`}
-                          className="icon-btn" title={t('shareViaWhatsAppBtn')}
-                        >
-                          {reportBusyId === `${c.id}:whatsapp` ? <RefreshCw className="animate-spin h-4 w-4" /> : (
-                            <svg viewBox="0 0 24 24" width="16" height="16" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
-                          )}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              });
-            })()}
-          </tbody>
-        </table>
+                      </td>
+                      <td className="cell-sub" data-label={t('phoneCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
+                      <td className="cell-sub" data-label={t('vehicleCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.vehicleNumber || 'N/A'}</td>
+                      <td data-label={t('keyCodeCol')}>
+                        <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
+                        {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
+                      </td>
+                      <td className="cell-sub" data-label={t('locationCol')} style={{ fontWeight: 700, color: 'var(--text-2)', maxWidth: 180 }}>
+                        <span className="flex items-center gap-1" style={{ overflow: 'hidden' }}>
+                          <MapPin style={{ width: 13, height: 13, color: 'var(--green)', flexShrink: 0 }} />
+                          <span className="truncate">{c.capturedAddress || 'N/A'}</span>
+                        </span>
+                      </td>
+                      <td className="cell-sub" data-label={t('loggedCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
+                      <td data-label={t('actionsCol')}>
+                        <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
+                          <button onClick={(e) => { e.stopPropagation(); setSelectedCust(c); }} className="icon-btn" title={t('viewComplianceFile')}>
+                            <Eye />
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleDownloadCustomerReport(c); }}
+                            disabled={reportBusyId === `${c.id}:download`}
+                            className="icon-btn" title={t('downloadReportBtn')}
+                          >
+                            {reportBusyId === `${c.id}:download` ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleShareCustomerReportViaWhatsApp(c); }}
+                            disabled={reportBusyId === `${c.id}:whatsapp`}
+                            className="icon-btn" title={t('shareViaWhatsAppBtn')}
+                          >
+                            {reportBusyId === `${c.id}:whatsapp` ? <RefreshCw className="animate-spin h-4 w-4" /> : (
+                              <svg viewBox="0 0 24 24" width="16" height="16" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z" /></svg>
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                });
+              })()}
+            </tbody>
+          </table>
         )}
       </div>
 
@@ -12956,55 +12906,55 @@ export function CustomerCareView({ t, api }) {
 
       <div className="card">
         <div className="section-title" style={{ marginBottom: 14 }}>
-            <div className="flex items-center gap-3">
-              <div className="icon-badge teal" style={{ width: 34, height: 34, borderRadius: 10 }}>
-                <Radio style={{ width: 16, height: 16 }} />
-              </div>
-              <div>
-                <h2 style={{ fontSize: 16 }}>{t('locksmithSkillUpgradesTitle')}</h2>
-                <span className="sub">{t('videoTutorialsFromExpertsDesc')}</span>
-              </div>
+          <div className="flex items-center gap-3">
+            <div className="icon-badge teal" style={{ width: 34, height: 34, borderRadius: 10 }}>
+              <Radio style={{ width: 16, height: 16 }} />
+            </div>
+            <div>
+              <h2 style={{ fontSize: 16 }}>{t('locksmithSkillUpgradesTitle')}</h2>
+              <span className="sub">{t('videoTutorialsFromExpertsDesc')}</span>
             </div>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ maxHeight: 380, overflowY: 'auto', paddingRight: 4 }}>
-            {config?.videos && config.videos.length > 0 ? (
-              config.videos.map((vid, idx) => {
-                const { thumbnail } = getYoutubeThumbnailAndId(vid.url);
-                const badgeColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
-                const badgeColor = badgeColors[idx % badgeColors.length];
-                return (
-                  <div key={idx} className="product-card" style={{ borderRadius: 14 }}>
-                    <div className="product-img" style={{ height: 92 }}>
-                      <img src={thumbnail} alt={vid.name} className="w-full h-full object-cover" style={{ position: 'absolute', inset: 0, opacity: .6 }} />
-                      <a
-                        href={vid.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center justify-center"
-                        style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)' }}
-                      >
-                        <span className={`icon-badge ${badgeColor} animate-pulse`} style={{ width: 32, height: 32, borderRadius: 999 }}>
-                          <PlayCircle style={{ width: 18, height: 18 }} />
-                        </span>
-                      </a>
-                    </div>
-                    <div className="product-body" style={{ padding: 12, gap: 4 }}>
-                      <span style={{ fontSize: 9, color: 'var(--gold)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '.05em' }}>{t('trainingMaterialLabel')}</span>
-                      <h4 className="pname" style={{ fontSize: 12.5 }}>{vid.name}</h4>
-                      <a href={vid.url} target="_blank" rel="noreferrer" style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600 }} className="hover:underline truncate block">{t('watchLinkLabel')}</a>
-                    </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" style={{ maxHeight: 380, overflowY: 'auto', paddingRight: 4 }}>
+          {config?.videos && config.videos.length > 0 ? (
+            config.videos.map((vid, idx) => {
+              const { thumbnail } = getYoutubeThumbnailAndId(vid.url);
+              const badgeColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
+              const badgeColor = badgeColors[idx % badgeColors.length];
+              return (
+                <div key={idx} className="product-card" style={{ borderRadius: 14 }}>
+                  <div className="product-img" style={{ height: 92 }}>
+                    <img src={thumbnail} alt={vid.name} className="w-full h-full object-cover" style={{ position: 'absolute', inset: 0, opacity: .6 }} />
+                    <a
+                      href={vid.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex items-center justify-center"
+                      style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)' }}
+                    >
+                      <span className={`icon-badge ${badgeColor} animate-pulse`} style={{ width: 32, height: 32, borderRadius: 999 }}>
+                        <PlayCircle style={{ width: 18, height: 18 }} />
+                      </span>
+                    </a>
                   </div>
-                );
-              })
-            ) : (
-              <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic', gridColumn: '1 / -1', padding: '32px 0', textAlign: 'center' }}>
-                {t('noSkillUpgradeVideosMsg')}
-              </p>
-            )}
-          </div>
+                  <div className="product-body" style={{ padding: 12, gap: 4 }}>
+                    <span style={{ fontSize: 9, color: 'var(--gold)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '.05em' }}>{t('trainingMaterialLabel')}</span>
+                    <h4 className="pname" style={{ fontSize: 12.5 }}>{vid.name}</h4>
+                    <a href={vid.url} target="_blank" rel="noreferrer" style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600 }} className="hover:underline truncate block">{t('watchLinkLabel')}</a>
+                  </div>
+                </div>
+              );
+            })
+          ) : (
+            <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic', gridColumn: '1 / -1', padding: '32px 0', textAlign: 'center' }}>
+              {t('noSkillUpgradeVideosMsg')}
+            </p>
+          )}
         </div>
       </div>
+    </div>
   );
 }
 
@@ -13457,47 +13407,47 @@ export function SupportConfigView({ t, api }) {
                   const rowColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
                   const rowColor = rowColors[idx % rowColors.length];
                   return (
-                  <div key={idx} style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 14, padding: 16, position: 'relative' }}>
-                    <button
-                      type="button"
-                      onClick={() => setVideos(videos.filter((_, i) => i !== idx))}
-                      className="icon-btn"
-                      style={{ position: 'absolute', top: 12, right: 12, color: 'var(--red)' }}
-                      title={t('removeVideoTitle')}
-                    >
-                      <X />
-                    </button>
-                    <div className="form-grid" style={{ paddingRight: 36 }}>
-                      <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: `var(--${rowColor})` }}><PlayCircle /></div><b>{t('videoTitleNameLabel')}</b></div>
-                        <div className="input-wrap">
-                          <input
-                            type="text" required value={vid.name}
-                            onChange={(e) => {
-                              const newVids = [...videos];
-                              newVids[idx].name = e.target.value;
-                              setVideos(newVids);
-                            }}
-                            placeholder={t('videoTitlePlaceholderEg')}
-                          />
+                    <div key={idx} style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 14, padding: 16, position: 'relative' }}>
+                      <button
+                        type="button"
+                        onClick={() => setVideos(videos.filter((_, i) => i !== idx))}
+                        className="icon-btn"
+                        style={{ position: 'absolute', top: 12, right: 12, color: 'var(--red)' }}
+                        title={t('removeVideoTitle')}
+                      >
+                        <X />
+                      </button>
+                      <div className="form-grid" style={{ paddingRight: 36 }}>
+                        <div className="reg-field" style={{ marginBottom: 0 }}>
+                          <div className="reg-field-label"><div className="reg-ico" style={{ background: `var(--${rowColor})` }}><PlayCircle /></div><b>{t('videoTitleNameLabel')}</b></div>
+                          <div className="input-wrap">
+                            <input
+                              type="text" required value={vid.name}
+                              onChange={(e) => {
+                                const newVids = [...videos];
+                                newVids[idx].name = e.target.value;
+                                setVideos(newVids);
+                              }}
+                              placeholder={t('videoTitlePlaceholderEg')}
+                            />
+                          </div>
                         </div>
-                      </div>
-                      <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><ExternalLink /></div><b>{t('youtubeUrlLabel')}</b></div>
-                        <div className="input-wrap">
-                          <input
-                            type="url" required value={vid.url}
-                            onChange={(e) => {
-                              const newVids = [...videos];
-                              newVids[idx].url = e.target.value;
-                              setVideos(newVids);
-                            }}
-                            placeholder="https://www.youtube.com/watch?v=..."
-                          />
+                        <div className="reg-field" style={{ marginBottom: 0 }}>
+                          <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><ExternalLink /></div><b>{t('youtubeUrlLabel')}</b></div>
+                          <div className="input-wrap">
+                            <input
+                              type="url" required value={vid.url}
+                              onChange={(e) => {
+                                const newVids = [...videos];
+                                newVids[idx].url = e.target.value;
+                                setVideos(newVids);
+                              }}
+                              placeholder="https://www.youtube.com/watch?v=..."
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
                   );
                 })}
               </div>
@@ -14037,225 +13987,225 @@ function ShopSettingsView({ t, api, shopId }) {
       </div>
 
       <div className="grid-2">
-      <div>
-      <div className="card">
-        <div className="section-title">
-          <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Store style={{ width: 16, height: 16, color: 'var(--gold)' }} />
-            {t('workspaceProfileTitle')}
-          </h2>
-          <span className="sub">{t('businessIdentityContactDesc')}</span>
-        </div>
-
-        <form onSubmit={handleUpdate}>
-          <div className="reg-section">
-            <div className="reg-field">
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>{t('workspaceDisplayNameLabel')} <span className="req">*</span></b></div>
-              <div className="input-wrap">
-                <input type="text" required value={shopName} onChange={(e) => setShopName(e.target.value)} />
-              </div>
+        <div>
+          <div className="card">
+            <div className="section-title">
+              <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Store style={{ width: 16, height: 16, color: 'var(--gold)' }} />
+                {t('workspaceProfileTitle')}
+              </h2>
+              <span className="sub">{t('businessIdentityContactDesc')}</span>
             </div>
 
-            <div className="reg-field">
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
-              <div className="input-wrap">
-                <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91..." />
-              </div>
-            </div>
-
-            <div className="reg-field" style={{ marginBottom: 0 }}>
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>{t('registeredAddressLabel')} <span className="req">*</span></b></div>
-              <div className="input-wrap">
-                <input type="text" required value={address} onChange={(e) => setAddress(e.target.value)} />
-              </div>
-            </div>
-          </div>
-
-          {/* Shop Verification Document Section */}
-          <div className="reg-section" style={{ marginBottom: 0 }}>
-            {(() => {
-              const value = verificationDoc;
-              const isPdf = value && value.fileUrl && value.fileUrl.toLowerCase().endsWith('.pdf');
-              return (
-                <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 14, padding: 12, display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 320 }}>
-                  <div className="flex items-center justify-between">
-                    <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, fontWeight: 800, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
-                      <span className="icon-badge purple" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><FileCheck style={{ width: 10, height: 10 }} /></span>
-                      {t('verificationDocumentLabel')}
-                    </span>
-                    <span className={`badge ${value ? 'badge-active' : 'badge-pending'}`} style={{ padding: '2px 8px', fontSize: 9 }}>
-                      <span className="dot"></span>{value ? t('uploadedBadge') : t('missingBadge')}
-                    </span>
-                  </div>
-                  {value ? (
-                    <div style={{ height: 140, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-2)', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {isPdf ? (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--red)', fontWeight: 800 }}>
-                          <FileText style={{ width: 15, height: 15 }} /> {t('pdfFileLabel')}
-                        </span>
-                      ) : (
-                        <img src={getAssetUrl(value.fileUrl)} className="w-full h-full object-cover" alt={t('verificationDocumentLabel')} />
-                      )}
-                    </div>
-                  ) : (
-                    <div style={{ height: 140, borderRadius: 10, border: '1.5px dashed var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)' }}>
-                      <FileCheck style={{ width: 24, height: 24 }} />
-                    </div>
-                  )}
-                  <div className="flex gap-2">
-                    {value ? (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => downloadAsset(value.fileUrl, value.originalName || filenameForAsset(value.fileUrl, 'verification_document'))}
-                          className="btn btn-primary btn-sm"
-                          style={{ flex: 1, fontSize: 10.5, padding: '8px 10px' }}
-                        >
-                          <Download style={{ width: 12, height: 12 }} />
-                          <span>{t('downloadTitleLabel')}</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={handleDocRemove}
-                          className="btn btn-danger-outline btn-sm"
-                          style={{ flex: 1, fontSize: 10.5, padding: '8px 10px' }}
-                        >
-                          <Trash style={{ width: 12, height: 12 }} />
-                          <span>{t('btnRemove')}</span>
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        {IS_NATIVE_APP && (
-                          <button
-                            type="button"
-                            onClick={handleCaptureDocPhoto}
-                            disabled={docUploading}
-                            className="btn btn-ghost btn-sm"
-                            style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', opacity: docUploading ? 0.6 : 1 }}
-                          >
-                            <Camera style={{ width: 12, height: 12 }} />
-                            <span>{t('useCameraBtn')}</span>
-                          </button>
-                        )}
-                        <label className="btn btn-ghost btn-sm" style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', cursor: docUploading ? 'not-allowed' : 'pointer', opacity: docUploading ? 0.6 : 1 }}>
-                          {docUploading ? <RefreshCw className="animate-spin" style={{ width: 12, height: 12 }} /> : <Upload style={{ width: 12, height: 12 }} />}
-                          <span>{docUploading ? t('uploadingEllipsisLabel') : t('chooseFromGalleryBtn')}</span>
-                          <input
-                            type="file" accept="image/jpeg,image/png,application/pdf" className="hidden" disabled={docUploading}
-                            onClick={primeStoragePermission}
-                            onChange={(e) => { const file = e.target.files[0]; e.target.value = ''; handleDocFileSelected(file); }}
-                          />
-                        </label>
-                      </>
-                    )}
+            <form onSubmit={handleUpdate}>
+              <div className="reg-section">
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>{t('workspaceDisplayNameLabel')} <span className="req">*</span></b></div>
+                  <div className="input-wrap">
+                    <input type="text" required value={shopName} onChange={(e) => setShopName(e.target.value)} />
                   </div>
                 </div>
-              );
-            })()}
-          </div>
 
-          <div className="form-action-bar flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginTop: 20 }}>
-            <button type="submit" className="btn btn-primary">
-              <Check />
-              <span>{t('saveWorkspaceDetailsBtn')}</span>
-            </button>
-          </div>
-        </form>
-      </div>
-      </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
+                  <div className="input-wrap">
+                    <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91..." />
+                  </div>
+                </div>
 
-      <div>
-      {/* Admin User Credentials Block - this is the logged-in user's own
+                <div className="reg-field" style={{ marginBottom: 0 }}>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>{t('registeredAddressLabel')} <span className="req">*</span></b></div>
+                  <div className="input-wrap">
+                    <input type="text" required value={address} onChange={(e) => setAddress(e.target.value)} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Shop Verification Document Section */}
+              <div className="reg-section" style={{ marginBottom: 0 }}>
+                {(() => {
+                  const value = verificationDoc;
+                  const isPdf = value && value.fileUrl && value.fileUrl.toLowerCase().endsWith('.pdf');
+                  return (
+                    <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 14, padding: 12, display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 320 }}>
+                      <div className="flex items-center justify-between">
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, fontWeight: 800, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                          <span className="icon-badge purple" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><FileCheck style={{ width: 10, height: 10 }} /></span>
+                          {t('verificationDocumentLabel')}
+                        </span>
+                        <span className={`badge ${value ? 'badge-active' : 'badge-pending'}`} style={{ padding: '2px 8px', fontSize: 9 }}>
+                          <span className="dot"></span>{value ? t('uploadedBadge') : t('missingBadge')}
+                        </span>
+                      </div>
+                      {value ? (
+                        <div style={{ height: 140, borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-2)', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {isPdf ? (
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--red)', fontWeight: 800 }}>
+                              <FileText style={{ width: 15, height: 15 }} /> {t('pdfFileLabel')}
+                            </span>
+                          ) : (
+                            <img src={getAssetUrl(value.fileUrl)} className="w-full h-full object-cover" alt={t('verificationDocumentLabel')} />
+                          )}
+                        </div>
+                      ) : (
+                        <div style={{ height: 140, borderRadius: 10, border: '1.5px dashed var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)' }}>
+                          <FileCheck style={{ width: 24, height: 24 }} />
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        {value ? (
+                          <>
+                            <button
+                              type="button"
+                              onClick={() => downloadAsset(value.fileUrl, value.originalName || filenameForAsset(value.fileUrl, 'verification_document'))}
+                              className="btn btn-primary btn-sm"
+                              style={{ flex: 1, fontSize: 10.5, padding: '8px 10px' }}
+                            >
+                              <Download style={{ width: 12, height: 12 }} />
+                              <span>{t('downloadTitleLabel')}</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleDocRemove}
+                              className="btn btn-danger-outline btn-sm"
+                              style={{ flex: 1, fontSize: 10.5, padding: '8px 10px' }}
+                            >
+                              <Trash style={{ width: 12, height: 12 }} />
+                              <span>{t('btnRemove')}</span>
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            {IS_NATIVE_APP && (
+                              <button
+                                type="button"
+                                onClick={handleCaptureDocPhoto}
+                                disabled={docUploading}
+                                className="btn btn-ghost btn-sm"
+                                style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', opacity: docUploading ? 0.6 : 1 }}
+                              >
+                                <Camera style={{ width: 12, height: 12 }} />
+                                <span>{t('useCameraBtn')}</span>
+                              </button>
+                            )}
+                            <label className="btn btn-ghost btn-sm" style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', cursor: docUploading ? 'not-allowed' : 'pointer', opacity: docUploading ? 0.6 : 1 }}>
+                              {docUploading ? <RefreshCw className="animate-spin" style={{ width: 12, height: 12 }} /> : <Upload style={{ width: 12, height: 12 }} />}
+                              <span>{docUploading ? t('uploadingEllipsisLabel') : t('chooseFromGalleryBtn')}</span>
+                              <input
+                                type="file" accept="image/jpeg,image/png,application/pdf" className="hidden" disabled={docUploading}
+                                onClick={primeStoragePermission}
+                                onChange={(e) => { const file = e.target.files[0]; e.target.value = ''; handleDocFileSelected(file); }}
+                              />
+                            </label>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+
+              <div className="form-action-bar flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginTop: 20 }}>
+                <button type="submit" className="btn btn-primary">
+                  <Check />
+                  <span>{t('saveWorkspaceDetailsBtn')}</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div>
+          {/* Admin User Credentials Block - this is the logged-in user's own
           account/password, so it's meaningless (and hidden) when a Super
           Admin is managing another shop's settings on its behalf. */}
-      {!shopId && (
-      <div className="card">
-        <div className="section-title">
-          <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <ShieldCheck style={{ width: 16, height: 16, color: 'var(--gold)' }} />
-            {t('adminCredentialsTitle')}
-          </h2>
-        </div>
-
-        <div className="reg-section">
-          <div className="reg-field" style={{ marginBottom: 12 }}>
-            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('usernameNameLabel')}</b></div>
-            <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)', fontFamily: 'var(--display)' }}>{user.name}</p>
-          </div>
-          <div className="reg-field" style={{ marginBottom: 12 }}>
-            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
-            <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email}</p>
-          </div>
-          <div className="reg-field" style={{ marginBottom: 0 }}>
-            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
-            <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{phone || 'N/A'}</p>
-          </div>
-        </div>
-
-        <div className="reg-section" style={{ marginBottom: 0 }}>
-          <div className="reg-field" style={{ marginBottom: 14 }}>
-            <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><KeyRound /></div><b>{t('workspacePasswordLabel')}</b></div>
-            <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '10px 14px' }}>
-              <div className="flex items-center gap-2">
-                {revealPassword ? (
-                  <span style={{ color: 'var(--gold)', fontFamily: 'monospace', fontWeight: 800, fontSize: 13 }}>{revealedPasswordVal}</span>
-                ) : (
-                  <span style={{ color: 'var(--text-3)', fontFamily: 'monospace', letterSpacing: '.15em' }}>••••••••</span>
-                )}
+          {!shopId && (
+            <div className="card">
+              <div className="section-title">
+                <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <ShieldCheck style={{ width: 16, height: 16, color: 'var(--gold)' }} />
+                  {t('adminCredentialsTitle')}
+                </h2>
               </div>
-              <button
-                onClick={() => (revealPassword ? setRevealPassword(false) : setShowPassVerifyModal(true))}
-                className="icon-btn"
-                title={revealPassword ? t('hidePasswordTitle') : t('revealPasswordTitle')}
-              >
-                {revealPassword ? <EyeOff /> : <Eye />}
-              </button>
+
+              <div className="reg-section">
+                <div className="reg-field" style={{ marginBottom: 12 }}>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('usernameNameLabel')}</b></div>
+                  <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)', fontFamily: 'var(--display)' }}>{user.name}</p>
+                </div>
+                <div className="reg-field" style={{ marginBottom: 12 }}>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
+                  <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email}</p>
+                </div>
+                <div className="reg-field" style={{ marginBottom: 0 }}>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
+                  <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{phone || 'N/A'}</p>
+                </div>
+              </div>
+
+              <div className="reg-section" style={{ marginBottom: 0 }}>
+                <div className="reg-field" style={{ marginBottom: 14 }}>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--maroon)' }}><KeyRound /></div><b>{t('workspacePasswordLabel')}</b></div>
+                  <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '10px 14px' }}>
+                    <div className="flex items-center gap-2">
+                      {revealPassword ? (
+                        <span style={{ color: 'var(--gold)', fontFamily: 'monospace', fontWeight: 800, fontSize: 13 }}>{revealedPasswordVal}</span>
+                      ) : (
+                        <span style={{ color: 'var(--text-3)', fontFamily: 'monospace', letterSpacing: '.15em' }}>••••••••</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => (revealPassword ? setRevealPassword(false) : setShowPassVerifyModal(true))}
+                      className="icon-btn"
+                      title={revealPassword ? t('hidePasswordTitle') : t('revealPasswordTitle')}
+                    >
+                      {revealPassword ? <EyeOff /> : <Eye />}
+                    </button>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setOtpResetOpen(true)}
+                  className="btn btn-outline btn-block"
+                >
+                  <Lock />
+                  <span>{t('forgotPasswordResetOtpBtn')}</span>
+                </button>
+              </div>
             </div>
-          </div>
+          )}
 
-          <button
-            onClick={() => setOtpResetOpen(true)}
-            className="btn btn-outline btn-block"
-          >
-            <Lock />
-            <span>{t('forgotPasswordResetOtpBtn')}</span>
-          </button>
-        </div>
-      </div>
-      )}
-
-      {/* Referral Program Block */}
-      <div className="card" style={{ marginTop: shopId ? 0 : 20 }}>
-        <div className="section-title">
-          <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <BadgePercent style={{ width: 16, height: 16, color: 'var(--gold)' }} />
-            {t('referralProgramTitle')}
-          </h2>
-          <span className="sub">{t('referralProgramDesc')}</span>
-        </div>
-
-        {referralCode ? (
-          <div>
-            <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px', marginBottom: 12 }}>
-              <span style={{ color: 'var(--gold)', fontFamily: 'monospace', fontWeight: 800, fontSize: 16, letterSpacing: '.1em' }}>{referralCode}</span>
-              <button onClick={handleCopyReferralCode} className="icon-btn" title={t('copyTitle')}>
-                {referralCopied ? <CheckCircle2 style={{ color: 'var(--green)' }} /> : <Copy />}
-              </button>
+          {/* Referral Program Block */}
+          <div className="card" style={{ marginTop: shopId ? 0 : 20 }}>
+            <div className="section-title">
+              <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                <BadgePercent style={{ width: 16, height: 16, color: 'var(--gold)' }} />
+                {t('referralProgramTitle')}
+              </h2>
+              <span className="sub">{t('referralProgramDesc')}</span>
             </div>
-            <button onClick={handleShareReferralCode} className="btn btn-primary btn-block">
-              <Share2 />
-              <span>{t('shareReferralCodeBtn')}</span>
-            </button>
+
+            {referralCode ? (
+              <div>
+                <div className="flex items-center justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px', marginBottom: 12 }}>
+                  <span style={{ color: 'var(--gold)', fontFamily: 'monospace', fontWeight: 800, fontSize: 16, letterSpacing: '.1em' }}>{referralCode}</span>
+                  <button onClick={handleCopyReferralCode} className="icon-btn" title={t('copyTitle')}>
+                    {referralCopied ? <CheckCircle2 style={{ color: 'var(--green)' }} /> : <Copy />}
+                  </button>
+                </div>
+                <button onClick={handleShareReferralCode} className="btn btn-primary btn-block">
+                  <Share2 />
+                  <span>{t('shareReferralCodeBtn')}</span>
+                </button>
+              </div>
+            ) : (
+              <button onClick={handleGenerateReferralCode} disabled={referralGenerating} className="btn btn-primary btn-block">
+                {referralGenerating ? <RefreshCw className="animate-spin" /> : <BadgePercent />}
+                <span>{referralGenerating ? t('generatingEllipsisLabel') : t('generateReferralCodeBtn')}</span>
+              </button>
+            )}
           </div>
-        ) : (
-          <button onClick={handleGenerateReferralCode} disabled={referralGenerating} className="btn btn-primary btn-block">
-            {referralGenerating ? <RefreshCw className="animate-spin" /> : <BadgePercent />}
-            <span>{referralGenerating ? t('generatingEllipsisLabel') : t('generateReferralCodeBtn')}</span>
-          </button>
-        )}
-      </div>
-      </div>
+        </div>
       </div>
 
       {/* Password Verification Modal overlay */}
@@ -14461,7 +14411,7 @@ export function ReportsPortalView({ t, api }) {
     const now = new Date();
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(now.getDate() - 30);
-    
+
     setFromDate(thirtyDaysAgo.toISOString().split('T')[0]);
     setToDate(now.toISOString().split('T')[0]);
   }, []);
@@ -14673,77 +14623,77 @@ export function ReportsPortalView({ t, api }) {
                 <h4 className="bar-label" style={{ textAlign: 'center', marginBottom: 10, fontSize: 11 }}>
                   {t('registrationTimelineTrendTitle')}
                 </h4>
-                  <div className="h-48 w-full rounded-xl p-4 flex flex-col justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border)' }}>
-                    {(() => {
-                      const dateCounts = {};
-                      reportData.forEach(r => {
-                        const rawDate = r['Date Registered'] || '';
-                        const datePart = rawDate.split(' ')[0] || 'N/A';
-                        dateCounts[datePart] = (dateCounts[datePart] || 0) + 1;
-                      });
-                      const sortedDates = Object.keys(dateCounts).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(-10);
-                      const dataPoints = sortedDates.map(date => ({ label: date, value: dateCounts[date] }));
+                <div className="h-48 w-full rounded-xl p-4 flex flex-col justify-between" style={{ background: 'var(--card-2)', border: '1px solid var(--border)' }}>
+                  {(() => {
+                    const dateCounts = {};
+                    reportData.forEach(r => {
+                      const rawDate = r['Date Registered'] || '';
+                      const datePart = rawDate.split(' ')[0] || 'N/A';
+                      dateCounts[datePart] = (dateCounts[datePart] || 0) + 1;
+                    });
+                    const sortedDates = Object.keys(dateCounts).sort((a, b) => new Date(a).getTime() - new Date(b).getTime()).slice(-10);
+                    const dataPoints = sortedDates.map(date => ({ label: date, value: dateCounts[date] }));
 
-                      if (dataPoints.length === 0) return <div className="text-center py-12" style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600 }}>{t('noTrendDataMsg')}</div>;
+                    if (dataPoints.length === 0) return <div className="text-center py-12" style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600 }}>{t('noTrendDataMsg')}</div>;
 
-                      const maxVal = Math.max(...dataPoints.map(d => d.value), 1);
-                      const width = 500;
-                      const height = 150;
-                      const padding = 20;
+                    const maxVal = Math.max(...dataPoints.map(d => d.value), 1);
+                    const width = 500;
+                    const height = 150;
+                    const padding = 20;
 
-                      const coords = dataPoints.map((d, i) => {
-                        const x = padding + (i / (dataPoints.length - 1 || 1)) * (width - 2 * padding);
-                        const y = height - padding - (d.value / maxVal) * (height - 2 * padding);
-                        return { x, y, label: d.label, val: d.value };
-                      });
+                    const coords = dataPoints.map((d, i) => {
+                      const x = padding + (i / (dataPoints.length - 1 || 1)) * (width - 2 * padding);
+                      const y = height - padding - (d.value / maxVal) * (height - 2 * padding);
+                      return { x, y, label: d.label, val: d.value };
+                    });
 
-                      const pathD = coords.reduce((acc, c, i) => {
-                        return i === 0 ? `M ${c.x} ${c.y}` : `${acc} L ${c.x} ${c.y}`;
-                      }, '');
+                    const pathD = coords.reduce((acc, c, i) => {
+                      return i === 0 ? `M ${c.x} ${c.y}` : `${acc} L ${c.x} ${c.y}`;
+                    }, '');
 
-                      const areaD = coords.length > 0 
-                        ? `${pathD} L ${coords[coords.length - 1].x} ${height - padding} L ${coords[0].x} ${height - padding} Z`
-                        : '';
+                    const areaD = coords.length > 0
+                      ? `${pathD} L ${coords[coords.length - 1].x} ${height - padding} L ${coords[0].x} ${height - padding} Z`
+                      : '';
 
-                      return (
-                        <div className="w-full h-full flex flex-col justify-between">
-                          <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-28 overflow-visible">
-                            <defs>
-                              <linearGradient id="areaGradientReport" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#C89416" stopOpacity="0.4" />
-                                <stop offset="100%" stopColor="#C89416" stopOpacity="0.0" />
-                              </linearGradient>
-                            </defs>
-                            
-                            {/* Area under the line */}
-                            {areaD && <path d={areaD} fill="url(#areaGradientReport)" className="chart-area-fade" />}
+                    return (
+                      <div className="w-full h-full flex flex-col justify-between">
+                        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-28 overflow-visible">
+                          <defs>
+                            <linearGradient id="areaGradientReport" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="0%" stopColor="#C89416" stopOpacity="0.4" />
+                              <stop offset="100%" stopColor="#C89416" stopOpacity="0.0" />
+                            </linearGradient>
+                          </defs>
 
-                            {/* Grid lines */}
-                            <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
-                            <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="rgba(255,255,255,0.05)" strokeDasharray="3,3" />
+                          {/* Area under the line */}
+                          {areaD && <path d={areaD} fill="url(#areaGradientReport)" className="chart-area-fade" />}
 
-                            {/* Trend Line */}
-                            {pathD && <path d={pathD} fill="none" stroke="#7A1220" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="chart-line-draw" />}
+                          {/* Grid lines */}
+                          <line x1={padding} y1={height - padding} x2={width - padding} y2={height - padding} stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+                          <line x1={padding} y1={padding} x2={width - padding} y2={padding} stroke="rgba(255,255,255,0.05)" strokeDasharray="3,3" />
 
-                            {/* Interactive dots */}
-                            {coords.map((c, i) => (
-                              <g key={i} className="group cursor-pointer">
-                                <circle cx={c.x} cy={c.y} r="4" fill="#7A1220" stroke="#ffffff" strokeWidth="1.5" className="chart-dot-pop" style={{ animationDelay: `${0.6 + i * 0.06}s` }} />
-                                <text x={c.x} y={c.y - 8} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#1e1b2e" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                  {c.val}
-                                </text>
-                              </g>
-                            ))}
-                          </svg>
-                          <div className="flex justify-between px-1" style={{ fontSize: 9, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em' }}>
-                            {dataPoints.map((d, i) => (
-                              <span key={i}>{d.label}</span>
-                            ))}
-                          </div>
+                          {/* Trend Line */}
+                          {pathD && <path d={pathD} fill="none" stroke="#7A1220" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="chart-line-draw" />}
+
+                          {/* Interactive dots */}
+                          {coords.map((c, i) => (
+                            <g key={i} className="group cursor-pointer">
+                              <circle cx={c.x} cy={c.y} r="4" fill="#7A1220" stroke="#ffffff" strokeWidth="1.5" className="chart-dot-pop" style={{ animationDelay: `${0.6 + i * 0.06}s` }} />
+                              <text x={c.x} y={c.y - 8} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#1e1b2e" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                                {c.val}
+                              </text>
+                            </g>
+                          ))}
+                        </svg>
+                        <div className="flex justify-between px-1" style={{ fontSize: 9, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                          {dataPoints.map((d, i) => (
+                            <span key={i}>{d.label}</span>
+                          ))}
                         </div>
-                      );
-                    })()}
-                  </div>
+                      </div>
+                    );
+                  })()}
+                </div>
               </div>
 
             </div>

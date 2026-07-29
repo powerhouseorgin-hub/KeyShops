@@ -227,7 +227,7 @@
 .reg-action-btn svg { width: 21px; height: 21px; }
 .reg-action-btn:active:not(:disabled) { transform: scale(.93); }
 .reg-action-btn:disabled { opacity: .45; cursor: not-allowed; }
-.reg-action-btn.save { background: var(--green); color: #fff; box-shadow: 0 10px 20px -8px rgba(21, 128, 61, 0.5); }
+.reg-action-btn.save { background: #2563EB; color: #fff; box-shadow: 0 10px 20px -8px rgba(37, 99, 235, 0.5); }
 .reg-action-btn.save:hover:not(:disabled) { filter: brightness(1.08); }
 .reg-action-btn.download { background: #fff; border-color: rgba(37, 99, 235, 0.3); color: #2563EB; }
 .reg-action-btn.download:hover:not(:disabled) { background: rgba(37, 99, 235, 0.08); }
@@ -819,7 +819,7 @@
 @media (max-width: 900px) { .step-label .name { display: none; } .step-line { width: 22px; } }
 
 .wizard-body { padding: 24px 34px; }
-.wizard-body.reg-compact { padding: 18px 22px; }
+.wizard-body.reg-compact { padding: 8px 22px 18px; }
 .wizard-body h3 { font-size: 19px; margin-bottom: 6px; }
 .wizard-body .desc { color: var(--text-2); font-size: 13.5px; font-weight: 600; margin-bottom: 26px; }
 
