@@ -248,6 +248,13 @@
 .btn-primary { background: #2563EB; color: #ffffff; box-shadow: 0 14px 26px rgba(37, 99, 235, 0.32), 0 2px 4px rgba(37, 99, 235, 0.2); }
 .btn-primary:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px) scale(1.015); }
 .btn-primary:active:not(:disabled) { transform: translateY(0) scale(.98); }
+/* Deeper/richer shade of the same primary blue, for the one main CTA on a
+   screen that also has other filled-blue buttons (e.g. Customer
+   Registration's Save Record vs. its Review button) - stands out as the
+   primary action without introducing a whole new hue. */
+.btn-primary-deep { background: #1D4ED8; color: #ffffff; box-shadow: 0 14px 26px rgba(29, 78, 216, 0.4), 0 2px 4px rgba(29, 78, 216, 0.24); }
+.btn-primary-deep:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px) scale(1.015); }
+.btn-primary-deep:active:not(:disabled) { transform: translateY(0) scale(.98); }
 .btn-outline { background: transparent; color: #2563EB; border: 1.5px solid rgba(37, 99, 235, 0.45); }
 .btn-outline:hover:not(:disabled) { background: rgba(37, 99, 235, 0.12); transform: translateY(-1px); }
 .btn-ghost { background: var(--card-2); color: var(--text-1); border: 1px solid var(--border-2); }

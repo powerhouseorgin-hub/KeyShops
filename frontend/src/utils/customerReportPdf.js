@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
-import { urlToDataUrl, rasterizePdfFirstPage } from './pdfImage';
+import { fileToDataUrl, urlToDataUrl, rasterizePdfFirstPage } from './pdfImage';
 
 const MAROON = '#7A1220';
 const MAROON_DARK = '#5C0E17';
@@ -61,13 +61,19 @@ function summaryRow(label, ok) {
     </tr>`;
 }
 
-// Builds a single branded PDF report for an already-registered customer
-// (Customer History's Download/WhatsApp actions) - customer info, key
-// details, shop information and every uploaded document (fetched from its
-// stored URL and embedded as an image, rasterizing PDF uploads via pdfjs) on
-// one printable page. Renders an HTML template through html2canvas + jsPDF
-// (rather than jsPDF's own primitive draw calls) so the layout can closely
-// follow the Key Shops report template this was designed against.
+// Builds a single branded PDF report - customer info, key details, shop
+// information and every document embedded as an image (rasterizing PDF
+// uploads via pdfjs) on one printable page. Renders an HTML template through
+// html2canvas + jsPDF (rather than jsPDF's own primitive draw calls) so the
+// layout can closely follow the Key Shops report template this was designed
+// against. Used by both:
+//  - Customer History's Download/WhatsApp actions, where `documents` are
+//    already-saved rows with a remote `fileUrl` (Supabase signed URL or
+//    backend path);
+//  - the Registration wizard's Download/Share actions, where `documents` are
+//    still local, in-memory `{ type, file }` File objects (upload to the
+//    server only happens after Submit) - so no network fetch is needed or
+//    even possible there yet.
 export async function buildCustomerReportPdf({ customer, shop, registeredByName }) {
   const reportId = `RPT-KEY-${(customer.id || '').replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 
@@ -81,17 +87,24 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   const docs = customer.documents || [];
   const docCards = [];
   for (const d of docs) {
+    const label = d.documentType || d.type;
     let imgDataUrl = null;
     try {
-      if (/\.pdf($|\?)/i.test(d.fileUrl) || d.fileKey?.toLowerCase().endsWith('.pdf')) {
+      if (d.file) {
+        // Local, not-yet-uploaded File (registration wizard) - read/rasterize
+        // directly, no network involved.
+        imgDataUrl = d.file.type === 'application/pdf'
+          ? await rasterizePdfFirstPage(d.file)
+          : await fileToDataUrl(d.file);
+      } else if (/\.pdf($|\?)/i.test(d.fileUrl) || d.fileKey?.toLowerCase().endsWith('.pdf')) {
         imgDataUrl = await rasterizePdfFirstPage(d.fileUrl);
       } else {
         imgDataUrl = await urlToDataUrl(d.fileUrl);
       }
     } catch (err) {
-      console.error(`Failed to load document "${d.documentType}" for report:`, err);
+      console.error(`Failed to load document "${label}" for report:`, err);
     }
-    docCards.push(documentCard(d.documentType, imgDataUrl));
+    docCards.push(documentCard(label, imgDataUrl));
   }
 
   const gpsCaptured = !!(customer.latitude && customer.longitude);
@@ -171,7 +184,7 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
         ${sectionHeader('&#128737;', 'Registration Summary')}
         <table style="width:100%; border-collapse:collapse; background:#fff; border:1px solid ${BORDER}; border-top:none;">
           ${summaryRow('Customer Photo', !!photoDataUrl)}
-          ${docs.map((d) => summaryRow(d.documentType, true)).join('')}
+          ${docs.map((d) => summaryRow(d.documentType || d.type, true)).join('')}
           ${summaryRow('GPS Location', gpsCaptured)}
         </table>
       </div>

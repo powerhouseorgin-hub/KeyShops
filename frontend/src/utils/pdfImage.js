@@ -1,6 +1,6 @@
-// Shared image-loading helpers for the app's PDF builders (registrationPdf.js
-// for in-memory registration uploads, customerReportPdf.js for already-saved
-// customer records) - kept in one place so both stay in sync.
+// Shared image-loading helpers for customerReportPdf.js, used both for
+// already-saved customer records (remote fileUrl) and in-memory registration
+// uploads (local File objects) - kept in one place so both stay in sync.
 
 // Reads a local File (already in-memory, not yet uploaded to the server) as a
 // data URL so it can be embedded directly into a generated PDF.
