@@ -6766,13 +6766,16 @@ export default function App() {
                                 <CheckCircle2 className="h-4 w-4" /> {t('mobileNumberVerifiedMsg')}
                               </div>
                             ) : !regOtpSent ? (
-                              <button
-                                type="button" onClick={handleSendRegOtp} disabled={regOtpLoading}
-                                className="btn btn-primary" style={{ width: '100%' }}
-                              >
-                                {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}
-                                {t('sendOtpToVerifyBtn')}
-                              </button>
+                              <div>
+                                {regOtpError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginBottom: 10 }}>{regOtpError}</div>}
+                                <button
+                                  type="button" onClick={handleSendRegOtp} disabled={regOtpLoading}
+                                  className="btn btn-primary" style={{ width: '100%' }}
+                                >
+                                  {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}
+                                  {t('sendOtpToVerifyBtn')}
+                                </button>
+                              </div>
                             ) : (
                               <div>
                                 {regOtpError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginBottom: 10 }}>{regOtpError}</div>}
