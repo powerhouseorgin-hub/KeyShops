@@ -11932,29 +11932,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
           <div className="eyebrow"><UserPlus /> {t('newCustomerEyebrow')}</div>
           <h1>{t('register')}</h1>
         </div>
-        <div className="reg-header-actions">
-          {superAdminMode && onCancel && (
-            <button type="button" onClick={onCancel} className="btn btn-ghost">
-              <X className="h-4 w-4" /><span>{t('btnCancel')}</span>
-            </button>
-          )}
-          <button
-            type="button" className="reg-action-btn save"
-            disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
-            onClick={handleFinalSubmit}
-            title={t('saveRecordBtn')}
-          >
-            <Save />
+        {superAdminMode && onCancel && (
+          <button type="button" onClick={onCancel} className="btn btn-ghost">
+            <X className="h-4 w-4" /><span>{t('btnCancel')}</span>
           </button>
-          <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="reg-action-btn download" title={t('downloadBtn')}>
-            {pdfAction === 'download' ? <RefreshCw className="animate-spin" /> : <Download />}
-          </button>
-          <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="reg-action-btn share" title={t('shareViaWhatsAppBtn')}>
-            {pdfAction === 'share' ? <RefreshCw className="animate-spin" /> : (
-              <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
-            )}
-          </button>
-        </div>
+        )}
       </div>
 
       <div className="card wizard-card">
@@ -12198,6 +12180,22 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         <div className="wizard-foot">
           <span />
           <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <button
+              type="button" className="reg-action-btn save"
+              disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
+              onClick={handleFinalSubmit}
+              title={t('saveRecordBtn')}
+            >
+              <Save />
+            </button>
+            <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="reg-action-btn download" title={t('downloadBtn')}>
+              {pdfAction === 'download' ? <RefreshCw className="animate-spin" /> : <Download />}
+            </button>
+            <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="reg-action-btn share" title={t('shareViaWhatsAppBtn')}>
+              {pdfAction === 'share' ? <RefreshCw className="animate-spin" /> : (
+                <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z"/></svg>
+              )}
+            </button>
             <button type="button" onClick={() => setShowReviewModal(true)} className="btn btn-primary" style={{ minWidth: 150 }}>
               <Eye style={{ width: 20, height: 20 }} /> {t('reviewStepLabel')}
             </button>
