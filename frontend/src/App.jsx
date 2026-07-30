@@ -1005,6 +1005,7 @@ const LANGUAGES = {
     locationUnavailableTitle: 'Location Unavailable',
     locationUnavailableMsg: 'Unable to fetch your current location. Please ensure that location services are enabled and location permission has been granted.',
     loadingWorkspaceSettingsMsg: 'Loading workspace settings…',
+    failedLoadShopSettingsMsg: 'Failed to load shop settings. Please check your connection and try again.',
     workspaceConfigurationEyebrow: 'Workspace Configuration',
     manageShopProfileDesc: 'Manage your shop profile, branding, verification documents, and account security.',
     refreshTitle: 'Refresh',
@@ -1814,6 +1815,7 @@ const LANGUAGES = {
     locationUnavailableTitle: 'लोकेशन उपलब्ध नहीं है',
     locationUnavailableMsg: 'आपकी वर्तमान लोकेशन प्राप्त करने में असमर्थ। कृपया सुनिश्चित करें कि लोकेशन सेवाएं सक्षम हैं और लोकेशन अनुमति दी गई है।',
     loadingWorkspaceSettingsMsg: 'वर्कस्पेस सेटिंग्स लोड हो रही हैं…',
+    failedLoadShopSettingsMsg: 'दुकान सेटिंग्स लोड करने में विफल। कृपया अपना कनेक्शन जांचें और पुनः प्रयास करें।',
     workspaceConfigurationEyebrow: 'वर्कस्पेस कॉन्फ़िगरेशन',
     manageShopProfileDesc: 'अपनी दुकान की प्रोफ़ाइल, ब्रांडिंग, सत्यापन दस्तावेज़ और खाता सुरक्षा प्रबंधित करें।',
     refreshTitle: 'रीफ्रेश करें',
@@ -2623,6 +2625,7 @@ const LANGUAGES = {
     locationUnavailableTitle: 'இருப்பிடம் கிடைக்கவில்லை',
     locationUnavailableMsg: 'உங்கள் தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை. இருப்பிட சேவைகள் இயக்கப்பட்டு, இருப்பிட அனுமதி வழங்கப்பட்டுள்ளதா என்பதை உறுதிப்படுத்தவும்.',
     loadingWorkspaceSettingsMsg: 'பணிமனை அமைப்புகள் ஏற்றப்படுகின்றன…',
+    failedLoadShopSettingsMsg: 'கடை அமைப்புகளை ஏற்ற முடியவில்லை. உங்கள் இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.',
     workspaceConfigurationEyebrow: 'பணிமனை உள்ளமைவு',
     manageShopProfileDesc: 'உங்கள் கடையின் சுயவிவரம், பிராண்டிங், சரிபார்ப்பு ஆவணங்கள் மற்றும் கணக்கு பாதுகாப்பை நிர்வகிக்கவும்.',
     refreshTitle: 'புதுப்பிக்கவும்',
@@ -3432,6 +3435,7 @@ const LANGUAGES = {
     locationUnavailableTitle: 'లొకేషన్ అందుబాటులో లేదు',
     locationUnavailableMsg: 'మీ ప్రస్తుత లొకేషన్‌ను పొందడం సాధ్యం కాలేదు. లొకేషన్ సేవలు ప్రారంభించబడ్డాయని మరియు లొకేషన్ అనుమతి మంజూరు చేయబడిందని నిర్ధారించుకోండి.',
     loadingWorkspaceSettingsMsg: 'వర్క్‌స్పేస్ సెట్టింగ్‌లు లోడ్ అవుతున్నాయి…',
+    failedLoadShopSettingsMsg: 'షాప్ సెట్టింగ్‌లను లోడ్ చేయడంలో విఫలమైంది. మీ కనెక్షన్‌ను తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి.',
     workspaceConfigurationEyebrow: 'వర్క్‌స్పేస్ కాన్ఫిగరేషన్',
     manageShopProfileDesc: 'మీ షాప్ ప్రొఫైల్, బ్రాండింగ్, ధృవీకరణ పత్రాలు మరియు ఖాతా భద్రతను నిర్వహించండి.',
     refreshTitle: 'రిఫ్రెష్ చేయండి',
@@ -4241,6 +4245,7 @@ const LANGUAGES = {
     locationUnavailableTitle: 'ಸ್ಥಳ ಲಭ್ಯವಿಲ್ಲ',
     locationUnavailableMsg: 'ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಸ್ಥಳ ಸೇವೆಗಳು ಸಕ್ರಿಯವಾಗಿವೆ ಮತ್ತು ಸ್ಥಳ ಅನುಮತಿ ನೀಡಲಾಗಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.',
     loadingWorkspaceSettingsMsg: 'ಕಾರ್ಯಸ್ಥಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…',
+    failedLoadShopSettingsMsg: 'ಅಂಗಡಿ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ನಿಮ್ಮ ಸಂಪರ್ಕವನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
     workspaceConfigurationEyebrow: 'ಕಾರ್ಯಸ್ಥಳ ಕಾನ್ಫಿಗರೇಶನ್',
     manageShopProfileDesc: 'ನಿಮ್ಮ ಅಂಗಡಿಯ ಪ್ರೊಫೈಲ್, ಬ್ರಾಂಡಿಂಗ್, ಪರಿಶೀಲನಾ ದಾಖಲೆಗಳು ಮತ್ತು ಖಾತೆ ಭದ್ರತೆಯನ್ನು ನಿರ್ವಹಿಸಿ.',
     refreshTitle: 'ರಿಫ್ರೆಶ್ ಮಾಡಿ',
@@ -5050,6 +5055,7 @@ const LANGUAGES = {
     locationUnavailableTitle: 'ലൊക്കേഷൻ ലഭ്യമല്ല',
     locationUnavailableMsg: 'നിങ്ങളുടെ നിലവിലെ ലൊക്കേഷൻ ലഭ്യമാക്കാൻ കഴിഞ്ഞില്ല. ലൊക്കേഷൻ സേവനങ്ങൾ പ്രവർത്തനക്ഷമമാണെന്നും ലൊക്കേഷൻ അനുമതി നൽകിയിട്ടുണ്ടെന്നും ഉറപ്പാക്കുക.',
     loadingWorkspaceSettingsMsg: 'വർക്ക്‌സ്‌പേസ് ക്രമീകരണങ്ങൾ ലോഡ് ചെയ്യുന്നു…',
+    failedLoadShopSettingsMsg: 'ഷോപ്പ് ക്രമീകരണങ്ങൾ ലോഡ് ചെയ്യാൻ കഴിഞ്ഞില്ല. നിങ്ങളുടെ കണക്ഷൻ പരിശോധിച്ച് വീണ്ടും ശ്രമിക്കുക.',
     workspaceConfigurationEyebrow: 'വർക്ക്‌സ്‌പേസ് കോൺഫിഗറേഷൻ',
     manageShopProfileDesc: 'നിങ്ങളുടെ ഷോപ്പ് പ്രൊഫൈൽ, ബ്രാൻഡിംഗ്, സ്ഥിരീകരണ രേഖകൾ, അക്കൗണ്ട് സുരക്ഷ എന്നിവ കൈകാര്യം ചെയ്യുക.',
     refreshTitle: 'പുതുക്കുക',
@@ -13766,6 +13772,7 @@ function ShopSettingsView({ t, api, shopId }) {
   const [verificationDoc, setVerificationDoc] = useState(null);
   const [docUploading, setDocUploading] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [settingsError, setSettingsError] = useState('');
   const [referralCode, setReferralCode] = useState(null);
   const [referralGenerating, setReferralGenerating] = useState(false);
   const [referralCopied, setReferralCopied] = useState(false);
@@ -13814,6 +13821,7 @@ function ShopSettingsView({ t, api, shopId }) {
 
   const fetchSettings = async () => {
     setLoading(true);
+    setSettingsError('');
     try {
       const res = await api.getSettings(shopId);
       setShopName(res.name);
@@ -13842,6 +13850,10 @@ function ShopSettingsView({ t, api, shopId }) {
       setVerificationDoc(verificationDocs[0] || null);
     } catch (e) {
       console.error(e);
+      // Surfaced so a failed fetch (flaky mobile network, expired session,
+      // etc.) doesn't silently leave every field blank with no indication
+      // anything went wrong - previously this just logged to the console.
+      setSettingsError(e.message || t('failedLoadShopSettingsMsg'));
     } finally {
       setLoading(false);
     }
@@ -14056,11 +14068,34 @@ function ShopSettingsView({ t, api, shopId }) {
     }
   };
 
+  const refreshAll = () => {
+    fetchSettings();
+    fetchReferralOverview();
+  };
+
   if (loading) {
     return (
       <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
         <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
         <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingWorkspaceSettingsMsg')}</span>
+      </div>
+    );
+  }
+
+  // A failed fetch (flaky network, expired session, etc.) used to leave every
+  // field silently blank with no indication anything went wrong. Show a
+  // dedicated error state with a retry action instead of a broken-looking form.
+  if (settingsError) {
+    return (
+      <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, minHeight: 260, textAlign: 'center' }}>
+        <div className="icon-badge red" style={{ width: 44, height: 44, borderRadius: '50%' }}><AlertTriangle /></div>
+        <div>
+          <p style={{ fontWeight: 800, color: 'var(--text-0)', fontFamily: 'var(--display)', marginBottom: 4 }}>{t('failedLoadShopSettingsMsg')}</p>
+          <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>{settingsError}</p>
+        </div>
+        <button onClick={refreshAll} className="btn btn-primary">
+          <RefreshCw className="h-4 w-4" /><span>{t('btnRetry')}</span>
+        </button>
       </div>
     );
   }
@@ -14073,7 +14108,7 @@ function ShopSettingsView({ t, api, shopId }) {
           <h1>{t('settings')}</h1>
           <p>{t('manageShopProfileDesc')}</p>
         </div>
-        <button onClick={fetchSettings} className="icon-btn" title={t('refreshTitle')}><RefreshCw /></button>
+        <button onClick={refreshAll} className="icon-btn" title={t('refreshTitle')}><RefreshCw /></button>
       </div>
 
       <div className="grid-2">
