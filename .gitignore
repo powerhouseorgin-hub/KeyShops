@@ -48,3 +48,13 @@ backend/public/uploads/
 # Built Android APK output (regenerate via: cd frontend && npx cap sync android &&
 # cd android && ./gradlew assembleDebug) — binary build artifact, not source.
 *.apk
+
+# The web landing page's downloadable APK (renamed .keeapp so Firebase Hosting's
+# Spark plan will deploy it - see firebase.json). Deliberately NOT committed: it's
+# a build artifact that also must never sit inside frontend/public or frontend/dist
+# while `npx cap sync` runs, or it gets embedded as a dead asset inside the next
+# Android build (ballooning APK size release over release). Instead it's copied
+# straight into frontend/dist/downloads/ as the last step before `firebase deploy`,
+# sourced from the just-built android/app/build/outputs/apk/release/app-release.apk.
+frontend/public/downloads/
+frontend/dist/downloads/
