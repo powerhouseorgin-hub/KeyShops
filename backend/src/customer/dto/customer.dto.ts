@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsOptional, IsNumber, Matches, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsBoolean, Matches, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
 
@@ -39,8 +39,8 @@ export class CreateCustomerDto {
   reason?: string;
 
   @IsString()
-  @IsNotEmpty({ message: 'Key number is required' })
-  keyNumber: string;
+  @IsOptional()
+  keyNumber?: string;
 
   @IsString()
   @IsOptional()
@@ -86,6 +86,30 @@ export class CreateCustomerDto {
   @IsString()
   @IsOptional()
   photoBase64?: string;
+
+  @IsNumber()
+  @IsOptional()
+  billAmount?: number;
+
+  @IsString()
+  @IsOptional()
+  vehicleName?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  lostKey?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  addKey?: boolean;
+
+  @IsString()
+  @IsOptional()
+  homeOfficeName?: string;
+
+  @IsString()
+  @IsOptional()
+  vehicleCategory?: string;
 }
 
 // SUPER ADMIN: same shape as CreateCustomerDto, plus a required target shop.
@@ -135,4 +159,48 @@ export class UpdateCustomerDto {
   @IsString()
   @IsOptional()
   vehicleNumber?: string;
+
+  @IsString()
+  @IsOptional()
+  masterKeyId?: string;
+
+  @IsNumber()
+  @IsOptional()
+  latitude?: number;
+
+  @IsNumber()
+  @IsOptional()
+  longitude?: number;
+
+  @IsString()
+  @IsOptional()
+  mapsLink?: string;
+
+  @IsString()
+  @IsOptional()
+  capturedAddress?: string;
+
+  @IsNumber()
+  @IsOptional()
+  billAmount?: number;
+
+  @IsString()
+  @IsOptional()
+  vehicleName?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  lostKey?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  addKey?: boolean;
+
+  @IsString()
+  @IsOptional()
+  homeOfficeName?: string;
+
+  @IsString()
+  @IsOptional()
+  vehicleCategory?: string;
 }

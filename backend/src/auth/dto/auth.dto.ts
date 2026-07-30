@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsOptional, MinLength, Matches, IsNumber } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsOptional, MinLength, Matches, IsNumber, IsUrl } from 'class-validator';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
 
 export class LoginDto {
@@ -100,9 +100,12 @@ export class RegisterShopDto {
   @IsNotEmpty()
   ownerName: string;
 
+  // Optional - a shop can self-register with just a mobile number and log in
+  // with that alone (see AuthService.login/registerShop). When provided, it's
+  // still validated as a well-formed email and must be unique.
+  @IsOptional()
   @IsEmail({}, { message: 'Please enter a valid email address' })
-  @IsNotEmpty({ message: 'Email address is required' })
-  email: string;
+  email?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -166,4 +169,12 @@ export class RegisterShopDto {
   @IsOptional()
   @IsString()
   referralCode?: string;
+
+  // Optional shop website, gated behind an ON/OFF toggle on the registration
+  // form (default OFF). Stored inside Shop.companyDetails JSON alongside
+  // gst/city/state/pinCode rather than as its own column - see
+  // AuthService.registerShop().
+  @IsOptional()
+  @IsUrl({}, { message: 'Please enter a valid website URL' })
+  website?: string;
 }

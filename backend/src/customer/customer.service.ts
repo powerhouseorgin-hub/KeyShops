@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { TenantService } from '../tenant/tenant.service';
 import { CryptoService } from '../crypto/crypto.service';
 import { FileService } from './file.service';
-import { CreateCustomerDto } from './dto/customer.dto';
+import { CreateCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { getTenantContext } from '../tenant/tenant.context';
 
 @Injectable()
@@ -44,7 +44,7 @@ export class CustomerService {
     const customer = await this.tenantService.prisma.$transaction(async (tx) => {
       let finalMasterKeyId = dto.masterKeyId || null;
 
-      if (!finalMasterKeyId && dto.manualKey) {
+      if (!finalMasterKeyId && dto.manualKey && dto.keyNumber) {
         const key = await tx.masterKey.upsert({
           where: { shopId_keyNumber: { shopId, keyNumber: dto.keyNumber } },
           update: {},
@@ -66,7 +66,7 @@ export class CustomerService {
           idProofType: dto.idProofType || null,
           idProofNumber: encryptedIdNumber,
           reason: dto.reason || null,
-          keyNumber: dto.keyNumber,
+          keyNumber: dto.keyNumber || null,
           keyType: dto.keyType || null,
           vehicleNumber: dto.vehicleNumber || null,
           masterKeyId: finalMasterKeyId,
@@ -75,6 +75,12 @@ export class CustomerService {
           mapsLink: dto.mapsLink || `https://www.google.com/maps?q=${finalLat},${finalLng}`,
           capturedAddress: dto.capturedAddress || 'Connaught Place, New Delhi, India',
           photoUrl,
+          billAmount: dto.billAmount ?? null,
+          vehicleName: dto.vehicleName || null,
+          lostKey: dto.lostKey ?? false,
+          addKey: dto.addKey ?? false,
+          homeOfficeName: dto.homeOfficeName || null,
+          vehicleCategory: dto.vehicleCategory || null,
         },
       });
 
@@ -95,7 +101,9 @@ export class CustomerService {
       await tx.notification.create({
         data: {
           title: 'New Customer Registered',
-          message: `Customer "${created.name}" (Key: ${created.keyNumber}) has been registered.`,
+          message: created.keyNumber
+            ? `Customer "${created.name}" (Key: ${created.keyNumber}) has been registered.`
+            : `Customer "${created.name}" has been registered.`,
           type: 'CUSTOMER_REGISTRATION',
           shopId,
           audience: 'SHOP',
@@ -109,7 +117,7 @@ export class CustomerService {
   }
 
   // SHOP ADMIN: Update Customer
-  async updateCustomer(shopId: string, id: string, dto: any) {
+  async updateCustomer(shopId: string, id: string, dto: UpdateCustomerDto) {
     const customer = await this.tenantService.prisma.customer.findFirst({
       where: { id, shopId },
     });
@@ -123,7 +131,7 @@ export class CustomerService {
       address: dto.address,
       idProofType: dto.idProofType,
       reason: dto.reason,
-      keyNumber: dto.keyNumber,
+      keyNumber: dto.keyNumber || null,
       keyType: dto.keyType || null,
       vehicleNumber: dto.vehicleNumber || null,
       masterKeyId: dto.masterKeyId || null,
@@ -131,6 +139,12 @@ export class CustomerService {
       longitude: dto.longitude || null,
       mapsLink: dto.mapsLink || null,
       capturedAddress: dto.capturedAddress || null,
+      billAmount: dto.billAmount ?? null,
+      vehicleName: dto.vehicleName || null,
+      lostKey: dto.lostKey ?? false,
+      addKey: dto.addKey ?? false,
+      homeOfficeName: dto.homeOfficeName || null,
+      vehicleCategory: dto.vehicleCategory || null,
     };
 
     if (dto.idProofNumber) {
@@ -293,7 +307,7 @@ export class CustomerService {
   }
 
   // SUPER ADMIN: Update customer details (any shop)
-  async updateSuperCustomer(id: string, dto: any) {
+  async updateSuperCustomer(id: string, dto: UpdateCustomerDto) {
     const customer = await this.tenantService.prisma.customer.findFirst({
       where: { id },
     });
@@ -307,13 +321,19 @@ export class CustomerService {
       address: dto.address,
       idProofType: dto.idProofType,
       reason: dto.reason,
-      keyNumber: dto.keyNumber,
+      keyNumber: dto.keyNumber || null,
       keyType: dto.keyType || null,
       masterKeyId: dto.masterKeyId || null,
       latitude: dto.latitude || null,
       longitude: dto.longitude || null,
       mapsLink: dto.mapsLink || null,
       capturedAddress: dto.capturedAddress || null,
+      billAmount: dto.billAmount ?? null,
+      vehicleName: dto.vehicleName || null,
+      lostKey: dto.lostKey ?? false,
+      addKey: dto.addKey ?? false,
+      homeOfficeName: dto.homeOfficeName || null,
+      vehicleCategory: dto.vehicleCategory || null,
     };
 
     if (dto.idProofNumber) {

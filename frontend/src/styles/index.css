@@ -643,12 +643,20 @@
    padding/margins reduce scrolling while keeping each section's card
    boundary for readability. */
 .reg-compact .reg-section {
-  padding: 10px 4px; margin-bottom: 6px;
+  padding: 7px 5px; margin-bottom: 9px;
   border: none; background: transparent; box-shadow: none; border-radius: 0;
 }
-.reg-compact .reg-field { margin-bottom: 8px; }
-.reg-compact .reg-field-label { margin-bottom: 5px; }
-.reg-compact .form-grid { gap: 12px; }
+.reg-compact .reg-field { margin-bottom: 13px; }
+.reg-compact .reg-field-label { margin-bottom: 6px; }
+.reg-compact .form-grid { gap: 10px; }
+
+/* Customer Registration wizard's page header - the app-wide .page-head/h1
+   sizing (30px heading, 20px margin) is tuned for full dashboard pages, not
+   this compact single-mobile-screen wizard, so it's shrunk here to leave
+   more room for the fields themselves without introducing scrolling. */
+.reg-wizard-head.page-head { margin-bottom: 8px; }
+.reg-wizard-head.page-head h1 { font-size: 19px; }
+.reg-wizard-head .eyebrow { margin-bottom: 2px; }
 .reg-field-label { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
 .reg-ico {
   width: 27px; height: 27px; border-radius: 9px; display: flex; align-items: center;
@@ -675,6 +683,7 @@
 .reg-field .input-wrap input, .reg-field .input-wrap select { padding-left: 15px; }
 .reg-field .input-wrap > svg { display: none; }
 .reg-field .input-wrap input, .reg-field .input-wrap select { background: var(--card-2); }
+.reg-compact .input-wrap input, .reg-compact .input-wrap select { padding-top: 10px; padding-bottom: 10px; }
 .reg-otp-btn {
   background: #1D4ED8; color: #ffffff; border: none; border-radius: 10px;
   padding: 0 14px; font-weight: 800; font-size: 11.5px; font-family: var(--display);
@@ -683,6 +692,67 @@
 .reg-otp-btn:hover:not(:disabled) { filter: brightness(1.1); }
 .reg-submit-btn { width: 100%; justify-content: center; border-radius: 14px; padding: 15px; font-size: 14.5px; background: #1D4ED8; box-shadow: 0 14px 26px rgba(29, 78, 216, 0.35), 0 2px 4px rgba(29, 78, 216, 0.2); }
 .reg-submit-btn:hover:not(:disabled) { filter: brightness(1.1); }
+
+/* 5-across icon category picker - Customer Registration wizard Page 1
+   (Two Wheeler/Four Wheeler/Truck-Lorry/Home/Office). Automobile vs Domestic
+   grouping is derived purely in code (see utils/vehicleCategory.js) - never
+   shown here as text. */
+.category-icon-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 9px;
+}
+.category-icon-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  background: var(--card-2); border: 1.5px solid var(--border-2); border-radius: 14px;
+  padding: 7px 4px; cursor: pointer; transition: border-color .15s ease, background .15s ease, transform .1s ease;
+  color: var(--text-2);
+}
+.category-icon-btn svg { width: 20px; height: 20px; }
+.category-icon-btn img { width: 100%; max-width: 40px; height: 26px; object-fit: contain; }
+.category-icon-btn span { font-size: 9.5px; font-weight: 800; text-align: center; line-height: 1.2; text-transform: uppercase; letter-spacing: .02em; }
+.category-icon-btn:active { transform: scale(0.96); }
+.category-icon-btn.active {
+  border-color: var(--gold); background: rgba(245, 184, 0, 0.14); color: var(--gold);
+}
+
+/* Standalone selectable action button (Add Key / Lost Key) - same bordered
+   selection language as .category-icon-btn (icon + label), but each has its
+   own active-state color: Add Key turns blue, Lost Key turns red-on-white -
+   see .add-key-btn.active / .lost-key-btn.active below. */
+.choice-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  background: var(--card-2); border: 1.5px solid var(--border-2); border-radius: 14px;
+  padding: 9px 10px; cursor: pointer; font-weight: 800; font-size: 12.5px; color: var(--text-2);
+  transition: border-color .15s ease, background .15s ease, color .15s ease, transform .1s ease;
+}
+.choice-btn img { width: 100%; max-width: 32px; height: 26px; object-fit: contain; }
+.choice-btn:active { transform: scale(0.97); }
+.add-key-btn.active {
+  border-color: #2563EB !important; background: rgba(37, 99, 235, 0.14) !important; color: #2563EB !important;
+}
+.lost-key-btn.active {
+  border-color: #DC2626 !important; background: #ffffff !important; color: #DC2626 !important;
+}
+
+/* Pill/thumb toggle switch - used for Add Key / Lost Key (Page 1) and the
+   optional-field show/hide toggles (Page 2). No prior toggle-switch existed
+   in this codebase (only a plain checkbox), so this is a net-new component. */
+.toggle-switch {
+  position: relative; display: inline-flex; align-items: center;
+  width: 40px; height: 22px; border-radius: 999px; flex-shrink: 0;
+  background: var(--border-2); border: none; padding: 0; cursor: pointer;
+  transition: background .18s ease;
+}
+.toggle-switch.on { background: var(--gold); }
+.toggle-switch .toggle-thumb {
+  position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.25); transition: transform .18s ease;
+}
+.toggle-switch.on .toggle-thumb { transform: translateX(18px); }
+.toggle-field-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin-bottom: 7px;
+}
+.toggle-field-row .reg-field-label { margin-bottom: 0; flex: 1; }
 
 .login-divider { display: flex; align-items: center; gap: 12px; margin: 26px 0; color: var(--text-3); font-size: 12px; font-weight: 700; }
 .login-divider::before, .login-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-2); }
@@ -819,7 +889,7 @@
 @media (max-width: 900px) { .step-label .name { display: none; } .step-line { width: 22px; } }
 
 .wizard-body { padding: 24px 34px; }
-.wizard-body.reg-compact { padding: 8px 22px 18px; }
+.wizard-body.reg-compact { padding: 6px 16px 12px; }
 .wizard-body h3 { font-size: 19px; margin-bottom: 6px; }
 .wizard-body .desc { color: var(--text-2); font-size: 13.5px; font-weight: 600; margin-bottom: 26px; }
 

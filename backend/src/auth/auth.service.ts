@@ -390,11 +390,19 @@ export class AuthService implements OnModuleInit {
     // Re-check uniqueness at submit time (in addition to the check already
     // done when the OTP was sent) since time may have passed and another
     // registration could have raced in between.
+    // Email is optional now, so the OR array is built conditionally - Prisma
+    // strips `undefined` values from a where clause, so an unconditional
+    // `{ email: dto.email }` would collapse to `{}` (an always-true match)
+    // whenever the owner didn't enter an email, matching every user in the table.
+    const duplicateCheckOr: any[] = [{ phone: dto.phone }];
+    if (dto.email) {
+      duplicateCheckOr.push({ email: dto.email });
+    }
     const existingUser = await this.tenantService.prisma.user.findFirst({
-      where: { OR: [{ email: dto.email }, { phone: dto.phone }] },
+      where: { OR: duplicateCheckOr },
     });
     if (existingUser) {
-      if (existingUser.email === dto.email) {
+      if (dto.email && existingUser.email === dto.email) {
         throw new BadRequestException('This email address is already registered to another shop');
       }
       throw new BadRequestException('This mobile number is already registered to another shop');
@@ -434,6 +442,7 @@ export class AuthService implements OnModuleInit {
             pinCode: dto.pinCode,
             gst: 'Pending',
             phone: dto.phone,
+            website: dto.website || undefined,
           }),
           // Owner Aadhaar is a plain 12-digit number on this wizard (not an
           // uploaded document) - encrypted at rest, see CustomerService's
@@ -455,7 +464,7 @@ export class AuthService implements OnModuleInit {
       // identifiers, sharing the single password the owner chose.
       await tx.user.create({
         data: {
-          email: dto.email,
+          email: dto.email || null,
           phone: dto.phone,
           name: dto.ownerName,
           passwordHash,
@@ -512,7 +521,7 @@ export class AuthService implements OnModuleInit {
       return {
         success: true,
         shopId: shop.id,
-        loginEmail: dto.email,
+        ...(dto.email ? { loginEmail: dto.email } : {}),
         loginPhone: dto.phone,
         message: 'Registration successful! Your shop account is now active - you can log in right away.',
       };

@@ -5,9 +5,18 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { useAuth } from './context/AuthContext';
 import { getAssetUrl, downloadAsset, filenameForAsset, API_BASE } from './apiConfig';
 import { buildCustomerReportPdf } from './utils/customerReportPdf';
+import { VEHICLE_CATEGORIES, isAutomobileCategory } from './utils/vehicleCategory';
+import twoWheelerIcon from './assets/categories/two-wheeler.png';
+import fourWheelerIcon from './assets/categories/four-wheeler.png';
+import truckLorryIcon from './assets/categories/truck-lorry.png';
+import homeCategoryIcon from './assets/categories/home.png';
+import officeCategoryIcon from './assets/categories/office.png';
+import addKeyIcon from './assets/addlostkeys/bluekey.png';
+import lostKeyIcon from './assets/addlostkeys/redkey.png';
 import { downloadPdf, sharePdf } from './utils/pdfDelivery';
 import PublicSite from './components/PublicSite';
 import CustomSelect from './components/CustomSelect';
+import OtpVerificationModal from './components/OtpVerificationModal';
 import {
   Key, Users, Shield, Radio, BarChart3, Database, LogOut, Check, X,
   Plus, Settings, FileText, Search, UserCheck, MapPin, Camera, AlertTriangle,
@@ -812,6 +821,17 @@ const LANGUAGES = {
     backProfileLabel: 'Back Profile',
     customerNameLabel: 'Customer Name',
     vehicleNumberLabel: 'Vehicle Number',
+    twoWheelerLabel: 'Two Wheeler',
+    fourWheelerLabel: 'Four Wheeler',
+    truckLorryLabel: 'Truck / Lorry',
+    homeCategoryLabel: 'Home',
+    officeCategoryLabel: 'Office',
+    addKeyLabel: 'Add Key',
+    lostKeyLabel: 'Lost Key',
+    billAmountLabel: 'Bill Amount',
+    vehicleNameLabel: 'Vehicle Name',
+    homeOfficeNameLabel: 'Home / Office Name',
+    homeOfficeKeyCodeLabel: 'Home / Office Key Code',
     webcamSnapshotLabel: 'Camera Snapshot',
     registryLocationOverviewLabel: 'Registry Location Overview (Other Workspace)',
     customerMobileLabel: 'Customer Mobile',
@@ -878,7 +898,7 @@ const LANGUAGES = {
     dropOrBrowseCopyTemplate: 'Drop or browse a copy of {type}',
     jpegPngPdfUpTo5MbLabel: 'JPEG, PNG or PDF — up to 5MB',
     stagedIdCopiesTemplate: 'Staged ID copies ({count})',
-    verifyDetailsBeforeSubmitDesc: 'Verify every detail entered below before submitting this compliance registration. Nothing is captured or modified automatically on this step.',
+    verifyDetailsBeforeSubmitDesc: 'Review the details before submitting.',
     reviewCustomerLabel: 'Customer',
     reviewPhoneLabel: 'Phone',
     keyBlankLabel: 'Key Blank',
@@ -1018,6 +1038,8 @@ const LANGUAGES = {
     adminCredentialsTitle: 'Admin Credentials',
     usernameNameLabel: 'Username / Name',
     emailAddressLabel: 'Email Address',
+    noEmailOnFileLabel: 'No email on file',
+    optionalLabel: 'Optional',
     workspacePasswordLabel: 'Workspace Password',
     hidePasswordTitle: 'Hide password',
     revealPasswordTitle: 'Reveal password',
@@ -1082,6 +1104,8 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'Showing up to first 4 columns in browser preview. Export to view all detailed data columns.',
     aadhaarMustBe12DigitsMsg: 'Aadhaar number must be exactly 12 digits.',
     aadhaarNumberLabel: 'Aadhaar Number',
+    websiteUrlLabel: 'Website URL',
+    websiteUrlPlaceholderEg: 'e.g. https://www.yourshop.com',
     backToHomeLink: 'Back to home',
     canLogInWithEitherMsg: 'You can log in with either',
     cardholderNameLabel: 'Cardholder Name',
@@ -1126,6 +1150,7 @@ const LANGUAGES = {
     regPasswordMinLengthMsg: 'Password must be at least 6 characters.',
     rememberMeLabel: 'Remember me',
     resendOtpBtn: 'Resend OTP',
+    resendInTemplate: 'Resend in {time}',
     resetYourPasswordTitle: 'Reset your password',
     returnToLoginBtn: 'Return to login',
     runYourShopHeading: 'Run your shop',
@@ -1622,6 +1647,17 @@ const LANGUAGES = {
     backProfileLabel: 'बैक प्रोफाइल',
     customerNameLabel: 'ग्राहक का नाम',
     vehicleNumberLabel: 'वाहन नंबर',
+    twoWheelerLabel: 'दोपहिया',
+    fourWheelerLabel: 'चारपहिया',
+    truckLorryLabel: 'ट्रक / लॉरी',
+    homeCategoryLabel: 'घर',
+    officeCategoryLabel: 'कार्यालय',
+    addKeyLabel: 'की जोड़ें',
+    lostKeyLabel: 'खोई हुई चाबी',
+    billAmountLabel: 'बिल राशि',
+    vehicleNameLabel: 'वाहन का नाम',
+    homeOfficeNameLabel: 'घर / कार्यालय का नाम',
+    homeOfficeKeyCodeLabel: 'घर / कार्यालय की कोड',
     webcamSnapshotLabel: 'कैमरा स्नैपशॉट',
     registryLocationOverviewLabel: 'रजिस्ट्री स्थान अवलोकन (अन्य कार्यक्षेत्र)',
     customerMobileLabel: 'ग्राहक मोबाइल',
@@ -1688,7 +1724,7 @@ const LANGUAGES = {
     dropOrBrowseCopyTemplate: '{type} की एक प्रति ड्रॉप करें या ब्राउज़ करें',
     jpegPngPdfUpTo5MbLabel: 'JPEG, PNG या PDF — 5MB तक',
     stagedIdCopiesTemplate: 'जोड़ी गई आईडी प्रतियां ({count})',
-    verifyDetailsBeforeSubmitDesc: 'इस अनुपालन पंजीकरण को सबमिट करने से पहले नीचे दर्ज किए गए हर विवरण की पुष्टि करें। इस चरण में कुछ भी स्वचालित रूप से कैप्चर या संशोधित नहीं किया जाता है।',
+    verifyDetailsBeforeSubmitDesc: 'सबमिट करने से पहले विवरण की समीक्षा करें।',
     reviewCustomerLabel: 'ग्राहक',
     reviewPhoneLabel: 'फ़ोन',
     keyBlankLabel: 'की ब्लैंक',
@@ -1828,6 +1864,8 @@ const LANGUAGES = {
     adminCredentialsTitle: 'एडमिन क्रेडेंशियल्स',
     usernameNameLabel: 'उपयोगकर्ता नाम / नाम',
     emailAddressLabel: 'ईमेल पता',
+    noEmailOnFileLabel: 'कोई ईमेल दर्ज नहीं है',
+    optionalLabel: 'वैकल्पिक',
     workspacePasswordLabel: 'वर्कस्पेस पासवर्ड',
     hidePasswordTitle: 'पासवर्ड छिपाएं',
     revealPasswordTitle: 'पासवर्ड दिखाएं',
@@ -1892,6 +1930,8 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'ब्राउज़र पूर्वावलोकन में पहले 4 कॉलम तक दिखाए जा रहे हैं। सभी विस्तृत डेटा कॉलम देखने के लिए निर्यात करें।',
     aadhaarMustBe12DigitsMsg: 'आधार नंबर बिल्कुल 12 अंकों का होना चाहिए।',
     aadhaarNumberLabel: 'आधार नंबर',
+    websiteUrlLabel: 'वेबसाइट यूआरएल',
+    websiteUrlPlaceholderEg: 'उदा. https://www.yourshop.com',
     backToHomeLink: 'होम पर वापस जाएं',
     canLogInWithEitherMsg: 'आप इनमें से किसी से भी लॉग इन कर सकते हैं',
     cardholderNameLabel: 'कार्डधारक का नाम',
@@ -1936,6 +1976,7 @@ const LANGUAGES = {
     regPasswordMinLengthMsg: 'पासवर्ड कम से कम 6 वर्णों का होना चाहिए।',
     rememberMeLabel: 'मुझे याद रखें',
     resendOtpBtn: 'OTP पुनः भेजें',
+    resendInTemplate: '{time} में पुनः भेजें',
     resetYourPasswordTitle: 'अपना पासवर्ड रीसेट करें',
     returnToLoginBtn: 'लॉगिन पर वापस जाएं',
     runYourShopHeading: 'अपनी दुकान चलाएं',
@@ -2432,6 +2473,17 @@ const LANGUAGES = {
     backProfileLabel: 'பின் சுயவிவரம்',
     customerNameLabel: 'வாடிக்கையாளர் பெயர்',
     vehicleNumberLabel: 'வாகன எண்',
+    twoWheelerLabel: 'இருசக்கர வாகனம்',
+    fourWheelerLabel: 'நான்கு சக்கர வாகனம்',
+    truckLorryLabel: 'டிரக் / லாரி',
+    homeCategoryLabel: 'வீடு',
+    officeCategoryLabel: 'அலுவலகம்',
+    addKeyLabel: 'சாவி சேர்க்கவும்',
+    lostKeyLabel: 'தொலைந்த சாவி',
+    billAmountLabel: 'பில் தொகை',
+    vehicleNameLabel: 'வாகனத்தின் பெயர்',
+    homeOfficeNameLabel: 'வீடு / அலுவலக பெயர்',
+    homeOfficeKeyCodeLabel: 'வீடு / அலுவலக சாவி குறியீடு',
     webcamSnapshotLabel: 'கேமரா ஸ்னாப்ஷாட்',
     registryLocationOverviewLabel: 'பதிவு இருப்பிட மேலோட்டம் (மற்ற பணியிடம்)',
     customerMobileLabel: 'வாடிக்கையாளர் மொபைல்',
@@ -2498,7 +2550,7 @@ const LANGUAGES = {
     dropOrBrowseCopyTemplate: '{type} இன் நகலை இழுத்துவிடவும் அல்லது உலாவவும்',
     jpegPngPdfUpTo5MbLabel: 'JPEG, PNG அல்லது PDF — 5MB வரை',
     stagedIdCopiesTemplate: 'சேர்க்கப்பட்ட அடையாள நகல்கள் ({count})',
-    verifyDetailsBeforeSubmitDesc: 'இந்த இணக்க பதிவை சமர்ப்பிக்கும் முன் கீழே உள்ளிடப்பட்ட ஒவ்வொரு விவரத்தையும் சரிபார்க்கவும். இந்த படியில் எதுவும் தானாக பிடிக்கப்படவோ மாற்றப்படவோ மாட்டாது.',
+    verifyDetailsBeforeSubmitDesc: 'சமர்ப்பிக்கும் முன் விவரங்களை மதிப்பாய்வு செய்யவும்.',
     reviewCustomerLabel: 'வாடிக்கையாளர்',
     reviewPhoneLabel: 'தொலைபேசி',
     keyBlankLabel: 'சாவி வெற்று',
@@ -2638,6 +2690,8 @@ const LANGUAGES = {
     adminCredentialsTitle: 'நிர்வாக சான்றுகள்',
     usernameNameLabel: 'பயனர்பெயர் / பெயர்',
     emailAddressLabel: 'மின்னஞ்சல் முகவரி',
+    noEmailOnFileLabel: 'மின்னஞ்சல் பதிவு செய்யப்படவில்லை',
+    optionalLabel: 'விருப்பத்தேர்வு',
     workspacePasswordLabel: 'பணிமனை கடவுச்சொல்',
     hidePasswordTitle: 'கடவுச்சொல்லை மறை',
     revealPasswordTitle: 'கடவுச்சொல்லை காட்டு',
@@ -2702,6 +2756,8 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'உலாவி முன்னோட்டத்தில் முதல் 4 நெடுவரிசைகள் வரை காட்டப்படுகின்றன. அனைத்து விரிவான தரவு நெடுவரிசைகளையும் காண ஏற்றுமதி செய்யவும்.',
     aadhaarMustBe12DigitsMsg: 'ஆதார் எண் சரியாக 12 இலக்கங்களாக இருக்க வேண்டும்.',
     aadhaarNumberLabel: 'ஆதார் எண்',
+    websiteUrlLabel: 'இணையதள முகவரி',
+    websiteUrlPlaceholderEg: 'எ.கா. https://www.yourshop.com',
     backToHomeLink: 'முகப்புக்குத் திரும்பு',
     canLogInWithEitherMsg: 'நீங்கள் இவற்றில் ஏதேனும் ஒன்றைப் பயன்படுத்தி உள்நுழையலாம்',
     cardholderNameLabel: 'கார்டுதாரர் பெயர்',
@@ -2746,6 +2802,7 @@ const LANGUAGES = {
     regPasswordMinLengthMsg: 'கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்.',
     rememberMeLabel: 'என்னை நினைவில் கொள்ளவும்',
     resendOtpBtn: 'OTP ஐ மீண்டும் அனுப்பு',
+    resendInTemplate: '{time} இல் மீண்டும் அனுப்பு',
     resetYourPasswordTitle: 'உங்கள் கடவுச்சொல்லை மீட்டமைக்கவும்',
     returnToLoginBtn: 'உள்நுழைவுக்குத் திரும்பு',
     runYourShopHeading: 'உங்கள் கடையை நடத்துங்கள்',
@@ -3242,6 +3299,17 @@ const LANGUAGES = {
     backProfileLabel: 'బ్యాక్ ప్రొఫైల్',
     customerNameLabel: 'కస్టమర్ పేరు',
     vehicleNumberLabel: 'వాహన నంబర్',
+    twoWheelerLabel: 'రెండు చక్రాల వాహనం',
+    fourWheelerLabel: 'నాలుగు చక్రాల వాహనం',
+    truckLorryLabel: 'ట్రక్ / లారీ',
+    homeCategoryLabel: 'ఇల్లు',
+    officeCategoryLabel: 'కార్యాలయం',
+    addKeyLabel: 'కీ జోడించండి',
+    lostKeyLabel: 'పోగొట్టుకున్న కీ',
+    billAmountLabel: 'బిల్లు మొత్తం',
+    vehicleNameLabel: 'వాహనం పేరు',
+    homeOfficeNameLabel: 'ఇల్లు / కార్యాలయం పేరు',
+    homeOfficeKeyCodeLabel: 'ఇల్లు / కార్యాలయం కీ కోడ్',
     webcamSnapshotLabel: 'కెమెరా స్నాప్‌షాట్',
     registryLocationOverviewLabel: 'రిజిస్ట్రీ లొకేషన్ అవలోకనం (ఇతర వర్క్‌స్పేస్)',
     customerMobileLabel: 'కస్టమర్ మొబైల్',
@@ -3308,7 +3376,7 @@ const LANGUAGES = {
     dropOrBrowseCopyTemplate: '{type} యొక్క కాపీని డ్రాప్ చేయండి లేదా బ్రౌజ్ చేయండి',
     jpegPngPdfUpTo5MbLabel: 'JPEG, PNG లేదా PDF — 5MB వరకు',
     stagedIdCopiesTemplate: 'సిద్ధం చేసిన ID కాపీలు ({count})',
-    verifyDetailsBeforeSubmitDesc: 'ఈ కంప్లయన్స్ నమోదును సమర్పించే ముందు దిగువ నమోదు చేసిన ప్రతి వివరాన్ని ధృవీకరించండి. ఈ దశలో ఏదీ స్వయంచాలకంగా క్యాప్చర్ చేయబడదు లేదా సవరించబడదు.',
+    verifyDetailsBeforeSubmitDesc: 'సమర్పించే ముందు వివరాలను సమీక్షించండి.',
     reviewCustomerLabel: 'కస్టమర్',
     reviewPhoneLabel: 'ఫోన్',
     keyBlankLabel: 'కీ బ్లాంక్',
@@ -3448,6 +3516,8 @@ const LANGUAGES = {
     adminCredentialsTitle: 'అడ్మిన్ క్రెడెన్షియల్స్',
     usernameNameLabel: 'యూజర్‌నేమ్ / పేరు',
     emailAddressLabel: 'ఇమెయిల్ చిరునామా',
+    noEmailOnFileLabel: 'ఇమెయిల్ నమోదు చేయలేదు',
+    optionalLabel: 'ఐచ్ఛికం',
     workspacePasswordLabel: 'వర్క్‌స్పేస్ పాస్‌వర్డ్',
     hidePasswordTitle: 'పాస్‌వర్డ్ దాచండి',
     revealPasswordTitle: 'పాస్‌వర్డ్ చూపించండి',
@@ -3512,6 +3582,8 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'బ్రౌజర్ ప్రివ్యూలో మొదటి 4 కాలమ్‌ల వరకు చూపబడుతున్నాయి. అన్ని వివరణాత్మక డేటా కాలమ్‌లను చూడటానికి ఎగుమతి చేయండి.',
     aadhaarMustBe12DigitsMsg: 'ఆధార్ నంబర్ ఖచ్చితంగా 12 అంకెలు ఉండాలి.',
     aadhaarNumberLabel: 'ఆధార్ నంబర్',
+    websiteUrlLabel: 'వెబ్‌సైట్ URL',
+    websiteUrlPlaceholderEg: 'ఉదా. https://www.yourshop.com',
     backToHomeLink: 'హోమ్‌కు తిరిగి వెళ్ళండి',
     canLogInWithEitherMsg: 'మీరు వీటిలో దేనితోనైనా లాగిన్ కావచ్చు',
     cardholderNameLabel: 'కార్డుదారు పేరు',
@@ -3556,6 +3628,7 @@ const LANGUAGES = {
     regPasswordMinLengthMsg: 'పాస్‌వర్డ్ కనీసం 6 అక్షరాలు ఉండాలి.',
     rememberMeLabel: 'నన్ను గుర్తుంచుకో',
     resendOtpBtn: 'OTPని మళ్లీ పంపండి',
+    resendInTemplate: '{time} లో మళ్లీ పంపండి',
     resetYourPasswordTitle: 'మీ పాస్‌వర్డ్‌ను రీసెట్ చేయండి',
     returnToLoginBtn: 'లాగిన్‌కు తిరిగి వెళ్ళండి',
     runYourShopHeading: 'మీ దుకాణాన్ని నడపండి',
@@ -4052,6 +4125,17 @@ const LANGUAGES = {
     backProfileLabel: 'ಬ್ಯಾಕ್ ಪ್ರೊಫೈಲ್',
     customerNameLabel: 'ಗ್ರಾಹಕರ ಹೆಸರು',
     vehicleNumberLabel: 'ವಾಹನ ಸಂಖ್ಯೆ',
+    twoWheelerLabel: 'ದ್ವಿಚಕ್ರ ವಾಹನ',
+    fourWheelerLabel: 'ನಾಲ್ಕು ಚಕ್ರದ ವಾಹನ',
+    truckLorryLabel: 'ಟ್ರಕ್ / ಲಾರಿ',
+    homeCategoryLabel: 'ಮನೆ',
+    officeCategoryLabel: 'ಕಚೇರಿ',
+    addKeyLabel: 'ಕೀ ಸೇರಿಸಿ',
+    lostKeyLabel: 'ಕಳೆದುಹೋದ ಕೀ',
+    billAmountLabel: 'ಬಿಲ್ ಮೊತ್ತ',
+    vehicleNameLabel: 'ವಾಹನದ ಹೆಸರು',
+    homeOfficeNameLabel: 'ಮನೆ / ಕಚೇರಿ ಹೆಸರು',
+    homeOfficeKeyCodeLabel: 'ಮನೆ / ಕಚೇರಿ ಕೀ ಕೋಡ್',
     webcamSnapshotLabel: 'ಕ್ಯಾಮೆರಾ ಸ್ನ್ಯಾಪ್‌ಶಾಟ್',
     registryLocationOverviewLabel: 'ನೋಂದಣಿ ಸ್ಥಳ ಅವಲೋಕನ (ಇತರ ಕಾರ್ಯಸ್ಥಳ)',
     customerMobileLabel: 'ಗ್ರಾಹಕ ಮೊಬೈಲ್',
@@ -4118,7 +4202,7 @@ const LANGUAGES = {
     dropOrBrowseCopyTemplate: '{type} ನ ಪ್ರತಿಯನ್ನು ಡ್ರಾಪ್ ಮಾಡಿ ಅಥವಾ ಬ್ರೌಸ್ ಮಾಡಿ',
     jpegPngPdfUpTo5MbLabel: 'JPEG, PNG ಅಥವಾ PDF — 5MB ವರೆಗೆ',
     stagedIdCopiesTemplate: 'ಸಿದ್ಧಪಡಿಸಿದ ID ಪ್ರತಿಗಳು ({count})',
-    verifyDetailsBeforeSubmitDesc: 'ಈ ಅನುಸರಣೆ ನೋಂದಣಿಯನ್ನು ಸಲ್ಲಿಸುವ ಮೊದಲು ಕೆಳಗೆ ನಮೂದಿಸಿದ ಪ್ರತಿಯೊಂದು ವಿವರವನ್ನು ಪರಿಶೀಲಿಸಿ. ಈ ಹಂತದಲ್ಲಿ ಯಾವುದನ್ನೂ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸೆರೆಹಿಡಿಯಲಾಗುವುದಿಲ್ಲ ಅಥವಾ ಮಾರ್ಪಡಿಸಲಾಗುವುದಿಲ್ಲ.',
+    verifyDetailsBeforeSubmitDesc: 'ಸಲ್ಲಿಸುವ ಮೊದಲು ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ.',
     reviewCustomerLabel: 'ಗ್ರಾಹಕ',
     reviewPhoneLabel: 'ಫೋನ್',
     keyBlankLabel: 'ಕೀ ಬ್ಲಾಂಕ್',
@@ -4258,6 +4342,8 @@ const LANGUAGES = {
     adminCredentialsTitle: 'ಅಡ್ಮಿನ್ ಕ್ರೆಡೆನ್ಷಿಯಲ್‌ಗಳು',
     usernameNameLabel: 'ಬಳಕೆದಾರ ಹೆಸರು / ಹೆಸರು',
     emailAddressLabel: 'ಇಮೇಲ್ ವಿಳಾಸ',
+    noEmailOnFileLabel: 'ಇಮೇಲ್ ನೋಂದಾಯಿಸಿಲ್ಲ',
+    optionalLabel: 'ಐಚ್ಛಿಕ',
     workspacePasswordLabel: 'ಕಾರ್ಯಸ್ಥಳ ಪಾಸ್‌ವರ್ಡ್',
     hidePasswordTitle: 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆಮಾಡಿ',
     revealPasswordTitle: 'ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸಿ',
@@ -4322,6 +4408,8 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'ಬ್ರೌಸರ್ ಪೂರ್ವವೀಕ್ಷಣೆಯಲ್ಲಿ ಮೊದಲ 4 ಕಾಲಮ್‌ಗಳವರೆಗೆ ತೋರಿಸಲಾಗುತ್ತಿದೆ. ಎಲ್ಲಾ ವಿವರವಾದ ಡೇಟಾ ಕಾಲಮ್‌ಗಳನ್ನು ವೀಕ್ಷಿಸಲು ರಫ್ತು ಮಾಡಿ.',
     aadhaarMustBe12DigitsMsg: 'ಆಧಾರ್ ಸಂಖ್ಯೆ ನಿಖರವಾಗಿ 12 ಅಂಕೆಗಳಾಗಿರಬೇಕು.',
     aadhaarNumberLabel: 'ಆಧಾರ್ ಸಂಖ್ಯೆ',
+    websiteUrlLabel: 'ವೆಬ್‌ಸೈಟ್ URL',
+    websiteUrlPlaceholderEg: 'ಉದಾ. https://www.yourshop.com',
     backToHomeLink: 'ಮುಖಪುಟಕ್ಕೆ ಹಿಂತಿರುಗಿ',
     canLogInWithEitherMsg: 'ನೀವು ಇವುಗಳಲ್ಲಿ ಯಾವುದಾದರೂ ಬಳಸಿ ಲಾಗಿನ್ ಆಗಬಹುದು',
     cardholderNameLabel: 'ಕಾರ್ಡ್‌ದಾರರ ಹೆಸರು',
@@ -4366,6 +4454,7 @@ const LANGUAGES = {
     regPasswordMinLengthMsg: 'ಪಾಸ್‌ವರ್ಡ್ ಕನಿಷ್ಠ 6 ಅಕ್ಷರಗಳಾಗಿರಬೇಕು.',
     rememberMeLabel: 'ನನ್ನನ್ನು ನೆನಪಿಡಿ',
     resendOtpBtn: 'OTP ಅನ್ನು ಮರುಕಳುಹಿಸಿ',
+    resendInTemplate: '{time} ರಲ್ಲಿ ಮರುಕಳುಹಿಸಿ',
     resetYourPasswordTitle: 'ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ',
     returnToLoginBtn: 'ಲಾಗಿನ್‌ಗೆ ಹಿಂತಿರುಗಿ',
     runYourShopHeading: 'ನಿಮ್ಮ ಅಂಗಡಿಯನ್ನು ನಡೆಸಿ',
@@ -4862,6 +4951,17 @@ const LANGUAGES = {
     backProfileLabel: 'ബാക്ക് പ്രൊഫൈൽ',
     customerNameLabel: 'ഉപഭോക്താവിന്റെ പേര്',
     vehicleNumberLabel: 'വാഹന നമ്പർ',
+    twoWheelerLabel: 'ഇരുചക്ര വാഹനം',
+    fourWheelerLabel: 'നാലുചക്ര വാഹനം',
+    truckLorryLabel: 'ട്രക്ക് / ലോറി',
+    homeCategoryLabel: 'വീട്',
+    officeCategoryLabel: 'ഓഫീസ്',
+    addKeyLabel: 'കീ ചേർക്കുക',
+    lostKeyLabel: 'നഷ്ടപ്പെട്ട കീ',
+    billAmountLabel: 'ബിൽ തുക',
+    vehicleNameLabel: 'വാഹനത്തിന്റെ പേര്',
+    homeOfficeNameLabel: 'വീട് / ഓഫീസ് പേര്',
+    homeOfficeKeyCodeLabel: 'വീട് / ഓഫീസ് കീ കോഡ്',
     webcamSnapshotLabel: 'ക്യാമറ സ്നാപ്പ്ഷോട്ട്',
     registryLocationOverviewLabel: 'രജിസ്ട്രി ലൊക്കേഷൻ അവലോകനം (മറ്റ് വർക്ക്‌സ്പേസ്)',
     customerMobileLabel: 'ഉപഭോക്തൃ മൊബൈൽ',
@@ -4928,7 +5028,7 @@ const LANGUAGES = {
     dropOrBrowseCopyTemplate: '{type} ന്റെ ഒരു പകർപ്പ് ഡ്രോപ്പ് ചെയ്യുക അല്ലെങ്കിൽ ബ്രൗസ് ചെയ്യുക',
     jpegPngPdfUpTo5MbLabel: 'JPEG, PNG അല്ലെങ്കിൽ PDF — 5MB വരെ',
     stagedIdCopiesTemplate: 'സ്റ്റേജ് ചെയ്ത ID പകർപ്പുകൾ ({count})',
-    verifyDetailsBeforeSubmitDesc: 'ഈ കംപ്ലയൻസ് രജിസ്ട്രേഷൻ സമർപ്പിക്കുന്നതിന് മുമ്പ് താഴെ നൽകിയ ഓരോ വിശദാംശവും പരിശോധിക്കുക. ഈ ഘട്ടത്തിൽ യാതൊന്നും സ്വയമേവ ക്യാപ്‌ചർ ചെയ്യപ്പെടുകയോ പരിഷ്‌ക്കരിക്കപ്പെടുകയോ ഇല്ല.',
+    verifyDetailsBeforeSubmitDesc: 'സമർപ്പിക്കുന്നതിന് മുമ്പ് വിശദാംശങ്ങൾ അവലോകനം ചെയ്യുക.',
     reviewCustomerLabel: 'ഉപഭോക്താവ്',
     reviewPhoneLabel: 'ഫോൺ',
     keyBlankLabel: 'കീ ബ്ലാങ്ക്',
@@ -5068,6 +5168,8 @@ const LANGUAGES = {
     adminCredentialsTitle: 'അഡ്മിൻ ക്രെഡൻഷ്യലുകൾ',
     usernameNameLabel: 'ഉപയോക്തൃനാമം / പേര്',
     emailAddressLabel: 'ഇമെയിൽ വിലാസം',
+    noEmailOnFileLabel: 'ഇമെയിൽ രേഖപ്പെടുത്തിയിട്ടില്ല',
+    optionalLabel: 'ഐച്ഛികം',
     workspacePasswordLabel: 'വർക്ക്‌സ്‌പേസ് പാസ്‌വേഡ്',
     hidePasswordTitle: 'പാസ്‌വേഡ് മറയ്ക്കുക',
     revealPasswordTitle: 'പാസ്‌വേഡ് കാണിക്കുക',
@@ -5132,6 +5234,8 @@ const LANGUAGES = {
     showingFirstColumnsPreviewDesc: 'ബ്രൗസർ പ്രിവ്യൂവിൽ ആദ്യ 4 കോളങ്ങൾ വരെ കാണിക്കുന്നു. എല്ലാ വിശദമായ ഡാറ്റ കോളങ്ങളും കാണാൻ എക്സ്പോർട്ട് ചെയ്യുക.',
     aadhaarMustBe12DigitsMsg: 'ആധാർ നമ്പർ കൃത്യമായി 12 അക്കങ്ങൾ ആയിരിക്കണം.',
     aadhaarNumberLabel: 'ആധാർ നമ്പർ',
+    websiteUrlLabel: 'വെബ്സൈറ്റ് URL',
+    websiteUrlPlaceholderEg: 'ഉദാ. https://www.yourshop.com',
     backToHomeLink: 'ഹോമിലേക്ക് മടങ്ങുക',
     canLogInWithEitherMsg: 'ഇവയിലേതെങ്കിലും ഉപയോഗിച്ച് നിങ്ങൾക്ക് ലോഗിൻ ചെയ്യാം',
     cardholderNameLabel: 'കാർഡ് ഉടമയുടെ പേര്',
@@ -5176,6 +5280,7 @@ const LANGUAGES = {
     regPasswordMinLengthMsg: 'പാസ്‌വേഡ് കുറഞ്ഞത് 6 അക്ഷരങ്ങൾ ഉണ്ടായിരിക്കണം.',
     rememberMeLabel: 'എന്നെ ഓർമ്മിക്കുക',
     resendOtpBtn: 'OTP വീണ്ടും അയയ്ക്കുക',
+    resendInTemplate: '{time} ൽ വീണ്ടും അയയ്ക്കുക',
     resetYourPasswordTitle: 'നിങ്ങളുടെ പാസ്‌വേഡ് റീസെറ്റ് ചെയ്യുക',
     returnToLoginBtn: 'ലോഗിനിലേക്ക് മടങ്ങുക',
     runYourShopHeading: 'നിങ്ങളുടെ ഷോപ്പ് നടത്തുക',
@@ -5874,15 +5979,13 @@ export default function App() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetMethod, setResetMethod] = useState(null); // 'email' | 'phone' | null
   const [resetIdentifier, setResetIdentifier] = useState('');
-  const [resetOtpInput, setResetOtpInput] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
+  const [showResetOtpModal, setShowResetOtpModal] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
   const [resetError, setResetError] = useState('');
   const [resetSuccess, setResetSuccess] = useState(false);
-  const [resetOtpDevCode, setResetOtpDevCode] = useState('');
 
   // Shop Self-Registration states - two-step wizard: Step 1 collects the
   // shop/owner details shown in the public registration screenshot (name,
@@ -5912,6 +6015,11 @@ export default function App() {
   const [regState, setRegState] = useState('');
   const [regPinCode, setRegPinCode] = useState('');
   const [regAadhaarNumber, setRegAadhaarNumber] = useState('');
+  // Optional shop website, gated behind an ON/OFF toggle that defaults OFF -
+  // the field itself is only rendered (and only sent to the backend) when
+  // enabled, see RegisterShopDto.website in auth.dto.ts.
+  const [regWebsiteUrlEnabled, setRegWebsiteUrlEnabled] = useState(false);
+  const [regWebsiteUrl, setRegWebsiteUrl] = useState('');
   // Optional code entered by the new shop owner, validated server-side against
   // another shop's Shop.referralCode (see ShopService.getOrCreateReferralCode).
   const [regReferralCode, setRegReferralCode] = useState('');
@@ -5942,18 +6050,11 @@ export default function App() {
   // signup form before you're logged in).
   useBackHandler(regStep > 1, () => setRegStep((s) => Math.max(1, s - 1)));
 
-  // Mobile OTP verification - inline within Step 1 (the screenshot shows the
-  // verify affordance directly under the Mobile Number field, not as a
-  // separate wizard step). Phone-only - there's no email to verify against.
-  const [regOtpSent, setRegOtpSent] = useState(false);
+  // Mobile OTP verification - Step 1's Mobile Number field triggers the
+  // shared OtpVerificationModal (phone-only - there's no email to verify
+  // against here since email is optional and unverified).
   const [regOtpVerified, setRegOtpVerified] = useState(false);
-  const [regOtpInput, setRegOtpInput] = useState('');
-  const [regOtpError, setRegOtpError] = useState('');
-  const [regOtpLoading, setRegOtpLoading] = useState(false);
-  // Testing convenience: backend only returns this when no real SMS
-  // provider is configured, shown on-screen as a substitute for actual SMS
-  // delivery. Disappears automatically once a real provider is configured.
-  const [regOtpDevCode, setRegOtpDevCode] = useState('');
+  const [showRegOtpModal, setShowRegOtpModal] = useState(false);
 
   // Self-Registration Payment states - plan selection and payment now live
   // on the same Step 2 screen (see the combined form below).
@@ -6029,36 +6130,6 @@ export default function App() {
     }
   };
 
-  const handleSendOtp = async (e) => {
-    e.preventDefault();
-    setResetError('');
-    setResetLoading(true);
-    setResetOtpDevCode('');
-    try {
-      const result = await api.sendOtp(resetIdentifier, resetMethod || 'email', 'reset');
-      if (result?.devCode) setResetOtpDevCode(result.devCode);
-      setOtpSent(true);
-    } catch (err) {
-      setResetError(err.message || t('failedDispatchVerificationCodeMsg'));
-    } finally {
-      setResetLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setResetError('');
-    setResetLoading(true);
-    try {
-      await api.verifyOtp(resetIdentifier, resetMethod || 'email', 'reset', resetOtpInput);
-      setOtpVerified(true);
-    } catch (err) {
-      setResetError(err.message || t('incorrectVerificationCodeMsg'));
-    } finally {
-      setResetLoading(false);
-    }
-  };
-
   const handleResetPasswordSubmit = async (e) => {
     e.preventDefault();
     setResetError('');
@@ -6081,18 +6152,18 @@ export default function App() {
     setShowForgotPassword(false);
     setResetMethod(null);
     setResetIdentifier('');
-    setResetOtpInput('');
-    setOtpSent(false);
     setOtpVerified(false);
+    setShowResetOtpModal(false);
     setNewPassword('');
     setConfirmPassword('');
     setResetError('');
     setResetSuccess(false);
-    setResetOtpDevCode('');
   };
 
-  // Inline mobile OTP verification for Step 1 - phone-only, no email option.
-  const handleSendRegOtp = async () => {
+  // Inline mobile OTP verification trigger for Step 1 - phone-only, no email
+  // option. Actual send/verify/resend/countdown lives in the shared
+  // OtpVerificationModal (see showRegOtpModal below).
+  const handleOpenRegOtpModal = () => {
     if (!regPhone) {
       alert(t('pleaseEnterMobileNumberFirstMsg'));
       return;
@@ -6101,32 +6172,7 @@ export default function App() {
       alert(`Mobile number: ${PHONE_REGEX_MESSAGE}`);
       return;
     }
-    setRegOtpLoading(true);
-    setRegOtpError('');
-    setRegOtpDevCode('');
-    try {
-      const result = await api.sendOtp(regPhone, 'phone', 'register');
-      if (result?.devCode) setRegOtpDevCode(result.devCode);
-      setRegOtpSent(true);
-    } catch (err) {
-      setRegOtpError(err.message || t('failedDispatchVerificationOtpMsg'));
-    } finally {
-      setRegOtpLoading(false);
-    }
-  };
-
-  const handleVerifyRegOtp = async (e) => {
-    e.preventDefault();
-    setRegOtpError('');
-    setRegOtpLoading(true);
-    try {
-      await api.verifyOtp(regPhone, 'phone', 'register', regOtpInput);
-      setRegOtpVerified(true);
-    } catch (err) {
-      setRegOtpError(err.message || t('incorrectVerificationOtpCodeMsg'));
-    } finally {
-      setRegOtpLoading(false);
-    }
+    setShowRegOtpModal(true);
   };
 
   // "Current Location" button for the Shop Registration wizard - captures the
@@ -6191,13 +6237,14 @@ export default function App() {
         shopName: regShopName,
         ownerName: regOwnerName,
         categoryId: regCategoryId,
-        email: regEmail,
+        email: regEmail ? regEmail.trim() : undefined,
         phone: regPhone,
         location: regLocation,
         city: regCity,
         state: regState,
         pinCode: regPinCode,
         aadhaarNumber: regAadhaarNumber || undefined,
+        website: regWebsiteUrlEnabled && regWebsiteUrl ? regWebsiteUrl.trim() : undefined,
         referralCode: regReferralCode || undefined,
         password: regPassword,
         latitude: regLat ?? undefined,
@@ -6230,18 +6277,16 @@ export default function App() {
     setRegState('');
     setRegPinCode('');
     setRegAadhaarNumber('');
+    setRegWebsiteUrlEnabled(false);
+    setRegWebsiteUrl('');
     setRegCategoryId('');
     setRegPassword('');
     setRegPlan('MONTHLY');
     setRegError('');
     setRegSuccessMessage('');
     setRegLoginEmail('');
-    setRegOtpSent(false);
     setRegOtpVerified(false);
-    setRegOtpInput('');
-    setRegOtpError('');
-    setRegOtpLoading(false);
-    setRegOtpDevCode('');
+    setShowRegOtpModal(false);
     setRegPayMethod('card');
     setRegCardNumber('');
     setRegCardExpiry('');
@@ -6490,8 +6535,8 @@ export default function App() {
                         {t('btnCancel')}
                       </button>
                     </div>
-                  ) : !otpSent ? (
-                    <form onSubmit={handleSendOtp}>
+                  ) : !otpVerified ? (
+                    <form onSubmit={(e) => { e.preventDefault(); setShowResetOtpModal(true); }}>
                       <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
                         {t('enterRegisteredMethodTemplate').split('{method}')[0]}{resetMethod === 'email' ? t('emailOtpLabel') : t('phoneOtpLabel')}{t('enterRegisteredMethodTemplate').split('{method}')[1]}
                       </p>
@@ -6507,6 +6552,7 @@ export default function App() {
                           />
                         </div>
                       </div>
+                      {resetError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>{resetError}</div>}
                       <div className="flex gap-2">
                         <button
                           type="button"
@@ -6525,46 +6571,19 @@ export default function App() {
                           {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('sendOtpCodeBtn')}
                         </button>
                       </div>
-                    </form>
-                  ) : !otpVerified ? (
-                    <form onSubmit={handleVerifyOtp}>
-                      <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 14 }}>
-                        {t('fourDigitCodeDispatchedTemplate').split('{identifier}')[0]}<span style={{ color: 'var(--gold)', fontWeight: 800 }}>{resetIdentifier}</span>{t('fourDigitCodeDispatchedTemplate').split('{identifier}')[1]}
-                      </p>
-                      {resetOtpDevCode && (
-                        <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
-                          <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                            {t('testingModeNoProviderTemplate').split('{provider}')[0]}{resetMethod === 'phone' ? 'SMS' : 'SMTP'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
-                          </p>
-                          <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{resetOtpDevCode}</p>
-                        </div>
-                      )}
-                      {resetError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, textAlign: 'center', marginBottom: 12 }}>{resetError}</div>}
-                      <div className="field">
-                        <label style={{ textAlign: 'center' }}>{t('enterOtpLabel')}</label>
-                        <input
-                          type="text"
-                          required
-                          maxLength={4}
-                          value={resetOtpInput}
-                          onChange={(e) => setResetOtpInput(e.target.value.replace(/\D/g, ''))}
-                          placeholder="1234"
-                          style={{ width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '13px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
-                        />
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setOtpSent(false)}
-                          className="btn btn-ghost"
-                          style={{ flex: 1 }}
-                        >
-                          {t('resendBtn')}
-                        </button>
-                        <button type="submit" disabled={resetLoading} className="btn btn-primary" style={{ flex: 2 }}>
-                          {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyOtpBtn')}
-                        </button>
-                      </div>
+
+                      <OtpVerificationModal
+                        open={showResetOtpModal}
+                        onClose={() => setShowResetOtpModal(false)}
+                        onVerified={() => setOtpVerified(true)}
+                        api={api}
+                        identifier={resetIdentifier}
+                        method={resetMethod || 'email'}
+                        purpose="reset"
+                        title={t('verifyOtpModalTitle')}
+                        description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', resetIdentifier)}
+                        t={t}
+                      />
                     </form>
                   ) : (
                     <form onSubmit={handleResetPasswordSubmit}>
@@ -6753,6 +6772,25 @@ export default function App() {
                               </div>
                             </div>
                             <div className="reg-field">
+                              <div className="toggle-field-row">
+                                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Link2 /></div><b>{t('websiteUrlLabel')}</b></div>
+                                <button
+                                  type="button" className={`toggle-switch ${regWebsiteUrlEnabled ? 'on' : ''}`}
+                                  onClick={() => setRegWebsiteUrlEnabled(!regWebsiteUrlEnabled)} aria-pressed={regWebsiteUrlEnabled}
+                                >
+                                  <span className="toggle-thumb" />
+                                </button>
+                              </div>
+                              {regWebsiteUrlEnabled && (
+                                <div className="input-wrap">
+                                  <input
+                                    type="url" value={regWebsiteUrl} onChange={(e) => setRegWebsiteUrl(e.target.value)}
+                                    placeholder={t('websiteUrlPlaceholderEg')}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            <div className="reg-field">
                               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><BadgePercent /></div><b>{t('referralCodeLabel')}</b></div>
                               <div className="input-wrap">
                                 <input
@@ -6773,10 +6811,10 @@ export default function App() {
                               />
                             </div>
                             <div className="reg-field">
-                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>{t('emailAddressLabel')} <span className="req">*</span></b></div>
+                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>{t('emailAddressLabel')} <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>({t('optionalLabel')})</span></b></div>
                               <div className="input-wrap">
                                 <input
-                                  type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
+                                  type="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
                                   placeholder="you@example.com"
                                 />
                               </div>
@@ -6786,7 +6824,7 @@ export default function App() {
                               <div className="input-wrap">
                                 <input
                                   type="tel" required value={regPhone} disabled={regOtpVerified}
-                                  onChange={(e) => { setRegPhone(e.target.value); setRegOtpSent(false); setRegOtpVerified(false); setRegOtpDevCode(''); }}
+                                  onChange={(e) => { setRegPhone(e.target.value); setRegOtpVerified(false); }}
                                   placeholder={t('digitMobilePlaceholder')} style={{ opacity: regOtpVerified ? 0.6 : 1 }}
                                 />
                               </div>
@@ -6796,48 +6834,28 @@ export default function App() {
                               <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: 'var(--green)', fontSize: 12, fontWeight: 800 }}>
                                 <CheckCircle2 className="h-4 w-4" /> {t('mobileNumberVerifiedMsg')}
                               </div>
-                            ) : !regOtpSent ? (
-                              <div>
-                                {regOtpError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginBottom: 10 }}>{regOtpError}</div>}
-                                <button
-                                  type="button" onClick={handleSendRegOtp} disabled={regOtpLoading}
-                                  className="btn btn-primary" style={{ width: '100%' }}
-                                >
-                                  {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Phone className="h-4 w-4" />}
-                                  {t('sendOtpToVerifyBtn')}
-                                </button>
-                              </div>
                             ) : (
-                              <div>
-                                {regOtpError && <div style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginBottom: 10 }}>{regOtpError}</div>}
-
-                                {regOtpDevCode && (
-                                  <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 12 }}>
-                                    <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                                      {t('testingModeNoProviderTemplate').split('{provider}')[0]}SMS{t('testingModeNoProviderTemplate').split('{provider}')[1]}
-                                    </p>
-                                    <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{regOtpDevCode}</p>
-                                  </div>
-                                )}
-
-                                <div className="flex gap-2">
-                                  <input
-                                    type="text" maxLength={4} value={regOtpInput} onChange={(e) => setRegOtpInput(e.target.value.replace(/\D/g, ''))}
-                                    placeholder="OTP"
-                                    style={{ flex: 1, background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '11px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
-                                  />
-                                  <button type="button" onClick={handleVerifyRegOtp} disabled={regOtpLoading} className="btn btn-primary">
-                                    {regOtpLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyBtnLabel')}
-                                  </button>
-                                </div>
-                                <button
-                                  type="button" onClick={() => { setRegOtpSent(false); setRegOtpDevCode(''); setRegOtpInput(''); }}
-                                  style={{ display: 'block', margin: '10px auto 0', fontSize: 11, color: 'var(--text-3)', fontWeight: 700, textDecoration: 'underline' }}
-                                >
-                                  {t('resendOtpBtn')}
-                                </button>
-                              </div>
+                              <button
+                                type="button" onClick={handleOpenRegOtpModal}
+                                className="btn btn-primary" style={{ width: '100%' }}
+                              >
+                                <Phone className="h-4 w-4" />
+                                {t('sendOtpToVerifyBtn')}
+                              </button>
                             )}
+
+                            <OtpVerificationModal
+                              open={showRegOtpModal}
+                              onClose={() => setShowRegOtpModal(false)}
+                              onVerified={() => setRegOtpVerified(true)}
+                              api={api}
+                              identifier={regPhone}
+                              method="phone"
+                              purpose="register"
+                              title={t('verifyOtpModalTitle')}
+                              description={t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', regPhone)}
+                              t={t}
+                            />
 
                             <div className="reg-field" style={{ marginTop: 13 }}>
                               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('passwordLabel')} <span className="req">*</span></b></div>
@@ -6879,7 +6897,7 @@ export default function App() {
                             <button
                               type="button"
                               onClick={() => {
-                                if (!regShopName || !regOwnerName || !regCategoryId || !regEmail || !regPhone || !regLocation) {
+                                if (!regShopName || !regOwnerName || !regCategoryId || !regPhone || !regLocation) {
                                   alert(t('pleaseFillRequiredRegFieldsMsg'));
                                   return;
                                 }
@@ -6887,7 +6905,7 @@ export default function App() {
                                   alert(t('pleaseUseCurrentLocationMsg'));
                                   return;
                                 }
-                                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
+                                if (regEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
                                   alert(t('pleaseEnterValidEmailMsg'));
                                   return;
                                 }
@@ -7254,7 +7272,7 @@ export default function App() {
                 <span className="avatar">{(user.name || 'U').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()}</span>
                 <div style={{ minWidth: 0 }}>
                   <div className="truncate" style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 13, color: 'var(--text-0)' }}>{user.name}</div>
-                  <div className="truncate" style={{ fontSize: 11, color: 'var(--text-3)' }}>{user.email}</div>
+                  <div className="truncate" style={{ fontSize: 11, color: 'var(--text-3)' }}>{user.email || t('noEmailOnFileLabel')}</div>
                 </div>
               </div>
               <button
@@ -11460,7 +11478,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [idProofNumber, setIdProofNumber] = useState('N/A');
   const [reason, setReason] = useState('N/A');
   const [keyNumber, setKeyNumber] = useState('');
-  const [keyType, setKeyType] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [addressLine, setAddressLine] = useState('');
   // Internal-only (not shown as their own fields) - resolved from the reverse
@@ -11471,22 +11488,37 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [country] = useState('India');
   const [masterKeyId, setMasterKeyId] = useState('');
 
-  // Super-Admin-managed list of key types (see KeyType model / api.getKeyTypes)
-  // that powers the Key Type dropdown next to the Key Code field below.
-  const [keyTypes, setKeyTypes] = useState([]);
+  // 2-page wizard: Page 1 (customer details) -> Page 2 (category-specific
+  // optional fields + documents). Hardware Back on Page 2 returns to Page 1
+  // instead of exiting the wizard (see useBackHandler below).
+  const [wizardPage, setWizardPage] = useState(1);
+  useBackHandler(wizardPage === 2, () => setWizardPage(1));
 
-  // Inline OTP states
-  const [otpSent, setOtpSent] = useState(false);
+  // Page 1's icon category selector - one of VEHICLE_CATEGORIES. Drives which
+  // Page 2 field set is shown and the report's Automobile/Domestic grouping
+  // (see utils/vehicleCategory.js - those words are never shown in the UI).
+  const [vehicleCategory, setVehicleCategory] = useState('');
+  const [addKey, setAddKey] = useState(false);
+  const [lostKey, setLostKey] = useState(false);
+
+  // Page 2 optional fields - each gated behind its own ON/OFF toggle,
+  // defaulting OFF per the approved spec. Key Code is the SAME field for
+  // both the Automobile "Key Code" and Home/Office "Home/Office Key Code"
+  // labels (see keyNumber above).
+  const [vehicleName, setVehicleName] = useState('');
+  const [homeOfficeName, setHomeOfficeName] = useState('');
+  const [billAmount, setBillAmount] = useState('');
+  const [vehicleNumberEnabled, setVehicleNumberEnabled] = useState(false);
+  const [vehicleNameEnabled, setVehicleNameEnabled] = useState(false);
+  const [keyCodeEnabled, setKeyCodeEnabled] = useState(false);
+  const [billAmountEnabled, setBillAmountEnabled] = useState(false);
+  const [homeOfficeNameEnabled, setHomeOfficeNameEnabled] = useState(false);
+
+  // OTP verification - shared OtpVerificationModal (Page 1's Mobile Number
+  // field trigger), phone-only.
   const [otpVerified, setOtpVerified] = useState(false);
-  const [enteredOtp, setEnteredOtp] = useState('');
-  const [otpError, setOtpError] = useState('');
+  const [showCustomerOtpModal, setShowCustomerOtpModal] = useState(false);
   const [duplicateKeyWarning, setDuplicateKeyWarning] = useState(false);
-  // Customers aren't required to have an email on file, so this is a
-  // transient field used only to redirect the verification OTP to email
-  // instead of SMS when testing — it is never saved to the customer record.
-  const [otpMethod, setOtpMethod] = useState('phone');
-  const [otpTestEmail, setOtpTestEmail] = useState('');
-  const [otpDevCode, setOtpDevCode] = useState('');
 
   // Document Uploads
   const [uploadedDocs, setUploadedDocs] = useState([]);
@@ -11549,15 +11581,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       setCapturedAddress(addressLine);
     }
   }, [addressLine]);
-
-  useEffect(() => {
-    api.getKeyTypes()
-      .then((res) => {
-        setKeyTypes(res || []);
-        setKeyType((prev) => prev || res?.[0]?.name || '');
-      })
-      .catch((e) => console.error('Failed to load key types:', e));
-  }, []);
 
   // "Current Location" button for the Contact & Key step - captures the device's
   // real GPS position and reverse-geocodes it to best-effort prefill the address
@@ -11704,63 +11727,31 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
   };
 
-  const handleSendOtp = async () => {
+  // Page 1's Mobile Number OTP trigger - actual send/verify/resend/countdown
+  // lives in the shared OtpVerificationModal (see showCustomerOtpModal below).
+  const handleOpenCustomerOtpModal = () => {
     if (!phone || !PHONE_REGEX.test(phone)) {
       alert(PHONE_REGEX_MESSAGE);
       return;
     }
-    if (!keyNumber) {
-      alert(t('pleaseEnterKeyCodeMsg'));
-      return;
-    }
-    if (otpMethod === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(otpTestEmail)) {
-      alert(t('pleaseEnterValidTestEmailMsg'));
-      return;
-    }
+    setShowCustomerOtpModal(true);
+  };
 
-    // Duplicate key validation check across current customer registry
+  // Duplicate-key check, relocated here (from the old OTP-send handler) since
+  // Key Code now lives on Page 2, entered after phone/OTP verification. Fired
+  // on the Key Code field's blur (see Page 2 below).
+  const checkDuplicateKey = async (value) => {
+    if (!value) {
+      setDuplicateKeyWarning(false);
+      return;
+    }
     try {
       const allCusts = superAdminMode ? await api.getSuperCustomers() : await api.getCustomers();
-      const duplicate = allCusts.find(c => c.keyNumber.toLowerCase() === keyNumber.trim().toLowerCase());
-      if (duplicate) {
-        setDuplicateKeyWarning(true);
-        return;
-      }
+      const duplicate = allCusts.find(c => c.keyNumber && c.keyNumber.toLowerCase() === value.trim().toLowerCase());
+      setDuplicateKeyWarning(!!duplicate);
     } catch (e) {
       console.warn('Duplicate key validation check skipped:', e);
     }
-
-    setDuplicateKeyWarning(false);
-    setOtpError('');
-    setOtpDevCode('');
-    try {
-      const identifier = otpMethod === 'email' ? otpTestEmail : phone;
-      const result = await api.sendOtp(identifier, otpMethod, 'customer_verify');
-      if (result?.devCode) setOtpDevCode(result.devCode);
-      setOtpSent(true);
-    } catch (e) {
-      setOtpError(e.message || t('failedSendOtpMsg'));
-    }
-  };
-
-  const handleVerifyOtp = async () => {
-    setOtpError('');
-    try {
-      const identifier = otpMethod === 'email' ? otpTestEmail : phone;
-      await api.verifyOtp(identifier, otpMethod, 'customer_verify', enteredOtp);
-      setOtpVerified(true);
-    } catch (e) {
-      setOtpError(e.message || t('invalidOtpCodeMsg'));
-    }
-  };
-
-  // Cancel/Close on the OTP modal - aborts verification back to the initial
-  // "Send OTP" state without touching the typed phone number.
-  const handleCancelOtpModal = () => {
-    setOtpSent(false);
-    setEnteredOtp('');
-    setOtpError('');
-    setOtpDevCode('');
   };
 
   const handleFinalSubmit = async () => {
@@ -11775,6 +11766,17 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       const finalLat = latitude || null;
       const finalLng = longitude || null;
 
+      // Toggled-OFF Page 2 fields are hidden entirely, but their state can
+      // still hold a stale value from a quick off->on->off toggle - map them
+      // to null here regardless of what's in state, so only fields the shop
+      // admin actually left switched on ever reach the backend.
+      const isAutomobile = isAutomobileCategory(vehicleCategory);
+      const finalKeyNumber = keyCodeEnabled ? (keyNumber || null) : null;
+      const finalVehicleNumber = (isAutomobile && vehicleNumberEnabled) ? (vehicleNumber || null) : null;
+      const finalVehicleName = (isAutomobile && vehicleNameEnabled) ? (vehicleName || null) : null;
+      const finalHomeOfficeName = (!isAutomobile && homeOfficeNameEnabled) ? (homeOfficeName || null) : null;
+      const finalBillAmount = billAmountEnabled && billAmount ? Number(billAmount) : null;
+
       // If the typed key number matches an existing catalog entry, reference it
       // directly. Otherwise, send the "register this as a new key blank" details
       // inline as `manualKey` so the backend creates the MasterKey row in the SAME
@@ -11782,13 +11784,13 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       // owning customer this way. (Previously this made a separate createShopKey()
       // call before createCustomer(); if the customer request failed afterwards for
       // any reason, the key row was left permanently orphaned with no customer.)
-      let matchKey = keysList.find(k => k.keyNumber.toLowerCase() === keyNumber.toLowerCase());
-      let finalMasterKeyId = masterKeyId || null;
+      let matchKey = finalKeyNumber ? keysList.find(k => k.keyNumber.toLowerCase() === finalKeyNumber.toLowerCase()) : null;
+      let finalMasterKeyId = finalKeyNumber ? (masterKeyId || null) : null;
       let manualKey = null;
 
-      if (!matchKey && keyNumber) {
+      if (!matchKey && finalKeyNumber) {
         manualKey = {
-          category: 'Vehicle Keys',
+          category: isAutomobile ? 'Vehicle Keys' : 'Home/Office Keys',
         };
       } else if (matchKey) {
         finalMasterKeyId = matchKey.id;
@@ -11796,7 +11798,10 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
       const payload = {
         name, phone, address, idProofType, idProofNumber, reason,
-        keyNumber, keyType, vehicleNumber, masterKeyId: finalMasterKeyId, manualKey,
+        keyNumber: finalKeyNumber, vehicleNumber: finalVehicleNumber,
+        vehicleName: finalVehicleName, homeOfficeName: finalHomeOfficeName,
+        billAmount: finalBillAmount, addKey, lostKey, vehicleCategory,
+        masterKeyId: finalMasterKeyId, manualKey,
         latitude: finalLat,
         longitude: finalLng,
         mapsLink: (finalLat && finalLng) ? `https://www.google.com/maps?q=${finalLat},${finalLng}` : null,
@@ -11830,6 +11835,10 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
   const resetWizard = () => {
     setSelectedShopId('');
+    setWizardPage(1);
+    setVehicleCategory('');
+    setAddKey(false);
+    setLostKey(false);
     setName('');
     setPhone('');
     setAddress('N/A');
@@ -11837,14 +11846,20 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setIdProofNumber('N/A');
     setReason('N/A');
     setKeyNumber('');
-    setKeyType('');
     setVehicleNumber('');
+    setVehicleName('');
+    setHomeOfficeName('');
+    setBillAmount('');
+    setVehicleNumberEnabled(false);
+    setVehicleNameEnabled(false);
+    setKeyCodeEnabled(false);
+    setBillAmountEnabled(false);
+    setHomeOfficeNameEnabled(false);
     setAddressLine('');
     setDistrict('');
     setStateVal('');
-    setOtpSent(false);
     setOtpVerified(false);
-    setEnteredOtp('');
+    setShowCustomerOtpModal(false);
     setDuplicateKeyWarning(false);
     setUploadedDocs([]);
     setLatitude(null);
@@ -11890,13 +11905,21 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // directly, no network fetch needed.
   const buildDraftReportPdf = async () => {
     const shop = await ensureShopInfoForReport();
-    const matchKey = keysList.find(k => k.keyNumber.toLowerCase() === keyNumber.toLowerCase());
+    const isAutomobile = isAutomobileCategory(vehicleCategory);
+    const finalKeyNumber = keyCodeEnabled ? (keyNumber || null) : null;
+    const matchKey = finalKeyNumber ? keysList.find(k => k.keyNumber.toLowerCase() === finalKeyNumber.toLowerCase()) : null;
     const customerLike = {
-      name, phone, vehicleNumber, keyNumber, keyType,
+      name, phone,
+      vehicleNumber: (isAutomobile && vehicleNumberEnabled) ? vehicleNumber : null,
+      vehicleName: (isAutomobile && vehicleNameEnabled) ? vehicleName : null,
+      homeOfficeName: (!isAutomobile && homeOfficeNameEnabled) ? homeOfficeName : null,
+      keyNumber: finalKeyNumber,
+      billAmount: billAmountEnabled && billAmount ? Number(billAmount) : null,
+      addKey, lostKey, vehicleCategory,
       address: addressLine, capturedAddress: capturedAddress || addressLine,
       latitude, longitude, reason,
       photoUrl: null,
-      masterKey: { category: matchKey?.category || 'Vehicle Keys' },
+      masterKey: { category: matchKey?.category || (isAutomobile ? 'Vehicle Keys' : 'Home/Office Keys') },
       createdAt: new Date().toISOString(),
       documents: uploadedDocs,
     };
@@ -11927,7 +11950,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       const safeName = `${(name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Registration.pdf`;
       await sharePdf(pdf, safeName, {
         title: 'Customer Registration',
-        fallbackText: `${name} - Key: ${keyNumber}${keyType ? ` (${keyType})` : ''} - Phone: ${phone}`,
+        fallbackText: `${name}${keyCodeEnabled && keyNumber ? ` - Key: ${keyNumber}` : ''} - Phone: ${phone}`,
       });
     } catch (err) {
       // A cancelled share sheet also rejects the promise - not a real error.
@@ -11940,14 +11963,9 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
   };
 
-  const plainInputStyle = {
-    width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)',
-    color: 'var(--text-0)', borderRadius: 13, padding: '13px 15px', fontSize: 14, outline: 'none'
-  };
-
   return (
     <div className="animate-fade-in">
-      <div className="page-head">
+      <div className="page-head reg-wizard-head">
         <div>
           <div className="eyebrow"><UserPlus /> {t('newCustomerEyebrow')}</div>
           <h1>{t('register')}</h1>
@@ -11977,249 +11995,311 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
             </div>
           )}
 
-          {duplicateKeyWarning && (
-            <div className="animate-fade-in" style={{ display: 'flex', gap: 12, background: 'var(--red-dim)', border: '1px solid rgba(242,86,77,0.3)', borderRadius: 16, padding: 16, marginBottom: 20 }}>
-              <div className="icon-badge red" style={{ width: 36, height: 36, borderRadius: 11 }}><AlertTriangle className="h-4 w-4" /></div>
-              <div>
-                <div style={{ color: 'var(--red)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>{t('duplicateKeyDetectedLabel')}</div>
-                <p style={{ color: 'var(--text-2)', fontSize: 12, fontWeight: 600, marginTop: 4, lineHeight: 1.5 }}>
-                  {t('duplicateKeyDetectedDescTemplate').split('{code}')[0]}<b style={{ color: 'var(--text-0)' }}>{keyNumber}</b>{t('duplicateKeyDetectedDescTemplate').split('{code}')[1]}
-                </p>
-              </div>
-            </div>
-          )}
+          {wizardPage === 1 && (
+            <>
+              <div className="reg-section">
+                <div className="category-icon-grid">
+                  {[
+                    { value: VEHICLE_CATEGORIES.TWO_WHEELER, img: twoWheelerIcon, label: t('twoWheelerLabel') },
+                    { value: VEHICLE_CATEGORIES.FOUR_WHEELER, img: fourWheelerIcon, label: t('fourWheelerLabel') },
+                    { value: VEHICLE_CATEGORIES.TRUCK_LORRY, img: truckLorryIcon, label: t('truckLorryLabel') },
+                    { value: VEHICLE_CATEGORIES.HOME, img: homeCategoryIcon, label: t('homeCategoryLabel') },
+                    { value: VEHICLE_CATEGORIES.OFFICE, img: officeCategoryIcon, label: t('officeCategoryLabel') },
+                  ].map((cat) => (
+                    <button
+                      type="button" key={cat.value}
+                      className={`category-icon-btn ${vehicleCategory === cat.value ? 'active' : ''}`}
+                      onClick={() => setVehicleCategory(cat.value)}
+                    >
+                      <img src={cat.img} alt={cat.label} />
+                      <span>{cat.label}</span>
+                    </button>
+                  ))}
+                </div>
 
-          <div className="reg-section">
-            <div className="form-grid">
-              <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('fullCustomerNameLabel')} <span className="req">*</span></b></div>
-                <div className="input-wrap">
-                  <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder={t('customerNamePlaceholderEg')} />
-                </div>
-              </div>
-              <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>{t('vehicleNumberLabel')} <span className="req">*</span></b></div>
-                <div className="input-wrap">
-                  <input type="text" required value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder={t('Vehicle Number')} />
-                </div>
-              </div>
-            </div>
-            <div className="form-grid">
-              <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyCodeKeyNumberLabel')} <span className="req">*</span></b></div>
-                <div className="input-wrap">
-                  <input
-                    type="text" required value={keyNumber}
-                    onChange={(e) => { setKeyNumber(e.target.value); setDuplicateKeyWarning(false); }}
-                    placeholder={t('keyCodeEnterPlaceholderEg')}
-                  />
-                </div>
-              </div>
-              <div className="reg-field">
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>{t('keyTypeLabel')}</b></div>
-                <CustomSelect
-                  value={keyType} onChange={setKeyType}
-                  placeholder={t('selectKeyTypePlaceholder')}
-                  options={keyTypes.map(kt => ({ value: kt.name, label: kt.name }))}
-                />
-              </div>
-            </div>
-            <div className="reg-field">
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <div className="input-wrap" style={{ flex: 1 }}>
-                  <input
-                    type="tel" required value={phone}
-                    onChange={(e) => { setPhone(e.target.value); setOtpVerified(false); setOtpSent(false); setOtpDevCode(''); }}
-                    placeholder={t('phoneNumberPlaceholderEg')}
-                  />
-                </div>
-                {!otpVerified && (
+                <div style={{ display: 'flex', gap: 10 }}>
                   <button
-                    type="button" onClick={handleSendOtp}
-                    disabled={!phone || !keyNumber || (otpMethod === 'email' && !otpTestEmail)}
-                    className="btn btn-primary btn-sm"
+                    type="button" className={`choice-btn add-key-btn ${addKey ? 'active' : ''}`} style={{ flex: 1 }}
+                    onClick={() => setAddKey(!addKey)} aria-pressed={addKey}
                   >
-                    {otpSent ? t('resendBtn') : t('sendOtpBtn')}
-                  </button>
-                )}
-              </div>
-              {!otpVerified && !otpSent && (
-                <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <button
-                    type="button" onClick={() => setOtpMethod('phone')}
-                    className={`store-tab ${otpMethod === 'phone' ? 'active' : ''}`}
-                  >
-                    <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('smsToPhoneLabel')}</span>
+                    <img src={addKeyIcon} alt="" />
+                    <span>{t('addKeyLabel')}</span>
                   </button>
                   <button
-                    type="button" onClick={() => setOtpMethod('email')}
-                    className={`store-tab ${otpMethod === 'email' ? 'active' : ''}`}
+                    type="button" className={`choice-btn lost-key-btn ${lostKey ? 'active' : ''}`} style={{ flex: 1 }}
+                    onClick={() => setLostKey(!lostKey)} aria-pressed={lostKey}
                   >
-                    <span style={{ fontSize: 10.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('emailTestingLabel')}</span>
+                    <img src={lostKeyIcon} alt="" />
+                    <span>{t('lostKeyLabel')}</span>
                   </button>
-                  {otpMethod === 'email' && (
+                </div>
+              </div>
+
+              <div className="reg-section">
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('fullCustomerNameLabel')} <span className="req">*</span></b></div>
+                  <div className="input-wrap">
+                    <input type="text" required value={name} onChange={(e) => setName(e.target.value)} placeholder={t('customerNamePlaceholderEg')} />
+                  </div>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
+                  <div className="input-wrap">
                     <input
-                      type="email" value={otpTestEmail} onChange={(e) => setOtpTestEmail(e.target.value)}
-                      placeholder={t('testEmailPlaceholder')}
-                      style={{ flex: '1 1 220px', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 10, padding: '8px 12px', fontSize: 12, outline: 'none' }}
+                      type="tel" required value={phone}
+                      onChange={(e) => { setPhone(e.target.value); setOtpVerified(false); }}
+                      placeholder={t('phoneNumberPlaceholderEg')}
                     />
+                  </div>
+                  {!otpVerified && (
+                    <button type="button" onClick={handleOpenCustomerOtpModal} className="btn btn-primary btn-sm" style={{ width: '100%', marginTop: 8 }}>
+                      {t('sendOtpToVerifyBtn')}
+                    </button>
+                  )}
+                  {otpVerified && (
+                    <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                      <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--green)' }} />
+                      <span style={{ color: 'var(--green)', fontSize: 12, fontWeight: 700 }}>{t('mobileNumberVerifiedMsg')}</span>
+                    </div>
+                  )}
+                  <OtpVerificationModal
+                    open={showCustomerOtpModal}
+                    onClose={() => setShowCustomerOtpModal(false)}
+                    onVerified={() => setOtpVerified(true)}
+                    api={api}
+                    identifier={phone}
+                    method="phone"
+                    purpose="customer_verify"
+                    title={t('verifyOtpModalTitle')}
+                    description={t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', phone)}
+                    t={t}
+                  />
+                </div>
+                <div className="reg-field" style={{ marginBottom: 0 }}>
+                  <div className="reg-field-label">
+                    <div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div>
+                    <b>{t('addressLineLabel')} <span className="req">*</span></b>
+                    <button
+                      type="button"
+                      onClick={captureCustomerLocation}
+                      disabled={isCapturingGps}
+                      className="reg-trailing loc-btn"
+                    >
+                      <Crosshair className={isCapturingGps ? 'animate-spin' : ''} />
+                      <span>{isCapturingGps ? t('locatingLabel') : t('currentLocationBtn')}</span>
+                    </button>
+                  </div>
+                  <div className="input-wrap">
+                    <input type="text" required value={addressLine} onChange={(e) => setAddressLine(e.target.value)} placeholder={t('addressLinePlaceholderEg')} />
+                  </div>
+                  {latitude && longitude && !gpsError && (
+                    <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>{t('gpsCapturedTemplate').split('{lat}')[0]}{latitude.toFixed(5)}{t('gpsCapturedTemplate').split('{lat}')[1].split('{long}')[0]}{longitude.toFixed(5)}</p>
                   )}
                 </div>
-              )}
-            </div>
-            <div className="reg-field" style={{ marginBottom: 0 }}>
-              <div className="reg-field-label">
-                <div className="reg-ico" style={{ background: 'var(--teal)' }}><MapPin /></div>
-                <b>{t('addressLineLabel')} <span className="req">*</span></b>
+              </div>
+
+              <div className="wizard-foot">
+                <span />
                 <button
-                  type="button"
-                  onClick={captureCustomerLocation}
-                  disabled={isCapturingGps}
-                  className="reg-trailing loc-btn"
+                  type="button" className="btn btn-primary" style={{ minWidth: 150 }}
+                  disabled={!vehicleCategory || !name || !phone || !otpVerified || !addressLine || (superAdminMode && !selectedShopId)}
+                  onClick={() => setWizardPage(2)}
                 >
-                  <Crosshair className={isCapturingGps ? 'animate-spin' : ''} />
-                  <span>{isCapturingGps ? t('locatingLabel') : t('currentLocationBtn')}</span>
+                  {t('btnNext')} <ArrowRight style={{ width: 18, height: 18 }} />
                 </button>
               </div>
-              <div className="input-wrap">
-                <input type="text" required value={addressLine} onChange={(e) => setAddressLine(e.target.value)} placeholder={t('addressLinePlaceholderEg')} />
-              </div>
-              {latitude && longitude && !gpsError && (
-                <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>{t('gpsCapturedTemplate').split('{lat}')[0]}{latitude.toFixed(5)}{t('gpsCapturedTemplate').split('{lat}')[1].split('{long}')[0]}{longitude.toFixed(5)}</p>
-              )}
-            </div>
-          </div>
+            </>
+          )}
 
-          {otpSent && !otpVerified && createPortal(
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
-              <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 420, padding: 28 }}>
-                <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
-                  <div className="icon-badge orange" style={{ width: 44, height: 44, borderRadius: '50%' }}>
-                    <ShieldCheck style={{ width: 21, height: 21 }} />
-                  </div>
-                  <button type="button" onClick={handleCancelOtpModal} className="icon-btn" title={t('btnClose')}>
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-                <h3 style={{ marginTop: 12, marginBottom: 4 }}>{t('verifyOtpModalTitle')}</h3>
-                <p className="desc" style={{ marginBottom: 18 }}>
-                  {otpMethod === 'email' ? t('enterOtpCodeSentToEmailTemplate').replace('{email}', otpTestEmail) : t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', phone)}
-                </p>
-
-                {otpDevCode && (
-                  <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 16 }}>
-                    <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                      {t('testingModeNoProviderTemplate').split('{provider}')[0]}{otpMethod === 'email' ? 'SMTP' : 'SMS'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
+          {wizardPage === 2 && (
+            <>
+              {duplicateKeyWarning && (
+                <div className="animate-fade-in" style={{ display: 'flex', gap: 12, background: 'var(--red-dim)', border: '1px solid rgba(242,86,77,0.3)', borderRadius: 16, padding: 16, marginBottom: 20 }}>
+                  <div className="icon-badge red" style={{ width: 36, height: 36, borderRadius: 11 }}><AlertTriangle className="h-4 w-4" /></div>
+                  <div>
+                    <div style={{ color: 'var(--red)', fontWeight: 800, fontSize: 13, fontFamily: 'var(--display)' }}>{t('duplicateKeyDetectedLabel')}</div>
+                    <p style={{ color: 'var(--text-2)', fontSize: 12, fontWeight: 600, marginTop: 4, lineHeight: 1.5 }}>
+                      {t('duplicateKeyDetectedDescTemplate').split('{code}')[0]}<b style={{ color: 'var(--text-0)' }}>{keyNumber}</b>{t('duplicateKeyDetectedDescTemplate').split('{code}')[1]}
                     </p>
-                    <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{otpDevCode}</p>
+                  </div>
+                </div>
+              )}
+
+              <div className="reg-section">
+                {isAutomobileCategory(vehicleCategory) ? (
+                  <>
+                    <div className="reg-field">
+                      <div className="toggle-field-row">
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Car /></div><b>{t('vehicleNumberLabel')}</b></div>
+                        <button type="button" className={`toggle-switch ${vehicleNumberEnabled ? 'on' : ''}`} onClick={() => setVehicleNumberEnabled(!vehicleNumberEnabled)} aria-pressed={vehicleNumberEnabled}>
+                          <span className="toggle-thumb" />
+                        </button>
+                      </div>
+                      {vehicleNumberEnabled && (
+                        <div className="input-wrap">
+                          <input type="text" value={vehicleNumber} onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())} placeholder={t('vehicleNumberLabel')} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="reg-field">
+                      <div className="toggle-field-row">
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Car /></div><b>{t('vehicleNameLabel')}</b></div>
+                        <button type="button" className={`toggle-switch ${vehicleNameEnabled ? 'on' : ''}`} onClick={() => setVehicleNameEnabled(!vehicleNameEnabled)} aria-pressed={vehicleNameEnabled}>
+                          <span className="toggle-thumb" />
+                        </button>
+                      </div>
+                      {vehicleNameEnabled && (
+                        <div className="input-wrap">
+                          <input type="text" value={vehicleName} onChange={(e) => setVehicleName(e.target.value)} placeholder={t('vehicleNameLabel')} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="reg-field">
+                      <div className="toggle-field-row">
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyCodeKeyNumberLabel')}</b></div>
+                        <button type="button" className={`toggle-switch ${keyCodeEnabled ? 'on' : ''}`} onClick={() => setKeyCodeEnabled(!keyCodeEnabled)} aria-pressed={keyCodeEnabled}>
+                          <span className="toggle-thumb" />
+                        </button>
+                      </div>
+                      {keyCodeEnabled && (
+                        <div className="input-wrap">
+                          <input
+                            type="text" value={keyNumber}
+                            onChange={(e) => { setKeyNumber(e.target.value); setDuplicateKeyWarning(false); }}
+                            onBlur={(e) => checkDuplicateKey(e.target.value)}
+                            placeholder={t('keyCodeEnterPlaceholderEg')}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="reg-field">
+                      <div className="toggle-field-row">
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Home /></div><b>{t('homeOfficeNameLabel')}</b></div>
+                        <button type="button" className={`toggle-switch ${homeOfficeNameEnabled ? 'on' : ''}`} onClick={() => setHomeOfficeNameEnabled(!homeOfficeNameEnabled)} aria-pressed={homeOfficeNameEnabled}>
+                          <span className="toggle-thumb" />
+                        </button>
+                      </div>
+                      {homeOfficeNameEnabled && (
+                        <div className="input-wrap">
+                          <input type="text" value={homeOfficeName} onChange={(e) => setHomeOfficeName(e.target.value)} placeholder={t('homeOfficeNameLabel')} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="reg-field">
+                      <div className="toggle-field-row">
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('homeOfficeKeyCodeLabel')}</b></div>
+                        <button type="button" className={`toggle-switch ${keyCodeEnabled ? 'on' : ''}`} onClick={() => setKeyCodeEnabled(!keyCodeEnabled)} aria-pressed={keyCodeEnabled}>
+                          <span className="toggle-thumb" />
+                        </button>
+                      </div>
+                      {keyCodeEnabled && (
+                        <div className="input-wrap">
+                          <input
+                            type="text" value={keyNumber}
+                            onChange={(e) => { setKeyNumber(e.target.value); setDuplicateKeyWarning(false); }}
+                            onBlur={(e) => checkDuplicateKey(e.target.value)}
+                            placeholder={t('keyCodeEnterPlaceholderEg')}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+                <div className="reg-field" style={{ marginBottom: 0 }}>
+                  <div className="toggle-field-row">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><IndianRupee /></div><b>{t('billAmountLabel')}</b></div>
+                    <button type="button" className={`toggle-switch ${billAmountEnabled ? 'on' : ''}`} onClick={() => setBillAmountEnabled(!billAmountEnabled)} aria-pressed={billAmountEnabled}>
+                      <span className="toggle-thumb" />
+                    </button>
+                  </div>
+                  {billAmountEnabled && (
+                    <div className="input-wrap">
+                      <input type="number" min="0" step="0.01" value={billAmount} onChange={(e) => setBillAmount(e.target.value)} placeholder={t('billAmountLabel')} />
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="reg-section">
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>{t('documentTypeLabel')}</b></div>
+                  <CustomSelect
+                    value={idProofType} onChange={setIdProofType}
+                    options={[
+                      { value: 'Aadhaar Card', label: t('aadhaarCardLabel'), disabled: uploadedDocs.some(d => d.type === 'Aadhaar Card') },
+                      { value: 'Driving License', label: t('drivingLicenseLabel'), disabled: uploadedDocs.some(d => d.type === 'Driving License') },
+                      { value: 'PAN Card', label: t('panCardLabel'), disabled: uploadedDocs.some(d => d.type === 'PAN Card') },
+                      { value: 'Voter ID', label: t('voterIdLabel'), disabled: uploadedDocs.some(d => d.type === 'Voter ID') },
+                    ]}
+                  />
+                </div>
+                {IS_NATIVE_APP && (
+                  <button type="button" onClick={handleCaptureDocumentPhoto} className="btn btn-outline btn-sm" style={{ marginBottom: 12 }}>
+                    <Camera className="h-4 w-4" /> {t('useCameraBtn')}
+                  </button>
+                )}
+                <label htmlFor="docUploadInput" className="dropzone">
+                  <div className="icon-badge orange"><UploadCloud className="h-5 w-5" /></div>
+                  <div className="dz-title">{t('dropOrBrowseCopyTemplate').replace('{type}', idProofType)}</div>
+                  <div className="dz-sub">{t('jpegPngPdfUpTo5MbLabel')}</div>
+                  <input type="file" id="docUploadInput" onClick={primeStoragePermission} onChange={handleFileChange} style={{ display: 'none' }} accept="image/jpeg, image/png, application/pdf" />
+                </label>
+                {uploadError && <p style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginTop: 12, textAlign: 'center' }}>{uploadError}</p>}
+
+                {uploadedDocs.length > 0 && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
+                    <span className="side-section-label" style={{ padding: 0 }}>{t('stagedIdCopiesTemplate').replace('{count}', uploadedDocs.length)}</span>
+                    {uploadedDocs.map((doc, idx) => {
+                      const docColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
+                      const docColor = docColors[idx % docColors.length];
+                      return (
+                        <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div className={`icon-badge ${docColor}`} style={{ width: 26, height: 26, borderRadius: 8 }}><FileCheck style={{ width: 13, height: 13 }} /></div>
+                            <span style={{ color: 'var(--gold)', fontWeight: 800, fontSize: 12.5, fontFamily: 'var(--display)' }}>{doc.type}</span>
+                          </div>
+                          <span style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.file.name}</span>
+                          <button type="button" onClick={() => setUploadedDocs(uploadedDocs.filter((_, i) => i !== idx))} className="icon-btn">
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      );
+                    })}
                   </div>
                 )}
+              </div>
 
-                <input
-                  type="text" maxLength={4} value={enteredOtp}
-                  onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
-                  placeholder="1234"
-                  style={{ ...plainInputStyle, textAlign: 'center', fontWeight: 800, letterSpacing: 8, fontSize: 20, marginBottom: 12 }}
-                />
-                {otpError && <p style={{ color: 'var(--red)', fontSize: 11.5, fontWeight: 700, marginBottom: 12 }}>{otpError}</p>}
-
-                <button type="button" onClick={handleVerifyOtp} className="btn btn-primary" style={{ width: '100%', marginBottom: 10 }}>
-                  {t('verifyOtpBtn')}
+              <div className="wizard-foot">
+                <button type="button" onClick={() => setWizardPage(1)} className="btn btn-ghost">
+                  <ArrowLeft style={{ width: 18, height: 18 }} /> {t('btnBack')}
                 </button>
-                <div className="flex items-center justify-between" style={{ gap: 10 }}>
-                  <button type="button" onClick={handleSendOtp} className="btn btn-ghost btn-sm">
-                    {t('resendBtn')}
+                <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                  <button
+                    type="button" className="reg-action-btn save"
+                    disabled={duplicateKeyWarning || (superAdminMode && !selectedShopId)}
+                    onClick={handleFinalSubmit}
+                    title={t('saveRecordBtn')}
+                  >
+                    <Save />
                   </button>
-                  <button type="button" onClick={handleCancelOtpModal} className="btn btn-ghost btn-sm">
-                    {t('btnCancel')}
+                  <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="reg-action-btn download" title={t('downloadBtn')}>
+                    {pdfAction === 'download' ? <RefreshCw className="animate-spin" /> : <Download />}
+                  </button>
+                  <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="reg-action-btn share" title={t('shareViaWhatsAppBtn')}>
+                    {pdfAction === 'share' ? <RefreshCw className="animate-spin" /> : (
+                      <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z" /></svg>
+                    )}
+                  </button>
+                  <button type="button" onClick={() => setShowReviewModal(true)} className="btn btn-primary" style={{ minWidth: 150 }}>
+                    <Eye style={{ width: 20, height: 20 }} /> {t('reviewStepLabel')}
                   </button>
                 </div>
               </div>
-            </div>,
-            document.body
+            </>
           )}
-
-          {otpVerified && (
-            <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--green-dim)', border: '1px solid rgba(62,207,106,0.3)', borderRadius: 14, padding: '12px 16px', marginTop: 20 }}>
-              <Check className="h-4 w-4" style={{ color: 'var(--green)' }} />
-              <span style={{ color: 'var(--green)', fontSize: 12.5, fontWeight: 700 }}>{otpMethod === 'email' ? t('otpVerifiedSuccessEmailMsg') : t('otpVerifiedSuccessPhoneMsg')}</span>
-            </div>
-          )}
-
-          <div className="reg-section">
-            <div className="reg-field">
-              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>{t('documentTypeLabel')}</b></div>
-              <CustomSelect
-                value={idProofType} onChange={setIdProofType}
-                options={[
-                  { value: 'Aadhaar Card', label: t('aadhaarCardLabel'), disabled: uploadedDocs.some(d => d.type === 'Aadhaar Card') },
-                  { value: 'Driving License', label: t('drivingLicenseLabel'), disabled: uploadedDocs.some(d => d.type === 'Driving License') },
-                  { value: 'PAN Card', label: t('panCardLabel'), disabled: uploadedDocs.some(d => d.type === 'PAN Card') },
-                  { value: 'Voter ID', label: t('voterIdLabel'), disabled: uploadedDocs.some(d => d.type === 'Voter ID') },
-                ]}
-              />
-            </div>
-            {IS_NATIVE_APP && (
-              <button type="button" onClick={handleCaptureDocumentPhoto} className="btn btn-outline btn-sm" style={{ marginBottom: 12 }}>
-                <Camera className="h-4 w-4" /> {t('useCameraBtn')}
-              </button>
-            )}
-            <label htmlFor="docUploadInput" className="dropzone">
-              <div className="icon-badge orange"><UploadCloud className="h-5 w-5" /></div>
-              <div className="dz-title">{t('dropOrBrowseCopyTemplate').replace('{type}', idProofType)}</div>
-              <div className="dz-sub">{t('jpegPngPdfUpTo5MbLabel')}</div>
-              <input type="file" id="docUploadInput" onClick={primeStoragePermission} onChange={handleFileChange} style={{ display: 'none' }} accept="image/jpeg, image/png, application/pdf" />
-            </label>
-            {uploadError && <p style={{ color: 'var(--red)', fontSize: 12, fontWeight: 700, marginTop: 12, textAlign: 'center' }}>{uploadError}</p>}
-
-            {uploadedDocs.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 20 }}>
-                <span className="side-section-label" style={{ padding: 0 }}>{t('stagedIdCopiesTemplate').replace('{count}', uploadedDocs.length)}</span>
-                {uploadedDocs.map((doc, idx) => {
-                  const docColors = ['purple', 'pink', 'blue', 'orange', 'teal', 'skyblue', 'rose', 'jgreen'];
-                  const docColor = docColors[idx % docColors.length];
-                  return (
-                    <div key={idx} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 13, padding: '12px 16px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div className={`icon-badge ${docColor}`} style={{ width: 26, height: 26, borderRadius: 8 }}><FileCheck style={{ width: 13, height: 13 }} /></div>
-                        <span style={{ color: 'var(--gold)', fontWeight: 800, fontSize: 12.5, fontFamily: 'var(--display)' }}>{doc.type}</span>
-                      </div>
-                      <span style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, maxWidth: 150, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.file.name}</span>
-                      <button type="button" onClick={() => setUploadedDocs(uploadedDocs.filter((_, i) => i !== idx))} className="icon-btn">
-                        <X className="h-4 w-4" />
-                      </button>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="wizard-foot">
-          <span />
-          <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-            <button
-              type="button" className="reg-action-btn save"
-              disabled={!name || !phone || !keyNumber || !vehicleNumber || !otpVerified || !addressLine || duplicateKeyWarning || (superAdminMode && !selectedShopId)}
-              onClick={handleFinalSubmit}
-              title={t('saveRecordBtn')}
-            >
-              <Save />
-            </button>
-            <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="reg-action-btn download" title={t('downloadBtn')}>
-              {pdfAction === 'download' ? <RefreshCw className="animate-spin" /> : <Download />}
-            </button>
-            <button type="button" onClick={handleShareRegistration} disabled={pdfAction !== null} className="reg-action-btn share" title={t('shareViaWhatsAppBtn')}>
-              {pdfAction === 'share' ? <RefreshCw className="animate-spin" /> : (
-                <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z" /></svg>
-              )}
-            </button>
-            <button type="button" onClick={() => setShowReviewModal(true)} className="btn btn-primary" style={{ minWidth: 150 }}>
-              <Eye style={{ width: 20, height: 20 }} /> {t('reviewStepLabel')}
-            </button>
-          </div>
         </div>
       </div>
 
@@ -12252,20 +12332,58 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{phone}</div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="icon-badge orange" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Car style={{ width: 16, height: 16 }} /></div>
-                  <div>
-                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('vehicleNumberLabel')}</div>
-                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{vehicleNumber}</div>
+                {isAutomobileCategory(vehicleCategory) ? (
+                  <>
+                    {vehicleNumberEnabled && (
+                      <div className="flex items-center gap-3">
+                        <div className="icon-badge orange" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Car style={{ width: 16, height: 16 }} /></div>
+                        <div>
+                          <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('vehicleNumberLabel')}</div>
+                          <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{vehicleNumber}</div>
+                        </div>
+                      </div>
+                    )}
+                    {vehicleNameEnabled && (
+                      <div className="flex items-center gap-3">
+                        <div className="icon-badge skyblue" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Car style={{ width: 16, height: 16 }} /></div>
+                        <div>
+                          <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('vehicleNameLabel')}</div>
+                          <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{vehicleName}</div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  homeOfficeNameEnabled && (
+                    <div className="flex items-center gap-3">
+                      <div className="icon-badge orange" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><Home style={{ width: 16, height: 16 }} /></div>
+                      <div>
+                        <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('homeOfficeNameLabel')}</div>
+                        <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{homeOfficeName}</div>
+                      </div>
+                    </div>
+                  )
+                )}
+                {keyCodeEnabled && (
+                  <div className="flex items-center gap-3">
+                    <div className="icon-badge pink" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><KeyRound style={{ width: 16, height: 16 }} /></div>
+                    <div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>
+                        {isAutomobileCategory(vehicleCategory) ? t('keyCodeKeyNumberLabel') : t('homeOfficeKeyCodeLabel')}
+                      </div>
+                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}</div>
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="icon-badge pink" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><KeyRound style={{ width: 16, height: 16 }} /></div>
-                  <div>
-                    <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('keyBlankLabel')}</div>
-                    <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{keyNumber}{keyType ? ` (${keyType})` : ''}</div>
+                )}
+                {billAmountEnabled && (
+                  <div className="flex items-center gap-3">
+                    <div className="icon-badge jgreen" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><IndianRupee style={{ width: 16, height: 16 }} /></div>
+                    <div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('billAmountLabel')}</div>
+                      <div style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 13.5 }}>{billAmount}</div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div className="flex items-center gap-3" style={{ marginTop: 16 }}>
                 <div className="icon-badge teal" style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}><MapPin style={{ width: 16, height: 16 }} /></div>
@@ -13798,15 +13916,13 @@ function ShopSettingsView({ t, api, shopId }) {
   const [otpResetOpen, setOtpResetOpen] = useState(false);
   const [otpResetMethod, setOtpResetMethod] = useState(null); // 'email' | 'phone'
   const [otpResetIdentifier, setOtpResetIdentifier] = useState('');
-  const [otpResetOtpInput, setOtpResetOtpInput] = useState('');
-  const [otpResetSent, setOtpResetSent] = useState(false);
   const [otpResetVerified, setOtpResetVerified] = useState(false);
+  const [showShopOtpResetModal, setShowShopOtpResetModal] = useState(false);
   const [otpResetNewPassword, setOtpResetNewPassword] = useState('');
   const [otpResetConfirmPassword, setOtpResetConfirmPassword] = useState('');
   const [otpResetLoading, setOtpResetLoading] = useState(false);
   const [otpResetError, setOtpResetError] = useState('');
   const [otpResetSuccess, setOtpResetSuccess] = useState(false);
-  const [otpResetDevCode, setOtpResetDevCode] = useState('');
 
   useEffect(() => {
     fetchSettings();
@@ -14010,34 +14126,13 @@ function ShopSettingsView({ t, api, shopId }) {
   };
 
   // OTP Reset handlers
-  const handleOtpResetSend = async () => {
+  const handleOtpResetSend = () => {
     if (!otpResetIdentifier) {
       alert(t('pleaseEnterRegisteredEmailPhoneMsg'));
       return;
     }
-    setOtpResetDevCode('');
-    try {
-      const result = await api.sendOtp(otpResetIdentifier, otpResetMethod || 'email', 'reset');
-      if (result?.devCode) setOtpResetDevCode(result.devCode);
-      setOtpResetSent(true);
-      setOtpResetError('');
-    } catch (err) {
-      alert(err.message || t('failedSendOtpCodeMsg'));
-    }
-  };
-
-  const handleOtpResetVerify = async (e) => {
-    e.preventDefault();
-    setOtpResetLoading(true);
-    try {
-      await api.verifyOtp(otpResetIdentifier, otpResetMethod || 'email', 'reset', otpResetOtpInput);
-      setOtpResetVerified(true);
-      setOtpResetError('');
-    } catch (err) {
-      setOtpResetError(err.message || t('invalidOtpCodeEnterCorrectMsg'));
-    } finally {
-      setOtpResetLoading(false);
-    }
+    setOtpResetError('');
+    setShowShopOtpResetModal(true);
   };
 
   const handleOtpResetSubmit = async (e) => {
@@ -14054,13 +14149,10 @@ function ShopSettingsView({ t, api, shopId }) {
       alert(t('passwordUpdatedSuccessfullyMsg'));
       setOtpResetOpen(false);
       // Reset flow variables
-      setOtpResetSent(false);
       setOtpResetVerified(false);
       setOtpResetIdentifier('');
-      setOtpResetOtpInput('');
       setOtpResetNewPassword('');
       setOtpResetConfirmPassword('');
-      setOtpResetDevCode('');
     } catch (err) {
       setOtpResetError(err.message || t('failedUpdatePasswordMsg'));
     } finally {
@@ -14260,7 +14352,7 @@ function ShopSettingsView({ t, api, shopId }) {
                 </div>
                 <div className="reg-field" style={{ marginBottom: 12 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
-                  <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email}</p>
+                  <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email || t('noEmailOnFileLabel')}</p>
                 </div>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
@@ -14442,7 +14534,7 @@ function ShopSettingsView({ t, api, shopId }) {
               </button>
             </div>
 
-            {!otpResetSent ? (
+            {!otpResetVerified ? (
               <div>
                 <div className="store-tabs">
                   <button
@@ -14471,6 +14563,7 @@ function ShopSettingsView({ t, api, shopId }) {
                     />
                   </div>
                 </div>
+                {otpResetError && <div style={{ color: '#b91c1c', fontSize: 12, fontWeight: 600, marginBottom: 14 }}>{otpResetError}</div>}
                 <button
                   onClick={handleOtpResetSend}
                   className="btn btn-primary btn-block"
@@ -14478,36 +14571,20 @@ function ShopSettingsView({ t, api, shopId }) {
                   <Mail />
                   <span>{t('sendOtpVerificationCodeBtn')}</span>
                 </button>
+
+                <OtpVerificationModal
+                  open={showShopOtpResetModal}
+                  onClose={() => setShowShopOtpResetModal(false)}
+                  onVerified={() => setOtpResetVerified(true)}
+                  api={api}
+                  identifier={otpResetIdentifier}
+                  method={otpResetMethod || 'email'}
+                  purpose="reset"
+                  title={t('verifyOtpModalTitle')}
+                  description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', otpResetIdentifier)}
+                  t={t}
+                />
               </div>
-            ) : !otpResetVerified ? (
-              <form onSubmit={handleOtpResetVerify}>
-                <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 14 }}>
-                  {t('fourDigitCodeDispatchedTemplate').split('{identifier}')[0]}<span style={{ color: 'var(--gold)', fontWeight: 800 }}>{otpResetIdentifier}</span>{t('fourDigitCodeDispatchedTemplate').split('{identifier}')[1]}
-                </p>
-                {otpResetDevCode && (
-                  <div style={{ background: 'var(--card-2)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 14 }}>
-                    <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-                      {t('testingModeNoProviderTemplate').split('{provider}')[0]}{otpResetMethod === 'phone' ? 'SMS' : 'SMTP'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
-                    </p>
-                    <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{otpResetDevCode}</p>
-                  </div>
-                )}
-                <div className="field">
-                  <label style={{ textAlign: 'center' }}>{t('enterOtpLabel')}</label>
-                  <input
-                    type="text" required maxLength={4} value={otpResetOtpInput} onChange={(e) => setOtpResetOtpInput(e.target.value.replace(/\D/g, ''))}
-                    placeholder="1234"
-                    style={{ width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)', borderRadius: 13, padding: '13px 15px', fontSize: 16, textAlign: 'center', letterSpacing: '.3em', fontWeight: 800, outline: 'none' }}
-                  />
-                </div>
-                {otpResetError && <div style={{ color: '#b91c1c', fontSize: 12, fontWeight: 600, marginBottom: 14 }}>{otpResetError}</div>}
-                <div className="flex gap-2">
-                  <button type="button" onClick={() => setOtpResetSent(false)} className="btn btn-ghost" style={{ flex: 1 }}>{t('btnBack')}</button>
-                  <button type="submit" disabled={otpResetLoading} className="btn btn-primary" style={{ flex: 2 }}>
-                    {otpResetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyOtpBtn')}
-                  </button>
-                </div>
-              </form>
             ) : (
               <form onSubmit={handleOtpResetSubmit}>
                 {otpResetError && <div style={{ color: '#b91c1c', fontSize: 12, fontWeight: 600, marginBottom: 14 }}>{otpResetError}</div>}

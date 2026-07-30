@@ -44,7 +44,11 @@ enum PromotionType {
 
 model User {
   id           String        @id @default(uuid())
-  email        String        @unique
+  // Nullable - shop self-registration no longer requires an email address
+  // (see AuthService.registerShop/RegisterShopDto), so a Shop Admin may only
+  // have a phone login identifier. Still unique when present; Postgres
+  // allows multiple NULLs under a unique constraint, same as `phone` below.
+  email        String?       @unique
   // Login identifier alternative to email - a Shop Admin can sign in with
   // either their email or mobile number using the same password (see
   // AuthService.login). Nullable/unique: Super Admin accounts have no phone,
@@ -273,7 +277,12 @@ model Customer {
   idProofType     String?
   idProofNumber   String? // Encrypted PII at rest
   reason          String?
-  keyNumber       String
+  // Optional - the 2-page registration wizard now lets the shop admin skip
+  // entering a key code entirely (toggled off on Page 2), e.g. for a
+  // customer visit that doesn't involve cutting/duplicating a key yet. A
+  // blank keyNumber means no MasterKey catalog entry was auto-created and no
+  // duplicate-key check ran for this record (see CustomerService.createCustomer).
+  keyNumber       String?
   keyType         String?
   vehicleNumber   String?
   masterKeyId     String?
@@ -284,6 +293,23 @@ model Customer {
   capturedAddress String?
   photoUrl        String?
   documents       CustomerDocument[]
+
+  // Added for the 2-page registration wizard's Page 2 (optional, individually
+  // toggled fields) and the compact single-page report.
+  billAmount     Float?
+  vehicleName    String?
+  lostKey        Boolean @default(false)
+  addKey         Boolean @default(false)
+  homeOfficeName String?
+  // Which of the 5 icon categories the shop admin picked on Page 1 of the
+  // registration wizard - one of 'TWO_WHEELER' | 'FOUR_WHEELER' |
+  // 'TRUCK_LORRY' | 'HOME' | 'OFFICE'. Free-form string (not a Prisma enum)
+  // to match the keyType/documentType precedent elsewhere in this schema -
+  // new categories can be added without a migration. The app groups the
+  // first three as "Automobile" and the last two as "Domestic" purely in
+  // code (see frontend/src/utils/vehicleCategory.js) - those words are
+  // never persisted or shown in the UI.
+  vehicleCategory String?
 
   deletedAt DateTime?
 

@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
-import { fileToDataUrl, urlToDataUrl, rasterizePdfFirstPage } from './pdfImage';
+import { isAutomobileCategory } from './vehicleCategory';
 
 // Matches the app's own theme (see frontend/src/styles/index.css --maroon /
 // --maroon-dark / --gold) so the report reads as part of the same product,
@@ -23,6 +23,10 @@ function naVal(value) {
   return str && str !== 'N/A' ? str : NOT_AVAILABLE;
 }
 
+function boolLabel(value) {
+  return value ? 'Yes' : 'No';
+}
+
 function esc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (c) => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -40,7 +44,7 @@ function infoRow(icon, label, value) {
   return `
     <tr>
       <td style="width:34px; padding:10px 8px; border-bottom:1px solid ${BORDER}; vertical-align:top;">${icon}</td>
-      <td style="width:150px; padding:10px 8px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:12.5px; vertical-align:top;">${esc(label)}</td>
+      <td style="width:170px; padding:10px 8px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:12.5px; vertical-align:top;">${esc(label)}</td>
       <td style="padding:10px 12px; border-bottom:1px solid ${BORDER}; font-size:12.5px; color:#2a2a2a; vertical-align:top; word-break:break-word;">${esc(naVal(value))}</td>
     </tr>`;
 }
@@ -53,88 +57,30 @@ function sectionHeader(icon, title) {
     </div>`;
 }
 
-function documentCard(label, imgDataUrl) {
-  // object-fit:contain (not cover) so a document photo is never cropped or
-  // stretched out of its real aspect ratio - it's letterboxed inside a
-  // neutral frame instead.
-  const body = imgDataUrl
-    ? `<div style="width:100%; height:150px; display:flex; align-items:center; justify-content:center; background:#f4ede0; border-radius:6px; overflow:hidden;"><img src="${imgDataUrl}" style="max-width:100%; max-height:100%; object-fit:contain;" /></div>`
-    : `<div style="width:100%; height:150px; display:flex; align-items:center; justify-content:center; background:#f4ede0; border-radius:6px; font-size:32px;">&#128196;</div>`;
-  return `
-    <div style="flex:1 1 220px; max-width:260px; min-width:180px; background:#fff; border:1px solid ${BORDER}; border-radius:8px; overflow:hidden;">
-      <div style="background:${GOLD}; color:#fff; font-weight:800; font-size:10.5px; padding:6px 8px; text-transform:uppercase; letter-spacing:.03em;">${esc(label)}</div>
-      <div style="padding:8px;">${body}</div>
-    </div>`;
-}
-
-function summaryRow(label, ok) {
-  const badge = ok
-    ? `<span style="color:#1f9d55; font-weight:800; white-space:nowrap;">&#10003; Uploaded</span>`
-    : `<span style="color:#c0392b; font-weight:800; white-space:nowrap;">&#10007; Not Captured</span>`;
-  return `
-    <tr>
-      <td style="padding:9px 12px; border-bottom:1px solid ${BORDER}; font-size:12px; font-weight:700; color:#2a2a2a; word-break:break-word;">${esc(label)}</td>
-      <td style="padding:9px 12px; border-bottom:1px solid ${BORDER}; font-size:12px; text-align:right;">${badge}</td>
-    </tr>`;
-}
-
-// Builds a single branded PDF report - customer info, key details, shop
-// information and every document embedded as an image (rasterizing PDF
-// uploads via pdfjs) on one printable A4 page, breaking cleanly onto
-// additional pages only between sections (never mid-row or mid-image) when
-// content is too tall for one page. Renders an HTML template through
-// html2canvas + jsPDF (rather than jsPDF's own primitive draw calls) so the
-// layout can closely follow the Key Shops report design. Used by both:
-//  - Customer History's Download/WhatsApp actions, where `documents` are
-//    already-saved rows with a remote `fileUrl` (Supabase signed URL or
-//    backend path);
-//  - the Registration wizard's Download/Share actions, where `documents` are
-//    still local, in-memory `{ type, file }` File objects (upload to the
-//    server only happens after Submit) - so no network fetch is needed or
-//    even possible there yet.
+// Builds a single branded, compact PDF report - a consolidated info table
+// (customer/vehicle-or-home-office/key/shop details, whichever apply to this
+// customer's category) plus a thin declaration/footer strip. Always exactly
+// one A4 page: the rendered report is scaled down to fit the page if needed
+// (see the ratio math below) instead of paginating, so it can never spill
+// onto a second page regardless of how tall the content renders on a given
+// device. Renders an HTML template through html2canvas + jsPDF (rather than
+// jsPDF's own primitive draw calls) so the layout can closely follow the Key
+// Shops report design. Used by both:
+//  - Customer History's Download/WhatsApp actions, where `customer` is an
+//    already-saved row;
+//  - the Registration wizard's Download/Share actions, where `customer` is a
+//    customer-like object built from in-progress wizard state (see
+//    buildDraftReportPdf in App.jsx).
 export async function buildCustomerReportPdf({ customer, shop, registeredByName }) {
   const idSource = customer.id || `DRAFT${Date.now()}`;
   const reportId = `RPT-KEY-${idSource.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
 
-  let photoDataUrl = null;
-  if (customer.photoUrl) {
-    try { photoDataUrl = await urlToDataUrl(customer.photoUrl); } catch (err) {
-      console.error('Failed to load customer photo for report:', err);
-    }
-  }
-
-  const docs = customer.documents || [];
-  const docCards = [];
-  for (const d of docs) {
-    const label = d.documentType || d.type;
-    let imgDataUrl = null;
-    try {
-      if (d.file) {
-        // Local, not-yet-uploaded File (registration wizard) - read/rasterize
-        // directly, no network involved.
-        imgDataUrl = d.file.type === 'application/pdf'
-          ? await rasterizePdfFirstPage(d.file)
-          : await fileToDataUrl(d.file);
-      } else if (/\.pdf($|\?)/i.test(d.fileUrl) || d.fileKey?.toLowerCase().endsWith('.pdf')) {
-        imgDataUrl = await rasterizePdfFirstPage(d.fileUrl);
-      } else {
-        imgDataUrl = await urlToDataUrl(d.fileUrl);
-      }
-    } catch (err) {
-      console.error(`Failed to load document "${label}" for report:`, err);
-    }
-    docCards.push(documentCard(label, imgDataUrl));
-  }
-
   const gpsCaptured = !!(customer.latitude && customer.longitude);
+  const isAutomobile = isAutomobileCategory(customer.vehicleCategory);
 
-  // Each top-level "report-block" is a printable unit - the pagination pass
-  // below only ever cuts the page between these blocks, never inside one, so
-  // a table row, document image, or signature box can never be split across
-  // two pages.
   const html = `
   <div style="width:794px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a;">
-    <div class="report-block" style="display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:22px 24px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:22px 24px;">
       <div style="display:flex; align-items:center; gap:12px;">
         <img src="${keyShopLogo}" style="width:52px; height:52px; object-fit:contain; background:#fff; border-radius:50%; padding:4px; flex-shrink:0;" />
         <div>
@@ -151,85 +97,31 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
       </div>
     </div>
 
-    <div class="report-block" style="display:flex; gap:16px; padding:20px 24px 4px;">
-      <div style="flex:2; min-width:0;">
-        ${sectionHeader('&#128100;', 'Customer Information')}
-        <table style="width:100%; border-collapse:collapse; background:#fff; border:1px solid ${BORDER}; border-top:none; table-layout:fixed;">
-          ${infoRow('&#128100;', 'Customer Name', customer.name)}
-          ${infoRow('&#128241;', 'Mobile Number', customer.phone)}
-          ${infoRow('&#128663;', 'Vehicle Number', customer.vehicleNumber)}
-          ${infoRow('&#128273;', 'Key Blank Code', customer.keyNumber)}
-          ${infoRow('&#128272;', 'Key Type', customer.keyType)}
-          ${infoRow('&#128205;', 'Address', customer.capturedAddress || customer.address)}
-          ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : null)}
-          ${infoRow('&#128100;', 'Registered By', registeredByName)}
-        </table>
-      </div>
-      <div style="flex:1; min-width:0;">
-        ${sectionHeader('&#128247;', 'Customer Photograph')}
-        <div style="background:#fff; border:1px solid ${BORDER}; border-top:none; border-radius:0 0 8px 8px; padding:12px; display:flex; align-items:center; justify-content:center; height:190px;">
-          ${photoDataUrl
-            ? `<img src="${photoDataUrl}" style="max-width:100%; max-height:100%; border-radius:8px; object-fit:contain;" />`
-            : `<div style="text-align:center; color:#b0a48a;"><div style="font-size:46px;">&#128100;</div><div style="font-size:11px; font-weight:700; margin-top:6px;">No Photo Captured</div></div>`}
-        </div>
+    <div style="padding:20px 24px 4px;">
+      ${sectionHeader('&#128100;', 'Registration Details')}
+      <table style="width:100%; border-collapse:collapse; background:#fff; border:1px solid ${BORDER}; border-top:none; table-layout:fixed;">
+        ${infoRow('&#128100;', 'Customer Name', customer.name)}
+        ${infoRow('&#128241;', 'Mobile Number', customer.phone)}
+        ${infoRow('&#128205;', 'Address', customer.capturedAddress || customer.address)}
+        ${isAutomobile
+          ? `${infoRow('&#128663;', 'Vehicle Number', customer.vehicleNumber)}${infoRow('&#128663;', 'Vehicle Name', customer.vehicleName)}`
+          : infoRow('&#127968;', 'Home / Office Name', customer.homeOfficeName)}
+        ${infoRow('&#128273;', isAutomobile ? 'Key Code' : 'Home / Office Key Code', customer.keyNumber)}
+        ${infoRow('&#9989;', 'Add Key', boolLabel(customer.addKey))}
+        ${infoRow('&#10060;', 'Lost Key', boolLabel(customer.lostKey))}
+        ${infoRow('&#128176;', 'Bill Amount', customer.billAmount)}
+        ${infoRow('&#127978;', 'Shop Name', shop?.name)}
+        ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : null)}
+      </table>
+    </div>
+
+    <div style="padding:14px 24px 4px;">
+      <div style="background:#fff; border:1px solid ${BORDER}; border-radius:8px; padding:12px 16px;">
+        <p style="font-size:10.5px; color:#4a4a4a; line-height:1.4; margin:0;">I hereby confirm that the above information is true and was submitted during customer key registration.</p>
       </div>
     </div>
 
-    <div class="report-block" style="padding:16px 24px 4px;">
-      ${sectionHeader('&#128193;', `Uploaded Documents (${docs.length})`)}
-      <div style="background:#fff; border:1px solid ${BORDER}; border-top:none; border-radius:0 0 8px 8px; padding:14px; display:flex; gap:12px; flex-wrap:wrap;">
-        ${docs.length > 0 ? docCards.join('') : `<div style="font-size:12px; color:#8a7f68; font-style:italic; padding:8px;">No documents were uploaded for this customer.</div>`}
-      </div>
-    </div>
-
-    <div class="report-block" style="display:flex; gap:16px; padding:16px 24px 4px;">
-      <div style="flex:1; min-width:0;">
-        ${sectionHeader('&#128273;', 'Key Details')}
-        <table style="width:100%; border-collapse:collapse; background:#fff; border:1px solid ${BORDER}; border-top:none; table-layout:fixed;">
-          ${infoRow('&#127991;', 'Key Blank Code', customer.keyNumber)}
-          ${infoRow('&#128193;', 'Key Category', customer.masterKey?.category)}
-          ${infoRow('&#128272;', 'Key Type', customer.keyType)}
-          ${infoRow('&#128221;', 'Remarks', customer.reason && customer.reason !== 'N/A' ? customer.reason : null)}
-        </table>
-      </div>
-      <div style="flex:1; min-width:0;">
-        ${sectionHeader('&#127978;', 'Shop Information')}
-        <table style="width:100%; border-collapse:collapse; background:#fff; border:1px solid ${BORDER}; border-top:none; table-layout:fixed;">
-          ${infoRow('&#127978;', 'Shop Name', shop?.name)}
-          ${infoRow('&#128205;', 'Shop Address', shop?.address)}
-          ${infoRow('&#128222;', 'Contact Number', shop?.phone)}
-        </table>
-      </div>
-    </div>
-
-    <div class="report-block" style="display:flex; gap:16px; padding:16px 24px 4px;">
-      <div style="flex:1; min-width:0;">
-        ${sectionHeader('&#128737;', 'Registration Summary')}
-        <table style="width:100%; border-collapse:collapse; background:#fff; border:1px solid ${BORDER}; border-top:none; table-layout:fixed;">
-          ${summaryRow('Customer Photo', !!photoDataUrl)}
-          ${docs.map((d) => summaryRow(d.documentType || d.type, true)).join('')}
-          ${summaryRow('GPS Location', gpsCaptured)}
-        </table>
-      </div>
-      <div style="flex:1; min-width:0;">
-        ${sectionHeader('&#128203;', 'Declaration')}
-        <div style="background:#fff; border:1px solid ${BORDER}; border-top:none; border-radius:0 0 8px 8px; padding:16px;">
-          <p style="font-size:11px; color:#4a4a4a; line-height:1.5; margin:0 0 18px;">I hereby confirm that the above information and uploaded documents are true and submitted during customer key registration.</p>
-          <div style="display:flex; gap:14px;">
-            <div style="flex:1;">
-              <div style="font-size:10px; font-weight:800; color:${MAROON_DARK}; margin-bottom:24px;">CUSTOMER SIGNATURE</div>
-              <div style="border-top:1px solid #b0a48a; font-size:9.5px; color:#8a7f68; padding-top:4px; white-space:nowrap;">Date: ____ / ____ / ______</div>
-            </div>
-            <div style="flex:1;">
-              <div style="font-size:10px; font-weight:800; color:${MAROON_DARK}; margin-bottom:24px;">SHOP ADMIN SIGNATURE</div>
-              <div style="border-top:1px solid #b0a48a; font-size:9.5px; color:#8a7f68; padding-top:4px; white-space:nowrap;">Date: ____ / ____ / ______</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="report-block" style="display:flex; align-items:center; justify-content:space-between; background:${MAROON_DARK}; color:#fff; padding:14px 24px; margin-top:16px; font-size:10.5px; gap:16px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; background:${MAROON_DARK}; color:#fff; padding:14px 24px; margin-top:16px; font-size:10.5px; gap:16px;">
       <div>Generated On<br/><b>${formatDateTime(new Date())}</b></div>
       <div>Generated By<br/><b>${esc(naVal(registeredByName))}</b></div>
       <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:13px; text-align:right;">THANK YOU FOR CHOOSING KEY SHOPS</div>
@@ -244,46 +136,22 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   document.body.appendChild(container);
 
   try {
-    const scale = 2.5;
-    const reportRoot = container.firstElementChild;
-    const blockEls = Array.from(reportRoot.children).filter((el) => el.classList.contains('report-block'));
-
-    const canvas = await html2canvas(container, { scale, useCORS: true, backgroundColor: '#ffffff' });
-
-    // Block boundaries in canvas-pixel space, used to snap page breaks to
-    // section edges instead of cutting through content.
-    const blockBottoms = blockEls.map((el) => Math.round((el.offsetTop + el.offsetHeight) * scale));
+    const canvas = await html2canvas(container.firstElementChild, { scale: 2.5, useCORS: true, backgroundColor: '#ffffff' });
 
     const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = pageWidth;
-    const pxPerPage = Math.floor((canvas.width * pageHeight) / imgWidth);
 
-    let cursor = 0;
-    let first = true;
-    while (cursor < canvas.height) {
-      const hardLimit = Math.min(cursor + pxPerPage, canvas.height);
-      // The furthest block boundary that still fits within this page - if
-      // none do (a single block taller than a full page, e.g. many
-      // documents), fall back to the hard pixel limit as a last resort.
-      let cutY = hardLimit;
-      for (const bottom of blockBottoms) {
-        if (bottom > cursor && bottom <= hardLimit) cutY = bottom;
-      }
+    // Always exactly one page: scale the whole report to fit within the A4
+    // page (by whichever dimension is the binding constraint) rather than
+    // pagination logic that could spill a second page depending on how tall
+    // the content happens to render on a given device.
+    const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
+    const imgWidth = canvas.width * ratio;
+    const imgHeight = canvas.height * ratio;
+    const x = (pageWidth - imgWidth) / 2;
 
-      const sliceHeight = cutY - cursor;
-      const sliceCanvas = document.createElement('canvas');
-      sliceCanvas.width = canvas.width;
-      sliceCanvas.height = sliceHeight;
-      sliceCanvas.getContext('2d').drawImage(
-        canvas, 0, cursor, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight,
-      );
-      if (!first) pdf.addPage();
-      pdf.addImage(sliceCanvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgWidth, (sliceHeight * imgWidth) / canvas.width);
-      cursor = cutY;
-      first = false;
-    }
+    pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, 0, imgWidth, imgHeight);
 
     return pdf;
   } finally {
