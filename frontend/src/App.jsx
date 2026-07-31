@@ -5959,6 +5959,34 @@ export default function App() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLangDialog, setShowLangDialog] = useState(false);
   const langDialogCardRef = useRef(null);
+  // Auto-download customer report PDF when opening deep link e.g. ?action=download_doc&id={customerId}
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get('action');
+    const id = params.get('id');
+    if (action === 'download_doc' && id) {
+      (async () => {
+        try {
+          const custs = await api.getSuperCustomers(id);
+          const customer = Array.isArray(custs) ? custs[0] : custs;
+          if (customer && customer.name) {
+            const shops = await api.getShops();
+            const shopRes = customer.shop || (shops || []).find(s => s.id === customer.shopId);
+            const pdf = await buildCustomerReportPdf({
+              customer,
+              shop: shopRes,
+              registeredByName: customer.registeredByName || shopRes?.name || 'Key Shops',
+            });
+            const safeName = `${customer.name.trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+            await downloadPdf(pdf, safeName);
+          }
+        } catch (err) {
+          console.error('Failed auto-download of customer document:', err);
+        }
+      })();
+    }
+  }, []);
+
   // Side-drawer and language dialog are both full-screen overlays - Back
   // should close them, not navigate the screen underneath.
   useBackHandler(mobileNavOpen, () => setMobileNavOpen(false));
@@ -7972,7 +8000,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           Support card spanning both columns. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--purple)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter('KEY_SHOPS'); setActiveTab('dealers'); } },
+        { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--gold)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter('KEY_SHOPS'); setActiveTab('dealers'); } },
         { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter(null); setActiveTab('dealers'); } },
         { title: 'Used Machines', description: 'View and manage used machines', image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: 'ECM', description: 'Manage ECM records', image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
@@ -8449,7 +8477,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           }
 
           return (
-            <div className="dealer-list stagger-in" style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 0', width: '100%' }}>
+            <div className="dealer-list stagger-in">
               {filteredShops.map(s => {
                 let details = {};
                 if (s.companyDetails) {
@@ -8458,16 +8486,17 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 const shopPhone = details.phone || s.phone || s.users?.[0]?.phone;
                 const shopAddress = details.address || s.address || (s.users?.[0]?.email ? `Admin: ${s.users[0].email}` : null);
                 const shopWebsite = details.website || s.website;
+                const shopCategory = s.category || 'Key Shop';
 
                 return (
-                  <div key={s.id} className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: 16, cursor: 'pointer', border: '1px solid var(--border-2)', background: 'var(--card-1)', width: '100%', boxSizing: 'border-box' }} onClick={() => setFullSettingsShopId(s.id)}>
+                  <div key={s.id} className="dealer-row" onClick={() => setFullSettingsShopId(s.id)}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
-                      <div style={{ width: 50, height: 50, borderRadius: 12, overflow: 'hidden', background: 'var(--card-2)', border: '1px solid var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                        <img src={s.shopPhoto || keyShopLogo} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div className="dealer-logo">
+                        <img src={s.shopPhoto || keyShopLogo} alt={s.name} />
                       </div>
-                      <div style={{ minWidth: 0, flex: 1 }}>
-                        <div className="flex items-center gap-2" style={{ marginBottom: 4 }}>
-                          <div style={{ fontSize: 14.5, fontWeight: 800, color: 'var(--text-0)' }}>{s.name}</div>
+                      <div className="dealer-info">
+                        <div className="dealer-name" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <span>{s.name}</span>
                           <button
                             onClick={(e) => { e.stopPropagation(); toggleShopStatus(s); }}
                             title={t('toggleShopActiveStatusTitle')}
@@ -8477,21 +8506,24 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                             <span className="dot" />{s.isActive ? t('active') : t('suspended')}
                           </button>
                         </div>
+                        {shopCategory && (
+                          <div className="dealer-line">
+                            <Tag style={{ width: 13, height: 13, color: 'var(--text-3)' }} /> <span>{shopCategory}</span>
+                          </div>
+                        )}
                         {shopAddress && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
-                            <MapPin style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--text-3)' }} />
-                            <span className="truncate">{shopAddress}</span>
+                          <div className="dealer-line">
+                            <MapPin style={{ width: 13, height: 13, color: 'var(--text-3)' }} /> <span>{shopAddress}</span>
                           </div>
                         )}
                         {shopPhone && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
-                            <Phone style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--text-3)' }} />
-                            <span>{shopPhone}</span>
+                          <div className="dealer-line">
+                            <Phone style={{ width: 13, height: 13, color: 'var(--text-3)' }} /> <span>{shopPhone}</span>
                           </div>
                         )}
                         {shopWebsite && (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--gold)', fontWeight: 600, marginTop: 2 }}>
-                            <Globe style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--gold)' }} />
+                          <div className="dealer-line">
+                            <Globe style={{ width: 13, height: 13, color: 'var(--gold)' }} />
                             <a href={shopWebsite.startsWith('http') ? shopWebsite : `https://${shopWebsite}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: 'var(--gold)', textDecoration: 'none' }}>
                               {shopWebsite}
                             </a>
@@ -8500,10 +8532,22 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       </div>
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-                      <div className="icon-btn" style={{ background: 'var(--card-2)', color: 'var(--gold)' }} title={t('viewDetails')}>
+                    <div className="dealer-quick-actions" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {shopPhone && (
+                        <a href={`tel:${shopPhone}`} className="dealer-quick-btn call" onClick={(e) => e.stopPropagation()}>
+                          <Phone className="h-3.5 w-3.5" />
+                          <span>{t('callPrefix') || 'Call'}</span>
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setFullSettingsShopId(s.id); }}
+                        className="icon-btn"
+                        style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--card-2)', color: 'var(--gold)' }}
+                        title={t('viewDetails')}
+                      >
                         <ChevronRight style={{ width: 18, height: 18 }} />
-                      </div>
+                      </button>
                     </div>
                   </div>
                 );
@@ -9442,7 +9486,55 @@ function SuperCustomersView({ t, api, searchDispatch }) {
               )}
             </div>
 
-            <div className="flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
+            <div className="flex justify-between items-center flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const shops = await api.getShops();
+                      const shopRes = viewCust.shop || (shops || []).find(s => s.id === viewCust.shopId);
+                      const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name });
+                      const safeName = `${(viewCust.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+                      await downloadPdf(pdf, safeName);
+                    } catch (e) {
+                      console.error(e);
+                      alert('Could not download document PDF.');
+                    }
+                  }}
+                  className="btn btn-outline btn-sm"
+                >
+                  <Download className="h-4 w-4" />
+                  <span>Download Document</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const shops = await api.getShops();
+                      const shopRes = viewCust.shop || (shops || []).find(s => s.id === viewCust.shopId);
+                      const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name });
+                      const safeName = `${(viewCust.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+                      const downloadUrl = `https://keee-7d6cb.web.app/?action=download_doc&id=${viewCust.id}`;
+                      const msg = `Hi ${viewCust.name},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
+                      if (Capacitor.isNativePlatform()) {
+                        await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: msg });
+                      } else {
+                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+                        await downloadPdf(pdf, safeName);
+                      }
+                    } catch (e) {
+                      console.error(e);
+                      alert('Could not share document via WhatsApp.');
+                    }
+                  }}
+                  className="btn btn-primary btn-sm"
+                  style={{ background: '#25D366', borderColor: '#25D366' }}
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span>Share WhatsApp</span>
+                </button>
+              </div>
               <button onClick={() => setViewCust(null)} className="btn btn-ghost">{t('closeFileBtn')}</button>
             </div>
           </div>
@@ -10946,7 +11038,7 @@ function DealersView({ t, api, initialCategory }) {
     const shopName = (dealer.name || '').toLowerCase();
 
     if (selectedCategory === 'KEY_SHOPS') {
-      return !dealer.category || catName.includes('key') || catName.includes('shop') || shopName.includes('key');
+      return catName.includes('key') || catName === 'key shops' || catName === 'key shop' || shopName.includes('key shops');
     }
     if (selectedCategory === 'ECM') {
       return catName.includes('ecm') || shopName.includes('ecm');
@@ -12127,7 +12219,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setPdfAction('download');
     try {
       const pdf = await buildDraftReportPdf();
-      const safeName = `${(name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Registration.pdf`;
+      const safeName = `${(name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
       await downloadPdf(pdf, safeName);
     } catch (err) {
       console.error('Failed to generate registration PDF:', err);
@@ -12141,10 +12233,12 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setPdfAction('share');
     try {
       const pdf = await buildDraftReportPdf();
-      const safeName = `${(name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Registration.pdf`;
+      const safeName = `${(name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+      const downloadUrl = `https://keee-7d6cb.web.app/?action=download_doc&name=${encodeURIComponent(name || 'Customer')}`;
+      const shareMsg = `Hi ${name || 'Customer'},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
       await sharePdf(pdf, safeName, {
-        title: 'Customer Registration',
-        fallbackText: `${name}${keyCodeEnabled && keyNumber ? ` - Key: ${keyNumber}` : ''} - Phone: ${phone}`,
+        title: `${name} - Key Registration`,
+        fallbackText: shareMsg,
       });
     } catch (err) {
       // A cancelled share sheet also rejects the promise - not a real error.

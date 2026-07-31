@@ -43,9 +43,11 @@ function formatDateTime(value) {
 function infoRow(icon, label, value) {
   return `
     <tr>
-      <td style="width:28px; padding:8px 6px; border-bottom:1px solid ${BORDER}; vertical-align:top; text-align:center;">${icon}</td>
-      <td style="width:160px; padding:8px 6px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:11.5px; vertical-align:top;">${esc(label)}</td>
-      <td style="padding:8px 10px; border-bottom:1px solid ${BORDER}; font-size:11.5px; color:#2a2a2a; vertical-align:top; word-break:break-word;">${esc(naVal(value))}</td>
+      <td style="width:28px; padding:7px 6px; border-bottom:1px solid ${BORDER}; vertical-align:middle; text-align:center;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; font-size:12px; line-height:1; vertical-align:middle;">${icon}</span>
+      </td>
+      <td style="width:160px; padding:7px 6px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:11.5px; vertical-align:middle; line-height:1.3;">${esc(label)}</td>
+      <td style="padding:7px 10px; border-bottom:1px solid ${BORDER}; font-size:11.5px; color:#2a2a2a; vertical-align:middle; line-height:1.3; word-break:break-word;">${esc(naVal(value))}</td>
     </tr>`;
 }
 
