@@ -154,6 +154,15 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   document.body.appendChild(container);
 
   try {
+    const imgs = Array.from(container.querySelectorAll('img'));
+    await Promise.all(imgs.map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => {
+        img.onload = resolve;
+        img.onerror = resolve;
+      });
+    }));
+
     const canvas = await html2canvas(container.firstElementChild, { scale: 2.5, useCORS: true, backgroundColor: '#ffffff' });
 
     const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true });

@@ -5959,27 +5959,56 @@ export default function App() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLangDialog, setShowLangDialog] = useState(false);
   const langDialogCardRef = useRef(null);
-  // Auto-download customer report PDF when opening deep link e.g. ?action=download_doc&id={customerId}
+  // Auto-download customer report PDF when opening deep link e.g. ?action=download_doc&...
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const action = params.get('action');
-    const id = params.get('id');
-    if (action === 'download_doc' && id) {
+    if (action === 'download_doc') {
+      const id = params.get('id');
+      const name = params.get('name') || 'Customer';
+      const phone = params.get('phone') || 'N/A';
+      const keyNumber = params.get('keyNumber') || '';
+      const address = params.get('address') || '';
+      const vehicleNumber = params.get('vehicleNumber') || '';
+      const billAmount = params.get('billAmount') || '';
+      const shopName = params.get('shopName') || 'Key Shops';
+      const vehicleCategory = params.get('vehicleCategory') || '';
+
       (async () => {
         try {
-          const custs = await api.getSuperCustomers(id);
-          const customer = Array.isArray(custs) ? custs[0] : custs;
-          if (customer && customer.name) {
-            const shops = await api.getShops();
-            const shopRes = customer.shop || (shops || []).find(s => s.id === customer.shopId);
-            const pdf = await buildCustomerReportPdf({
-              customer,
-              shop: shopRes,
-              registeredByName: customer.registeredByName || shopRes?.name || 'Key Shops',
-            });
-            const safeName = `${customer.name.trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
-            await downloadPdf(pdf, safeName);
+          let customerData = null;
+          let shopData = { name: shopName, address: 'N/A', phone: 'N/A' };
+
+          if (id && api && api.getSuperCustomers) {
+            try {
+              const custs = await api.getSuperCustomers(id).catch(() => null);
+              if (custs) {
+                customerData = Array.isArray(custs) ? custs.find(c => c.id === id) || custs[0] : custs;
+              }
+            } catch (e) {}
           }
+
+          if (!customerData) {
+            customerData = {
+              name,
+              phone,
+              keyNumber,
+              vehicleNumber,
+              capturedAddress: address,
+              address,
+              billAmount: billAmount ? Number(billAmount) : null,
+              vehicleCategory,
+              createdAt: new Date().toISOString(),
+            };
+          }
+
+          const pdf = await buildCustomerReportPdf({
+            customer: customerData,
+            shop: customerData.shop || shopData,
+            registeredByName: customerData.registeredByName || shopName,
+          });
+          const safeName = `${name.trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+          await downloadPdf(pdf, safeName);
         } catch (err) {
           console.error('Failed auto-download of customer document:', err);
         }
@@ -9252,11 +9281,39 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 
   const [reportBusyId, setReportBusyId] = useState(null);
 
+  const getFullShopDetails = async (c) => {
+    let name = c.shop?.name || 'Key Shops';
+    let address = 'N/A';
+    let phone = 'N/A';
+    try {
+      const shopsRes = await api.getShops();
+      const found = (shopsRes || []).find(s => s.id === c.shopId || s.name === c.shop?.name);
+      if (found) {
+        name = found.name || name;
+        if (found.companyDetails) {
+          try {
+            const details = typeof found.companyDetails === 'string' ? JSON.parse(found.companyDetails) : found.companyDetails;
+            address = details.address || found.address || 'N/A';
+            phone = details.phone || found.phone || 'N/A';
+          } catch (e) {
+            address = found.address || 'N/A';
+            phone = found.phone || 'N/A';
+          }
+        } else {
+          address = found.address || 'N/A';
+          phone = found.phone || 'N/A';
+        }
+      }
+    } catch (e) {
+      console.warn('Could not fetch shop details for report:', e);
+    }
+    return { name, address, phone };
+  };
+
   const handleDownloadCustomerReport = async (c) => {
     setReportBusyId(`${c.id}:download`);
     try {
-      const shopsRes = await api.getShops();
-      const shopRes = c.shop || (shopsRes || []).find(s => s.id === c.shopId);
+      const shopRes = await getFullShopDetails(c);
       const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
       const safeName = `${(c.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
       await downloadPdf(pdf, safeName);
@@ -9271,11 +9328,21 @@ function SuperCustomersView({ t, api, searchDispatch }) {
   const handleShareCustomerReportViaWhatsApp = async (c) => {
     setReportBusyId(`${c.id}:whatsapp`);
     try {
-      const shopsRes = await api.getShops();
-      const shopRes = c.shop || (shopsRes || []).find(s => s.id === c.shopId);
+      const shopRes = await getFullShopDetails(c);
       const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
       const safeName = `${(c.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
-      const downloadUrl = `https://keee-7d6cb.web.app/?action=download_doc&id=${c.id}`;
+      const queryParams = new URLSearchParams({
+        action: 'download_doc',
+        id: c.id,
+        name: c.name || 'Customer',
+        phone: c.phone || '',
+        keyNumber: c.keyNumber || '',
+        vehicleNumber: c.vehicleNumber || c.vehicleName || '',
+        billAmount: c.billAmount ?? '',
+        address: c.capturedAddress || c.address || '',
+        shopName: shopRes?.name || 'Key Shops',
+      }).toString();
+      const downloadUrl = `https://keee-7d6cb.web.app/?${queryParams}`;
       const msg = `Hi ${c.name},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
       if (Capacitor.isNativePlatform()) {
         await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: msg });
@@ -12360,15 +12427,30 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setPdfAction('share');
     try {
       const pdf = await buildDraftReportPdf();
+      const shop = await ensureShopInfoForReport();
+      const isAutomobile = isAutomobileCategory(vehicleCategory);
+      const finalKeyNumber = keyCodeEnabled ? (keyNumber || null) : null;
       const safeName = `${(name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
-      const downloadUrl = `https://keee-7d6cb.web.app/?action=download_doc&name=${encodeURIComponent(name || 'Customer')}`;
+      const queryParams = new URLSearchParams({
+        action: 'download_doc',
+        name: name || 'Customer',
+        phone: phone || '',
+        keyNumber: finalKeyNumber || '',
+        vehicleNumber: (isAutomobile && vehicleNumberEnabled) ? vehicleNumber : '',
+        billAmount: (billAmountEnabled && billAmount) ? billAmount : '',
+        address: capturedAddress || addressLine || '',
+        shopName: shop?.name || 'Key Shops',
+        vehicleCategory: vehicleCategory || '',
+      }).toString();
+      const downloadUrl = `https://keee-7d6cb.web.app/?${queryParams}`;
       const shareMsg = `Hi ${name || 'Customer'},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
-      await sharePdf(pdf, safeName, {
-        title: `${name} - Key Registration`,
-        fallbackText: shareMsg,
-      });
+      if (Capacitor.isNativePlatform()) {
+        await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: shareMsg });
+      } else {
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`, '_blank');
+        await downloadPdf(pdf, safeName);
+      }
     } catch (err) {
-      // A cancelled share sheet also rejects the promise - not a real error.
       if (err && err.name !== 'AbortError') {
         console.error('Failed to share registration PDF:', err);
         window.alert('Could not share the registration PDF. Please try again.');
