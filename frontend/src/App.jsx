@@ -7754,6 +7754,55 @@ export default function App() {
           )}
         </div>
       )}
+
+      {/* Language selection dialog (center-screen modal - available on both login screen and in app) */}
+      {showLangDialog && createPortal(
+        <div
+          className="fixed inset-0 z-50 overflow-y-auto flex justify-center items-center p-4"
+          style={{ background: 'rgba(5,4,3,0.72)' }}
+          onClick={() => setShowLangDialog(false)}
+        >
+          <div
+            ref={langDialogCardRef}
+            className="card animate-fade-in"
+            style={{ width: '100%', maxWidth: 340, padding: 24, position: 'relative' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowLangDialog(false)}
+              className="icon-btn"
+              style={{ position: 'absolute', top: 16, right: 16 }}
+            >
+              <X className="h-4 w-4" />
+            </button>
+            <div className="flex flex-col items-center mb-5" style={{ textAlign: 'center' }}>
+              <div className="icon-badge solid" style={{ marginBottom: 10 }}><Languages /></div>
+              <h2 style={{ fontSize: 17 }}>{t('chooseLanguage')}</h2>
+              <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>{t('selectLanguageDesc')}</p>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {[
+                { code: 'en', label: 'English' },
+                { code: 'hi', label: 'Hindi (हिन्दी)' },
+                { code: 'ta', label: 'Tamil (தமிழ்)' },
+                { code: 'te', label: 'Telugu (తెలుగు)' },
+                { code: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
+                { code: 'ml', label: 'Malayalam (മലയാളം)' },
+              ].map(l => (
+                <button
+                  key={l.code}
+                  onClick={() => { setLang(l.code); localStorage.setItem('kee_lang', l.code); setShowLangDialog(false); }}
+                  className={`lang-option-btn ${lang === l.code ? 'active' : ''}`}
+                >
+                  <span>{l.label}</span>
+                  {lang === l.code && <Check className="h-4 w-4" />}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </>
   );
 }
