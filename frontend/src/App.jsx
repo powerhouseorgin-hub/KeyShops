@@ -9250,6 +9250,49 @@ function SuperCustomersView({ t, api, searchDispatch }) {
     }
   };
 
+  const [reportBusyId, setReportBusyId] = useState(null);
+
+  const handleDownloadCustomerReport = async (c) => {
+    setReportBusyId(`${c.id}:download`);
+    try {
+      const shopsRes = await api.getShops();
+      const shopRes = c.shop || (shopsRes || []).find(s => s.id === c.shopId);
+      const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
+      const safeName = `${(c.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+      await downloadPdf(pdf, safeName);
+    } catch (err) {
+      console.error('Failed to generate customer report PDF:', err);
+      window.alert('Could not generate the report PDF. Please try again.');
+    } finally {
+      setReportBusyId(null);
+    }
+  };
+
+  const handleShareCustomerReportViaWhatsApp = async (c) => {
+    setReportBusyId(`${c.id}:whatsapp`);
+    try {
+      const shopsRes = await api.getShops();
+      const shopRes = c.shop || (shopsRes || []).find(s => s.id === c.shopId);
+      const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
+      const safeName = `${(c.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+      const downloadUrl = `https://keee-7d6cb.web.app/?action=download_doc&id=${c.id}`;
+      const msg = `Hi ${c.name},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
+      if (Capacitor.isNativePlatform()) {
+        await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: msg });
+      } else {
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+        await downloadPdf(pdf, safeName);
+      }
+    } catch (err) {
+      if (err && err.name !== 'AbortError') {
+        console.error('Failed to share customer report PDF:', err);
+        window.alert('Could not share the report PDF. Please try again.');
+      }
+    } finally {
+      setReportBusyId(null);
+    }
+  };
+
   return (
     <div className="animate-fade-in">
       <div className="page-head">
@@ -9292,39 +9335,123 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             {t('noCustomerRecordsMatch')}
           </p>
         ) : (
-          <div className="dealer-list stagger-in" style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 0', width: '100%' }}>
+          <div className="stagger-in" style={{ display: 'flex', flexDirection: 'column', gap: 14, padding: '16px' }}>
             {customers.map(c => {
               const keyCode = c.keyNumber || (c.keys?.[0]?.keyNumber) || '—';
               const shopName = c.shop ? c.shop.name : (t('shopWorkspaceFallback') || 'Unassigned Workspace');
+              const fullLoc = c.capturedAddress || c.address || 'N/A';
 
               return (
-                <div key={c.id} className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: 16, cursor: 'pointer', border: '1px solid var(--border-2)', background: 'var(--card-1)', width: '100%', boxSizing: 'border-box' }} onClick={() => setViewCust(c)}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
-                    <div className="icon-badge jgreen" style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0 }}>
-                      <User style={{ width: 22, height: 22 }} />
+                <div
+                  key={c.id}
+                  className="card"
+                  style={{
+                    background: 'var(--card-1, #ffffff)',
+                    border: '1.5px solid var(--border-2)',
+                    borderRadius: 18,
+                    padding: '20px 22px',
+                    width: '100%',
+                    boxSizing: 'border-box',
+                  }}
+                >
+                  {/* Card Header: Icon Badge + Customer Name + Shop */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                    <div className="icon-badge purple" style={{ width: 38, height: 38, borderRadius: 11, flexShrink: 0 }}>
+                      <User style={{ width: 19, height: 19 }} />
                     </div>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                      <div style={{ fontSize: 14.5, fontWeight: 800, color: 'var(--text-0)', marginBottom: 4 }}>{c.name}</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
-                        <Store style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--text-3)' }} />
-                        <span className="truncate">{shopName}</span>
-                      </div>
-                      {c.phone && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
-                          <Phone style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--text-3)' }} />
-                          <span>{c.phone}</span>
+                      <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--text-0)', fontFamily: 'var(--display)' }}>{c.name}</div>
+                      {shopName && (
+                        <div style={{ fontSize: 11.5, color: 'var(--text-3)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4, marginTop: 2 }}>
+                          <Store style={{ width: 12, height: 12, color: 'var(--gold)' }} />
+                          <span>{shopName}</span>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-                    <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 10, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--gold)' }}>
-                      <Key style={{ width: 13, height: 13 }} />
-                      <span>{keyCode}</span>
+                  {/* Customer Details Grid (Key-Value pairs matching Customer History) */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 12, fontSize: 13, fontWeight: 700 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                        {t('phoneCol') || 'PHONE'}
+                      </span>
+                      <span style={{ color: 'var(--text-0)', fontWeight: 700 }}>{c.phone || 'N/A'}</span>
                     </div>
-                    <div className="icon-btn" style={{ background: 'var(--card-2)', color: 'var(--gold)' }}>
-                      <ChevronRight style={{ width: 18, height: 18 }} />
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                        {t('vehicleCol') || 'VEHICLE'}
+                      </span>
+                      <span style={{ color: 'var(--text-0)', fontWeight: 700 }}>{c.vehicleNumber || c.vehicleName || 'N/A'}</span>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                        {t('keyCodeCol') || 'KEY CODE'}
+                      </span>
+                      <span className="badge badge-active" style={{ fontSize: 12, padding: '3px 10px' }}>
+                        <span className="dot" />{keyCode}
+                      </span>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16 }}>
+                      <span style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.04em', flexShrink: 0, marginTop: 2 }}>
+                        {t('locationCol') || 'LOCATION'}
+                      </span>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 6, textAlign: 'right', wordBreak: 'break-word', whiteSpace: 'normal', lineHeight: 1.4, color: 'var(--text-0)', fontWeight: 600, fontSize: 12.5, maxWidth: '75%' }}>
+                        <MapPin style={{ width: 14, height: 14, color: 'var(--green)', flexShrink: 0, marginTop: 2 }} />
+                        <span>{fullLoc}</span>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                        {t('loggedCol') || 'LOGGED'}
+                      </span>
+                      <span style={{ color: 'var(--text-0)', fontWeight: 700 }}>{new Date(c.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+
+                  {/* Actions Bar */}
+                  <div style={{ borderTop: '1px solid var(--border-2)', paddingTop: 14, marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                      {t('actionsCol') || 'ACTIONS'}
+                    </span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <button
+                        type="button"
+                        onClick={() => setViewCust(c)}
+                        className="icon-btn"
+                        style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--card-2)', color: 'var(--text-1)' }}
+                        title={t('viewComplianceFile') || 'View File'}
+                      >
+                        <Eye style={{ width: 16, height: 16 }} />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleDownloadCustomerReport(c)}
+                        disabled={reportBusyId === `${c.id}:download`}
+                        className="icon-btn"
+                        style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--card-2)', color: 'var(--text-1)' }}
+                        title={t('downloadReportBtn') || 'Download Report'}
+                      >
+                        {reportBusyId === `${c.id}:download` ? <RefreshCw className="animate-spin" style={{ width: 15, height: 15 }} /> : <Download style={{ width: 16, height: 16 }} />}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleShareCustomerReportViaWhatsApp(c)}
+                        disabled={reportBusyId === `${c.id}:whatsapp`}
+                        className="icon-btn"
+                        style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--card-2)', color: '#25D366' }}
+                        title={t('shareViaWhatsAppBtn') || 'Share via WhatsApp'}
+                      >
+                        {reportBusyId === `${c.id}:whatsapp` ? <RefreshCw className="animate-spin" style={{ width: 15, height: 15 }} /> : (
+                          <svg viewBox="0 0 24 24" width="16" height="16" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z" /></svg>
+                        )}
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -13038,10 +13165,10 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                         <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
                         {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
                       </td>
-                      <td className="cell-sub" data-label={t('locationCol')} style={{ fontWeight: 700, color: 'var(--text-2)', maxWidth: 180 }}>
-                        <span className="flex items-center gap-1" style={{ overflow: 'hidden' }}>
-                          <MapPin style={{ width: 13, height: 13, color: 'var(--green)', flexShrink: 0 }} />
-                          <span className="truncate">{c.capturedAddress || 'N/A'}</span>
+                      <td className="cell-sub" data-label={t('locationCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>
+                        <span className="flex items-start gap-1" style={{ wordBreak: 'break-word', whiteSpace: 'normal', lineHeight: 1.3, maxWidth: 220 }}>
+                          <MapPin style={{ width: 13, height: 13, color: 'var(--green)', flexShrink: 0, marginTop: 2 }} />
+                          <span>{c.capturedAddress || c.address || 'N/A'}</span>
                         </span>
                       </td>
                       <td className="cell-sub" data-label={t('loggedCol')} style={{ fontWeight: 700, color: 'var(--text-2)' }}>{new Date(c.createdAt).toLocaleDateString()}</td>
