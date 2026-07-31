@@ -43,34 +43,15 @@ function formatDateTime(value) {
 function infoRow(icon, label, value) {
   return `
     <tr>
-      <td style="width:34px; padding:10px 8px; border-bottom:1px solid ${BORDER}; vertical-align:top;">${icon}</td>
-      <td style="width:170px; padding:10px 8px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:12.5px; vertical-align:top;">${esc(label)}</td>
-      <td style="padding:10px 12px; border-bottom:1px solid ${BORDER}; font-size:12.5px; color:#2a2a2a; vertical-align:top; word-break:break-word;">${esc(naVal(value))}</td>
+      <td style="width:28px; padding:8px 6px; border-bottom:1px solid ${BORDER}; vertical-align:top; text-align:center;">${icon}</td>
+      <td style="width:160px; padding:8px 6px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:11.5px; vertical-align:top;">${esc(label)}</td>
+      <td style="padding:8px 10px; border-bottom:1px solid ${BORDER}; font-size:11.5px; color:#2a2a2a; vertical-align:top; word-break:break-word;">${esc(naVal(value))}</td>
     </tr>`;
 }
 
-function sectionHeader(icon, title) {
-  return `
-    <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 14px; border-radius:8px 8px 0 0;">
-      <span style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; background:${GOLD}; border-radius:5px; font-size:12px; flex-shrink:0;">${icon}</span>
-      <span style="font-weight:800; font-size:13.5px; letter-spacing:.02em;">${esc(title)}</span>
-    </div>`;
-}
-
-// Builds a single branded, compact PDF report - a consolidated info table
-// (customer/vehicle-or-home-office/key/shop details, whichever apply to this
-// customer's category) plus a thin declaration/footer strip. Always exactly
-// one A4 page: the rendered report is scaled down to fit the page if needed
-// (see the ratio math below) instead of paginating, so it can never spill
-// onto a second page regardless of how tall the content renders on a given
-// device. Renders an HTML template through html2canvas + jsPDF (rather than
-// jsPDF's own primitive draw calls) so the layout can closely follow the Key
-// Shops report design. Used by both:
-//  - Customer History's Download/WhatsApp actions, where `customer` is an
-//    already-saved row;
-//  - the Registration wizard's Download/Share actions, where `customer` is a
-//    customer-like object built from in-progress wizard state (see
-//    buildDraftReportPdf in App.jsx).
+// Builds a single branded, compact PDF report - structured into 3 separate bordered
+// information boxes: Customer Information, Shop Information, and Bill Amount.
+// Always exactly one A4 page: the rendered report is scaled down to fit the page.
 export async function buildCustomerReportPdf({ customer, shop, registeredByName }) {
   const idSource = customer.id || `DRAFT${Date.now()}`;
   const reportId = `RPT-KEY-${idSource.replace(/-/g, '').slice(0, 8).toUpperCase()}`;
@@ -79,52 +60,87 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   const isAutomobile = isAutomobileCategory(customer.vehicleCategory);
 
   const html = `
-  <div style="width:794px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a;">
-    <div style="display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:22px 24px;">
+  <div style="width:794px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a; box-sizing:border-box;">
+    <!-- Top Header Banner -->
+    <div style="display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:18px 24px;">
       <div style="display:flex; align-items:center; gap:12px;">
-        <img src="${keyShopLogo}" style="width:52px; height:52px; object-fit:contain; background:#fff; border-radius:50%; padding:4px; flex-shrink:0;" />
+        <img src="${keyShopLogo}" style="width:48px; height:48px; object-fit:contain; background:#fff; border-radius:50%; padding:3px; flex-shrink:0;" />
         <div>
-          <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:22px; letter-spacing:.03em;">CUSTOMER KEY</div>
-          <div style="color:#fff; font-weight:900; font-size:16px; letter-spacing:.05em;">REGISTRATION REPORT</div>
-          <div style="color:#f0d9b5; font-size:9.5px; letter-spacing:.15em; margin-top:2px;">SECURE REGISTRATION &middot; TRUSTED SERVICE</div>
+          <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:20px; letter-spacing:.03em;">CUSTOMER KEY</div>
+          <div style="color:#fff; font-weight:900; font-size:15px; letter-spacing:.05em;">REGISTRATION REPORT</div>
+          <div style="color:#f0d9b5; font-size:9px; letter-spacing:.15em; margin-top:2px;">SECURE REGISTRATION &middot; TRUSTED SERVICE</div>
         </div>
       </div>
       <div style="text-align:right;">
-        <div style="color:${GOLD_BRIGHT}; font-size:9px; font-weight:800; letter-spacing:.1em;">REPORT ID</div>
-        <div style="background:#fff; color:${MAROON_DARK}; font-weight:800; font-size:12px; padding:4px 10px; border-radius:6px; margin:4px 0 8px; white-space:nowrap;">${esc(reportId)}</div>
-        <div style="color:#f0d9b5; font-size:9px;">Registration Date</div>
-        <div style="color:#fff; font-size:11.5px; font-weight:700; white-space:nowrap;">${formatDateTime(customer.createdAt)}</div>
+        <div style="color:${GOLD_BRIGHT}; font-size:8.5px; font-weight:800; letter-spacing:.1em;">REPORT ID</div>
+        <div style="background:#fff; color:${MAROON_DARK}; font-weight:800; font-size:11.5px; padding:3px 8px; border-radius:5px; margin:3px 0 6px; white-space:nowrap; display:inline-block;">${esc(reportId)}</div>
+        <div style="color:#f0d9b5; font-size:8.5px;">Registration Date</div>
+        <div style="color:#fff; font-size:11px; font-weight:700; white-space:nowrap;">${formatDateTime(customer.createdAt)}</div>
       </div>
     </div>
 
-    <div style="padding:20px 24px 4px;">
-      ${sectionHeader('&#128100;', 'Registration Details')}
-      <table style="width:100%; border-collapse:collapse; background:#fff; border:1px solid ${BORDER}; border-top:none; table-layout:fixed;">
-        ${infoRow('&#128100;', 'Customer Name', customer.name)}
-        ${infoRow('&#128241;', 'Mobile Number', customer.phone)}
-        ${infoRow('&#128205;', 'Address', customer.capturedAddress || customer.address)}
-        ${isAutomobile
-          ? `${infoRow('&#128663;', 'Vehicle Number', customer.vehicleNumber)}${infoRow('&#128663;', 'Vehicle Name', customer.vehicleName)}`
-          : infoRow('&#127968;', 'Home / Office Name', customer.homeOfficeName)}
-        ${infoRow('&#128273;', isAutomobile ? 'Key Code' : 'Home / Office Key Code', customer.keyNumber)}
-        ${infoRow('&#9989;', 'Add Key', boolLabel(customer.addKey))}
-        ${infoRow('&#10060;', 'Lost Key', boolLabel(customer.lostKey))}
-        ${infoRow('&#128176;', 'Bill Amount', customer.billAmount)}
-        ${infoRow('&#127978;', 'Shop Name', shop?.name)}
-        ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : null)}
-      </table>
-    </div>
+    <div style="padding:16px 24px 4px;">
+      <!-- BOX 1: Customer Information Box -->
+      <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:14px;">
+        <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 14px;">
+          <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#128100;</span>
+          <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Customer Information</span>
+        </div>
+        <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
+          ${infoRow('&#128100;', 'Customer Name', customer.name)}
+          ${infoRow('&#128241;', 'Mobile Number', customer.phone)}
+          ${infoRow('&#128205;', 'Address', customer.capturedAddress || customer.address)}
+          ${isAutomobile
+            ? `${infoRow('&#128663;', 'Vehicle Number', customer.vehicleNumber)}${infoRow('&#128663;', 'Vehicle Name', customer.vehicleName)}`
+            : infoRow('&#127968;', 'Home / Office Name', customer.homeOfficeName)}
+          ${infoRow('&#128273;', isAutomobile ? 'Key Code' : 'Home / Office Key Code', customer.keyNumber)}
+          ${infoRow('&#9989;', 'Add Key', boolLabel(customer.addKey))}
+          ${infoRow('&#10060;', 'Lost Key', boolLabel(customer.lostKey))}
+          ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : null)}
+        </table>
+      </div>
 
-    <div style="padding:14px 24px 4px;">
-      <div style="background:#fff; border:1px solid ${BORDER}; border-radius:8px; padding:12px 16px;">
-        <p style="font-size:10.5px; color:#4a4a4a; line-height:1.4; margin:0;">I hereby confirm that the above information is true and was submitted during customer key registration.</p>
+      <!-- Grid 2-column for Shop Info Box & Bill Amount Box -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+        <!-- BOX 2: Shop Information Box -->
+        <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; display:flex; flex-direction:column;">
+          <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 14px;">
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#127978;</span>
+            <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Shop Information</span>
+          </div>
+          <table style="width:100%; border-collapse:collapse; table-layout:fixed; flex:1;">
+            ${infoRow('&#127978;', 'Shop Name', shop?.name)}
+            ${infoRow('&#128205;', 'Shop Address', shop?.address)}
+            ${infoRow('&#128241;', 'Shop Contact', shop?.phone)}
+          </table>
+        </div>
+
+        <!-- BOX 3: Bill Amount Box -->
+        <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; display:flex; flex-direction:column;">
+          <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 14px;">
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#128176;</span>
+            <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Bill Amount</span>
+          </div>
+          <div style="padding:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; text-align:center; background:#FAFAFA;">
+            <div style="font-size:11px; color:#777; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;">Total Bill Amount</div>
+            <div style="font-size:24px; font-weight:900; color:${MAROON_DARK};">
+              ${customer.billAmount !== null && customer.billAmount !== undefined && customer.billAmount !== '' ? `&#8377; ${Number(customer.billAmount).toFixed(2)}` : NOT_AVAILABLE}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirmation Declaration Strip -->
+      <div style="background:#fff; border:1px solid ${BORDER}; border-radius:8px; padding:10px 14px; margin-bottom:10px;">
+        <p style="font-size:10px; color:#4a4a4a; line-height:1.35; margin:0;">I hereby confirm that the above information is true and was submitted during customer key registration.</p>
       </div>
     </div>
 
-    <div style="display:flex; align-items:center; justify-content:space-between; background:${MAROON_DARK}; color:#fff; padding:14px 24px; margin-top:16px; font-size:10.5px; gap:16px;">
+    <!-- Footer Strip -->
+    <div style="display:flex; align-items:center; justify-content:space-between; background:${MAROON_DARK}; color:#fff; padding:12px 24px; font-size:10px; gap:16px;">
       <div>Generated On<br/><b>${formatDateTime(new Date())}</b></div>
       <div>Generated By<br/><b>${esc(naVal(registeredByName))}</b></div>
-      <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:13px; text-align:right;">THANK YOU FOR CHOOSING KEY SHOPS</div>
+      <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:12px; text-align:right;">THANK YOU FOR CHOOSING KEY SHOPS</div>
     </div>
   </div>`;
 
@@ -142,10 +158,6 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
 
-    // Always exactly one page: scale the whole report to fit within the A4
-    // page (by whichever dimension is the binding constraint) rather than
-    // pagination logic that could spill a second page depending on how tall
-    // the content happens to render on a given device.
     const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
     const imgWidth = canvas.width * ratio;
     const imgHeight = canvas.height * ratio;

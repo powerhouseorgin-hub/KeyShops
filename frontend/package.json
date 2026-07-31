@@ -1,7 +1,7 @@
 {
   "name": "kee-frontend",
   "private": true,
-  "version": "1.20.0",
+  "version": "1.23.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -20,7 +20,6 @@
     "capacitor-native-settings": "^8.1.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.344.0",
-    "pdfjs-dist": "^6.2.108",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

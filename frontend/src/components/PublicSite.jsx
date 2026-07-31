@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Key, ArrowRight, Search, MapPin, Phone, Mail, ShieldCheck, Users,
   Package, BarChart3, Building2, Sparkles, CheckCircle2, Menu, X,
-  RefreshCw, Clock, Store, Star, Send, Download, Tag, MessageCircle,
+  RefreshCw, Clock, Store, Star, Send, Download, Tag, MessageCircle, Globe,
 } from 'lucide-react';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 
@@ -319,6 +319,14 @@ function ShopResultCard({ shop, index }) {
       )}
       {shop.phone && (
         <div className="public-shop-meta"><Phone className="h-3.5 w-3.5" /> {shop.phone}</div>
+      )}
+      {shop.website && (
+        <div className="public-shop-meta">
+          <Globe className="h-3.5 w-3.5" />
+          <a href={shop.website.startsWith('http') ? shop.website : `https://${shop.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold)', textDecoration: 'none' }}>
+            {shop.website}
+          </a>
+        </div>
       )}
     </Reveal>
   );

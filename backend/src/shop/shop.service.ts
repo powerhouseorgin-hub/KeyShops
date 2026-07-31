@@ -209,11 +209,13 @@ export class ShopService {
     return shops.map((shop) => {
       let address: string | null = null;
       let phone: string | null = null;
+      let website: string | null = null;
       if (shop.companyDetails) {
         try {
           const details = JSON.parse(shop.companyDetails);
           address = details.address || null;
           phone = details.phone || null;
+          website = details.website || null;
         } catch {
           // companyDetails wasn't valid JSON - ignore, just omit address/phone.
         }
@@ -224,6 +226,7 @@ export class ShopService {
         themeColor: shop.themeColor,
         address,
         phone,
+        website,
         category: shop.category?.name || null,
       };
     });

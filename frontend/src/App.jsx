@@ -19,7 +19,7 @@ import CustomSelect from './components/CustomSelect';
 import OtpVerificationModal from './components/OtpVerificationModal';
 import {
   Key, Users, Shield, Radio, BarChart3, Database, LogOut, Check, X,
-  Plus, Settings, FileText, Search, UserCheck, MapPin, Camera, AlertTriangle,
+  Plus, Settings, FileText, Search, Filter, UserCheck, MapPin, Camera, AlertTriangle,
   Trash, RefreshCw, Layers, Edit, ExternalLink, Sliders, DollarSign,
   Bell, Eye, EyeOff, CheckCircle2, ChevronRight, Info,
   CreditCard, QrCode, Wallet, Lock, ShieldCheck, Upload, Mail, Phone,
@@ -43,6 +43,7 @@ import ecmServiceImg from './assets/dashboard-icons/ecm-service.png';
 import meterServiceImg from './assets/dashboard-icons/meter-service.png';
 import scanningServiceImg from './assets/dashboard-icons/scanning-service.png';
 import customerSupportIcon from './assets/dashboard-icons/customer-support.png';
+import dealerIcon from './assets/dashboard-icons/dealer.png';
 import keyShopLogo from './assets/branding/keyshop-logo.png';
 
 // Shared registry so the hardware Back button/gesture (see the
@@ -492,6 +493,13 @@ const LANGUAGES = {
     registerComplianceEntry: 'Register a compliance entry for new customer',
     shopsCardTitle: 'Shops',
     viewManageShopsDesc: 'View and manage every registered shop',
+    dealersCardTitle: 'Dealers',
+    dealersCardDesc: 'Verified dealers & locksmith partners',
+    dealersPageTitle: 'Dealers',
+    dealersEyebrow: 'Dealers Directory',
+    dealersPageDesc: 'Explore verified Key Shop dealers and locksmith partners across India.',
+    searchDealersPlaceholder: 'Search dealers by name, location, category...',
+    noDealersFoundMsg: 'No dealers found matching your search.',
     customerSupport: 'Customer Support',
     manageCustomerSupportDesc: 'Manage the customer support contact & resources',
     complianceInventoryTerminal: 'compliance & inventory terminal',
@@ -5598,6 +5606,7 @@ export default function App() {
   // `setActiveTab={setActiveTab}`) without needing to touch any of them.
   const [activeTab, setActiveTabRaw] = useState('dashboard');
   const [navStack, setNavStack] = useState([]);
+  const [dealersCategoryFilter, setDealersCategoryFilter] = useState(null);
 
   const setActiveTab = (nextTab) => {
     setActiveTabRaw((current) => {
@@ -7187,8 +7196,15 @@ export default function App() {
                     onClick={() => setActiveTab('promotions')}
                     className={`side-link ${activeTab === 'promotions' ? 'active' : ''}`}
                   >
-                    <span className="nav-ico" style={{ background: 'var(--pink)' }}><Megaphone /></span>
+                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><Package /></span>
                     <span>{t('inventory')}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('banner-offer-management')}
+                    className={`side-link ${activeTab === 'banner-offer-management' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--gold)' }}><Sparkles /></span>
+                    <span>Banner &amp; Offer Management</span>
                   </button>
 
                   <div className="side-section-label">{t('navSupport')}</div>
@@ -7318,10 +7334,9 @@ export default function App() {
                       >
                         {(() => {
                           const active = SEARCH_TYPE_OPTIONS.find(o => o.value === globalSearchType) || SEARCH_TYPE_OPTIONS[0];
-                          const ActiveIcon = active.icon;
                           return (
                             <>
-                              <ActiveIcon className="h-3.5 w-3.5" />
+                              <Filter className="h-3.5 w-3.5" style={{ color: 'var(--gold)' }} />
                               <span className="search-type-label">{t(active.labelKey)}</span>
                             </>
                           );
@@ -7525,12 +7540,16 @@ export default function App() {
               </div>
             </header>
 
-            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} setAutoOpenOffersTab={setAutoOpenOffersTab} />}
+            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} setAutoOpenOffersTab={setAutoOpenOffersTab} setDealersCategoryFilter={setDealersCategoryFilter} />}
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
+            {activeTab === 'dealers' && <DealersView t={t} api={api} initialCategory={dealersCategoryFilter} />}
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
             {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} initiallyOpenOffersTab={autoOpenOffersTab} onCloseInitiallyOpenOffersTab={() => setAutoOpenOffersTab(false)} />}
+            {(activeTab === 'banner-offer-management' || activeTab === 'banner-management' || activeTab === 'offer-management') && (
+              <SuperBannerOfferManagementView t={t} api={api} user={user} initialTab={activeTab === 'offer-management' ? 'offers' : 'banners'} />
+            )}
             {activeTab === 'offers-ads-banners' && <OffersAdsBannersView t={t} api={api} />}
             {activeTab === 'search-keys' && <KeysSearchView t={t} api={api} searchDispatch={activeTab === 'search-keys' ? searchDispatch : null} />}
             {activeTab === 'register' && <CustomerRegistrationWizard t={t} api={api} />}
@@ -7777,18 +7796,28 @@ function DashCardGrid({ items }) {
   );
 }
 
-function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal, setAutoOpenOffersTab }) {
+function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal, setAutoOpenOffersTab, setDealersCategoryFilter }) {
   const { user, api } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [popupAds, setPopupAds] = useState([]);
 
-  // Tapping a product-type card jumps to the Inventory screen and
-  // auto-filters it to that category - reuses the same searchDispatch
-  // mechanism the global header search uses (see the App component).
+  // Tapping ECM, Meter, or Scanner category cards on the Dashboard navigates to
+  // the Dealers directory with that specific category pre-filtered.
   const goToProductType = (productType) => {
-    setSearchDispatch({ query: productType, type: 'productType', nonce: Date.now() });
-    setActiveTab('promotions');
+    if (productType === 'ECM') {
+      if (setDealersCategoryFilter) setDealersCategoryFilter('ECM');
+      setActiveTab('dealers');
+    } else if (productType === 'Meter') {
+      if (setDealersCategoryFilter) setDealersCategoryFilter('METER');
+      setActiveTab('dealers');
+    } else if (productType === 'Scanning' || productType === 'Scanner') {
+      if (setDealersCategoryFilter) setDealersCategoryFilter('SCANNER');
+      setActiveTab('dealers');
+    } else {
+      setSearchDispatch({ query: productType, type: 'productType', nonce: Date.now() });
+      setActiveTab('promotions');
+    }
   };
 
   // "Add Machines" quick action jumps straight to the Inventory screen and
@@ -7885,9 +7914,12 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         <DashCardGrid items={[
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
-          { title: t('newListingBtn'), description: t('addMachinesCardDesc'), icon: Plus, iconVariant: 'flat-icon', accent: 'var(--jgreen)', onClick: goToAddMachines },
-          ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, imgScale: c.imgScale, accent: c.accent, onClick: () => goToProductType(c.type) })),
-          { title: t('offersLabel'), description: t('everyActiveAdOfferDesc'), icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: goToOffers },
+          { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter(null); setActiveTab('dealers'); } },
+          { title: 'Used Machines', description: 'View and manage used machines', image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
+          { title: 'ECM', description: 'Manage ECM records', image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
+          { title: 'Scanning', description: 'Scan & process compliance entries', image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
+          { title: 'Meter', description: 'Track and manage meter records', image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
+          { title: t('offersLabel'), description: 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: goToOffers },
           { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
         ]} />
       </div>
@@ -7940,10 +7972,13 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           Support card spanning both columns. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: t('newListingBtn'), description: t('addMachinesCardDesc'), icon: Plus, iconVariant: 'flat-icon', accent: 'var(--jgreen)', onClick: goToAddMachines },
-        ...DASHBOARD_PRODUCT_CARDS.map(c => ({ title: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[0]) || c.type, description: t(PRODUCT_TYPE_LABEL_KEYS[c.type]?.[1]) || c.description, icon: c.icon, image: c.image, imgScale: c.imgScale, accent: c.accent, onClick: () => goToProductType(c.type) })),
-        { title: t('searchKeysCardTitle'), description: t('findDigitizeKeysDesc'), icon: SearchKeysIcon, iconVariant: 'flat-icon', accent: 'var(--pink)', onClick: () => setActiveTab('search-keys') },
-        { title: t('offersLabel'), description: t('everyActiveAdOfferDesc'), icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
+        { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--purple)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter('KEY_SHOPS'); setActiveTab('dealers'); } },
+        { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter(null); setActiveTab('dealers'); } },
+        { title: 'Used Machines', description: 'View and manage used machines', image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
+        { title: 'ECM', description: 'Manage ECM records', image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
+        { title: 'Scanning', description: 'Scan & process compliance entries', image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
+        { title: 'Meter', description: 'Track and manage meter records', image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
+        { title: t('offersLabel'), description: 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
         { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
       ]} />
 
@@ -8043,7 +8078,8 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // their own dashboard - scoped to this shop via the shopId prop.
   const [fullSettingsShopId, setFullSettingsShopId] = useState(null);
   const [selectedShop, setSelectedShop] = useState(null);
-  useBackHandler(showAddModal, () => setShowAddModal(false));
+
+  useBackHandler(showAddModal, () => { resetAddForm(); setShowAddModal(false); });
   useBackHandler(showSubModal, () => setShowSubModal(false));
   useBackHandler(showEditModal, () => setShowEditModal(false));
   useBackHandler(!!fullSettingsShopId, () => setFullSettingsShopId(null));
@@ -8413,87 +8449,66 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           }
 
           return (
-            <table className="kee-table">
-              <thead>
-                <tr>
-                  <th>{t('shopDetails')}</th>
-                  <th>{t('adminContact')}</th>
-                  <th>{t('activePlan')}</th>
-                  <th>{t('validUntil')}</th>
-                  <th>{t('diskStorage')}</th>
-                  <th style={{ textAlign: 'center' }}>{t('status')}</th>
-                  <th style={{ textAlign: 'right' }}>{t('actions')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredShops.map(s => (
-                  <tr key={s.id}>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div className={`icon-badge ${s.isActive ? 'jgreen' : 'rose'}`} style={{ width: 34, height: 34, borderRadius: 10 }}>
-                          <Store style={{ width: 16, height: 16 }} />
-                        </div>
-                        <div>
-                          <div className="cell-primary">{s.name}</div>
-                          <div className="cell-sub">ID: {s.id}</div>
-                        </div>
+            <div className="dealer-list stagger-in" style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 0', width: '100%' }}>
+              {filteredShops.map(s => {
+                let details = {};
+                if (s.companyDetails) {
+                  try { details = typeof s.companyDetails === 'string' ? JSON.parse(s.companyDetails) : s.companyDetails; } catch (e) {}
+                }
+                const shopPhone = details.phone || s.phone || s.users?.[0]?.phone;
+                const shopAddress = details.address || s.address || (s.users?.[0]?.email ? `Admin: ${s.users[0].email}` : null);
+                const shopWebsite = details.website || s.website;
+
+                return (
+                  <div key={s.id} className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: 16, cursor: 'pointer', border: '1px solid var(--border-2)', background: 'var(--card-1)', width: '100%', boxSizing: 'border-box' }} onClick={() => setFullSettingsShopId(s.id)}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
+                      <div style={{ width: 50, height: 50, borderRadius: 12, overflow: 'hidden', background: 'var(--card-2)', border: '1px solid var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <img src={s.shopPhoto || keyShopLogo} alt={s.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                       </div>
-                    </td>
-                    <td>
-                      <div className="cell-primary" style={{ fontSize: 13 }}>{s.users?.[0]?.name || 'N/A'}</div>
-                      <div className="cell-sub">{s.users?.[0]?.email || ''}</div>
-                    </td>
-                    <td>
-                      <span className="badge badge-gold"><span className="dot" />{s.subscriptions?.[0]?.plan || 'N/A'}</span>
-                    </td>
-                    <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
-                      {s.subscriptions?.[0]?.endDate ? new Date(s.subscriptions[0].endDate).toLocaleDateString() : 'N/A'}
-                    </td>
-                    <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
-                      {(Number(s.storageUsed || 0) / (1024 * 1024)).toFixed(2)} MB
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <button
-                        onClick={() => toggleShopStatus(s)}
-                        title={t('toggleShopActiveStatusTitle')}
-                        className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`}
-                        style={{ border: 'none', cursor: 'pointer' }}
-                      >
-                        <span className="dot" />{s.isActive ? t('active') : t('suspended')}
-                      </button>
-                    </td>
-                    <td>
-                      <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
-                        <button
-                          onClick={() => handleEditShopClick(s)}
-                          className="icon-btn"
-                          title={t('editWorkspace')}
-                        >
-                          <Settings />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedShop(s);
-                            setShowSubModal(true);
-                          }}
-                          className="icon-btn"
-                          title={t('managePlan')}
-                        >
-                          <DollarSign />
-                        </button>
-                        <button
-                          onClick={() => setFullSettingsShopId(s.id)}
-                          className="icon-btn"
-                          title={t('manageShopSettingsTitle')}
-                        >
-                          <ShieldCheck />
-                        </button>
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div className="flex items-center gap-2" style={{ marginBottom: 4 }}>
+                          <div style={{ fontSize: 14.5, fontWeight: 800, color: 'var(--text-0)' }}>{s.name}</div>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); toggleShopStatus(s); }}
+                            title={t('toggleShopActiveStatusTitle')}
+                            className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`}
+                            style={{ border: 'none', cursor: 'pointer', padding: '2px 8px', fontSize: 10 }}
+                          >
+                            <span className="dot" />{s.isActive ? t('active') : t('suspended')}
+                          </button>
+                        </div>
+                        {shopAddress && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
+                            <MapPin style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--text-3)' }} />
+                            <span className="truncate">{shopAddress}</span>
+                          </div>
+                        )}
+                        {shopPhone && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
+                            <Phone style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--text-3)' }} />
+                            <span>{shopPhone}</span>
+                          </div>
+                        )}
+                        {shopWebsite && (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--gold)', fontWeight: 600, marginTop: 2 }}>
+                            <Globe style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--gold)' }} />
+                            <a href={shopWebsite.startsWith('http') ? shopWebsite : `https://${shopWebsite}`} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} style={{ color: 'var(--gold)', textDecoration: 'none' }}>
+                              {shopWebsite}
+                            </a>
+                          </div>
+                        )}
                       </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                      <div className="icon-btn" style={{ background: 'var(--card-2)', color: 'var(--gold)' }} title={t('viewDetails')}>
+                        <ChevronRight style={{ width: 18, height: 18 }} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           );
         })()}
       </div>
@@ -8507,7 +8522,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 <span className="eyebrow" style={{ marginBottom: 4 }}><Layers /> {t('shopOnboarding')}</span>
                 <h2 style={{ fontSize: 19 }}>{t('provisionNewShopWorkspace')}</h2>
               </div>
-              <button onClick={() => setShowAddModal(false)} className="icon-btn">
+              <button onClick={() => { resetAddForm(); setShowAddModal(false); }} className="icon-btn">
                 <X className="h-4 w-4" />
               </button>
             </div>
@@ -9233,52 +9248,45 @@ function SuperCustomersView({ t, api, searchDispatch }) {
             {t('noCustomerRecordsMatch')}
           </p>
         ) : (
-          <table className="kee-table">
-            <thead>
-              <tr>
-                <th>{t('tenantWorkspaceCol')}</th>
-                <th>{t('customerCol')}</th>
-                <th>{t('phoneCol')}</th>
-                <th>{t('keyCodeCol')}</th>
-                <th>{t('registeredCol')}</th>
-                <th style={{ textAlign: 'right' }}>{t('actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {customers.map(c => (
-                <tr key={c.id}>
-                  <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.shop ? c.shop.name : t('shopWorkspaceFallback')}</td>
-                  <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                      <div className={`icon-badge ${c.photoUrl ? 'jgreen' : 'rose'}`} style={{ width: 34, height: 34, borderRadius: 10 }}>
-                        <User style={{ width: 16, height: 16 }} />
-                      </div>
-                      <div>
-                        <div className="cell-primary">{c.name}</div>
-                        <div className="cell-sub">{c.photoUrl ? t('photoOnFile') : t('photoPending')}</div>
-                      </div>
+          <div className="dealer-list stagger-in" style={{ display: 'flex', flexDirection: 'column', gap: 12, padding: '12px 0', width: '100%' }}>
+            {customers.map(c => {
+              const keyCode = c.keyNumber || (c.keys?.[0]?.keyNumber) || '—';
+              const shopName = c.shop ? c.shop.name : (t('shopWorkspaceFallback') || 'Unassigned Workspace');
+
+              return (
+                <div key={c.id} className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, padding: 16, cursor: 'pointer', border: '1px solid var(--border-2)', background: 'var(--card-1)', width: '100%', boxSizing: 'border-box' }} onClick={() => setViewCust(c)}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
+                    <div className="icon-badge jgreen" style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0 }}>
+                      <User style={{ width: 22, height: 22 }} />
                     </div>
-                  </td>
-                  <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>{c.phone}</td>
-                  <td>
-                    <span className="badge badge-active"><span className="dot" />{c.keyNumber}</span>
-                    {c.keyType && <div className="cell-sub" style={{ marginTop: 4 }}>{c.keyType}</div>}
-                  </td>
-                  <td className="cell-sub" style={{ fontWeight: 700, color: 'var(--text-2)' }}>
-                    {new Date(c.createdAt).toLocaleDateString()}
-                    <div className="cell-sub">{new Date(c.createdAt).toLocaleTimeString()}</div>
-                  </td>
-                  <td>
-                    <div className="row-actions" style={{ justifyContent: 'flex-end' }}>
-                      <button onClick={() => setViewCust(c)} className="icon-btn" title={t('viewComplianceFile')}>
-                        <Eye />
-                      </button>
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div style={{ fontSize: 14.5, fontWeight: 800, color: 'var(--text-0)', marginBottom: 4 }}>{c.name}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
+                        <Store style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--text-3)' }} />
+                        <span className="truncate">{shopName}</span>
+                      </div>
+                      {c.phone && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: 'var(--text-2)', fontWeight: 600, marginTop: 2 }}>
+                          <Phone style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--text-3)' }} />
+                          <span>{c.phone}</span>
+                        </div>
+                      )}
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+                    <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 10, padding: '4px 10px', display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: 'var(--gold)' }}>
+                      <Key style={{ width: 13, height: 13 }} />
+                      <span>{keyCode}</span>
+                    </div>
+                    <div className="icon-btn" style={{ background: 'var(--card-2)', color: 'var(--gold)' }}>
+                      <ChevronRight style={{ width: 18, height: 18 }} />
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
 
@@ -9599,22 +9607,22 @@ function KeysCatalogView({ t, api, searchDispatch }) {
                     <span className="pname">{k.keyNumber}</span>
                   </div>
                   <p className="pcat">{k.category}</p>
-                  <div className="product-foot" style={{ marginTop: 8, gap: 8 }}>
+                  <div className="product-foot" style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6, width: '100%' }}>
                     <button
                       onClick={() => handleEditClick(k)}
-                      className="btn btn-ghost btn-sm"
-                      style={{ flex: 1 }}
+                      className="btn btn-ghost"
+                      style={{ flex: 1, minWidth: 0, padding: '6px 8px', fontSize: 11.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, height: 32 }}
                     >
-                      <Edit className="h-3.5 w-3.5" />
-                      <span>{t('modifyBtn')}</span>
+                      <Edit style={{ width: 13, height: 13, flexShrink: 0 }} />
+                      <span className="truncate">{t('modifyBtn')}</span>
                     </button>
                     <button
                       onClick={() => handleDelete(k.id)}
-                      className="btn btn-danger-outline btn-sm"
-                      style={{ flex: 1 }}
+                      className="btn btn-danger-outline"
+                      style={{ flex: 1, minWidth: 0, padding: '6px 8px', fontSize: 11.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, height: 32 }}
                     >
-                      <Trash className="h-3.5 w-3.5" />
-                      <span>{t('deleteBtn')}</span>
+                      <Trash style={{ width: 13, height: 13, flexShrink: 0 }} />
+                      <span className="truncate">{t('deleteBtn')}</span>
                     </button>
                   </div>
                 </div>
@@ -10184,44 +10192,56 @@ function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, o
         </div>
       </div>
 
-      {isSuperAdmin && (
-        <div className="store-tabs">
-          <button
-            type="button"
-            className={`store-tab ${subTab === 'feed' ? 'active' : ''}`}
-            onClick={() => setSubTab('feed')}
-          >
-            <Layers className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
-            {t('inventoryFeedTab')}
-          </button>
-          <button
-            type="button"
-            className={`store-tab ${subTab === 'banners' ? 'active' : ''}`}
-            onClick={() => setSubTab('banners')}
-          >
-            <Megaphone className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
-            {t('bannerManagementTab')}
-          </button>
-          <button
-            type="button"
-            className={`store-tab ${subTab === 'offers' ? 'active' : ''}`}
-            onClick={() => setSubTab('offers')}
-          >
-            <BadgePercent className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
-            {t('offerManagementTab')}
-          </button>
-        </div>
-      )}
+      <PromotionsFeed
+        key="feed" t={t} api={api} user={user} isSuperAdmin={isSuperAdmin} onlyOffers={false}
+        searchDispatch={searchDispatch}
+        initiallyOpenAddModal={initiallyOpenAddModal}
+        onCloseInitiallyOpen={onCloseInitiallyOpen}
+      />
+    </div>
+  );
+}
 
-      {subTab === 'banners' && isSuperAdmin ? (
+function SuperBannerOfferManagementView({ t, api, user, initialTab = 'banners' }) {
+  const [subTab, setSubTab] = useState(initialTab);
+
+  useEffect(() => {
+    setSubTab(initialTab);
+  }, [initialTab]);
+
+  return (
+    <div className="animate-fade-in">
+      <div className="page-head">
+        <div>
+          <div className="eyebrow"><Sparkles /> {t('fromKeyShopHqLabel')}</div>
+          <h1>Banner &amp; Offer Management</h1>
+          <p>{t('manageSharedInventoryDesc') || 'Manage app banners, advertisements, and promotional offer campaigns.'}</p>
+        </div>
+      </div>
+
+      <div className="store-tabs" style={{ marginBottom: 20 }}>
+        <button
+          type="button"
+          className={`store-tab ${subTab === 'banners' ? 'active' : ''}`}
+          onClick={() => setSubTab('banners')}
+        >
+          <Megaphone className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
+          {t('bannerManagementTab') || 'Banner Management'}
+        </button>
+        <button
+          type="button"
+          className={`store-tab ${subTab === 'offers' ? 'active' : ''}`}
+          onClick={() => setSubTab('offers')}
+        >
+          <BadgePercent className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
+          {t('offerManagementTab') || 'Offer Management'}
+        </button>
+      </div>
+
+      {subTab === 'banners' ? (
         <AdsManagementView t={t} api={api} />
       ) : (
-        <PromotionsFeed
-          key={subTab} t={t} api={api} user={user} isSuperAdmin={isSuperAdmin} onlyOffers={subTab === 'offers'}
-          searchDispatch={subTab === 'feed' ? searchDispatch : null}
-          initiallyOpenAddModal={subTab === 'feed' ? initiallyOpenAddModal : false}
-          onCloseInitiallyOpen={onCloseInitiallyOpen}
-        />
+        <PromotionsFeed key="offers" t={t} api={api} user={user} isSuperAdmin={true} onlyOffers={true} />
       )}
     </div>
   );
@@ -10881,11 +10901,185 @@ function OffersAdsBannersView({ t, api }) {
 }
 
 // ============================================================================
-// COMPONENT 6C: SUBSCRIPTION PRICING MANAGEMENT (SUPER ADMIN ONLY)
-// Standalone screen dedicated only to subscription plan rates. Offers and
-// banner ad management now live under the separate Promotions screen
-// (see PromotionsView's "Banner Management" / "Offer Management" sub-tabs).
+// DEALERS DIRECTORY VIEW (SHOP ADMIN & SUPER ADMIN)
+// Displays public shop/dealer listings in a vertical stack with shop logo,
+// category badge, address, website link, and WhatsApp/Call quick action buttons.
+// Includes interactive Category Filter Cards at the top (All Shops, Key Shops,
+// ECM, Meter, Scanner).
 // ============================================================================
+function DealersView({ t, api, initialCategory }) {
+  const [dealers, setDealers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory || null);
+
+  useEffect(() => {
+    setSelectedCategory(initialCategory || null);
+  }, [initialCategory]);
+
+  const CATEGORY_CARDS = [
+    { id: 'KEY_SHOPS', label: 'Key Shops', icon: KeyRound, accent: 'var(--purple)' },
+    { id: 'ECM', label: 'ECM', icon: Cpu, image: ecmServiceImg, accent: 'var(--orange)' },
+    { id: 'METER', label: 'Meter', icon: Gauge, image: meterServiceImg, accent: 'var(--skyblue)' },
+    { id: 'SCANNER', label: 'Scanner', icon: ScanLine, image: scanningServiceImg, accent: 'var(--teal)' },
+  ];
+
+  useEffect(() => {
+    fetchDealers();
+  }, [query]);
+
+  const fetchDealers = async () => {
+    setLoading(true);
+    try {
+      const res = await api.searchPublicShops(query);
+      setDealers(Array.isArray(res) ? res : []);
+    } catch (e) {
+      console.error('Failed to fetch dealers', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredDealers = dealers.filter((dealer) => {
+    if (!selectedCategory) return true;
+    const catName = (dealer.category || '').toLowerCase();
+    const shopName = (dealer.name || '').toLowerCase();
+
+    if (selectedCategory === 'KEY_SHOPS') {
+      return !dealer.category || catName.includes('key') || catName.includes('shop') || shopName.includes('key');
+    }
+    if (selectedCategory === 'ECM') {
+      return catName.includes('ecm') || shopName.includes('ecm');
+    }
+    if (selectedCategory === 'METER') {
+      return catName.includes('meter') || shopName.includes('meter');
+    }
+    if (selectedCategory === 'SCANNER') {
+      return catName.includes('scan') || shopName.includes('scan');
+    }
+    return true;
+  });
+
+  return (
+    <div className="animate-fade-in">
+      <div className="page-head">
+        <div>
+          <div className="eyebrow"><Store /> {t('dealersEyebrow') || 'Dealers Directory'}</div>
+          <h1>{t('dealersPageTitle') || 'Dealers'}</h1>
+          <p>{t('dealersPageDesc') || 'Explore verified Key Shop dealers and locksmith partners across India.'}</p>
+        </div>
+      </div>
+
+      {/* Search Panel (First) */}
+      <div className="search-box" style={{ width: '100%', marginBottom: 14 }}>
+        <Search />
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t('searchDealersPlaceholder') || 'Search dealers by name, location, category...'}
+        />
+        {query && (
+          <button onClick={() => setQuery('')} className="icon-btn" style={{ width: 26, height: 26 }}>
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
+      </div>
+
+      {/* Category Filter Cards (Below Search Panel) */}
+      <div className="dealer-category-grid">
+        {CATEGORY_CARDS.map((cat) => {
+          const Icon = cat.icon;
+          const isActive = selectedCategory === cat.id;
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              className={`dealer-category-card ${isActive ? 'active' : ''}`}
+              onClick={() => setSelectedCategory((prev) => (prev === cat.id ? null : cat.id))}
+            >
+              <div
+                className="cat-icon-badge"
+                style={{
+                  background: isActive ? cat.accent : 'var(--card-2)',
+                  color: isActive ? '#ffffff' : cat.accent,
+                }}
+              >
+                {cat.image ? (
+                  <img src={cat.image} alt={cat.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                ) : (
+                  <Icon style={{ width: 26, height: 26 }} />
+                )}
+              </div>
+              <span className="cat-name">{cat.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {loading ? (
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
+          <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingEllipsis')}</span>
+        </div>
+      ) : filteredDealers.length === 0 ? (
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
+          <div className="icon-badge rose"><Store /></div>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noDealersFoundMsg') || 'No dealers found matching your search.'}</span>
+        </div>
+      ) : (
+        <div className="dealer-list stagger-in">
+          {filteredDealers.map((dealer) => (
+            <div key={dealer.id} className="dealer-row">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
+                <div className="dealer-logo">
+                  <img src={keyShopLogo} alt={dealer.name} />
+                </div>
+                <div className="dealer-info">
+                  <div className="dealer-name">{dealer.name}</div>
+                  {dealer.category && (
+                    <div className="dealer-line">
+                      <Tag /> <span>{dealer.category}</span>
+                    </div>
+                  )}
+                  {dealer.address && (
+                    <div className="dealer-line">
+                      <MapPin /> <span>{dealer.address}</span>
+                    </div>
+                  )}
+                  {dealer.website && (
+                    <div className="dealer-line">
+                      <Globe />
+                      <a href={dealer.website.startsWith('http') ? dealer.website : `https://${dealer.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold)', textDecoration: 'none' }}>
+                        {dealer.website}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="dealer-quick-actions">
+                {dealer.phone && (
+                  <>
+                    <a href={`tel:${dealer.phone}`} className="dealer-quick-btn call">
+                      <Phone className="h-3.5 w-3.5" />
+                      <span>{t('callPrefix') || 'Call'}</span>
+                    </a>
+                    <a href={`https://wa.me/${dealer.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="dealer-quick-btn whatsapp">
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      <span>WhatsApp</span>
+                    </a>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ============================================================================
 // COMPONENT 7: REVENUE MANAGEMENT (SUPER ADMIN ONLY)
 // ============================================================================
@@ -14194,13 +14388,10 @@ function ShopSettingsView({ t, api, shopId }) {
 
   return (
     <div className="animate-fade-in">
-      <div className="page-head">
+      <div className="page-head" style={{ marginBottom: 16 }}>
         <div>
-          <div className="eyebrow"><Settings /> {t('workspaceConfigurationEyebrow')}</div>
           <h1>{t('settings')}</h1>
-          <p>{t('manageShopProfileDesc')}</p>
         </div>
-        <button onClick={refreshAll} className="icon-btn" title={t('refreshTitle')}><RefreshCw /></button>
       </div>
 
       <div className="grid-2">
