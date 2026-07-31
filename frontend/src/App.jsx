@@ -8000,7 +8000,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           Support card spanning both columns. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--gold)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter('KEY_SHOPS'); setActiveTab('dealers'); } },
+        { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--maroon)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter('KEY_SHOPS'); setActiveTab('dealers'); } },
         { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter(null); setActiveTab('dealers'); } },
         { title: 'Used Machines', description: 'View and manage used machines', image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: 'ECM', description: 'Manage ECM records', image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
