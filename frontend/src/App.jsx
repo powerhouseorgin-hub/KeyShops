@@ -9233,6 +9233,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 // COMPONENT 3: SUPER CUSTOMER SUPERVISION VIEW (SUPER ADMIN ONLY)
 // ============================================================================
 function SuperCustomersView({ t, api, searchDispatch }) {
+  const { user } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -9686,9 +9687,8 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                   type="button"
                   onClick={async () => {
                     try {
-                      const shops = await api.getShops();
-                      const shopRes = viewCust.shop || (shops || []).find(s => s.id === viewCust.shopId);
-                      const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name });
+                      const shopRes = await getFullShopDetails(viewCust);
+                      const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
                       const safeName = `${(viewCust.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
                       await downloadPdf(pdf, safeName);
                     } catch (e) {
@@ -9705,11 +9705,21 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                   type="button"
                   onClick={async () => {
                     try {
-                      const shops = await api.getShops();
-                      const shopRes = viewCust.shop || (shops || []).find(s => s.id === viewCust.shopId);
-                      const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name });
+                      const shopRes = await getFullShopDetails(viewCust);
+                      const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
                       const safeName = `${(viewCust.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
-                      const downloadUrl = `https://keee-7d6cb.web.app/?action=download_doc&id=${viewCust.id}`;
+                      const queryParams = new URLSearchParams({
+                        action: 'download_doc',
+                        id: viewCust.id,
+                        name: viewCust.name || 'Customer',
+                        phone: viewCust.phone || '',
+                        keyNumber: viewCust.keyNumber || '',
+                        vehicleNumber: viewCust.vehicleNumber || viewCust.vehicleName || '',
+                        billAmount: viewCust.billAmount ?? '',
+                        address: viewCust.capturedAddress || viewCust.address || '',
+                        shopName: shopRes?.name || 'Key Shops',
+                      }).toString();
+                      const downloadUrl = `https://keee-7d6cb.web.app/?${queryParams}`;
                       const msg = `Hi ${viewCust.name},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
                       if (Capacitor.isNativePlatform()) {
                         await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: msg });
