@@ -727,10 +727,10 @@
 .choice-btn img { width: 100%; max-width: 32px; height: 26px; object-fit: contain; }
 .choice-btn:active { transform: scale(0.97); }
 .add-key-btn.active {
-  border-color: #2563EB !important; background: rgba(37, 99, 235, 0.14) !important; color: #2563EB !important;
+  border: 3px solid #1D4ED8 !important; border-color: #1D4ED8 !important; background: rgba(29, 78, 216, 0.14) !important; color: #1D4ED8 !important; font-weight: 900 !important; box-shadow: 0 0 0 1px #1D4ED8, 0 4px 12px rgba(29, 78, 216, 0.2) !important;
 }
 .lost-key-btn.active {
-  border-color: #DC2626 !important; background: #ffffff !important; color: #DC2626 !important;
+  border: 3px solid #B91C1C !important; border-color: #B91C1C !important; background: rgba(185, 28, 28, 0.08) !important; color: #B91C1C !important; font-weight: 900 !important; box-shadow: 0 0 0 1px #B91C1C, 0 4px 12px rgba(185, 28, 28, 0.2) !important;
 }
 
 /* Pill/thumb toggle switch - used for Add Key / Lost Key (Page 1) and the
