@@ -57,6 +57,13 @@ export class CustomerService {
         finalMasterKeyId = key.id;
       }
 
+      let billNumber = null;
+      if (dto.billAmount !== null && dto.billAmount !== undefined && dto.billAmount !== '') {
+        const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+        billNumber = `BILL-${dateStr}-${randomSuffix}`;
+      }
+
       const created = await tx.customer.create({
         data: {
           shopId,
@@ -76,6 +83,7 @@ export class CustomerService {
           capturedAddress: dto.capturedAddress || 'Connaught Place, New Delhi, India',
           photoUrl,
           billAmount: dto.billAmount ?? null,
+          billNumber,
           vehicleName: dto.vehicleName || null,
           lostKey: dto.lostKey ?? false,
           addKey: dto.addKey ?? false,
@@ -146,6 +154,12 @@ export class CustomerService {
       homeOfficeName: dto.homeOfficeName || null,
       vehicleCategory: dto.vehicleCategory || null,
     };
+
+    if (dto.billAmount !== null && dto.billAmount !== undefined && dto.billAmount !== '' && !customer.billNumber) {
+      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      updateData.billNumber = `BILL-${dateStr}-${randomSuffix}`;
+    }
 
     if (dto.idProofNumber) {
       updateData.idProofNumber = this.cryptoService.encrypt(dto.idProofNumber);
@@ -335,6 +349,12 @@ export class CustomerService {
       homeOfficeName: dto.homeOfficeName || null,
       vehicleCategory: dto.vehicleCategory || null,
     };
+
+    if (dto.billAmount !== null && dto.billAmount !== undefined && dto.billAmount !== '' && !customer.billNumber) {
+      const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+      updateData.billNumber = `BILL-${dateStr}-${randomSuffix}`;
+    }
 
     if (dto.idProofNumber) {
       updateData.idProofNumber = this.cryptoService.encrypt(dto.idProofNumber);

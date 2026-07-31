@@ -297,6 +297,7 @@ model Customer {
   // Added for the 2-page registration wizard's Page 2 (optional, individually
   // toggled fields) and the compact single-page report.
   billAmount     Float?
+  billNumber     String? @unique
   vehicleName    String?
   lostKey        Boolean @default(false)
   addKey         Boolean @default(false)

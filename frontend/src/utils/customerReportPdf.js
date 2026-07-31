@@ -61,16 +61,26 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   const gpsCaptured = !!(customer.latitude && customer.longitude);
   const isAutomobile = isAutomobileCategory(customer.vehicleCategory);
 
+  const shopName = shop?.name || 'Key Shops';
+  const ownerName = registeredByName || shop?.ownerName || 'Shop Owner';
+  const shopAddress = shop?.address || 'N/A';
+  const shopPhone = shop?.phone || 'N/A';
+
+  const keyName = isAutomobile ? (customer.vehicleName || customer.vehicleNumber || 'Vehicle Key') : (customer.homeOfficeName || 'Home / Office Key');
+  const hasBillAmount = customer.billAmount !== null && customer.billAmount !== undefined && customer.billAmount !== '';
+  const billId = customer.billNumber || (hasBillAmount ? `BILL-${idSource.replace(/[^a-zA-Z0-9]+/g, '').slice(0, 8).toUpperCase()}` : null);
+
   const html = `
   <div style="width:794px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a; box-sizing:border-box;">
-    <!-- Top Header Banner -->
+    <!-- Top Header Banner: Shop Information -->
     <div style="display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:18px 24px;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <img src="${keyShopLogo}" style="width:48px; height:48px; object-fit:contain; background:#fff; border-radius:50%; padding:3px; flex-shrink:0;" />
+      <div style="display:flex; align-items:center; gap:14px;">
+        <img src="${keyShopLogo}" style="width:52px; height:52px; object-fit:contain; background:#fff; border-radius:50%; padding:3px; flex-shrink:0;" />
         <div>
-          <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:20px; letter-spacing:.03em;">CUSTOMER KEY</div>
-          <div style="color:#fff; font-weight:900; font-size:15px; letter-spacing:.05em;">REGISTRATION REPORT</div>
-          <div style="color:#f0d9b5; font-size:9px; letter-spacing:.15em; margin-top:2px;">SECURE REGISTRATION &middot; TRUSTED SERVICE</div>
+          <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:20px; letter-spacing:.02em;">${esc(shopName)}</div>
+          <div style="color:#fff; font-size:11.5px; font-weight:700; margin-top:2px;">Owner: ${esc(ownerName)}</div>
+          <div style="color:#f0d9b5; font-size:10px; margin-top:1px;">${esc(shopAddress)}</div>
+          <div style="color:#f0d9b5; font-size:10px;">Phone: ${esc(shopPhone)}</div>
         </div>
       </div>
       <div style="text-align:right;">
@@ -82,55 +92,56 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
     </div>
 
     <div style="padding:16px 24px 4px;">
-      <!-- BOX 1: Customer Information Box -->
-      <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:14px;">
-        <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 14px;">
-          <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#128100;</span>
-          <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Customer Information</span>
-        </div>
-        <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
-          ${infoRow('&#128100;', 'Customer Name', customer.name)}
-          ${infoRow('&#128241;', 'Mobile Number', customer.phone)}
-          ${infoRow('&#128205;', 'Address', customer.capturedAddress || customer.address)}
-          ${isAutomobile
-            ? `${infoRow('&#128663;', 'Vehicle Number', customer.vehicleNumber)}${infoRow('&#128663;', 'Vehicle Name', customer.vehicleName)}`
-            : infoRow('&#127968;', 'Home / Office Name', customer.homeOfficeName)}
-          ${infoRow('&#128273;', isAutomobile ? 'Key Code' : 'Home / Office Key Code', customer.keyNumber)}
-          ${infoRow('&#9989;', 'Add Key', boolLabel(customer.addKey))}
-          ${infoRow('&#10060;', 'Lost Key', boolLabel(customer.lostKey))}
-          ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : null)}
-        </table>
-      </div>
-
-      <!-- Grid 2-column for Shop Info Box & Bill Amount Box -->
+      <!-- Grid 2-column: Customer Details Box & Key Details Box -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
-        <!-- BOX 2: Shop Information Box -->
+        <!-- BOX A: Customer Details Box -->
         <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; display:flex; flex-direction:column;">
           <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 14px;">
-            <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#127978;</span>
-            <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Shop Information</span>
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#128100;</span>
+            <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Customer Details</span>
           </div>
           <table style="width:100%; border-collapse:collapse; table-layout:fixed; flex:1;">
-            ${infoRow('&#127978;', 'Shop Name', shop?.name)}
-            ${infoRow('&#128205;', 'Shop Address', shop?.address)}
-            ${infoRow('&#128241;', 'Shop Contact', shop?.phone)}
+            ${infoRow('&#128100;', 'Customer Name', customer.name)}
+            ${infoRow('&#128241;', 'Mobile Number', customer.phone)}
+            ${infoRow('&#128205;', 'Address', customer.capturedAddress || customer.address)}
+            ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : null)}
           </table>
         </div>
 
-        <!-- BOX 3: Bill Amount Box -->
+        <!-- BOX B: Key Details Box -->
         <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; display:flex; flex-direction:column;">
           <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 14px;">
-            <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#128176;</span>
-            <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Bill Amount</span>
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#128273;</span>
+            <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Key Details</span>
           </div>
-          <div style="padding:16px; display:flex; flex-direction:column; align-items:center; justify-content:center; flex:1; text-align:center; background:#FAFAFA;">
-            <div style="font-size:11px; color:#777; font-weight:700; text-transform:uppercase; letter-spacing:.05em; margin-bottom:6px;">Total Bill Amount</div>
-            <div style="font-size:24px; font-weight:900; color:${MAROON_DARK};">
-              ${customer.billAmount !== null && customer.billAmount !== undefined && customer.billAmount !== '' ? `&#8377; ${Number(customer.billAmount).toFixed(2)}` : NOT_AVAILABLE}
+          <table style="width:100%; border-collapse:collapse; table-layout:fixed; flex:1;">
+            ${infoRow('&#127991;', 'Key Name', keyName)}
+            ${infoRow('&#128273;', 'Key Number', customer.keyNumber)}
+            ${infoRow('&#9989;', 'Add Key', boolLabel(customer.addKey))}
+            ${infoRow('&#10060;', 'Lost Key', boolLabel(customer.lostKey))}
+          </table>
+        </div>
+      </div>
+
+      <!-- Bill Information Box (Only rendered if Bill Amount is entered) -->
+      ${hasBillAmount ? `
+        <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:14px;">
+          <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 14px;">
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; background:${GOLD}; border-radius:4px; font-size:11px; flex-shrink:0;">&#128176;</span>
+            <span style="font-weight:800; font-size:13px; letter-spacing:.02em;">Bill Information</span>
+          </div>
+          <div style="padding:14px 20px; display:flex; align-items:center; justify-content:space-between; background:#FAFAFA;">
+            <div>
+              <div style="font-size:10.5px; color:#777; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Bill ID / Number</div>
+              <div style="font-size:14px; font-weight:800; color:${MAROON_DARK}; margin-top:2px;">${esc(billId)}</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:10.5px; color:#777; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Total Bill Amount</div>
+              <div style="font-size:22px; font-weight:900; color:${MAROON}; margin-top:2px;">&#8377; ${Number(customer.billAmount).toFixed(2)}</div>
             </div>
           </div>
         </div>
-      </div>
+      ` : ''}
 
       <!-- Confirmation Declaration Strip -->
       <div style="background:#fff; border:1px solid ${BORDER}; border-radius:8px; padding:10px 14px; margin-bottom:10px;">
