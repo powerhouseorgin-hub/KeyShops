@@ -29,7 +29,7 @@ import {
   User, Hash, UploadCloud, Crosshair, FileCheck, Navigation, KeyRound, Car,
   Tag, Package, Boxes, Percent, Image as ImageIcon, Megaphone, BadgePercent,
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
-  Download, Fingerprint, Palette, Menu, Home, Languages,
+  Download, Fingerprint, Palette, Menu, Home, Languages, Globe,
   Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2
 } from 'lucide-react';
 
@@ -6435,11 +6435,28 @@ export default function App() {
 
             <div className="login-form-side">
               <div className="login-box animate-fade-in">
-                {!IS_NATIVE_APP && (
-                  <button type="button" className="back-to-home-link" onClick={() => setPublicPage('home')}>
-                    <ArrowLeft className="h-3.5 w-3.5" /> {t('backToHomeLink')}
-                  </button>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                  {!IS_NATIVE_APP ? (
+                    <button type="button" className="back-to-home-link" onClick={() => setPublicPage('home')}>
+                      <ArrowLeft className="h-3.5 w-3.5" /> {t('backToHomeLink')}
+                    </button>
+                  ) : <div />}
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--card-2)', border: '1.5px solid var(--border-2)', borderRadius: 999, padding: '4px 12px' }}>
+                    <Globe className="h-3.5 w-3.5" style={{ color: 'var(--gold)' }} />
+                    <select
+                      value={lang}
+                      onChange={(e) => { setLang(e.target.value); localStorage.setItem('kee_lang', e.target.value); }}
+                      style={{ background: 'transparent', color: 'var(--text-1)', border: 'none', fontSize: 12, fontWeight: 700, outline: 'none', cursor: 'pointer', paddingRight: 4 }}
+                    >
+                      <option value="en" style={{ background: '#181512', color: '#ffffff' }}>English</option>
+                      <option value="hi" style={{ background: '#181512', color: '#ffffff' }}>Hindi (हिन्दी)</option>
+                      <option value="ta" style={{ background: '#181512', color: '#ffffff' }}>Tamil (தமிழ்)</option>
+                      <option value="te" style={{ background: '#181512', color: '#ffffff' }}>Telugu (తెలుగు)</option>
+                      <option value="kn" style={{ background: '#181512', color: '#ffffff' }}>Kannada (ಕನ್ನಡ)</option>
+                      <option value="ml" style={{ background: '#181512', color: '#ffffff' }}>Malayalam (മലയാളം)</option>
+                    </select>
+                  </div>
+                </div>
                 <div className="brand">
                   <img src={keyShopLogo} alt="Key Shop" className="brand-logo" />
                 </div>
