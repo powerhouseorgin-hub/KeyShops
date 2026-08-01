@@ -514,6 +514,7 @@ const LANGUAGES = {
     dealersPageTitle: 'Dealers',
     dealersEyebrow: 'Dealers Directory',
     dealersPageDesc: 'Explore verified Key Shop dealers and locksmith partners across India.',
+    allCategoriesCard: 'All',
     searchDealersPlaceholder: 'Search dealers by name, location, category...',
     noDealersFoundMsg: 'No dealers found matching your search.',
     customerSupport: 'Customer Support',
@@ -1350,6 +1351,12 @@ const LANGUAGES = {
     registerComplianceEntry: 'नए ग्राहक के लिए अनुपालन प्रविष्टि पंजीकृत करें',
     shopsCardTitle: 'दुकानें',
     viewManageShopsDesc: 'हर पंजीकृत दुकान देखें और प्रबंधित करें',
+    dealersCardTitle: 'डीलर्स',
+    dealersCardDesc: 'सत्यापित डीलर्स और ताला-चाबी पार्टनर्स',
+    dealersPageTitle: 'डीलर्स',
+    dealersEyebrow: 'डीलर्स निर्देशिका',
+    dealersPageDesc: 'भारत भर में सभी पंजीकृत की शॉप डीलरों और ताला-चाबी पार्टनर्स को खोजें।',
+    allCategoriesCard: 'सभी',
     customerSupport: 'ग्राहक सहायता',
     manageCustomerSupportDesc: 'ग्राहक सहायता संपर्क और संसाधन प्रबंधित करें',
     complianceInventoryTerminal: 'अनुपालन और इन्वेंटरी टर्मिनल',
@@ -2192,6 +2199,12 @@ const LANGUAGES = {
     registerComplianceEntry: 'புதிய வாடிக்கையாளருக்கான இணக்கப் பதிவை பதிவு செய்யவும்',
     shopsCardTitle: 'கடைகள்',
     viewManageShopsDesc: 'பதிவு செய்யப்பட்ட ஒவ்வொரு கடையையும் காணவும் நிர்வகிக்கவும்',
+    dealersCardTitle: 'டீலர்கள்',
+    dealersCardDesc: 'சரிபார்க்கப்பட்ட டீலர்கள் & பூட்டாளர் கூட்டாளர்கள்',
+    dealersPageTitle: 'டீலர்கள்',
+    dealersEyebrow: 'டீலர்கள் கோப்பகம்',
+    dealersPageDesc: 'இந்தியா முழுவதும் உள்ள பதிவு செய்யப்பட்ட சாவி கடை டீலர்கள் மற்றும் பூட்டாளர்களைக் கண்டறியவும்.',
+    allCategoriesCard: 'அனைத்தும்',
     customerSupport: 'வாடிக்கையாளர் ஆதரவு',
     manageCustomerSupportDesc: 'வாடிக்கையாளர் ஆதரவு தொடர்பு மற்றும் வளங்களை நிர்வகிக்கவும்',
     complianceInventoryTerminal: 'இணக்கம் & சரக்கு முனையம்',
@@ -3026,6 +3039,12 @@ const LANGUAGES = {
     registerComplianceEntry: 'కొత్త కస్టమర్ కోసం వర్తింపు ఎంట్రీని నమోదు చేయండి',
     shopsCardTitle: 'దుకాణాలు',
     viewManageShopsDesc: 'నమోదైన ప్రతి దుకాణాన్ని చూడండి మరియు నిర్వహించండి',
+    dealersCardTitle: 'డీలర్లు',
+    dealersCardDesc: 'ధృవీకరించబడిన డీలర్లు & లాక్‌స్మిత్ భాగస్వాములు',
+    dealersPageTitle: 'డీలర్లు',
+    dealersEyebrow: 'డీలర్ల డైరెక్టరీ',
+    dealersPageDesc: 'భారతదేశమంతటా నమోదు చేయబడిన కీ షాప్ డీలర్లు మరియు లాక్‌స్మిత్ భాగస్వాములను కనుగొనండి.',
+    allCategoriesCard: 'అన్నీ',
     customerSupport: 'కస్టమర్ మద్దతు',
     manageCustomerSupportDesc: 'కస్టమర్ మద్దతు సంప్రదింపు & వనరులను నిర్వహించండి',
     complianceInventoryTerminal: 'వర్తింపు & ఇన్వెంటరీ టెర్మినల్',
@@ -3868,6 +3887,12 @@ const LANGUAGES = {
     registerComplianceEntry: 'ಹೊಸ ಗ್ರಾಹಕರಿಗಾಗಿ ಅನುಸರಣೆ ನಮೂದನ್ನು ನೋಂದಾಯಿಸಿ',
     shopsCardTitle: 'ಅಂಗಡಿಗಳು',
     viewManageShopsDesc: 'ಪ್ರತಿ ನೋಂದಾಯಿತ ಅಂಗಡಿಯನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ',
+    dealersCardTitle: 'ಡೀಲರ್‌ಗಳು',
+    dealersCardDesc: 'ಪರಿಶೀಲಿಸಿದ ಡೀಲರ್‌ಗಳು & ಲಾಕ್‌ಸ್ಮಿತ್ ಭಾಗಿದಾರರು',
+    dealersPageTitle: 'ಡೀಲರ್‌ಗಳು',
+    dealersEyebrow: 'ಡೀಲರ್‌ಗಳ ಡೈರೆಕ್ಟರಿ',
+    dealersPageDesc: 'ಭಾರತದಾದ್ಯಂತ ನೋಂದಾಯಿತ ಕೀ ಶಾಪ್ ಡೀಲರ್‌ಗಳು ಮತ್ತು ಲಾಕ್‌ಸ್ಮಿತ್ ಭಾಗಿದಾರರನ್ನು ಹುಡುಕಿ.',
+    allCategoriesCard: 'ಎಲ್ಲಾ',
     customerSupport: 'ಗ್ರಾಹಕ ಬೆಂಬಲ',
     manageCustomerSupportDesc: 'ಗ್ರಾಹಕ ಬೆಂಬಲ ಸಂಪರ್ಕ ಮತ್ತು ಸಂಪನ್ಮೂಲಗಳನ್ನು ನಿರ್ವಹಿಸಿ',
     complianceInventoryTerminal: 'ಅನುಸರಣೆ & ದಾಸ್ತಾನು ಟರ್ಮಿನಲ್',
@@ -4702,6 +4727,12 @@ const LANGUAGES = {
     registerComplianceEntry: 'പുതിയ കസ്റ്റമറിനായി കംപ്ലയൻസ് എൻട്രി രജിസ്റ്റർ ചെയ്യുക',
     shopsCardTitle: 'ഷോപ്പുകൾ',
     viewManageShopsDesc: 'രജിസ്റ്റർ ചെയ്ത എല്ലാ ഷോപ്പും കാണുകയും നിയന്ത്രിക്കുകയും ചെയ്യുക',
+    dealersCardTitle: 'ഡീലർമാർ',
+    dealersCardDesc: 'പരിശോധിച്ച ഡീലർമാരും ലോക്ക്സ്മിത്ത് പങ്കാളികളും',
+    dealersPageTitle: 'ഡീലർമാർ',
+    dealersEyebrow: 'ഡീലർമാരുടെ ഡയറക്ടറി',
+    dealersPageDesc: 'ഇന്ത്യയിലുടനീളമുള്ള രജിസ്റ്റർ ചെയ്ത കീ ഷോപ്പ് ഡീലർമാരെയും ലോക്ക്സ്മിത്തുമാരെയും കണ്ടെത്തുക.',
+    allCategoriesCard: 'എല്ലാം',
     customerSupport: 'കസ്റ്റമർ സപ്പോർട്ട്',
     manageCustomerSupportDesc: 'കസ്റ്റമർ സപ്പോർട്ട് കോൺടാക്റ്റും വിഭവങ്ങളും നിയന്ത്രിക്കുക',
     complianceInventoryTerminal: 'കംപ്ലയൻസ് & ഇൻവെന്ററി ടെർമിനൽ',
@@ -11472,22 +11503,24 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
 
 // ============================================================================
 // DEALERS DIRECTORY VIEW (SHOP ADMIN & SUPER ADMIN)
-// Displays ALL registered public shop/dealer listings across India.
-// Displays all registered shops and does not contain category filters.
+// Displays registered public shop/dealer listings across India with non-scrollable
+// category filter cards (All, Key Shops, ECM, Meter, Scanning).
 // ============================================================================
 function DealersView({ t, api }) {
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
 
   useEffect(() => {
     fetchDealers();
-  }, [query]);
+  }, [query, selectedCategory]);
 
   const fetchDealers = async () => {
     setLoading(true);
     try {
-      const res = await api.searchPublicShops(query);
+      const categoryParam = selectedCategory === 'ALL' ? '' : selectedCategory;
+      const res = await api.searchPublicShops(query, categoryParam);
       setDealers(Array.isArray(res) ? res : []);
     } catch (e) {
       console.error('Failed to fetch dealers', e);
@@ -11496,14 +11529,109 @@ function DealersView({ t, api }) {
     }
   };
 
+  const filteredDealers = dealers.filter((dealer) => {
+    if (selectedCategory === 'ALL') return true;
+    const catName = (dealer.category || '').toLowerCase();
+    const shopName = (dealer.name || '').toLowerCase();
+
+    if (selectedCategory === 'KEY_SHOPS') {
+      const isOtherCategory = catName.includes('ecm') || catName.includes('meter') || catName.includes('scan') || catName.includes('dealer') ||
+                              shopName.includes('ecm') || shopName.includes('meter') || shopName.includes('scan') || shopName.includes('dealer');
+      return !isOtherCategory;
+    } else if (selectedCategory === 'ECM') {
+      return catName.includes('ecm') || shopName.includes('ecm');
+    } else if (selectedCategory === 'METER') {
+      return catName.includes('meter') || shopName.includes('meter');
+    } else if (selectedCategory === 'SCANNER') {
+      return catName.includes('scan') || shopName.includes('scan');
+    }
+    return true;
+  });
+
+  const categories = [
+    { id: 'ALL', keyName: 'allCategoriesCard', defaultLabel: 'All', icon: Store, accent: 'var(--gold)' },
+    { id: 'KEY_SHOPS', keyName: 'keyShops', defaultLabel: 'Key Shops', image: keyShopLogo, accent: 'var(--purple)' },
+    { id: 'ECM', keyName: 'ecm', defaultLabel: 'ECM', image: ecmServiceImg, accent: 'var(--orange)' },
+    { id: 'METER', keyName: 'meter', defaultLabel: 'Meter', image: meterServiceImg, accent: 'var(--skyblue)' },
+    { id: 'SCANNER', keyName: 'scanning', defaultLabel: 'Scanning', image: scanningServiceImg, accent: 'var(--teal)' },
+  ];
+
   return (
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
-          <div className="eyebrow"><Store /> {t('dealersEyebrow') || 'Dealers Directory'}</div>
-          <h1>{t('dealersPageTitle') || 'Dealers'}</h1>
-          <p>{t('dealersPageDesc') || 'Explore all registered Key Shop dealers and locksmith partners across India.'}</p>
+          <div className="eyebrow"><Store /> {t('dealersEyebrow')}</div>
+          <h1>{t('dealersPageTitle')}</h1>
+          <p>{t('dealersPageDesc')}</p>
         </div>
+      </div>
+
+      {/* NON-SCROLLABLE CATEGORY CARDS GRID */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(5, 1fr)',
+        gap: 6,
+        marginBottom: 16
+      }}>
+        {categories.map((cat) => {
+          const isSelected = selectedCategory === cat.id;
+          const label = t(cat.keyName) || cat.defaultLabel;
+          return (
+            <button
+              key={cat.id}
+              type="button"
+              onClick={() => setSelectedCategory(cat.id)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justify: 'center',
+                gap: 5,
+                padding: '8px 2px',
+                borderRadius: 12,
+                border: isSelected ? `2px solid ${cat.accent}` : '1px solid var(--border)',
+                background: isSelected ? `linear-gradient(180deg, var(--card-1), rgba(255,255,255,0.03))` : 'var(--card-1)',
+                boxShadow: isSelected ? `0 0 10px ${cat.accent}44` : 'none',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                outline: 'none',
+                userSelect: 'none'
+              }}
+            >
+              <div style={{
+                width: 34,
+                height: 34,
+                borderRadius: 10,
+                background: isSelected ? cat.accent : 'var(--card-2)',
+                color: isSelected ? '#ffffff' : 'var(--text-1)',
+                display: 'flex',
+                alignItems: 'center',
+                justify: 'center',
+                flexShrink: 0,
+                transition: 'all 0.2s ease'
+              }}>
+                {cat.image ? (
+                  <img src={cat.image} alt={label} style={{ width: 22, height: 22, objectFit: 'contain' }} />
+                ) : (
+                  <cat.icon style={{ width: 18, height: 18 }} />
+                )}
+              </div>
+              <span style={{
+                fontSize: 11,
+                fontWeight: isSelected ? 800 : 600,
+                color: isSelected ? 'var(--text-0)' : 'var(--text-2)',
+                textAlign: 'center',
+                lineHeight: 1.1,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: '100%'
+              }}>
+                {label}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Search Panel */}
@@ -11527,14 +11655,14 @@ function DealersView({ t, api }) {
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
           <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingEllipsis')}</span>
         </div>
-      ) : dealers.length === 0 ? (
+      ) : filteredDealers.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge rose"><Store /></div>
           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noDealersFoundMsg') || 'No dealers found matching your search.'}</span>
         </div>
       ) : (
         <div className="dealer-list stagger-in">
-          {dealers.map((dealer) => (
+          {filteredDealers.map((dealer) => (
             <div key={dealer.id} className="dealer-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                 <div className="dealer-logo">
