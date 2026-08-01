@@ -8207,7 +8207,6 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
           { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
-          { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => goToProductType('Key Shops') },
           { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
           { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
           { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
@@ -13472,6 +13471,14 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   );
 }
 
+const VEHICLE_CATEGORY_OPTIONS = [
+  { value: 'TWO_WHEELER', label: 'Two Wheeler' },
+  { value: 'FOUR_WHEELER', label: 'Four Wheeler' },
+  { value: 'TRUCK_LORRY', label: 'Truck / Lorry' },
+  { value: 'HOME', label: 'Home' },
+  { value: 'OFFICE', label: 'Office' },
+];
+
 // ============================================================================
 // COMPONENT: FULL CUSTOMER EDIT MODAL
 // ============================================================================
@@ -13635,7 +13642,7 @@ function FullCustomerEditModal({ t, api, customer, superAdminMode = false, shops
                 <CustomSelect
                   value={vehicleCategory}
                   onChange={setVehicleCategory}
-                  options={VEHICLE_CATEGORIES.map(c => ({ value: c.id, label: c.name }))}
+                  options={VEHICLE_CATEGORY_OPTIONS}
                 />
               </div>
               <div className="reg-field">
@@ -14196,8 +14203,8 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                     </button>
                   </div>
                   <div className="flex gap-2">
-                    <button onClick={() => setIsEditing(true)} className="btn btn-primary btn-sm">
-                      <Edit /> {t('editDetailsBtn')}
+                    <button onClick={() => setFullEditCust(selectedCust)} className="btn btn-primary btn-sm">
+                      <Edit /> <span>{t('editDetailsBtn')}</span>
                     </button>
                     <button onClick={() => setSelectedCust(null)} className="btn btn-ghost btn-sm">{t('closeFileBtn')}</button>
                   </div>
@@ -14321,6 +14328,21 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
           </div>
         </div>,
         document.body
+      )}
+
+      {fullEditCust && (
+        <FullCustomerEditModal
+          t={t}
+          api={api}
+          customer={fullEditCust}
+          superAdminMode={false}
+          onSave={(updated) => {
+            setFullEditCust(null);
+            setSelectedCust(updated);
+            fetchHistory();
+          }}
+          onClose={() => setFullEditCust(null)}
+        />
       )}
     </div>
   );
@@ -15075,80 +15097,6 @@ export function SupportConfigView({ t, api }) {
                         className="icon-btn" style={{ color: 'var(--red)' }} title={t('btnDelete')}
                       >
                         {savingPtId === pt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
-                      </button>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="card" style={{ maxWidth: 720, marginTop: 20 }}>
-        <div className="reg-section" style={{ marginBottom: 0 }}>
-          <div className="reg-section-head">
-            <div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div>
-            <h3>{t('keyTypesTitle')}</h3>
-            <span className="sub" style={{ marginLeft: 'auto' }}>{keyTypes.length} {keyTypes.length === 1 ? t('typeSingularLabel') : t('typePluralLabel')}</span>
-          </div>
-          <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
-            {t('manageKeyTypesDesc')}
-          </p>
-
-          <div className="reg-field" style={{ marginBottom: 16 }}>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <div className="input-wrap" style={{ flex: 1 }}>
-                <input
-                  type="text" value={newKeyTypeName} onChange={(e) => setNewKeyTypeName(e.target.value)}
-                  placeholder={t('enterKeyTypePlaceholder')}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddKeyType(); } }}
-                />
-              </div>
-              <button type="button" onClick={handleAddKeyType} disabled={addingKeyType} className="btn btn-outline btn-sm">
-                {addingKeyType ? <RefreshCw className="animate-spin" /> : <Plus />} {t('addBtnLabel')}
-              </button>
-            </div>
-          </div>
-
-          {ktLoading ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: 20 }}>
-              <RefreshCw className="animate-spin" style={{ width: 22, height: 22, color: 'var(--gold)' }} />
-            </div>
-          ) : keyTypes.length === 0 ? (
-            <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
-              {t('noKeyTypesYetMsg')}
-            </p>
-          ) : (
-            <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
-              {keyTypes.map((kt) => (
-                <div key={kt.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
-                  {editingKtId === kt.id ? (
-                    <>
-                      <input
-                        type="text" value={editingKtName} onChange={(e) => setEditingKtName(e.target.value)}
-                        style={{ flex: 1 }} autoFocus
-                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleSaveEditKeyType(kt.id); } }}
-                      />
-                      <button type="button" onClick={() => handleSaveEditKeyType(kt.id)} disabled={savingKtId === kt.id} className="icon-btn" title={t('btnSave')} style={{ color: 'var(--jgreen)' }}>
-                        {savingKtId === kt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Check className="h-4 w-4" />}
-                      </button>
-                      <button type="button" onClick={() => setEditingKtId(null)} className="icon-btn" title={t('btnCancel')}>
-                        <X className="h-4 w-4" />
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <KeyRound style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
-                      <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{kt.name}</span>
-                      <button type="button" onClick={() => handleStartEditKeyType(kt)} className="icon-btn" title={t('btnEdit')}>
-                        <Edit className="h-4 w-4" />
-                      </button>
-                      <button
-                        type="button" onClick={() => handleDeleteKeyType(kt)} disabled={savingKtId === kt.id}
-                        className="icon-btn" style={{ color: 'var(--red)' }} title={t('btnDelete')}
-                      >
-                        {savingKtId === kt.id ? <RefreshCw className="animate-spin h-4 w-4" /> : <Trash className="h-4 w-4" />}
                       </button>
                     </>
                   )}

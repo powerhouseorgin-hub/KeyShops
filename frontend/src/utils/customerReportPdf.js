@@ -57,22 +57,58 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   const reportId = `RPT-KEY-${idSource.replace(/[^a-zA-Z0-9]+/g, '').slice(0, 8).toUpperCase()}`;
 
   const gpsCaptured = !!(customer.latitude && customer.longitude);
-  const isAutomobile = isAutomobileCategory(customer.vehicleCategory);
+  const catRaw = (customer.vehicleCategory || customer.lockCategory || customer.keyType || '').toUpperCase();
+  const isHome = catRaw === 'HOME' || catRaw === 'HOUSE';
+  const isOffice = catRaw === 'OFFICE' || catRaw === 'COMMERCIAL';
+  const isAutomobile = !isHome && !isOffice;
 
   const shopName = shop?.name || 'Key Shops';
   const ownerName = registeredByName || shop?.ownerName || 'Shop Admin';
   const shopAddress = shop?.address || NOT_AVAILABLE;
   const shopPhone = shop?.phone || NOT_AVAILABLE;
 
-  const keyName = customer.vehicleName || customer.homeOfficeName || (isAutomobile ? 'Vehicle Key' : 'Home / Office Key');
-  const keyCategory = customer.vehicleCategory || customer.lockCategory || customer.keyType || NOT_AVAILABLE;
-  const keyCode = customer.keyNumber || customer.keyCode || NOT_AVAILABLE;
   const idType = customer.idType || customer.idProofType || NOT_AVAILABLE;
   const idNumber = customer.idNumber || customer.idProofNumber || NOT_AVAILABLE;
 
   const hasBillAmount = customer.billAmount !== null && customer.billAmount !== undefined && customer.billAmount !== '';
   const billId = customer.billNumber || customer.billId || (hasBillAmount ? `BILL-${idSource.replace(/[^a-zA-Z0-9]+/g, '').slice(0, 8).toUpperCase()}` : NOT_AVAILABLE);
   const billAmountFormatted = hasBillAmount ? `₹ ${Number(customer.billAmount).toFixed(2)}` : NOT_AVAILABLE;
+
+  let boxBTitle = 'Vehicle & Key Details';
+  let boxBRows = '';
+
+  if (isHome) {
+    boxBTitle = 'Home Key Details';
+    boxBRows += infoRow('&#127968;', 'Home / Property Description', customer.homeOfficeName || customer.vehicleName);
+    boxBRows += infoRow('&#127991;', 'Key Category', 'Home');
+    boxBRows += infoRow('&#128273;', 'Key / Blank Code', customer.keyNumber || customer.keyCode);
+    boxBRows += infoRow('&#9989;', 'Add Key Status', boolLabel(customer.addKey));
+    boxBRows += infoRow('&#10060;', 'Lost Key Status', boolLabel(customer.lostKey));
+  } else if (isOffice) {
+    boxBTitle = 'Office Key Details';
+    boxBRows += infoRow('&#127970;', 'Office Description', customer.homeOfficeName || customer.vehicleName);
+    boxBRows += infoRow('&#127991;', 'Key Category', 'Office');
+    boxBRows += infoRow('&#128273;', 'Key / Blank Code', customer.keyNumber || customer.keyCode);
+    boxBRows += infoRow('&#9989;', 'Add Key Status', boolLabel(customer.addKey));
+    boxBRows += infoRow('&#10060;', 'Lost Key Status', boolLabel(customer.lostKey));
+  } else {
+    // Automobile Category (Two Wheeler, Four Wheeler, Truck / Lorry)
+    boxBTitle = 'Vehicle & Key Details';
+    const formattedCatName = catRaw === 'TWO_WHEELER' ? 'Two Wheeler' : catRaw === 'FOUR_WHEELER' ? 'Four Wheeler' : catRaw === 'TRUCK_LORRY' ? 'Truck / Lorry' : (customer.vehicleCategory || 'Vehicle');
+    boxBRows += infoRow('&#127991;', 'Vehicle Model / Key Name', customer.vehicleName);
+    boxBRows += infoRow('&#128663;', 'Vehicle Category', formattedCatName);
+    boxBRows += infoRow('&#128273;', 'Key / Blank Code', customer.keyNumber || customer.keyCode);
+    boxBRows += infoRow('&#128663;', 'Vehicle Number', customer.vehicleNumber);
+    boxBRows += infoRow('&#9989;', 'Add Key Status', boolLabel(customer.addKey));
+    boxBRows += infoRow('&#10060;', 'Lost Key Status', boolLabel(customer.lostKey));
+  }
+
+  // Filter out vehicle-specific documents (e.g. RC Book) for Home / Office key types
+  const docsToDisplay = (customer.documents || []).filter(d => {
+    const dtName = (d.documentType || d.type || '').toLowerCase();
+    if ((isHome || isOffice) && dtName.includes('rc')) return false;
+    return true;
+  });
 
   const html = `
   <div style="width:794px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a; box-sizing:border-box;">
@@ -112,26 +148,21 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
             ${infoRow('&#127380;', 'ID Verification Type', idType)}
             ${infoRow('&#128195;', 'ID Number', idNumber)}
             ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : NOT_AVAILABLE)}
-            ${(customer.documents && customer.documents.length > 0) ? customer.documents.map(d => {
+            ${(docsToDisplay.length > 0) ? docsToDisplay.map(d => {
               const dtName = (d.documentType || d.type || 'Document').replace(/\s+Copy$/i, '');
               return infoRow('&#128196;', 'Attached Document', dtName);
             }).join('') : ''}
           </table>
         </div>
 
-        <!-- BOX B: Key & Vehicle Details -->
+        <!-- BOX B: Dynamic Key Details (Home / Office / Vehicle) -->
         <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; display:flex; flex-direction:column;">
           <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:7px 12px;">
             <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128273;</span>
-            <span style="font-weight:800; font-size:12.5px; letter-spacing:.02em;">Key & Vehicle Details</span>
+            <span style="font-weight:800; font-size:12.5px; letter-spacing:.02em;">${esc(boxBTitle)}</span>
           </div>
           <table style="width:100%; border-collapse:collapse; table-layout:fixed; flex:1;">
-            ${infoRow('&#127991;', 'Key / Vehicle Name', keyName)}
-            ${infoRow('&#128663;', 'Vehicle / Key Type', keyCategory)}
-            ${infoRow('&#128273;', 'Key / Blank Code', keyCode)}
-            ${infoRow('&#128663;', 'Vehicle Number', customer.vehicleNumber)}
-            ${infoRow('&#9989;', 'Add Key Status', boolLabel(customer.addKey))}
-            ${infoRow('&#10060;', 'Lost Key Status', boolLabel(customer.lostKey))}
+            ${boxBRows}
           </table>
         </div>
       </div>
