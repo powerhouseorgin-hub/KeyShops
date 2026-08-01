@@ -5967,11 +5967,11 @@ export default function App() {
   const PAGE_TITLES = {
     dashboard: t('dashboard'),
     shops: t('shops'),
-    dealers: t('dealersPageTitle') || 'Dealers',
-    'key-shops': 'Key Shops',
-    ecm: 'ECM',
-    meter: 'Meter',
-    scanning: 'Scanning',
+    dealers: t('dealersPageTitle') || t('dealers'),
+    'key-shops': t('keyShops'),
+    ecm: t('ecm'),
+    meter: t('meter'),
+    scanning: t('scanning'),
     'super-customers': t('customers'),
     keys: t('keys'),
     revenue: t('revenue'),
@@ -8072,7 +8072,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
           { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
           { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
-          { title: t('offersLabel'), description: 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: goToOffers },
+          { title: t('offersLabel'), description: t('activeOffersBannersDesc') || 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: goToOffers },
           { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
         ]} />
       </div>
@@ -8131,7 +8131,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
         { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
         { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
-        { title: t('offersLabel'), description: 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
+        { title: t('offersLabel'), description: t('activeOffersBannersDesc') || 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
         { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
       ]} />
 

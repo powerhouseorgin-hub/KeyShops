@@ -182,56 +182,28 @@ export class ShopService {
     if (category) {
       const catUpper = category.trim().toUpperCase();
       if (catUpper === 'KEY_SHOPS' || catUpper === 'KEY SHOPS' || catUpper === 'KEY_SHOP') {
-        whereClause.AND = [
-          {
-            OR: [
-              { category: { name: { contains: 'Key Shop', mode: 'insensitive' } } },
-              { companyDetails: { contains: 'Key Shop', mode: 'insensitive' } },
-            ],
-          },
-          {
-            NOT: [
-              { category: { name: { contains: 'Dealer', mode: 'insensitive' } } },
-              { companyDetails: { contains: 'Dealer', mode: 'insensitive' } },
-            ],
-          },
-        ];
+        whereClause.category = {
+          name: { equals: 'Key Shops', mode: 'insensitive' }
+        };
       } else if (catUpper === 'DEALERS' || catUpper === 'DEALER') {
-        whereClause.AND = [
-          {
-            OR: [
-              { category: { name: { contains: 'Dealer', mode: 'insensitive' } } },
-              { companyDetails: { contains: 'Dealer', mode: 'insensitive' } },
-            ],
-          },
-        ];
+        whereClause.category = {
+          name: { equals: 'Dealers', mode: 'insensitive' }
+        };
       } else if (catUpper === 'ECM') {
-        whereClause.AND = [
-          {
-            OR: [
-              { category: { name: { contains: 'ECM', mode: 'insensitive' } } },
-              { companyDetails: { contains: 'ECM', mode: 'insensitive' } },
-            ],
-          },
-        ];
+        whereClause.category = {
+          name: { equals: 'ECM', mode: 'insensitive' }
+        };
       } else if (catUpper === 'METER') {
-        whereClause.AND = [
-          {
-            OR: [
-              { category: { name: { contains: 'Meter', mode: 'insensitive' } } },
-              { companyDetails: { contains: 'Meter', mode: 'insensitive' } },
-            ],
-          },
-        ];
+        whereClause.category = {
+          name: { equals: 'Meter', mode: 'insensitive' }
+        };
       } else if (catUpper === 'SCANNER' || catUpper === 'SCANNING') {
-        whereClause.AND = [
-          {
-            OR: [
-              { category: { name: { contains: 'Scan', mode: 'insensitive' } } },
-              { companyDetails: { contains: 'Scan', mode: 'insensitive' } },
-            ],
-          },
-        ];
+        whereClause.category = {
+          OR: [
+            { name: { equals: 'Scanning', mode: 'insensitive' } },
+            { name: { equals: 'Scanner', mode: 'insensitive' } }
+          ]
+        };
       }
     }
 
