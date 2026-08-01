@@ -9995,20 +9995,25 @@ function SuperCustomersView({ t, api, searchDispatch }) {
         document.body
       )}
 
-      {fullEditCust && (
-        <FullCustomerEditModal
-          t={t}
-          api={api}
-          customer={fullEditCust}
-          superAdminMode={user?.role === 'SUPER_ADMIN'}
-          shops={shops}
-          onSave={(updated) => {
-            setFullEditCust(null);
-            if (viewCust) setViewCust(updated);
-            fetchCustomers();
-          }}
-          onClose={() => setFullEditCust(null)}
-        />
+      {fullEditCust && createPortal(
+        <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: 'var(--bg-0, #0b0a09)' }}>
+          <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 20px 60px' }}>
+            <CustomerRegistrationWizard
+              t={t}
+              api={api}
+              superAdminMode
+              shops={shops}
+              editCustomer={fullEditCust}
+              onCancel={() => setFullEditCust(null)}
+              onDone={(updated) => {
+                setFullEditCust(null);
+                if (viewCust && updated) setViewCust(updated);
+                fetchCustomers();
+              }}
+            />
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -12398,8 +12403,10 @@ function KeysSearchView({ t, api, searchDispatch }) {
   );
 }
 
-function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = [], onDone, onCancel }) {
+function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = [], editCustomer = null, onDone, onCancel }) {
   const { user } = useAuth();
+  const isEditMode = !!editCustomer;
+
   // Single-page form now (Review is a modal, not a separate step) - hardware
   // Back closes the Review modal if it's open; otherwise it falls through to
   // whatever is above this wizard (closes the superAdminMode overlay via its
@@ -12486,6 +12493,51 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // Post-submit confirmation - shown instead of a plain alert() so the
   // success state reads as part of the app's UI rather than a native dialog.
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // Populate wizard when editCustomer prop is supplied
+  useEffect(() => {
+    if (editCustomer) {
+      setName(editCustomer.name || '');
+      setPhone(editCustomer.phone || '');
+      const addr = editCustomer.address || editCustomer.capturedAddress || '';
+      setAddress(addr);
+      setAddressLine(addr);
+      setCapturedAddress(editCustomer.capturedAddress || addr);
+      setIdProofType(editCustomer.idProofType || editCustomer.idType || 'Aadhaar Card');
+      setIdProofNumber(editCustomer.idProofNumber || editCustomer.idNumber || '');
+      setReason(editCustomer.reason || '');
+
+      const cat = editCustomer.vehicleCategory || editCustomer.lockCategory || editCustomer.keyType || 'TWO_WHEELER';
+      setVehicleCategory(cat);
+      setAddKey(!!editCustomer.addKey);
+      setLostKey(!!editCustomer.lostKey);
+
+      setVehicleName(editCustomer.vehicleName || '');
+      if (editCustomer.vehicleName) setVehicleNameEnabled(true);
+
+      setHomeOfficeName(editCustomer.homeOfficeName || '');
+      if (editCustomer.homeOfficeName) setHomeOfficeNameEnabled(true);
+
+      setVehicleNumber(editCustomer.vehicleNumber || '');
+      if (editCustomer.vehicleNumber) setVehicleNumberEnabled(true);
+
+      const kNum = editCustomer.keyNumber || editCustomer.keyCode || '';
+      setKeyNumber(kNum);
+      if (kNum) setKeyCodeEnabled(true);
+
+      if (editCustomer.billAmount != null && editCustomer.billAmount !== '') {
+        setBillAmount(String(editCustomer.billAmount));
+        setBillAmountEnabled(true);
+      }
+
+      setLatitude(editCustomer.latitude || null);
+      setLongitude(editCustomer.longitude || null);
+
+      if (editCustomer.shopId || editCustomer.shop?.id) {
+        setSelectedShopId(editCustomer.shopId || editCustomer.shop?.id);
+      }
+    }
+  }, [editCustomer]);
 
   // Shop Admin: fetch their own shop's key catalog once on mount. Super Admin:
   // wait until a shop has been selected (Step 1's required dropdown), then
@@ -12751,14 +12803,24 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         capturedAddress: capturedAddress || address || null,
       };
 
-      const customer = superAdminMode
-        ? await api.createSuperCustomer({ shopId: selectedShopId, ...payload })
-        : await api.createCustomer(payload);
+      let customer;
+      if (isEditMode) {
+        if (superAdminMode && api.updateSuperCustomer) {
+          customer = await api.updateSuperCustomer(editCustomer.id, { ...payload, ...(selectedShopId ? { shopId: selectedShopId } : {}) });
+        } else {
+          customer = await api.updateCustomer(editCustomer.id, payload);
+        }
+      } else {
+        customer = superAdminMode
+          ? await api.createSuperCustomer({ shopId: selectedShopId, ...payload })
+          : await api.createCustomer(payload);
+      }
 
       for (const doc of uploadedDocs) {
         await api.uploadDocument(customer.id, doc.type, doc.file);
       }
 
+      window.dispatchEvent(new CustomEvent('customer_updated'));
       setShowSuccessModal(true);
     } catch (e) {
       alert(t('submissionFailedTemplate').replace('{message}', e.message));
@@ -12769,8 +12831,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // alert()'s dismissal used to trigger immediately.
   const handleSuccessModalOk = () => {
     setShowSuccessModal(false);
-    if (superAdminMode && onDone) {
-      onDone();
+    if (onDone) {
+      onDone(editCustomer || null);
     } else {
       resetWizard();
     }
@@ -12927,10 +12989,10 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     <div className="animate-fade-in">
       <div className="page-head reg-wizard-head">
         <div>
-          <div className="eyebrow"><UserPlus /> {t('newCustomerEyebrow')}</div>
-          <h1>{t('register')}</h1>
+          <div className="eyebrow"><UserPlus /> {isEditMode ? 'EDIT CUSTOMER REGISTRATION' : t('newCustomerEyebrow')}</div>
+          <h1>{isEditMode ? `Edit Customer (${name || 'Details'})` : t('register')}</h1>
         </div>
-        {superAdminMode && onCancel && (
+        {(superAdminMode || isEditMode) && onCancel && (
           <button type="button" onClick={onCancel} className="btn btn-ghost">
             <X className="h-4 w-4" /><span>{t('btnCancel')}</span>
           </button>
@@ -13237,12 +13299,13 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 </button>
                 <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
                   <button
-                    type="button" className="reg-action-btn save"
-                    disabled={duplicateKeyWarning || (superAdminMode && !selectedShopId)}
+                    type="button" className={`reg-action-btn save ${isEditMode ? 'px-4' : ''}`}
+                    disabled={duplicateKeyWarning || (superAdminMode && !selectedShopId && !isEditMode)}
                     onClick={handleFinalSubmit}
-                    title={t('saveRecordBtn')}
+                    title={isEditMode ? 'Update Customer' : t('saveRecordBtn')}
+                    style={isEditMode ? { width: 'auto', padding: '0 16px', gap: 6 } : {}}
                   >
-                    <Save />
+                    {isEditMode ? <><Check className="h-4 w-4" /><span style={{ fontSize: 13, fontWeight: 800 }}>Update Customer</span></> : <Save />}
                   </button>
                   <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="reg-action-btn download" title={t('downloadBtn')}>
                     {pdfAction === 'download' ? <RefreshCw className="animate-spin" /> : <Download />}
@@ -13458,8 +13521,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
             <div className="icon-badge jgreen" style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 18px' }}>
               <CheckCircle2 style={{ width: 28, height: 28 }} />
             </div>
-            <h3 style={{ marginBottom: 8 }}>{t('registrationSuccessTitle')}</h3>
-            <p className="desc" style={{ marginBottom: 22 }}>{t('registrationSuccessDesc')}</p>
+            <h3 style={{ marginBottom: 8 }}>{isEditMode ? 'Customer Updated Successfully!' : t('registrationSuccessTitle')}</h3>
+            <p className="desc" style={{ marginBottom: 22 }}>{isEditMode ? 'All customer and key compliance details have been updated.' : t('registrationSuccessDesc')}</p>
             <button type="button" onClick={handleSuccessModalOk} className="btn btn-primary" style={{ width: '100%' }}>
               {t('okBtn')}
             </button>
@@ -14330,19 +14393,23 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
         document.body
       )}
 
-      {fullEditCust && (
-        <FullCustomerEditModal
-          t={t}
-          api={api}
-          customer={fullEditCust}
-          superAdminMode={false}
-          onSave={(updated) => {
-            setFullEditCust(null);
-            setSelectedCust(updated);
-            fetchHistory();
-          }}
-          onClose={() => setFullEditCust(null)}
-        />
+      {fullEditCust && createPortal(
+        <div className="fixed inset-0 z-50 overflow-y-auto" style={{ background: 'var(--bg-0, #0b0a09)' }}>
+          <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 20px 60px' }}>
+            <CustomerRegistrationWizard
+              t={t}
+              api={api}
+              editCustomer={fullEditCust}
+              onCancel={() => setFullEditCust(null)}
+              onDone={(updated) => {
+                setFullEditCust(null);
+                if (selectedCust && updated) setSelectedCust(updated);
+                fetchHistory();
+              }}
+            />
+          </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -14564,22 +14631,10 @@ export function SupportConfigView({ t, api }) {
   const [editingPtName, setEditingPtName] = useState('');
   const [savingPtId, setSavingPtId] = useState(null);
 
-  // Key Types management - the Super-Admin-curated list of key "types" (e.g.
-  // Vehicle Key) that populates the Key Type dropdown on the Customer
-  // Registration form. Mirrors the Shop Categories/Product Types blocks above.
-  const [keyTypes, setKeyTypes] = useState([]);
-  const [ktLoading, setKtLoading] = useState(true);
-  const [newKeyTypeName, setNewKeyTypeName] = useState('');
-  const [addingKeyType, setAddingKeyType] = useState(false);
-  const [editingKtId, setEditingKtId] = useState(null);
-  const [editingKtName, setEditingKtName] = useState('');
-  const [savingKtId, setSavingKtId] = useState(null);
-
   useEffect(() => {
     fetchConfig();
     fetchCategories();
     fetchProductTypes();
-    fetchKeyTypes();
   }, []);
 
   const fetchConfig = async () => {
@@ -14739,72 +14794,6 @@ export function SupportConfigView({ t, api }) {
       alert(t('failedDeleteProductTypeTemplate').split('{msg}')[0] + e.message);
     } finally {
       setSavingPtId(null);
-    }
-  };
-
-  const fetchKeyTypes = async () => {
-    try {
-      const res = await api.getKeyTypes();
-      setKeyTypes(res || []);
-    } catch (e) {
-      console.error('Failed to load key types:', e);
-    } finally {
-      setKtLoading(false);
-    }
-  };
-
-  const handleAddKeyType = async () => {
-    const name = newKeyTypeName.trim();
-    if (!name) {
-      alert(t('pleaseEnterKeyTypeNameMsg'));
-      return;
-    }
-    setAddingKeyType(true);
-    try {
-      await api.createKeyType(name);
-      setNewKeyTypeName('');
-      await fetchKeyTypes();
-    } catch (e) {
-      alert(t('failedAddKeyTypeTemplate').split('{msg}')[0] + e.message);
-    } finally {
-      setAddingKeyType(false);
-    }
-  };
-
-  const handleStartEditKeyType = (kt) => {
-    setEditingKtId(kt.id);
-    setEditingKtName(kt.name);
-  };
-
-  const handleSaveEditKeyType = async (id) => {
-    const name = editingKtName.trim();
-    if (!name) {
-      alert(t('pleaseEnterKeyTypeNameMsg'));
-      return;
-    }
-    setSavingKtId(id);
-    try {
-      await api.updateKeyType(id, name);
-      setEditingKtId(null);
-      await fetchKeyTypes();
-    } catch (e) {
-      alert(t('failedUpdateKeyTypeTemplate').split('{msg}')[0] + e.message);
-    } finally {
-      setSavingKtId(null);
-    }
-  };
-
-  const handleDeleteKeyType = async (kt) => {
-    const [confirmPre, confirmPost] = t('deleteKeyTypeConfirmTemplate').split('{name}');
-    if (!confirm(confirmPre + kt.name + confirmPost)) return;
-    setSavingKtId(kt.id);
-    try {
-      await api.deleteKeyType(kt.id);
-      await fetchKeyTypes();
-    } catch (e) {
-      alert(t('failedDeleteKeyTypeTemplate').split('{msg}')[0] + e.message);
-    } finally {
-      setSavingKtId(null);
     }
   };
 
