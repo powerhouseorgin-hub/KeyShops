@@ -5895,6 +5895,11 @@ export default function App() {
   const PAGE_TITLES = {
     dashboard: t('dashboard'),
     shops: t('shops'),
+    dealers: t('dealersPageTitle') || 'Dealers',
+    'key-shops': 'Key Shops',
+    ecm: 'ECM',
+    meter: 'Meter',
+    scanning: 'Scanning',
     'super-customers': t('customers'),
     keys: t('keys'),
     revenue: t('revenue'),
@@ -7616,7 +7621,11 @@ export default function App() {
 
             {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} setAutoOpenOffersTab={setAutoOpenOffersTab} setDealersCategoryFilter={setDealersCategoryFilter} />}
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
-            {activeTab === 'dealers' && <DealersView t={t} api={api} initialCategory={dealersCategoryFilter} />}
+            {activeTab === 'dealers' && <DealersView t={t} api={api} />}
+            {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" title="Key Shops" description="Explore verified Key Shop partners and key duplication specialists across India." accentColor="var(--purple)" icon={KeyRound} t={t} api={api} />}
+            {activeTab === 'ecm' && <CategoryShopsView categoryKey="ECM" title="ECM" description="Explore ECM key programming and electronic control module specialists across India." accentColor="var(--orange)" image={ecmServiceImg} icon={Cpu} t={t} api={api} />}
+            {activeTab === 'meter' && <CategoryShopsView categoryKey="METER" title="Meter" description="Explore speedometer & meter calibration service partners across India." accentColor="var(--skyblue)" image={meterServiceImg} icon={Gauge} t={t} api={api} />}
+            {activeTab === 'scanning' && <CategoryShopsView categoryKey="SCANNER" title="Scanning" description="Explore vehicle diagnostic scanning and compliance service partners across India." accentColor="var(--teal)" image={scanningServiceImg} icon={ScanLine} t={t} api={api} />}
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
@@ -7876,18 +7885,17 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
   const [loading, setLoading] = useState(true);
   const [popupAds, setPopupAds] = useState([]);
 
-  // Tapping ECM, Meter, or Scanner category cards on the Dashboard navigates to
-  // the Dealers directory with that specific category pre-filtered.
+  // Tapping Key Shops, ECM, Meter, or Scanning category cards on the Dashboard navigates to
+  // their dedicated category screens (key-shops, ecm, meter, scanning).
   const goToProductType = (productType) => {
-    if (productType === 'ECM') {
-      if (setDealersCategoryFilter) setDealersCategoryFilter('ECM');
-      setActiveTab('dealers');
+    if (productType === 'Key Shops' || productType === 'KEY_SHOPS') {
+      setActiveTab('key-shops');
+    } else if (productType === 'ECM') {
+      setActiveTab('ecm');
     } else if (productType === 'Meter') {
-      if (setDealersCategoryFilter) setDealersCategoryFilter('METER');
-      setActiveTab('dealers');
+      setActiveTab('meter');
     } else if (productType === 'Scanning' || productType === 'Scanner') {
-      if (setDealersCategoryFilter) setDealersCategoryFilter('SCANNER');
-      setActiveTab('dealers');
+      setActiveTab('scanning');
     } else {
       setSearchDispatch({ query: productType, type: 'productType', nonce: Date.now() });
       setActiveTab('promotions');
@@ -7988,7 +7996,8 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         <DashCardGrid items={[
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
-          { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter(null); setActiveTab('dealers'); } },
+          { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
+          { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--purple)', onClick: () => goToProductType('Key Shops') },
           { title: 'Used Machines', description: 'View and manage used machines', image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
           { title: 'ECM', description: 'Manage ECM records', image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
           { title: 'Scanning', description: 'Scan & process compliance entries', image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
@@ -8046,8 +8055,8 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           Support card spanning both columns. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--maroon)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter('KEY_SHOPS'); setActiveTab('dealers'); } },
-        { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => { if (setDealersCategoryFilter) setDealersCategoryFilter(null); setActiveTab('dealers'); } },
+        { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--purple)', onClick: () => goToProductType('Key Shops') },
+        { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
         { title: 'Used Machines', description: 'View and manage used machines', image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: 'ECM', description: 'Manage ECM records', image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
         { title: 'Scanning', description: 'Scan & process compliance entries', image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
@@ -11220,22 +11229,199 @@ function OffersAdsBannersView({ t, api }) {
 // Includes interactive Category Filter Cards at the top (All Shops, Key Shops,
 // ECM, Meter, Scanner).
 // ============================================================================
-function DealersView({ t, api, initialCategory }) {
+// ============================================================================
+// DEDICATED CATEGORY SHOPS VIEW
+// Displays shops belonging specifically to Key Shops, ECM, Meter, or Scanning.
+// Each screen has its own Title, Search, Filter, and Responsive Layout.
+// ============================================================================
+function CategoryShopsView({ categoryKey, title, description, accentColor, icon: IconComponent, image, t, api }) {
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory || null);
+  const [statusFilter, setStatusFilter] = useState('ALL');
 
   useEffect(() => {
-    setSelectedCategory(initialCategory || null);
-  }, [initialCategory]);
+    fetchDealers();
+  }, [query]);
 
-  const CATEGORY_CARDS = [
-    { id: 'KEY_SHOPS', label: 'Key Shops', icon: KeyRound, accent: 'var(--purple)' },
-    { id: 'ECM', label: 'ECM', icon: Cpu, image: ecmServiceImg, accent: 'var(--orange)' },
-    { id: 'METER', label: 'Meter', icon: Gauge, image: meterServiceImg, accent: 'var(--skyblue)' },
-    { id: 'SCANNER', label: 'Scanner', icon: ScanLine, image: scanningServiceImg, accent: 'var(--teal)' },
-  ];
+  const fetchDealers = async () => {
+    setLoading(true);
+    try {
+      const res = await api.searchPublicShops(query);
+      setDealers(Array.isArray(res) ? res : []);
+    } catch (e) {
+      console.error('Failed to fetch category dealers', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredShops = dealers.filter((dealer) => {
+    const catName = (dealer.category || '').toLowerCase();
+    const shopName = (dealer.name || '').toLowerCase();
+
+    let matchesCategory = false;
+    if (categoryKey === 'KEY_SHOPS') {
+      matchesCategory = catName.includes('key') || catName.includes('key shop') || shopName.includes('key');
+    } else if (categoryKey === 'ECM') {
+      matchesCategory = catName.includes('ecm') || shopName.includes('ecm');
+    } else if (categoryKey === 'METER') {
+      matchesCategory = catName.includes('meter') || shopName.includes('meter');
+    } else if (categoryKey === 'SCANNER') {
+      matchesCategory = catName.includes('scan') || shopName.includes('scan');
+    } else {
+      matchesCategory = true;
+    }
+
+    if (!matchesCategory) return false;
+
+    if (statusFilter === 'ACTIVE') {
+      return dealer.isActive !== false;
+    }
+    if (statusFilter === 'VERIFIED') {
+      return dealer.isVerified === true;
+    }
+    return true;
+  });
+
+  return (
+    <div className="animate-fade-in">
+      <div className="page-head">
+        <div>
+          <div className="eyebrow" style={{ color: accentColor }}>
+            {IconComponent ? <IconComponent className="h-4 w-4 inline-block mr-1" /> : <Store className="h-4 w-4 inline-block mr-1" />}
+            {title} Directory
+          </div>
+          <h1>{title}</h1>
+          <p>{description}</p>
+        </div>
+      </div>
+
+      {/* Search & Status Filter Row */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+        <div className="search-box" style={{ width: '100%' }}>
+          <Search />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${title} shops by name, address, phone...`}
+          />
+          {query && (
+            <button onClick={() => setQuery('')} className="icon-btn" style={{ width: 26, height: 26 }}>
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
+          {[
+            { id: 'ALL', label: `All ${title}` },
+            { id: 'ACTIVE', label: 'Active Only' },
+            { id: 'VERIFIED', label: 'Verified Partners' },
+          ].map((f) => (
+            <button
+              key={f.id}
+              type="button"
+              className={`store-tab ${statusFilter === f.id ? 'active' : ''}`}
+              style={{
+                padding: '7px 14px',
+                fontSize: 12,
+                borderRadius: 999,
+                background: statusFilter === f.id ? accentColor : 'var(--card-2)',
+                color: statusFilter === f.id ? '#ffffff' : 'var(--text-1)',
+                border: `1.5px solid ${statusFilter === f.id ? accentColor : 'var(--border-2)'}`,
+                cursor: 'pointer',
+                fontWeight: 700,
+                whiteSpace: 'nowrap',
+              }}
+              onClick={() => setStatusFilter(f.id)}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
+          <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: accentColor }} />
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingEllipsis')}</span>
+        </div>
+      ) : filteredShops.length === 0 ? (
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
+          <div className="icon-badge" style={{ background: accentColor, color: '#ffffff' }}>
+            {IconComponent ? <IconComponent style={{ width: 24, height: 24 }} /> : <Store style={{ width: 24, height: 24 }} />}
+          </div>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>No shops found in {title}.</span>
+        </div>
+      ) : (
+        <div className="dealer-list stagger-in">
+          {filteredShops.map((dealer) => (
+            <div key={dealer.id} className="dealer-row">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
+                <div className="dealer-logo" style={{ background: 'var(--card-2)', padding: 4 }}>
+                  {image ? (
+                    <img src={image} alt={dealer.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  ) : (
+                    <img src={keyShopLogo} alt={dealer.name} />
+                  )}
+                </div>
+                <div className="dealer-info">
+                  <div className="dealer-name">{dealer.name}</div>
+                  {dealer.category && (
+                    <div className="dealer-line">
+                      <Tag /> <span>{dealer.category}</span>
+                    </div>
+                  )}
+                  {dealer.address && (
+                    <div className="dealer-line">
+                      <MapPin /> <span>{dealer.address}</span>
+                    </div>
+                  )}
+                  {dealer.website && (
+                    <div className="dealer-line">
+                      <Globe />
+                      <a href={dealer.website.startsWith('http') ? dealer.website : `https://${dealer.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold)', textDecoration: 'none' }}>
+                        {dealer.website}
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="dealer-quick-actions">
+                {dealer.phone && (
+                  <>
+                    <a href={`tel:${dealer.phone}`} className="dealer-quick-btn call">
+                      <Phone className="h-3.5 w-3.5" />
+                      <span>{t('callPrefix') || 'Call'}</span>
+                    </a>
+                    <a href={`https://wa.me/${dealer.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="dealer-quick-btn whatsapp">
+                      <MessageCircle className="h-3.5 w-3.5" />
+                      <span>WhatsApp</span>
+                    </a>
+                  </>
+                )}
+                <ChevronRight className="h-4 w-4 shrink-0" style={{ color: 'var(--text-3)' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============================================================================
+// DEALERS DIRECTORY VIEW (SHOP ADMIN & SUPER ADMIN)
+// Displays ALL registered public shop/dealer listings across India.
+// Displays all registered shops and does not contain category filters.
+// ============================================================================
+function DealersView({ t, api }) {
+  const [dealers, setDealers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [query, setQuery] = useState('');
 
   useEffect(() => {
     fetchDealers();
@@ -11253,37 +11439,17 @@ function DealersView({ t, api, initialCategory }) {
     }
   };
 
-  const filteredDealers = dealers.filter((dealer) => {
-    if (!selectedCategory) return true;
-    const catName = (dealer.category || '').toLowerCase();
-    const shopName = (dealer.name || '').toLowerCase();
-
-    if (selectedCategory === 'KEY_SHOPS') {
-      return catName.includes('key') || catName === 'key shops' || catName === 'key shop' || shopName.includes('key shops');
-    }
-    if (selectedCategory === 'ECM') {
-      return catName.includes('ecm') || shopName.includes('ecm');
-    }
-    if (selectedCategory === 'METER') {
-      return catName.includes('meter') || shopName.includes('meter');
-    }
-    if (selectedCategory === 'SCANNER') {
-      return catName.includes('scan') || shopName.includes('scan');
-    }
-    return true;
-  });
-
   return (
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
           <div className="eyebrow"><Store /> {t('dealersEyebrow') || 'Dealers Directory'}</div>
           <h1>{t('dealersPageTitle') || 'Dealers'}</h1>
-          <p>{t('dealersPageDesc') || 'Explore verified Key Shop dealers and locksmith partners across India.'}</p>
+          <p>{t('dealersPageDesc') || 'Explore all registered Key Shop dealers and locksmith partners across India.'}</p>
         </div>
       </div>
 
-      {/* Search Panel (First) */}
+      {/* Search Panel */}
       <div className="search-box" style={{ width: '100%', marginBottom: 14 }}>
         <Search />
         <input
@@ -11299,50 +11465,19 @@ function DealersView({ t, api, initialCategory }) {
         )}
       </div>
 
-      {/* Category Filter Cards (Below Search Panel) */}
-      <div className="dealer-category-grid">
-        {CATEGORY_CARDS.map((cat) => {
-          const Icon = cat.icon;
-          const isActive = selectedCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              className={`dealer-category-card ${isActive ? 'active' : ''}`}
-              onClick={() => setSelectedCategory((prev) => (prev === cat.id ? null : cat.id))}
-            >
-              <div
-                className="cat-icon-badge"
-                style={{
-                  background: isActive ? cat.accent : 'var(--card-2)',
-                  color: isActive ? '#ffffff' : cat.accent,
-                }}
-              >
-                {cat.image ? (
-                  <img src={cat.image} alt={cat.label} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                ) : (
-                  <Icon style={{ width: 26, height: 26 }} />
-                )}
-              </div>
-              <span className="cat-name">{cat.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
       {loading ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
           <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingEllipsis')}</span>
         </div>
-      ) : filteredDealers.length === 0 ? (
+      ) : dealers.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge rose"><Store /></div>
           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noDealersFoundMsg') || 'No dealers found matching your search.'}</span>
         </div>
       ) : (
         <div className="dealer-list stagger-in">
-          {filteredDealers.map((dealer) => (
+          {dealers.map((dealer) => (
             <div key={dealer.id} className="dealer-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                 <div className="dealer-logo">
@@ -11384,6 +11519,7 @@ function DealersView({ t, api, initialCategory }) {
                     </a>
                   </>
                 )}
+                <ChevronRight className="h-4 w-4 shrink-0" style={{ color: 'var(--text-3)' }} />
               </div>
             </div>
           ))}
