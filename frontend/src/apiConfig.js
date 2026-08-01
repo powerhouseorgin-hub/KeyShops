@@ -103,6 +103,11 @@ const guessMimeType = (name) => {
 // handles that prompt itself.
 export const downloadAsset = async (url, filename) => {
   if (!url) return;
+  try {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('document_downloaded'));
+    }
+  } catch (e) {}
   const fullUrl = getAssetUrl(url);
   const safeName = (filename || fullUrl.split('/').pop().split('?')[0] || 'download').replace(/[\\/]/g, '_');
 

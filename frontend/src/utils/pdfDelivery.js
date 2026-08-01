@@ -8,6 +8,11 @@ import { SaveToDownloads } from '../apiConfig';
 // plugin -> share-sheet fallback) since it's the already-proven way to get a
 // file out of this app's sandbox into a place the user can find it.
 export async function downloadPdf(pdf, filename) {
+  try {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('document_downloaded'));
+    }
+  } catch (e) {}
   if (Capacitor.isNativePlatform()) {
     const { Filesystem, Directory } = await import('@capacitor/filesystem');
     const base64 = pdf.output('datauristring').split(',')[1];

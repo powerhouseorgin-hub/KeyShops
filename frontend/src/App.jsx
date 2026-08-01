@@ -6066,13 +6066,26 @@ export default function App() {
   const [autoOpenOffersTab, setAutoOpenOffersTab] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLangDialog, setShowLangDialog] = useState(false);
+  const [downloadToastVisible, setDownloadToastVisible] = useState(false);
   const langDialogCardRef = useRef(null);
-  // Auto-download customer report PDF when opening deep link e.g. ?action=download_doc&...
+
+  useEffect(() => {
+    const handleDocDownloaded = () => {
+      setDownloadToastVisible(true);
+      setTimeout(() => setDownloadToastVisible(false), 3000);
+    };
+    window.addEventListener('document_downloaded', handleDocDownloaded);
+    return () => window.removeEventListener('document_downloaded', handleDocDownloaded);
+  }, []);
+
+  // Auto-download customer report PDF when opening deep link e.g. ?downloadDoc=... or ?action=download_doc&...
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const action = params.get('action');
-    if (action === 'download_doc') {
-      const id = params.get('id');
+    const downloadDocId = params.get('downloadDoc');
+
+    if (downloadDocId || action === 'download_doc') {
+      const id = downloadDocId || params.get('id');
       const name = params.get('name') || 'Customer';
       const phone = params.get('phone') || 'N/A';
       const keyNumber = params.get('keyNumber') || '';
@@ -6095,6 +6108,58 @@ export default function App() {
               }
             } catch (e) {}
           }
+
+            <div className="reg-section">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Phone /></div><b>{t('phoneContactLabel')}</b></div>
+                  <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{viewCust.phone || 'N/A'}</span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>{t('registryDateLabel')}</b></div>
+                  <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{new Date(viewCust.createdAt).toLocaleString()}</span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Home /></div><b>{t('addressLabel')}</b></div>
+                  <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }} className="block truncate">{viewCust.address || viewCust.capturedAddress || 'N/A'}</span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyBlankCodeLabel')}</b></div>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="badge badge-active"><span className="dot" />{viewCust.keyNumber || viewCust.keyCode || 'N/A'}</span>
+                  </div>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Car /></div><b>Vehicle / Key Type</b></div>
+                  <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--gold)' }}>{viewCust.vehicleCategory || viewCust.lockCategory || viewCust.keyType || 'N/A'}</span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Tag /></div><b>Key / Vehicle Name</b></div>
+                  <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{viewCust.vehicleName || viewCust.homeOfficeName || 'N/A'}</span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><CheckCircle2 /></div><b>Add Key / Lost Key</b></div>
+                  <div className="flex items-center gap-2">
+                    <span className={`badge ${viewCust.addKey ? 'badge-active' : 'badge-suspended'}`}>Add: {viewCust.addKey ? 'Yes' : 'No'}</span>
+                    <span className={`badge ${viewCust.lostKey ? 'badge-active' : 'badge-suspended'}`}>Lost: {viewCust.lostKey ? 'Yes' : 'No'}</span>
+                  </div>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><DollarSign /></div><b>Bill ID & Amount</b></div>
+                  <span style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--gold)' }}>
+                    {viewCust.billNumber || viewCust.billId || 'N/A'} {viewCust.billAmount != null && viewCust.billAmount !== '' ? `(₹${Number(viewCust.billAmount).toFixed(2)})` : '(N/A)'}
+                  </span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Fingerprint /></div><b>{t('idVerificationLabel')}</b></div>
+                  <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{viewCust.idProofType || viewCust.idType || 'N/A'}</span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('idNumberDecryptedLabel')}</b></div>
+                  <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--gold)' }}>{viewCust.idProofNumber || viewCust.idNumber || 'N/A'}</span>
+                </div>
+              </div>
+            </div>
 
           if (!customerData) {
             customerData = {
@@ -7811,6 +7876,35 @@ export default function App() {
               }}
             >
               {t('pressBackToExit')}
+            </div>,
+            document.body
+          )}
+
+          {downloadToastVisible && createPortal(
+            <div
+              style={{
+                position: 'fixed',
+                left: '50%',
+                bottom: 88,
+                transform: 'translateX(-50%)',
+                background: 'rgba(20, 18, 16, 0.95)',
+                color: 'var(--gold)',
+                border: '1px solid var(--gold)',
+                padding: '10px 22px',
+                borderRadius: 999,
+                fontSize: 13,
+                fontWeight: 700,
+                zIndex: 99999,
+                pointerEvents: 'none',
+                boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                backdropFilter: 'blur(8px)'
+              }}
+            >
+              <CheckCircle2 style={{ width: 16, height: 16, color: 'var(--green)' }} />
+              <span>Document downloaded successfully.</span>
             </div>,
             document.body
           )}
@@ -13653,22 +13747,50 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="reg-field">
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Phone /></div><b>{t('phoneContactLabel')}</b></div>
-                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{selectedCust.phone}</span>
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{selectedCust.phone || 'N/A'}</span>
                     </div>
                     <div className="reg-field">
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Calendar /></div><b>{t('registryDateLabel')}</b></div>
                       <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{new Date(selectedCust.createdAt).toLocaleString()}</span>
                     </div>
                     <div className="reg-field">
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Car /></div><b>{t('vehicleNumberLabel')}</b></div>
-                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{selectedCust.vehicleNumber || 'N/A'}</span>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Home /></div><b>{t('addressLabel')}</b></div>
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }} className="block truncate">{selectedCust.address || selectedCust.capturedAddress || 'N/A'}</span>
                     </div>
-                    <div className="reg-field" style={{ marginBottom: 0 }}>
+                    <div className="reg-field">
                       <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><KeyRound /></div><b>{t('keyBlankCodeLabel')}</b></div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="badge badge-active"><span className="dot" />{selectedCust.keyNumber}</span>
-                        {selectedCust.keyType && <span className="badge" style={{ background: 'var(--purple-dim, rgba(124,77,255,0.12))', color: 'var(--purple)' }}>{selectedCust.keyType}</span>}
+                        <span className="badge badge-active"><span className="dot" />{selectedCust.keyNumber || selectedCust.keyCode || 'N/A'}</span>
                       </div>
+                    </div>
+                    <div className="reg-field">
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Car /></div><b>Vehicle / Key Type</b></div>
+                      <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--gold)' }}>{selectedCust.vehicleCategory || selectedCust.lockCategory || selectedCust.keyType || 'N/A'}</span>
+                    </div>
+                    <div className="reg-field">
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Tag /></div><b>Key / Vehicle Name</b></div>
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{selectedCust.vehicleName || selectedCust.homeOfficeName || 'N/A'}</span>
+                    </div>
+                    <div className="reg-field">
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><CheckCircle2 /></div><b>Add Key / Lost Key</b></div>
+                      <div className="flex items-center gap-2">
+                        <span className={`badge ${selectedCust.addKey ? 'badge-active' : 'badge-suspended'}`}>Add: {selectedCust.addKey ? 'Yes' : 'No'}</span>
+                        <span className={`badge ${selectedCust.lostKey ? 'badge-active' : 'badge-suspended'}`}>Lost: {selectedCust.lostKey ? 'Yes' : 'No'}</span>
+                      </div>
+                    </div>
+                    <div className="reg-field">
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><DollarSign /></div><b>Bill ID & Amount</b></div>
+                      <span style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--gold)' }}>
+                        {selectedCust.billNumber || selectedCust.billId || 'N/A'} {selectedCust.billAmount != null && selectedCust.billAmount !== '' ? `(₹${Number(selectedCust.billAmount).toFixed(2)})` : '(N/A)'}
+                      </span>
+                    </div>
+                    <div className="reg-field">
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Fingerprint /></div><b>{t('idVerificationLabel')}</b></div>
+                      <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-0)' }}>{selectedCust.idProofType || selectedCust.idType || 'N/A'}</span>
+                    </div>
+                    <div className="reg-field">
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('idNumberDecryptedLabel')}</b></div>
+                      <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--gold)' }}>{selectedCust.idProofNumber || selectedCust.idNumber || 'N/A'}</span>
                     </div>
                   </div>
                 </div>
@@ -13755,11 +13877,34 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                   )}
                 </div>
 
-                <div className="flex justify-end gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
-                  <button onClick={() => setIsEditing(true)} className="btn btn-primary btn-sm">
-                    <Edit /> {t('editDetailsBtn')}
-                  </button>
-                  <button onClick={() => setSelectedCust(null)} className="btn btn-ghost btn-sm">{t('closeFileBtn')}</button>
+                <div className="flex justify-between items-center flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadCustomerReport(selectedCust)}
+                      disabled={reportBusyId === `${selectedCust.id}:download`}
+                      className="btn btn-outline btn-sm"
+                    >
+                      <Download className="h-4 w-4" />
+                      <span>Download Document</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleShareCustomerReportViaWhatsApp(selectedCust)}
+                      disabled={reportBusyId === `${selectedCust.id}:whatsapp`}
+                      className="btn btn-primary btn-sm"
+                      style={{ background: '#25D366', borderColor: '#25D366' }}
+                    >
+                      <MessageCircle className="h-4 w-4" />
+                      <span>WhatsApp</span>
+                    </button>
+                  </div>
+                  <div className="flex gap-2">
+                    <button onClick={() => setIsEditing(true)} className="btn btn-primary btn-sm">
+                      <Edit /> {t('editDetailsBtn')}
+                    </button>
+                    <button onClick={() => setSelectedCust(null)} className="btn btn-ghost btn-sm">{t('closeFileBtn')}</button>
+                  </div>
                 </div>
               </>
             ) : (
