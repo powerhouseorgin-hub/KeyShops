@@ -8093,6 +8093,11 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
   // Tapping Key Shops, ECM, Meter, or Scanning category cards on the Dashboard navigates to
   // their dedicated category screens (key-shops, ecm, meter, scanning).
   const goToProductType = (productType) => {
+    if (productType === 'Used Machines' || productType === 'USED_MACHINES') {
+      setSearchDispatch(null);
+      setActiveTab('promotions');
+      return;
+    }
     if (productType === 'Key Shops' || productType === 'KEY_SHOPS') {
       setActiveTab('key-shops');
     } else if (productType === 'ECM') {
@@ -10858,11 +10863,17 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
 
   useEffect(() => {
     if (searchDispatch && ['productType', 'location', 'all'].includes(searchDispatch.type)) {
-      setTextQuery(searchDispatch.query);
-      if (searchDispatch.type === 'productType') {
-        // If the query exactly matches a known category, jump straight to that chip.
-        const match = productTypes.find(pt => pt.name.toLowerCase() === searchDispatch.query.trim().toLowerCase());
-        if (match) setCategoryFilter(match.name);
+      const q = (searchDispatch.query || '').trim().toLowerCase();
+      if (q === 'used machines' || q === 'used_machines') {
+        setTextQuery('');
+        setCategoryFilter('ALL');
+      } else {
+        setTextQuery(searchDispatch.query);
+        if (searchDispatch.type === 'productType') {
+          // If the query exactly matches a known category, jump straight to that chip.
+          const match = productTypes.find(pt => pt.name.toLowerCase() === q);
+          if (match) setCategoryFilter(match.name);
+        }
       }
     }
   }, [searchDispatch?.nonce]);
@@ -11700,13 +11711,8 @@ function DealersView({ t, api }) {
         </div>
       </div>
 
-      {/* NON-SCROLLABLE CATEGORY CARDS GRID */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(5, 1fr)',
-        gap: 6,
-        marginBottom: 16
-      }}>
+      {/* REDESIGNED CATEGORY CARDS GRID */}
+      <div className="dealer-cat-grid">
         {categories.map((cat) => {
           const isSelected = selectedCategory === cat.id;
           const label = t(cat.keyName) || cat.defaultLabel;
@@ -11715,54 +11721,30 @@ function DealersView({ t, api }) {
               key={cat.id}
               type="button"
               onClick={() => setSelectedCategory(cat.id)}
+              className={`dealer-cat-card ${isSelected ? 'active' : ''}`}
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justify: 'center',
-                gap: 5,
-                padding: '8px 2px',
-                borderRadius: 12,
-                border: isSelected ? `2px solid ${cat.accent}` : '1px solid var(--border)',
-                background: isSelected ? `linear-gradient(180deg, var(--card-1), rgba(255,255,255,0.03))` : 'var(--card-1)',
-                boxShadow: isSelected ? `0 0 10px ${cat.accent}44` : 'none',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                outline: 'none',
-                userSelect: 'none'
+                borderColor: isSelected ? cat.accent : undefined,
+                background: isSelected ? `linear-gradient(180deg, var(--card-1), ${cat.accent}18)` : undefined,
+                boxShadow: isSelected ? `0 4px 14px ${cat.accent}35` : undefined
               }}
             >
-              <div style={{
-                width: 34,
-                height: 34,
-                borderRadius: 10,
-                background: isSelected ? cat.accent : 'var(--card-2)',
-                color: isSelected ? '#ffffff' : 'var(--text-1)',
-                display: 'flex',
-                alignItems: 'center',
-                justify: 'center',
-                flexShrink: 0,
-                transition: 'all 0.2s ease'
-              }}>
+              {/* TOP: Large Category Image / Icon (Primary Visual Element) */}
+              <div className="dealer-cat-img-box">
                 {cat.image ? (
-                  <img src={cat.image} alt={label} style={{ width: 22, height: 22, objectFit: 'contain' }} />
+                  <img src={cat.image} alt={label} />
                 ) : (
-                  <cat.icon style={{ width: 18, height: 18 }} />
+                  <div className="dealer-cat-icon-fallback" style={isSelected ? { background: cat.accent } : {}}>
+                    <cat.icon />
+                  </div>
                 )}
               </div>
-              <span style={{
-                fontSize: 11,
-                fontWeight: isSelected ? 800 : 600,
-                color: isSelected ? 'var(--text-0)' : 'var(--text-2)',
-                textAlign: 'center',
-                lineHeight: 1.1,
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                maxWidth: '100%'
-              }}>
-                {label}
-              </span>
+
+              {/* BOTTOM: Separate Category Title */}
+              <div className="dealer-cat-label-box" style={{ borderTopColor: isSelected ? `${cat.accent}44` : undefined }}>
+                <span className="dealer-cat-name" style={{ color: isSelected ? cat.accent : undefined }}>
+                  {label}
+                </span>
+              </div>
             </button>
           );
         })}
