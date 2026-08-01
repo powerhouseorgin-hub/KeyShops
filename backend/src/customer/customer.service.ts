@@ -58,7 +58,7 @@ export class CustomerService {
       }
 
       let billNumber = null;
-      if (dto.billAmount !== null && dto.billAmount !== undefined && dto.billAmount !== '') {
+      if (dto.billAmount !== null && dto.billAmount !== undefined && (dto.billAmount as any) !== '') {
         const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
         const randomSuffix = Math.floor(1000 + Math.random() * 9000);
         billNumber = `BILL-${dateStr}-${randomSuffix}`;
@@ -155,7 +155,7 @@ export class CustomerService {
       vehicleCategory: dto.vehicleCategory || null,
     };
 
-    if (dto.billAmount !== null && dto.billAmount !== undefined && dto.billAmount !== '' && !customer.billNumber) {
+    if (dto.billAmount !== null && dto.billAmount !== undefined && (dto.billAmount as any) !== '' && !customer.billNumber) {
       const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
       updateData.billNumber = `BILL-${dateStr}-${randomSuffix}`;
@@ -350,7 +350,7 @@ export class CustomerService {
       vehicleCategory: dto.vehicleCategory || null,
     };
 
-    if (dto.billAmount !== null && dto.billAmount !== undefined && dto.billAmount !== '' && !customer.billNumber) {
+    if (dto.billAmount !== null && dto.billAmount !== undefined && (dto.billAmount as any) !== '' && !customer.billNumber) {
       const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
       updateData.billNumber = `BILL-${dateStr}-${randomSuffix}`;
