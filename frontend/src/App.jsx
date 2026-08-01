@@ -8098,7 +8098,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
           { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
-          { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--purple)', onClick: () => goToProductType('Key Shops') },
+          { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => goToProductType('Key Shops') },
           { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
           { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
           { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
@@ -8156,7 +8156,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           Support card spanning both columns. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--purple)', onClick: () => goToProductType('Key Shops') },
+        { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => goToProductType('Key Shops') },
         { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
         { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
