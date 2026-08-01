@@ -133,6 +133,11 @@ export class CustomerService {
       throw new NotFoundException('Customer record not found');
     }
 
+    let encryptedIdNumber = undefined;
+    if (dto.idProofNumber !== undefined && dto.idProofNumber !== null) {
+      encryptedIdNumber = dto.idProofNumber ? this.encryptionService.encrypt(dto.idProofNumber) : null;
+    }
+
     const updateData: any = {
       name: dto.name,
       phone: dto.phone,
@@ -154,6 +159,9 @@ export class CustomerService {
       homeOfficeName: dto.homeOfficeName || null,
       vehicleCategory: dto.vehicleCategory || null,
     };
+    if (encryptedIdNumber !== undefined) {
+      updateData.idProofNumber = encryptedIdNumber;
+    }
 
     if (dto.billAmount !== null && dto.billAmount !== undefined && (dto.billAmount as any) !== '' && !customer.billNumber) {
       const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
@@ -329,6 +337,11 @@ export class CustomerService {
       throw new NotFoundException('Customer record not found');
     }
 
+    let encryptedIdNumber = undefined;
+    if (dto.idProofNumber !== undefined && dto.idProofNumber !== null) {
+      encryptedIdNumber = dto.idProofNumber ? this.encryptionService.encrypt(dto.idProofNumber) : null;
+    }
+
     const updateData: any = {
       name: dto.name,
       phone: dto.phone,
@@ -337,6 +350,7 @@ export class CustomerService {
       reason: dto.reason,
       keyNumber: dto.keyNumber || null,
       keyType: dto.keyType || null,
+      vehicleNumber: dto.vehicleNumber || null,
       masterKeyId: dto.masterKeyId || null,
       latitude: dto.latitude || null,
       longitude: dto.longitude || null,
@@ -349,6 +363,9 @@ export class CustomerService {
       homeOfficeName: dto.homeOfficeName || null,
       vehicleCategory: dto.vehicleCategory || null,
     };
+    if (encryptedIdNumber !== undefined) {
+      updateData.idProofNumber = encryptedIdNumber;
+    }
 
     if (dto.billAmount !== null && dto.billAmount !== undefined && (dto.billAmount as any) !== '' && !customer.billNumber) {
       const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');

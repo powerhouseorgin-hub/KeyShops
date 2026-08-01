@@ -112,6 +112,10 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
             ${infoRow('&#127380;', 'ID Verification Type', idType)}
             ${infoRow('&#128195;', 'ID Number', idNumber)}
             ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : NOT_AVAILABLE)}
+            ${(customer.documents && customer.documents.length > 0) ? customer.documents.map(d => {
+              const dtName = (d.documentType || d.type || 'Document').replace(/\s+Copy$/i, '');
+              return infoRow('&#128196;', 'Attached Document', dtName);
+            }).join('') : ''}
           </table>
         </div>
 

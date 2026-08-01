@@ -152,7 +152,6 @@ export const downloadAsset = async (url, filename) => {
         fileName: safeName,
         mimeType: guessMimeType(safeName),
       });
-      window.alert(`"${safeName}" downloaded to your Downloads folder.`);
     } catch (err) {
       console.warn('Direct save to Downloads failed, falling back to share sheet:', err);
       try {

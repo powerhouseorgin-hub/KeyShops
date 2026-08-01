@@ -57,6 +57,16 @@ import keyShopLogo from './assets/branding/keyshop-logo.png';
 // recent one first.
 const backHandlerStack = [];
 
+const ALL_DOC_TYPES = [
+  'Aadhaar Card',
+  'Driving License',
+  'RC Book',
+  'Passport',
+  'Voter ID',
+  'PAN Card',
+  'Additional Document'
+];
+
 // Registers `onBack` to run once the next time hardware Back is pressed,
 // for as long as `active` is true (e.g. `showAddModal`, or `step > 1` in a
 // wizard). Automatically unregisters when `active` flips back to false or
@@ -9473,7 +9483,9 @@ function SuperCustomersView({ t, api, searchDispatch }) {
   // required Shop dropdown on Step 1 (see superAdminMode prop).
   const [shops, setShops] = useState([]);
   const [showCreateWizard, setShowCreateWizard] = useState(false);
+  const [fullEditCust, setFullEditCust] = useState(null);
   useBackHandler(showCreateWizard, () => setShowCreateWizard(false));
+  useBackHandler(!!fullEditCust, () => setFullEditCust(null));
 
   useEffect(() => {
     fetchCustomers();
@@ -9940,12 +9952,14 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                         address: viewCust.capturedAddress || viewCust.address || '',
                         shopName: shopRes?.name || 'Key Shops',
                       }).toString();
-                      const downloadUrl = `https://keee-7d6cb.web.app/?${queryParams}`;
-                      const msg = `Hi ${viewCust.name},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
+                      const downloadUrl = `https://keee-7d6cb.web.app/?downloadDoc=${viewCust.id}`;
+                      const msg = `Hi ${viewCust.name || 'Customer'},\n\nThank you for choosing Key Shops.\n\nPlease find your Key Registration document attached.\n\nYou can also download it anytime using the link below:\n\n${downloadUrl}`;
+                      const cleanPhone = (viewCust.phone || '').replace(/[^0-9]/g, '');
                       if (Capacitor.isNativePlatform()) {
                         await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: msg });
                       } else {
-                        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
+                        const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+                        window.open(waUrl, '_blank');
                         await downloadPdf(pdf, safeName);
                       }
                     } catch (e) {
@@ -9960,11 +9974,37 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                   <span>Share WhatsApp</span>
                 </button>
               </div>
-              <button onClick={() => setViewCust(null)} className="btn btn-ghost">{t('closeFileBtn')}</button>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setFullEditCust(viewCust)}
+                  className="btn btn-primary btn-sm"
+                >
+                  <Edit className="h-4 w-4" />
+                  <span>{t('editDetailsBtn')}</span>
+                </button>
+                <button onClick={() => setViewCust(null)} className="btn btn-ghost">{t('closeFileBtn')}</button>
+              </div>
             </div>
           </div>
         </div>,
         document.body
+      )}
+
+      {fullEditCust && (
+        <FullCustomerEditModal
+          t={t}
+          api={api}
+          customer={fullEditCust}
+          superAdminMode={user?.role === 'SUPER_ADMIN'}
+          shops={shops}
+          onSave={(updated) => {
+            setFullEditCust(null);
+            if (viewCust) setViewCust(updated);
+            fetchCustomers();
+          }}
+          onClose={() => setFullEditCust(null)}
+        />
       )}
     </div>
   );
@@ -12615,7 +12655,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     const newDocs = [...uploadedDocs, { type: idProofType, file }];
     setUploadedDocs(newDocs);
 
-    const remaining = ['Aadhaar Card', 'Driving License', 'PAN Card', 'Voter ID'].filter(
+    const remaining = ALL_DOC_TYPES.filter(
       t => !newDocs.some(d => d.type === t)
     );
     if (remaining.length > 0) {
@@ -13167,12 +13207,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><FileCheck /></div><b>{t('documentTypeLabel')}</b></div>
                   <CustomSelect
                     value={idProofType} onChange={setIdProofType}
-                    options={[
-                      { value: 'Aadhaar Card', label: t('aadhaarCardLabel'), disabled: uploadedDocs.some(d => d.type === 'Aadhaar Card') },
-                      { value: 'Driving License', label: t('drivingLicenseLabel'), disabled: uploadedDocs.some(d => d.type === 'Driving License') },
-                      { value: 'PAN Card', label: t('panCardLabel'), disabled: uploadedDocs.some(d => d.type === 'PAN Card') },
-                      { value: 'Voter ID', label: t('voterIdLabel'), disabled: uploadedDocs.some(d => d.type === 'Voter ID') },
-                    ]}
+                    options={ALL_DOC_TYPES.map(dt => ({
+                      value: dt,
+                      label: dt,
+                      disabled: uploadedDocs.some(d => d.type === dt)
+                    }))}
                   />
                 </div>
                 {IS_NATIVE_APP && (
@@ -13452,6 +13491,274 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 }
 
 // ============================================================================
+// COMPONENT: FULL CUSTOMER EDIT MODAL
+// ============================================================================
+function FullCustomerEditModal({ t, api, customer, superAdminMode = false, shops = [], onSave, onClose }) {
+  const { user } = useAuth();
+  const [name, setName] = useState(customer.name || '');
+  const [phone, setPhone] = useState(customer.phone || '');
+  const [address, setAddress] = useState(customer.address || '');
+  const [capturedAddress, setCapturedAddress] = useState(customer.capturedAddress || '');
+  const [idProofType, setIdProofType] = useState(customer.idProofType || customer.idType || 'Aadhaar Card');
+  const [idProofNumber, setIdProofNumber] = useState(customer.idProofNumber || customer.idNumber || '');
+  const [reason, setReason] = useState(customer.reason || '');
+
+  const [vehicleCategory, setVehicleCategory] = useState(customer.vehicleCategory || customer.lockCategory || customer.keyType || 'Two Wheeler');
+  const [vehicleName, setVehicleName] = useState(customer.vehicleName || '');
+  const [homeOfficeName, setHomeOfficeName] = useState(customer.homeOfficeName || '');
+  const [vehicleNumber, setVehicleNumber] = useState(customer.vehicleNumber || '');
+  const [keyNumber, setKeyNumber] = useState(customer.keyNumber || customer.keyCode || '');
+
+  const [addKey, setAddKey] = useState(!!customer.addKey);
+  const [lostKey, setLostKey] = useState(!!customer.lostKey);
+  const [billNumber, setBillNumber] = useState(customer.billNumber || customer.billId || '');
+  const [billAmount, setBillAmount] = useState(customer.billAmount != null ? String(customer.billAmount) : '');
+
+  const [latitude, setLatitude] = useState(customer.latitude || null);
+  const [longitude, setLongitude] = useState(customer.longitude || null);
+
+  const [selectedShopId, setSelectedShopId] = useState(customer.shopId || customer.shop?.id || '');
+  const [stagedPhoto, setStagedPhoto] = useState(null);
+  const [stagedDocs, setStagedDocs] = useState([]);
+  const [newDocType, setNewDocType] = useState('Aadhaar Card');
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  const isAutomobile = isAutomobileCategory(vehicleCategory);
+
+  const handleStageDocument = (file) => {
+    if (!file) return;
+    setStagedDocs(prev => [...prev, { type: newDocType, file }]);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    try {
+      const updateDto = {
+        name,
+        phone,
+        address,
+        capturedAddress: capturedAddress || address,
+        idProofType,
+        idProofNumber,
+        reason,
+        vehicleCategory,
+        vehicleName: isAutomobile ? vehicleName : null,
+        homeOfficeName: !isAutomobile ? homeOfficeName : null,
+        vehicleNumber: isAutomobile ? vehicleNumber : null,
+        keyNumber,
+        addKey,
+        lostKey,
+        billNumber,
+        billAmount: billAmount !== '' ? Number(billAmount) : null,
+        latitude,
+        longitude,
+        ...(superAdminMode && selectedShopId ? { shopId: selectedShopId } : {})
+      };
+
+      let updated;
+      if (superAdminMode && api.updateSuperCustomer) {
+        updated = await api.updateSuperCustomer(customer.id, updateDto);
+      } else {
+        updated = await api.updateCustomer(customer.id, updateDto);
+      }
+
+      if (stagedPhoto) {
+        await api.uploadDocument(customer.id, 'Customer Photo', stagedPhoto);
+      }
+
+      for (const doc of stagedDocs) {
+        await api.uploadDocument(customer.id, doc.type, doc.file);
+      }
+
+      let finalCustomer = updated;
+      if (superAdminMode && api.getSuperCustomers) {
+        try {
+          const list = await api.getSuperCustomers(customer.id);
+          if (list) finalCustomer = Array.isArray(list) ? list.find(c => c.id === customer.id) || list[0] : list;
+        } catch (e) {}
+      }
+
+      window.dispatchEvent(new CustomEvent('customer_updated'));
+      alert(t('customerComplianceRecordUpdatedMsg') || 'Customer details updated successfully!');
+      onSave(finalCustomer || updated);
+    } catch (err) {
+      console.error('Failed to save customer edits:', err);
+      alert(err.message || 'Could not update customer details.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  return createPortal(
+    <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-8" style={{ background: 'rgba(5,4,3,0.85)' }}>
+      <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 720, margin: 'auto', padding: 28 }}>
+        <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 20 }}>
+          <div>
+            <span className="eyebrow" style={{ marginBottom: 4 }}><Edit /> Edit Customer Registration</span>
+            <h2 style={{ fontSize: 20 }}>{customer.name}</h2>
+          </div>
+          <button onClick={onClose} className="icon-btn"><X className="h-5 w-5" /></button>
+        </div>
+
+        <form onSubmit={handleSave} className="space-y-6">
+          {/* Section 1: Customer Information */}
+          <div className="reg-section">
+            <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gold)', marginBottom: 14, fontWeight: 800 }}>1. Customer Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="reg-field">
+                <div className="reg-field-label"><b>Customer Full Name</b></div>
+                <div className="input-wrap"><input type="text" required value={name} onChange={e => setName(e.target.value)} /></div>
+              </div>
+              <div className="reg-field">
+                <div className="reg-field-label"><b>Mobile Phone Number</b></div>
+                <div className="input-wrap"><input type="tel" required value={phone} onChange={e => setPhone(e.target.value)} /></div>
+              </div>
+              <div className="reg-field md:col-span-2">
+                <div className="reg-field-label"><b>Customer Address</b></div>
+                <div className="input-wrap"><input type="text" value={address} onChange={e => setAddress(e.target.value)} /></div>
+              </div>
+              <div className="reg-field">
+                <div className="reg-field-label"><b>ID Verification Type</b></div>
+                <CustomSelect
+                  value={idProofType}
+                  onChange={setIdProofType}
+                  options={ALL_DOC_TYPES.map(dt => ({ value: dt, label: dt }))}
+                />
+              </div>
+              <div className="reg-field">
+                <div className="reg-field-label"><b>ID Proof Number</b></div>
+                <div className="input-wrap"><input type="text" value={idProofNumber} onChange={e => setIdProofNumber(e.target.value)} /></div>
+              </div>
+              {superAdminMode && shops && shops.length > 0 && (
+                <div className="reg-field md:col-span-2">
+                  <div className="reg-field-label"><b>Assigned Key Shop</b></div>
+                  <CustomSelect
+                    value={selectedShopId}
+                    onChange={setSelectedShopId}
+                    options={shops.map(s => ({ value: s.id, label: s.name }))}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section 2: Key & Vehicle Details */}
+          <div className="reg-section">
+            <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gold)', marginBottom: 14, fontWeight: 800 }}>2. Key & Vehicle Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="reg-field">
+                <div className="reg-field-label"><b>Vehicle / Key Category</b></div>
+                <CustomSelect
+                  value={vehicleCategory}
+                  onChange={setVehicleCategory}
+                  options={VEHICLE_CATEGORIES.map(c => ({ value: c.id, label: c.name }))}
+                />
+              </div>
+              <div className="reg-field">
+                <div className="reg-field-label"><b>Key Blank / Key Code</b></div>
+                <div className="input-wrap"><input type="text" value={keyNumber} onChange={e => setKeyNumber(e.target.value)} /></div>
+              </div>
+              {isAutomobile ? (
+                <>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><b>Vehicle Name / Model</b></div>
+                    <div className="input-wrap"><input type="text" value={vehicleName} onChange={e => setVehicleName(e.target.value)} placeholder="e.g. Swift Dzire" /></div>
+                  </div>
+                  <div className="reg-field">
+                    <div className="reg-field-label"><b>Vehicle Number</b></div>
+                    <div className="input-wrap"><input type="text" value={vehicleNumber} onChange={e => setVehicleNumber(e.target.value)} placeholder="e.g. TN01AB1234" /></div>
+                  </div>
+                </>
+              ) : (
+                <div className="reg-field md:col-span-2">
+                  <div className="reg-field-label"><b>Home / Office Key Description</b></div>
+                  <div className="input-wrap"><input type="text" value={homeOfficeName} onChange={e => setHomeOfficeName(e.target.value)} placeholder="e.g. Main Gate Godrej Lock" /></div>
+                </div>
+              )}
+              <div className="reg-field md:col-span-2">
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" checked={addKey} onChange={e => setAddKey(e.target.checked)} className="checkbox" />
+                    <span style={{ fontWeight: 700, fontSize: 13 }}>Add Key</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" checked={lostKey} onChange={e => setLostKey(e.target.checked)} className="checkbox" />
+                    <span style={{ fontWeight: 700, fontSize: 13 }}>Lost Key</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 3: Billing & Financial Details */}
+          <div className="reg-section">
+            <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gold)', marginBottom: 14, fontWeight: 800 }}>3. Billing & Financial Details</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="reg-field">
+                <div className="reg-field-label"><b>Bill ID / Number</b></div>
+                <div className="input-wrap"><input type="text" value={billNumber} onChange={e => setBillNumber(e.target.value)} placeholder="e.g. BILL-2026-1029" /></div>
+              </div>
+              <div className="reg-field">
+                <div className="reg-field-label"><b>Bill Amount (₹)</b></div>
+                <div className="input-wrap"><input type="number" step="0.01" value={billAmount} onChange={e => setBillAmount(e.target.value)} placeholder="0.00" /></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 4: Customer Snapshot & Documents */}
+          <div className="reg-section">
+            <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '.06em', color: 'var(--gold)', marginBottom: 14, fontWeight: 800 }}>4. Customer Snapshot & Documents</h3>
+            <div className="space-y-4">
+              {customer.photoUrl && (
+                <div className="flex items-center gap-4">
+                  <img src={getAssetUrl(customer.photoUrl)} alt="Customer" style={{ width: 60, height: 60, borderRadius: 12, objectFit: 'cover', border: '1px solid var(--border)' }} />
+                  <span style={{ fontSize: 12, color: 'var(--text-2)' }}>Current Photograph On File</span>
+                </div>
+              )}
+
+              <div className="reg-field">
+                <div className="reg-field-label"><b>Upload Additional Document</b></div>
+                <div className="flex items-center gap-3">
+                  <CustomSelect
+                    value={newDocType}
+                    onChange={setNewDocType}
+                    options={ALL_DOC_TYPES.map(dt => ({ value: dt, label: dt }))}
+                  />
+                  <label className="btn btn-outline btn-sm cursor-pointer whitespace-nowrap">
+                    <Upload style={{ width: 14, height: 14 }} /> Browse File
+                    <input type="file" className="hidden" accept="image/jpeg,image/png,application/pdf" onChange={e => handleStageDocument(e.target.files[0])} />
+                  </label>
+                </div>
+                {stagedDocs.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    {stagedDocs.map((sd, sdi) => (
+                      <div key={sdi} style={{ fontSize: 11, color: 'var(--green)', fontWeight: 700 }}>
+                        + Staged document: {sd.type} ({sd.file.name})
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3" style={{ borderTop: '1px solid var(--border)', paddingTop: 18 }}>
+            <button type="button" onClick={onClose} className="btn btn-ghost">Cancel</button>
+            <button type="submit" disabled={isSaving} className="btn btn-primary">
+              {isSaving ? <RefreshCw className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4" />}
+              <span>Save Customer Changes</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+// ============================================================================
 // COMPONENT 10: CUSTOMER HISTORY LOOKUP (SHOP ADMIN ONLY)
 // ============================================================================
 function CustomerHistoryView({ t, api, searchDispatch }) {
@@ -13507,14 +13814,20 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
       const shop = await ensureShopInfo();
       const pdf = await buildCustomerReportPdf({ customer: c, shop, registeredByName: user?.name });
       const safeName = `${(c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Key_Registration_Report.pdf`;
-      await sharePdf(pdf, safeName, {
-        title: 'Customer Key Registration Report',
-        fallbackText: `${c.name} - Key: ${c.keyNumber}${c.keyType ? ` (${c.keyType})` : ''} - Phone: ${c.phone}`,
-      });
+      const downloadUrl = `https://keee-7d6cb.web.app/?downloadDoc=${c.id}`;
+      const msg = `Hi ${c.name || 'Customer'},\n\nThank you for choosing Key Shops.\n\nPlease find your Key Registration document attached.\n\nYou can also download it anytime using the link below:\n\n${downloadUrl}`;
+      const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
+      if (Capacitor.isNativePlatform()) {
+        await sharePdf(pdf, safeName, { title: 'Customer Key Registration Report', fallbackText: msg });
+      } else {
+        const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+        window.open(waUrl, '_blank');
+        await downloadPdf(pdf, safeName);
+      }
     } catch (err) {
       if (err && err.name !== 'AbortError') {
         console.error('Failed to share customer report PDF:', err);
-        window.alert('Could not share the report PDF. Please try again.');
+        alert('Could not share the report PDF. Please try again.');
       }
     } finally {
       setReportBusyId(null);
@@ -13530,6 +13843,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
   }, [searchDispatch?.nonce]);
 
   // Edit States
+  const [fullEditCust, setFullEditCust] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [editPhoneVal, setEditPhoneVal] = useState('');

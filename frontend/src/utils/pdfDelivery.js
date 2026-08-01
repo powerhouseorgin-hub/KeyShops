@@ -20,7 +20,6 @@ export async function downloadPdf(pdf, filename) {
     const { uri } = await Filesystem.getUri({ path: filename, directory: Directory.Cache });
     try {
       await SaveToDownloads.saveFile({ sourcePath: uri, fileName: filename, mimeType: 'application/pdf' });
-      window.alert(`"${filename}" downloaded to your Downloads folder.`);
     } catch (err) {
       console.warn('Direct save to Downloads failed, falling back to share sheet:', err);
       try {
