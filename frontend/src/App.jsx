@@ -11247,7 +11247,7 @@ function CategoryShopsView({ categoryKey, title, description, accentColor, icon:
   const fetchDealers = async () => {
     setLoading(true);
     try {
-      const res = await api.searchPublicShops(query);
+      const res = await api.searchPublicShops(query, categoryKey);
       setDealers(Array.isArray(res) ? res : []);
     } catch (e) {
       console.error('Failed to fetch category dealers', e);
@@ -11262,7 +11262,9 @@ function CategoryShopsView({ categoryKey, title, description, accentColor, icon:
 
     let matchesCategory = false;
     if (categoryKey === 'KEY_SHOPS') {
-      matchesCategory = catName.includes('key') || catName.includes('key shop') || shopName.includes('key');
+      const isOtherCategory = catName.includes('ecm') || catName.includes('meter') || catName.includes('scan') ||
+                              shopName.includes('ecm') || shopName.includes('meter') || shopName.includes('scan');
+      matchesCategory = !isOtherCategory;
     } else if (categoryKey === 'ECM') {
       matchesCategory = catName.includes('ecm') || shopName.includes('ecm');
     } else if (categoryKey === 'METER') {

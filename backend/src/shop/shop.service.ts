@@ -176,20 +176,46 @@ export class ShopService {
   // Deliberately unauthenticated (see PublicShopController) and therefore must only
   // ever return safe, non-sensitive fields - no GST/financial info, no user/admin
   // records, no documents. Only active shops are visible publicly.
-  async searchPublicShops(query?: string) {
+  async searchPublicShops(query?: string, category?: string) {
     const whereClause: any = { isActive: true };
 
-    if (query) {
-      whereClause.OR = [
-        { name: { contains: query, mode: 'insensitive' } },
-        // companyDetails is a JSON-encoded string ({ address, phone, gst, ... }) -
-        // `contains` on the raw string still matches free-text address searches
-        // (e.g. a city or locality name) since the address value is embedded as
-        // plain text within it.
-        { companyDetails: { contains: query, mode: 'insensitive' } },
-        // Shop Category/Type (e.g. "Dealers"), matched by category name.
-        { category: { name: { contains: query, mode: 'insensitive' } } },
+    if (category) {
+      const catUpper = category.trim().toUpperCase();
+      let matchedTerm = category;
+      if (catUpper === 'KEY_SHOPS' || catUpper === 'KEY SHOPS' || catUpper === 'KEY') {
+        matchedTerm = 'Key';
+      } else if (catUpper === 'ECM') {
+        matchedTerm = 'ECM';
+      } else if (catUpper === 'METER') {
+        matchedTerm = 'Meter';
+      } else if (catUpper === 'SCANNER' || catUpper === 'SCANNING') {
+        matchedTerm = 'Scan';
+      }
+
+      whereClause.AND = [
+        {
+          OR: [
+            { category: { name: { contains: matchedTerm, mode: 'insensitive' } } },
+            { companyDetails: { contains: matchedTerm, mode: 'insensitive' } },
+            { name: { contains: matchedTerm, mode: 'insensitive' } },
+          ],
+        },
       ];
+    }
+
+    if (query) {
+      const queryFilter = {
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { companyDetails: { contains: query, mode: 'insensitive' } },
+          { category: { name: { contains: query, mode: 'insensitive' } } },
+        ],
+      };
+      if (whereClause.AND) {
+        whereClause.AND.push(queryFilter);
+      } else {
+        whereClause.AND = [queryFilter];
+      }
     }
 
     const shops = await this.tenantService.prisma.shop.findMany({

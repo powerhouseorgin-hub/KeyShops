@@ -10,7 +10,7 @@ export class PublicShopController {
   constructor(private readonly shopService: ShopService) {}
 
   @Get()
-  async search(@Query('query') query?: string) {
-    return this.shopService.searchPublicShops(query);
+  async search(@Query('query') query?: string, @Query('category') category?: string) {
+    return this.shopService.searchPublicShops(query, category);
   }
 }

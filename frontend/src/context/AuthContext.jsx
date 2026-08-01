@@ -178,8 +178,12 @@ export const AuthProvider = ({ children }) => {
     },
 
     // Public landing-page shop search (no auth) - used by the "Find a Shop" search page.
-    searchPublicShops: async (query = '') => {
-      const url = `${API_BASE}/api/public/shops${query ? `?query=${encodeURIComponent(query)}` : ''}`;
+    searchPublicShops: async (query = '', category = '') => {
+      const params = new URLSearchParams();
+      if (query) params.append('query', query);
+      if (category) params.append('category', category);
+      const qs = params.toString();
+      const url = `${API_BASE}/api/public/shops${qs ? `?${qs}` : ''}`;
       const response = await fetch(url);
       if (!response.ok) {
         const err = await response.json();
