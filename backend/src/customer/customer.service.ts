@@ -135,7 +135,7 @@ export class CustomerService {
 
     let encryptedIdNumber = undefined;
     if (dto.idProofNumber !== undefined && dto.idProofNumber !== null) {
-      encryptedIdNumber = dto.idProofNumber ? this.encryptionService.encrypt(dto.idProofNumber) : null;
+      encryptedIdNumber = dto.idProofNumber ? this.cryptoService.encrypt(dto.idProofNumber) : null;
     }
 
     const updateData: any = {
@@ -339,7 +339,7 @@ export class CustomerService {
 
     let encryptedIdNumber = undefined;
     if (dto.idProofNumber !== undefined && dto.idProofNumber !== null) {
-      encryptedIdNumber = dto.idProofNumber ? this.encryptionService.encrypt(dto.idProofNumber) : null;
+      encryptedIdNumber = dto.idProofNumber ? this.cryptoService.encrypt(dto.idProofNumber) : null;
     }
 
     const updateData: any = {
