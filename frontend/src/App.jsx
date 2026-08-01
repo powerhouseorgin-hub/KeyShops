@@ -7512,8 +7512,6 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-3 relative app-topbar-actions">
-                {/* Refer & Invite - Shop Admin only (Super Admin has no shop
-                    of its own to attach a referral code to). */}
                 {user.role !== 'SUPER_ADMIN' && (
                   <button
                     onClick={handleHeaderReferShare}
@@ -7622,10 +7620,10 @@ export default function App() {
             {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} setAutoOpenOffersTab={setAutoOpenOffersTab} setDealersCategoryFilter={setDealersCategoryFilter} />}
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
             {activeTab === 'dealers' && <DealersView t={t} api={api} />}
-            {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" title="Key Shops" description="Explore verified Key Shop partners and key duplication specialists across India." accentColor="var(--purple)" icon={KeyRound} t={t} api={api} />}
-            {activeTab === 'ecm' && <CategoryShopsView categoryKey="ECM" title="ECM" description="Explore ECM key programming and electronic control module specialists across India." accentColor="var(--orange)" image={ecmServiceImg} icon={Cpu} t={t} api={api} />}
-            {activeTab === 'meter' && <CategoryShopsView categoryKey="METER" title="Meter" description="Explore speedometer & meter calibration service partners across India." accentColor="var(--skyblue)" image={meterServiceImg} icon={Gauge} t={t} api={api} />}
-            {activeTab === 'scanning' && <CategoryShopsView categoryKey="SCANNER" title="Scanning" description="Explore vehicle diagnostic scanning and compliance service partners across India." accentColor="var(--teal)" image={scanningServiceImg} icon={ScanLine} t={t} api={api} />}
+            {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" icon={KeyRound} t={t} api={api} />}
+            {activeTab === 'ecm' && <CategoryShopsView categoryKey="ECM" icon={Cpu} t={t} api={api} />}
+            {activeTab === 'meter' && <CategoryShopsView categoryKey="METER" icon={Gauge} t={t} api={api} />}
+            {activeTab === 'scanning' && <CategoryShopsView categoryKey="SCANNER" icon={ScanLine} t={t} api={api} />}
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
@@ -7996,12 +7994,12 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         <DashCardGrid items={[
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
-          { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
-          { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--purple)', onClick: () => goToProductType('Key Shops') },
-          { title: 'Used Machines', description: 'View and manage used machines', image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
-          { title: 'ECM', description: 'Manage ECM records', image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
-          { title: 'Scanning', description: 'Scan & process compliance entries', image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
-          { title: 'Meter', description: 'Track and manage meter records', image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
+          { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
+          { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--purple)', onClick: () => goToProductType('Key Shops') },
+          { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
+          { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
+          { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
+          { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
           { title: t('offersLabel'), description: 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: goToOffers },
           { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
         ]} />
@@ -8055,12 +8053,12 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           Support card spanning both columns. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: 'Key Shops', description: 'Explore verified key shop partners', image: keyShopLogo, accent: 'var(--purple)', onClick: () => goToProductType('Key Shops') },
-        { title: 'Dealers', description: 'Verified dealers & locksmith partners', image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
-        { title: 'Used Machines', description: 'View and manage used machines', image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
-        { title: 'ECM', description: 'Manage ECM records', image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
-        { title: 'Scanning', description: 'Scan & process compliance entries', image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
-        { title: 'Meter', description: 'Track and manage meter records', image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
+        { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--purple)', onClick: () => goToProductType('Key Shops') },
+        { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
+        { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
+        { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
+        { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
+        { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
         { title: t('offersLabel'), description: 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
         { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
       ]} />
@@ -11234,15 +11232,14 @@ function OffersAdsBannersView({ t, api }) {
 // Displays shops belonging specifically to Key Shops, ECM, Meter, or Scanning.
 // Each screen has its own Title, Search, Filter, and Responsive Layout.
 // ============================================================================
-function CategoryShopsView({ categoryKey, title, description, accentColor, icon: IconComponent, image, t, api }) {
+function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) {
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('ALL');
 
   useEffect(() => {
     fetchDealers();
-  }, [query]);
+  }, [query, categoryKey]);
 
   const fetchDealers = async () => {
     setLoading(true);
@@ -11256,14 +11253,36 @@ function CategoryShopsView({ categoryKey, title, description, accentColor, icon:
     }
   };
 
+  let title = t('dealers');
+  let description = t('dealersDesc');
+  let accentColor = 'var(--gold)';
+
+  if (categoryKey === 'KEY_SHOPS') {
+    title = t('keyShops');
+    description = t('keyShopsDesc');
+    accentColor = 'var(--purple)';
+  } else if (categoryKey === 'ECM') {
+    title = t('ecm');
+    description = t('ecmDesc');
+    accentColor = 'var(--orange)';
+  } else if (categoryKey === 'METER') {
+    title = t('meter');
+    description = t('meterDesc');
+    accentColor = 'var(--skyblue)';
+  } else if (categoryKey === 'SCANNER') {
+    title = t('scanning');
+    description = t('scanningDesc');
+    accentColor = 'var(--teal)';
+  }
+
   const filteredShops = dealers.filter((dealer) => {
     const catName = (dealer.category || '').toLowerCase();
     const shopName = (dealer.name || '').toLowerCase();
 
     let matchesCategory = false;
     if (categoryKey === 'KEY_SHOPS') {
-      const isOtherCategory = catName.includes('ecm') || catName.includes('meter') || catName.includes('scan') ||
-                              shopName.includes('ecm') || shopName.includes('meter') || shopName.includes('scan');
+      const isOtherCategory = catName.includes('ecm') || catName.includes('meter') || catName.includes('scan') || catName.includes('dealer') ||
+                              shopName.includes('ecm') || shopName.includes('meter') || shopName.includes('scan') || shopName.includes('dealer');
       matchesCategory = !isOtherCategory;
     } else if (categoryKey === 'ECM') {
       matchesCategory = catName.includes('ecm') || shopName.includes('ecm');
@@ -11275,15 +11294,7 @@ function CategoryShopsView({ categoryKey, title, description, accentColor, icon:
       matchesCategory = true;
     }
 
-    if (!matchesCategory) return false;
-
-    if (statusFilter === 'ACTIVE') {
-      return dealer.isActive !== false;
-    }
-    if (statusFilter === 'VERIFIED') {
-      return dealer.isVerified === true;
-    }
-    return true;
+    return matchesCategory;
   });
 
   return (
@@ -11292,56 +11303,28 @@ function CategoryShopsView({ categoryKey, title, description, accentColor, icon:
         <div>
           <div className="eyebrow" style={{ color: accentColor }}>
             {IconComponent ? <IconComponent className="h-4 w-4 inline-block mr-1" /> : <Store className="h-4 w-4 inline-block mr-1" />}
-            {title} Directory
+            {title} {t('directory') || 'Directory'}
           </div>
           <h1>{title}</h1>
           <p>{description}</p>
         </div>
       </div>
 
-      {/* Search & Status Filter Row */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+      {/* Search Bar - Filter buttons completely removed per user request */}
+      <div style={{ marginBottom: 16 }}>
         <div className="search-box" style={{ width: '100%' }}>
           <Search />
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Search ${title} shops by name, address, phone...`}
+            placeholder={t('searchDealersPlaceholder') || 'Search shops by name, address, phone...'}
           />
           {query && (
             <button onClick={() => setQuery('')} className="icon-btn" style={{ width: 26, height: 26 }}>
               <X className="h-3.5 w-3.5" />
             </button>
           )}
-        </div>
-
-        <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4 }}>
-          {[
-            { id: 'ALL', label: `All ${title}` },
-            { id: 'ACTIVE', label: 'Active Only' },
-            { id: 'VERIFIED', label: 'Verified Partners' },
-          ].map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              className={`store-tab ${statusFilter === f.id ? 'active' : ''}`}
-              style={{
-                padding: '7px 14px',
-                fontSize: 12,
-                borderRadius: 999,
-                background: statusFilter === f.id ? accentColor : 'var(--card-2)',
-                color: statusFilter === f.id ? '#ffffff' : 'var(--text-1)',
-                border: `1.5px solid ${statusFilter === f.id ? accentColor : 'var(--border-2)'}`,
-                cursor: 'pointer',
-                fontWeight: 700,
-                whiteSpace: 'nowrap',
-              }}
-              onClick={() => setStatusFilter(f.id)}
-            >
-              {f.label}
-            </button>
-          ))}
         </div>
       </div>
 

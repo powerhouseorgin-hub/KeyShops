@@ -181,26 +181,58 @@ export class ShopService {
 
     if (category) {
       const catUpper = category.trim().toUpperCase();
-      let matchedTerm = category;
-      if (catUpper === 'KEY_SHOPS' || catUpper === 'KEY SHOPS' || catUpper === 'KEY') {
-        matchedTerm = 'Key';
+      if (catUpper === 'KEY_SHOPS' || catUpper === 'KEY SHOPS' || catUpper === 'KEY_SHOP') {
+        whereClause.AND = [
+          {
+            OR: [
+              { category: { name: { contains: 'Key Shop', mode: 'insensitive' } } },
+              { companyDetails: { contains: 'Key Shop', mode: 'insensitive' } },
+            ],
+          },
+          {
+            NOT: [
+              { category: { name: { contains: 'Dealer', mode: 'insensitive' } } },
+              { companyDetails: { contains: 'Dealer', mode: 'insensitive' } },
+            ],
+          },
+        ];
+      } else if (catUpper === 'DEALERS' || catUpper === 'DEALER') {
+        whereClause.AND = [
+          {
+            OR: [
+              { category: { name: { contains: 'Dealer', mode: 'insensitive' } } },
+              { companyDetails: { contains: 'Dealer', mode: 'insensitive' } },
+            ],
+          },
+        ];
       } else if (catUpper === 'ECM') {
-        matchedTerm = 'ECM';
+        whereClause.AND = [
+          {
+            OR: [
+              { category: { name: { contains: 'ECM', mode: 'insensitive' } } },
+              { companyDetails: { contains: 'ECM', mode: 'insensitive' } },
+            ],
+          },
+        ];
       } else if (catUpper === 'METER') {
-        matchedTerm = 'Meter';
+        whereClause.AND = [
+          {
+            OR: [
+              { category: { name: { contains: 'Meter', mode: 'insensitive' } } },
+              { companyDetails: { contains: 'Meter', mode: 'insensitive' } },
+            ],
+          },
+        ];
       } else if (catUpper === 'SCANNER' || catUpper === 'SCANNING') {
-        matchedTerm = 'Scan';
+        whereClause.AND = [
+          {
+            OR: [
+              { category: { name: { contains: 'Scan', mode: 'insensitive' } } },
+              { companyDetails: { contains: 'Scan', mode: 'insensitive' } },
+            ],
+          },
+        ];
       }
-
-      whereClause.AND = [
-        {
-          OR: [
-            { category: { name: { contains: matchedTerm, mode: 'insensitive' } } },
-            { companyDetails: { contains: matchedTerm, mode: 'insensitive' } },
-            { name: { contains: matchedTerm, mode: 'insensitive' } },
-          ],
-        },
-      ];
     }
 
     if (query) {
