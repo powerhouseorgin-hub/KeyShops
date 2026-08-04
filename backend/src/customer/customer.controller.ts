@@ -18,9 +18,19 @@ export class CustomerController {
     return this.customerService.createCustomer(req.user.shopId, dto);
   }
 
+  // cursor/limit are optional - see CustomerService.getCustomers for how
+  // omitting `limit` preserves the original unpaginated behavior (used by
+  // the global-search route below and a couple of other unpaginated
+  // consumers); the Customer History screen passes `limit` to page through
+  // everything.
   @Get()
-  async getCustomers(@Request() req, @Query('search') search?: string) {
-    return this.customerService.getCustomers(req.user.shopId, search);
+  async getCustomers(
+    @Request() req,
+    @Query('search') search?: string,
+    @Query('cursor') cursor?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.customerService.getCustomers(req.user.shopId, search, { cursor, limit: limit ? Number(limit) : undefined });
   }
 
   // Despite the route name, this powers the Shop Admin's own dashboard

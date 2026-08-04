@@ -190,8 +190,16 @@ export class CustomerService {
     return this.decryptCustomerPII(updated);
   }
 
-  // SHOP ADMIN: List / Search Customers
-  async getCustomers(shopId: string, query?: string) {
+  // SHOP ADMIN: List / Search Customers.
+  //
+  // Pagination is opt-in via `pageOpts.limit`, same additive pattern as
+  // CustomerService.getSuperCustomers - omitting it preserves the exact
+  // original unpaginated flat-array behavior, since other call sites (the
+  // global-search route, the duplicate-key scan, and the revenue-by-date
+  // report generator) rely on that shape and aren't part of the Customer
+  // History screen this pagination was added for.
+  async getCustomers(shopId: string, query?: string, pageOpts: { cursor?: string; limit?: number } = {}) {
+    const { cursor, limit } = pageOpts;
     const whereClause: any = { shopId };
 
     if (query) {
@@ -204,20 +212,34 @@ export class CustomerService {
       ];
     }
 
-    const customers = await this.tenantService.prisma.customer.findMany({
-      where: whereClause,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
-        masterKey: { select: { category: true } },
-        // Mirrors getSuperCustomers()'s shape - the shared KeysSearchView
-        // detail panel reads customer.shop.name/companyDetails regardless of
-        // which role's endpoint supplied the result.
-        shop: { select: { name: true, companyDetails: true } },
-      },
-    });
+    const include = {
+      documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' as const } },
+      masterKey: { select: { category: true } },
+      // Mirrors getSuperCustomers()'s shape - the shared KeysSearchView
+      // detail panel reads customer.shop.name/companyDetails regardless of
+      // which role's endpoint supplied the result.
+      shop: { select: { name: true, companyDetails: true } },
+    };
 
-    return customers.map(c => this.decryptCustomerPII(c));
+    if (!limit) {
+      const customers = await this.tenantService.prisma.customer.findMany({
+        where: whereClause,
+        orderBy: { createdAt: 'desc' },
+        include,
+      });
+      return customers.map(c => this.decryptCustomerPII(c));
+    }
+
+    const rows = await this.tenantService.prisma.customer.findMany({
+      where: whereClause,
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      include,
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    });
+    const hasMore = rows.length > limit;
+    const page = hasMore ? rows.slice(0, limit) : rows;
+    return { items: page.map(c => this.decryptCustomerPII(c)), nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
   // SHOP ADMIN: Add Document to Customer

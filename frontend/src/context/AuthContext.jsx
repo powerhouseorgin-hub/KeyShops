@@ -226,6 +226,18 @@ export const AuthProvider = ({ children }) => {
 
     // --- SHOP ADMIN: CUSTOMERS ---
     getCustomers: async (search = '') => request(`/api/shop/customers?search=${search}`),
+    // Cursor-paginated variant of the same endpoint, used only by the
+    // Customer History list's infinite scroll - see
+    // CustomerService.getCustomers for why this is a separate method rather
+    // than extending getCustomers itself (several other call sites depend
+    // on its plain-flat-array, unpaginated shape).
+    getCustomersPage: async ({ search = '', cursor, limit } = {}) => {
+      const params = new URLSearchParams();
+      if (search) params.append('search', search);
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
+      return request(`/api/shop/customers?${params.toString()}`);
+    },
     getGlobalCustomersForSearch: async (search = '') => request(`/api/shop/customers/global-search?search=${search}`),
     createCustomer: async (dto) => request('/api/shop/customers', 'POST', dto),
     updateCustomer: async (id, dto) => request(`/api/shop/customers/${id}`, 'PUT', dto),

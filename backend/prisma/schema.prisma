@@ -327,6 +327,10 @@ model Customer {
   // Backs the Super Admin Customer Registry's cross-shop cursor pagination
   // (no shopId filter, ORDER BY createdAt DESC) - see CustomerService.getSuperCustomers.
   @@index([deletedAt, createdAt])
+  // Backs the Shop Admin Customer History screen's cursor pagination
+  // (WHERE shopId = X AND deletedAt IS NULL ORDER BY createdAt DESC) - see
+  // CustomerService.getCustomers.
+  @@index([shopId, deletedAt, createdAt])
 }
 
 model CustomerDocument {

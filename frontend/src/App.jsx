@@ -14033,11 +14033,29 @@ function FullCustomerEditModal({ t, api, customer, superAdminMode = false, shops
 // ============================================================================
 // COMPONENT 10: CUSTOMER HISTORY LOOKUP (SHOP ADMIN ONLY)
 // ============================================================================
+// Page size for the Customer History screen's cursor pagination - see
+// CustomerService.getCustomers.
+const CUSTOMER_HISTORY_PAGE_SIZE = 20;
+
 function CustomerHistoryView({ t, api, searchDispatch }) {
   const { user } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
+  // Infinite-scroll pagination state - `customers` only ever holds the pages
+  // loaded so far, never this shop's whole compliance history.
+  const [nextCursor, setNextCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreSentinelRef = useRef(null);
   const [search, setSearch] = useState('');
+  // Debounced before it reaches the server - see PromotionsFeed's identical
+  // pattern for why (every change now triggers a network request instead of
+  // filtering an already-fully-loaded list).
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  useEffect(() => {
+    const handle = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(handle);
+  }, [search]);
   const [selectedCust, setSelectedCust] = useState(null);
 
   // Customer report (Download/WhatsApp buttons on each row) - shop details
@@ -14159,21 +14177,55 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     }
   }, [selectedCust]);
 
-  useEffect(() => {
-    fetchHistory();
-  }, [search]);
-
+  // Loads the first page for the current search, replacing whatever was
+  // loaded before.
   const fetchHistory = async () => {
     setLoading(true);
     try {
-      const res = await api.getCustomers(search);
-      setCustomers(res);
+      const res = await api.getCustomersPage({ search: debouncedSearch, limit: CUSTOMER_HISTORY_PAGE_SIZE });
+      setCustomers(res.items);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
   };
+
+  // Appends the next page - triggered by the sentinel scrolling into view or
+  // the manual "Load More" fallback button.
+  const fetchMoreHistory = async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await api.getCustomersPage({ search: debouncedSearch, cursor: nextCursor, limit: CUSTOMER_HISTORY_PAGE_SIZE });
+      setCustomers((prev) => [...prev, ...res.items]);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHistory();
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    const node = loadMoreSentinelRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) fetchMoreHistory();
+      },
+      { rootMargin: '400px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, nextCursor, loadingMore, debouncedSearch]);
 
   const handleSaveChanges = async (e) => {
     e.preventDefault();
@@ -14313,6 +14365,20 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
               })()}
             </tbody>
           </table>
+        )}
+
+        {/* Infinite scroll (sentinel) + manual "Load More" fallback - see
+            PromotionsFeed's identical pattern for why both exist. */}
+        {!loading && hasMore && (
+          <div ref={loadMoreSentinelRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20 }}>
+            {loadingMore ? (
+              <RefreshCw className="animate-spin" style={{ width: 20, height: 20, color: 'var(--gold)' }} />
+            ) : (
+              <button type="button" onClick={fetchMoreHistory} className="btn btn-outline btn-sm">
+                {t('loadMoreBtn')}
+              </button>
+            )}
+          </div>
         )}
       </div>
 
