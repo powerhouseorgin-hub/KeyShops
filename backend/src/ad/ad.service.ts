@@ -71,13 +71,15 @@ export class AdService {
   // SHOP ADMIN: List targeted ads
   async getTargetedAds(shopId: string) {
     const now = new Date();
-    // Fetch advertisements that are currently active
+    // Fetch advertisements that are currently active - same defensive cap as
+    // getAllAds above, for consistency (ads are manually curated/low volume).
     const ads = await this.tenantService.prisma.advertisement.findMany({
       where: {
         startDate: { lte: now },
         endDate: { gte: now },
       },
       orderBy: { priority: 'desc' },
+      take: 200,
     });
 
     // Filter by targeting on application layer

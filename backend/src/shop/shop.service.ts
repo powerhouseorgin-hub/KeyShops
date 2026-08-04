@@ -425,19 +425,26 @@ export class ShopService {
   async getReferralOverview(shopId: string) {
     const referralCode = await this.getOrCreateReferralCode(shopId);
 
-    const [shop, referrals] = await Promise.all([
+    // `totalReferrals` comes from a separate count() rather than
+    // `referrals.length` so it stays accurate once the history list below is
+    // capped - a shop that keeps referring new shops for years would
+    // otherwise grow this history unbounded on a screen loaded every time
+    // Shop Settings opens.
+    const [shop, totalReferrals, referrals] = await Promise.all([
       this.tenantService.prisma.shop.findUnique({ where: { id: shopId }, select: { referralPoints: true } }),
+      this.tenantService.prisma.referral.count({ where: { referrerShopId: shopId } }),
       this.tenantService.prisma.referral.findMany({
         where: { referrerShopId: shopId },
         include: { referredShop: { select: { name: true, createdAt: true } } },
         orderBy: { createdAt: 'desc' },
+        take: 100,
       }),
     ]);
 
     return {
       referralCode,
       referralPoints: shop?.referralPoints ?? 0,
-      totalReferrals: referrals.length,
+      totalReferrals,
       history: referrals.map((r) => ({
         shopName: r.referredShop.name,
         registeredAt: r.referredShop.createdAt,

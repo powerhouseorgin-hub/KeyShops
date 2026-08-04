@@ -544,6 +544,10 @@ model RevenueRecord {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // Supports ReportService.logRevenue's WHERE {month, year} lookup and both
+  // ReportService.getRevenueRecords/getSuperDashboard's ORDER BY year, month.
+  @@index([year, month])
 }
 
 // Singleton row (fixed id "default") holding the Super Admin-managed global

@@ -100,7 +100,14 @@ export class KeyService {
     return { items: page, nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
-  // SHOP ADMIN: List/Search Keys created within their own shop only
+  // SHOP ADMIN: List/Search Keys created within their own shop only. Unlike
+  // getKeys() above, this had no cap at all - it's called on every Customer
+  // Registration wizard mount and every Blank Key Search keystroke (the
+  // highest-frequency screens in the app), and a shop's key catalog grows
+  // roughly one row per distinct key code ever registered (see
+  // CustomerService.createCustomer's masterKey.upsert), so it has no natural
+  // ceiling over a shop's lifetime. 500 is far beyond any realistic shop's
+  // catalog size today - same defensive-cap approach as AdService.getAllAds.
   async getShopKeys(shopId: string, search?: string) {
     const whereClause: any = { shopId };
     if (search) {
@@ -112,6 +119,7 @@ export class KeyService {
     return this.tenantService.prisma.masterKey.findMany({
       where: whereClause,
       orderBy: { keyNumber: 'asc' },
+      take: 500,
     });
   }
 

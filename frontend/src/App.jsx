@@ -7789,15 +7789,13 @@ export default function App() {
                         <button
                           onClick={async () => {
                             try {
-                              for (const n of notifications) {
-                                if (!n.isRead) {
-                                  if (user.role === 'SUPER_ADMIN') {
-                                    await api.markSuperNotificationRead(n.id);
-                                  } else {
-                                    await api.markNotificationRead(n.id);
-                                  }
-                                }
-                              }
+                              // Fired in parallel instead of one at a time -
+                              // this list is capped at 50 (see
+                              // NotificationService.getNotifications), so at
+                              // most 50 concurrent requests, versus up to 50
+                              // sequential round-trips one on top of another.
+                              const markRead = user.role === 'SUPER_ADMIN' ? api.markSuperNotificationRead : api.markNotificationRead;
+                              await Promise.all(notifications.filter(n => !n.isRead).map(n => markRead(n.id)));
                               fetchNotifications();
                             } catch (e) {
                               console.error(e);
@@ -13171,8 +13169,12 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       return;
     }
     try {
-      const allCusts = superAdminMode ? await api.getSuperCustomers() : await api.getCustomers();
-      const duplicate = allCusts.find(c => c.keyNumber && c.keyNumber.toLowerCase() === value.trim().toLowerCase());
+      // Passes the typed value as the search term so the backend filters
+      // server-side (WHERE keyNumber contains ...) instead of fetching every
+      // customer on the shop - or, for Super Admin, on the ENTIRE PLATFORM -
+      // just to run this exact-match check client-side over the full result.
+      const candidates = superAdminMode ? await api.getSuperCustomers(value) : await api.getCustomers(value);
+      const duplicate = candidates.find(c => c.keyNumber && c.keyNumber.toLowerCase() === value.trim().toLowerCase());
       setDuplicateKeyWarning(!!duplicate);
     } catch (e) {
       console.warn('Duplicate key validation check skipped:', e);

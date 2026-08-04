@@ -345,6 +345,10 @@ export class CustomerService {
         { name: { contains: query, mode: 'insensitive' } },
         { phone: { contains: query, mode: 'insensitive' } },
         { shop: { name: { contains: query, mode: 'insensitive' } } },
+        // Needed so App.jsx's checkDuplicateKey can search by the typed key
+        // code server-side instead of fetching every customer on the
+        // platform just to run a client-side exact-match check.
+        { keyNumber: { contains: query, mode: 'insensitive' } },
       ];
     }
     const include = {
