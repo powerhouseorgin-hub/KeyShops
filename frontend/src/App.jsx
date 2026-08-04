@@ -5978,12 +5978,11 @@ export default function App() {
           .catch(() => [])
       );
 
-      // Shops - Super Admin only, filtered client-side (no search param on this endpoint).
+      // Shops - Super Admin only, filtered server-side (name/admin name/admin email).
       if (isSuper) {
         tasks.push(
-          api.getShops()
+          api.getShops(query)
             .then(list => (list || [])
-              .filter(s => (s.name || '').toLowerCase().includes(q))
               .map(s => {
                 let phone = '';
                 try { phone = s.companyDetails ? (JSON.parse(s.companyDetails).phone || '') : ''; } catch (e) { }
@@ -6002,12 +6001,12 @@ export default function App() {
         );
       }
 
-      // Inventory products (cross-shop promotions feed), filtered client-side.
+      // Inventory products (cross-shop promotions feed), filtered server-side
+      // (title/description/productType) and scoped to PRODUCT-type listings
+      // only, instead of pulling every promotion/ad/offer on the platform.
       tasks.push(
-        api.getPromotions()
+        api.getPromotions({ search: query, type: 'PRODUCT' })
           .then(list => (list || [])
-            .filter(p => p.type === 'PRODUCT' &&
-              ((p.title || '').toLowerCase().includes(q) || (p.productType || '').toLowerCase().includes(q)))
             .map(p => ({
               type: 'product',
               key: `product-${p.id}`,
@@ -12524,8 +12523,16 @@ function KeysSearchView({ t, api, searchDispatch }) {
   const [query, setQuery] = useState('');
   const [selectedResult, setSelectedResult] = useState(null);
 
+  // Debounced (350ms, matching the dashboard's global search) so typing a
+  // query doesn't fire a fresh pair of shop-wide key/customer fetches on
+  // every keystroke - this screen has no character-count floor like the
+  // dashboard search does, so without debounce it was the worst offender.
   useEffect(() => {
-    performSearch();
+    const timer = setTimeout(() => {
+      performSearch();
+    }, 350);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   // Picks up a query dispatched from the global header search panel (filter = "Key").
@@ -12538,7 +12545,19 @@ function KeysSearchView({ t, api, searchDispatch }) {
   const performSearch = async () => {
     setLoading(true);
     try {
-      const allMasterKeys = await api.getMasterKeys();
+      // getMasterKeys is intentionally called unfiltered (not passed `query`)
+      // even though the endpoint supports server-side filtering - the full
+      // catalog is needed here so a matched customer's exact keyNumber can
+      // be looked up below regardless of whether that key's own
+      // keyNumber/category text happens to contain the typed query (e.g.
+      // searching by customer name). Both this shop-scoped catalog and the
+      // customer search are already bounded to this shop admin's own shop -
+      // debouncing above was the fix for the real cost here, which was
+      // re-running both on every keystroke, not their per-call payload size.
+      const [allMasterKeys, matchingCustomers] = await Promise.all([
+        api.getMasterKeys(),
+        api.getGlobalCustomersForSearch(query),
+      ]);
 
       let matchedKeys = allMasterKeys;
       if (query) {
@@ -12548,8 +12567,6 @@ function KeysSearchView({ t, api, searchDispatch }) {
           (k.category && k.category.toLowerCase().includes(q))
         );
       }
-
-      const matchingCustomers = await api.getGlobalCustomersForSearch(query);
 
       const items = [];
 

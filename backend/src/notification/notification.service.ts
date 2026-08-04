@@ -10,6 +10,11 @@ export class NotificationService {
   // notifications tagged audience: 'SUPER_ADMIN' — those are internal to the
   // Super Admin panel (e.g. new-shop-registration approval requests) and must
   // never be visible to any shop admin, including the shop that triggered them.
+  // Capped to the 50 most recent - this powers a notification bell dropdown,
+  // not a full history view, and a Customer registration creates one of
+  // these rows every time (see CustomerService.createCustomer), so an
+  // established shop's notification log grows unboundedly otherwise and was
+  // being fetched in full on every single login.
   async getNotifications(shopId: string) {
     return this.tenantService.prisma.notification.findMany({
       where: {
@@ -19,6 +24,7 @@ export class NotificationService {
         ],
       },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
   }
 
@@ -49,10 +55,14 @@ export class NotificationService {
   // and super-admin-only notifications (like registration requests) are visible
   // together. Shop-specific notifications (shopId set) are intentionally excluded;
   // Super Admin sees those in shop detail views, not the notification bell.
+  // Capped to the 50 most recent - same rationale as getNotifications above
+  // (a shop signup creates one of these rows every time too, see
+  // AuthService.registerShop).
   async getSuperNotifications() {
     return this.tenantService.prisma.notification.findMany({
       where: { shopId: null },
       orderBy: { createdAt: 'desc' },
+      take: 50,
     });
   }
 

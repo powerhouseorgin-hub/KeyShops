@@ -528,6 +528,11 @@ model Notification {
 
   @@index([shopId])
   @@index([shopId, audience])
+  // Supports the `orderBy: createdAt desc` used by both
+  // NotificationService.getNotifications (shopId equality) and
+  // getSuperNotifications (shopId: null equality) now that both are
+  // capped with `take` instead of returning every row unbounded.
+  @@index([shopId, createdAt])
 }
 
 model RevenueRecord {

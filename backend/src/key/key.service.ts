@@ -70,8 +70,11 @@ export class KeyService {
       shop: { select: { id: true, name: true } },
       // Surfaced in the Super Admin "Modify Key" dialog so an admin can see
       // which customer compliance record(s) this key blank is tied to
-      // before editing/removing it.
-      customers: { select: { id: true, name: true, phone: true } },
+      // before editing/removing it - capped since a popular key blank can
+      // accumulate thousands of historical customer registrations, which
+      // would otherwise bloat every row of this list/search response just
+      // to populate a dialog most keys never open.
+      customers: { select: { id: true, name: true, phone: true }, take: 20 },
     };
 
     if (!limit) {

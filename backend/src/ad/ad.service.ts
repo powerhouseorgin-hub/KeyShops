@@ -58,10 +58,13 @@ export class AdService {
     return this.tenantService.prisma.advertisement.delete({ where: { id } });
   }
 
-  // SUPER ADMIN: List all ads
+  // SUPER ADMIN: List all ads. Ads are manually curated (low volume) so this
+  // doesn't need real pagination, but a `take` cap bounds the worst case
+  // instead of leaving the query fully unbounded as the table grows.
   async getAllAds() {
     return this.tenantService.prisma.advertisement.findMany({
       orderBy: { createdAt: 'desc' },
+      take: 200,
     });
   }
 

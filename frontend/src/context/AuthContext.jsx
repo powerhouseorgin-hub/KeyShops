@@ -201,7 +201,11 @@ export const AuthProvider = ({ children }) => {
     },
 
     // --- SUPER ADMIN: SHOPS ---
-    getShops: async () => request('/api/super/shops'),
+    // `search` is optional and filters server-side (name/admin name/admin
+    // email) while still returning the full flat-array shape (no `limit`
+    // passed) - used by the dashboard's global search so it doesn't have to
+    // pull every shop on the platform just to filter client-side.
+    getShops: async (search = '') => request(`/api/super/shops${search ? `?search=${encodeURIComponent(search)}` : ''}`),
     // Cursor-paginated variant of the same endpoint, used only by the Shop
     // Management screen's infinite scroll - see ShopService.getShops for why
     // this is a separate method rather than extending getShops itself
