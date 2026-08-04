@@ -34,7 +34,10 @@ export class ShopService {
       throw new BadRequestException('Email address already registered to another user');
     }
 
-    const salt = await bcrypt.genSalt(12);
+    // 10, not 12 - see the identical PASSWORD_HASH_COST comment in
+    // AuthService for why (bcrypt cost 12 measured ~1.5-1.8s per hash on
+    // this app's actual production host).
+    const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(dto.adminPassword || 'shoppassword', salt);
 
     // Run in transaction to guarantee consistency

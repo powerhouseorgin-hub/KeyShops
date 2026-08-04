@@ -8,6 +8,15 @@ import { Role } from '@prisma/client';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 import { CryptoService } from '../crypto/crypto.service';
 
+// bcrypt's cost factor is exponential (each +1 roughly doubles the CPU time
+// spent per hash/compare) - 12 was fine on typical hardware (~200-300ms) but
+// measured ~1.5-1.8s per login on this app's actual production host (Render),
+// which has much weaker/shared CPU. 10 is still well above OWASP's current
+// minimum recommendation and cuts that cost by roughly 4x. This only affects
+// hashes created from here on - see login()'s upgrade-on-verify step below
+// for how existing users' already-cost-12 hashes get migrated transparently.
+const PASSWORD_HASH_COST = 10;
+
 @Injectable()
 export class AuthService implements OnModuleInit {
   constructor(
@@ -36,7 +45,7 @@ export class AuthService implements OnModuleInit {
         const seedName = process.env.SEED_SUPER_ADMIN_NAME || 'KEE Platform Administrator';
 
         console.log('No Super Admin found. Auto-seeding Super Admin credentials...');
-        const salt = await bcrypt.genSalt(12);
+        const salt = await bcrypt.genSalt(PASSWORD_HASH_COST);
         const passwordHash = await bcrypt.hash(seedPassword, salt);
 
         await this.tenantService.prisma.user.create({
@@ -214,8 +223,12 @@ export class AuthService implements OnModuleInit {
     // `loginDto.email` is either the account's email address or its mobile
     // number - both are valid login identifiers for a Shop Admin (see
     // RegisterShopDto/registerShop below), sharing the same password.
+    // The shop's isActive is pulled via `include` in the same query instead
+    // of a separate findUnique afterward - one DB round-trip instead of two
+    // on the critical path.
     const user = await this.tenantService.prisma.user.findFirst({
       where: { OR: [{ email: loginDto.email }, { phone: loginDto.email }] },
+      include: { shop: { select: { isActive: true } } },
     });
 
     if (!user) {
@@ -225,6 +238,21 @@ export class AuthService implements OnModuleInit {
     const isPasswordValid = await bcrypt.compare(loginDto.password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid email or password');
+    }
+
+    // Transparently upgrades this user's stored hash to the current (lower)
+    // cost factor the first time they successfully log in after the
+    // PASSWORD_HASH_COST reduction above - existing users were hashed at
+    // cost 12 (~1.5-1.8s to verify on this app's production host) and would
+    // otherwise stay that slow forever, since the cost is baked into the
+    // hash itself and there's no way to "downgrade" it without the
+    // plaintext password, which only ever exists in memory right here.
+    // Fire-and-forget: never block/slow down the login response for this.
+    if (bcrypt.getRounds(user.passwordHash) > PASSWORD_HASH_COST) {
+      bcrypt
+        .hash(loginDto.password, PASSWORD_HASH_COST)
+        .then((newHash) => this.tenantService.prisma.user.update({ where: { id: user.id }, data: { passwordHash: newHash } }))
+        .catch((err) => console.error('Failed to upgrade password hash cost for user', user.id, err));
     }
 
     // Shop Admin accounts are only allowed to sign in from the native mobile
@@ -237,28 +265,26 @@ export class AuthService implements OnModuleInit {
 
     // Verify tenant is active if SHOP_ADMIN
     if (user.role === Role.SHOP_ADMIN && user.shopId) {
-      const shop = await this.tenantService.prisma.shop.findUnique({
-        where: { id: user.shopId },
-      });
-      if (!shop) {
-        throw new UnauthorizedException('Your shop access has been suspended');
-      }
-      if (!shop.isActive) {
+      if (!user.shop || !user.shop.isActive) {
         throw new UnauthorizedException('Your shop access has been suspended');
       }
     }
 
     const payload = { sub: user.id, email: user.email, role: user.role, shopId: user.shopId };
-    
-    // Log activity
-    await this.tenantService.prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        shopId: user.shopId,
-        action: 'LOGIN',
-        details: JSON.stringify({ email: user.email, name: user.name }),
-      },
-    });
+
+    // Log activity - fire-and-forget, same rationale as the hash upgrade
+    // above: this is an audit record, not something the client needs to
+    // wait on before getting their token back.
+    this.tenantService.prisma.activityLog
+      .create({
+        data: {
+          userId: user.id,
+          shopId: user.shopId,
+          action: 'LOGIN',
+          details: JSON.stringify({ email: user.email, name: user.name }),
+        },
+      })
+      .catch((err) => console.error('Failed to write LOGIN activity log for user', user.id, err));
 
     return {
       accessToken: this.jwtService.sign(payload),
@@ -289,7 +315,7 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException('Current password input is incorrect');
     }
 
-    const salt = await bcrypt.genSalt(12);
+    const salt = await bcrypt.genSalt(PASSWORD_HASH_COST);
     const newPasswordHash = await bcrypt.hash(changePasswordDto.newPassword, salt);
 
     await this.tenantService.prisma.user.update({
@@ -326,7 +352,7 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException(`No active profile registered with this ${dto.method}`);
     }
 
-    const salt = await bcrypt.genSalt(12);
+    const salt = await bcrypt.genSalt(PASSWORD_HASH_COST);
     const newPasswordHash = await bcrypt.hash(dto.newPassword, salt);
 
     await this.tenantService.prisma.user.update({
@@ -417,7 +443,7 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException('Please select a valid shop category');
     }
 
-    const salt = await bcrypt.genSalt(12);
+    const salt = await bcrypt.genSalt(PASSWORD_HASH_COST);
     const passwordHash = await bcrypt.hash(dto.password, salt);
 
     // Every new shop's shareable referral code is simply its own registered
