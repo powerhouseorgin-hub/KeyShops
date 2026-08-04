@@ -202,6 +202,18 @@ export const AuthProvider = ({ children }) => {
 
     // --- SUPER ADMIN: SHOPS ---
     getShops: async () => request('/api/super/shops'),
+    // Cursor-paginated variant of the same endpoint, used only by the Shop
+    // Management screen's infinite scroll - see ShopService.getShops for why
+    // this is a separate method rather than extending getShops itself
+    // (several other call sites depend on its plain-flat-array,
+    // unpaginated shape).
+    getShopsPage: async ({ search = '', cursor, limit } = {}) => {
+      const params = new URLSearchParams();
+      if (search) params.append('search', search);
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
+      return request(`/api/super/shops?${params.toString()}`);
+    },
     createShop: async (dto) => request('/api/super/shops', 'POST', dto),
     updateShop: async (id, dto) => request(`/api/super/shops/${id}`, 'PUT', dto),
     suspendShop: async (id, isActive) => request(`/api/super/shops/${id}/suspend`, 'POST', { isActive }),

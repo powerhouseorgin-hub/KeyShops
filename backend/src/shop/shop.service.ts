@@ -85,21 +85,65 @@ export class ShopService {
     });
   }
 
-  // SUPER ADMIN: List Shops
-  async getShops() {
-    return this.tenantService.prisma.shop.findMany({
-      include: {
-        subscriptions: {
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-        },
-        users: {
-          where: { role: Role.SHOP_ADMIN },
-          select: { id: true, email: true, name: true },
-        },
-        ...ACTIVE_DOCUMENTS_INCLUDE,
+  // SUPER ADMIN: List Shops.
+  //
+  // Pagination is opt-in via `pageOpts.limit`, same additive pattern used
+  // throughout this codebase - omitting it preserves the exact original
+  // unpaginated flat-array behavior (no explicit orderBy either), since
+  // other callers (the global header search, and a couple of "all shops for
+  // a picker/lookup" consumers) rely on that shape and aren't part of the
+  // Shop Management screen this pagination was added for. `search` is new
+  // (this endpoint never supported it before) - the Shop Management screen's
+  // search box used to filter shops.name/admin name/admin email entirely
+  // client-side over the full loaded list; now that the list is paginated,
+  // that filtering has to happen server-side instead to stay correct across
+  // pages.
+  async getShops(pageOpts: { search?: string; cursor?: string; limit?: number } = {}) {
+    const { search, cursor, limit } = pageOpts;
+    const include = {
+      subscriptions: {
+        orderBy: { createdAt: 'desc' as const },
+        take: 1,
       },
+      users: {
+        where: { role: Role.SHOP_ADMIN },
+        select: { id: true, email: true, name: true },
+      },
+      ...ACTIVE_DOCUMENTS_INCLUDE,
+    };
+    const where = search
+      ? {
+          OR: [
+            { name: { contains: search, mode: 'insensitive' as const } },
+            {
+              users: {
+                some: {
+                  role: Role.SHOP_ADMIN,
+                  OR: [
+                    { name: { contains: search, mode: 'insensitive' as const } },
+                    { email: { contains: search, mode: 'insensitive' as const } },
+                  ],
+                },
+              },
+            },
+          ],
+        }
+      : undefined;
+
+    if (!limit) {
+      return this.tenantService.prisma.shop.findMany({ where, include });
+    }
+
+    const rows = await this.tenantService.prisma.shop.findMany({
+      where,
+      include,
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     });
+    const hasMore = rows.length > limit;
+    const page = hasMore ? rows.slice(0, limit) : rows;
+    return { items: page, nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
   // SUPER ADMIN: Get Shop details

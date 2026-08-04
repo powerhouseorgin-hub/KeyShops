@@ -16,10 +16,19 @@ export class ShopController {
   // SUPER ADMIN ENDPOINTS
   // ==========================================
 
+  // search/cursor/limit are optional - see ShopService.getShops for how
+  // omitting `limit` preserves the original unpaginated behavior (used by
+  // the global header search and a couple of "all shops for a picker"
+  // consumers); the Shop Management screen passes `limit` (and `search`,
+  // newly added alongside pagination) to page through everything.
   @Get('super/shops')
   @Roles(Role.SUPER_ADMIN)
-  async getShops() {
-    return this.shopService.getShops();
+  async getShops(
+    @Query('search') search?: string,
+    @Query('cursor') cursor?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.shopService.getShops({ search, cursor, limit: limit ? Number(limit) : undefined });
   }
 
   @Post('super/shops')

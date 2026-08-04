@@ -8366,13 +8366,30 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
 // ============================================================================
 // COMPONENT 2: SHOPS MANAGEMENT WITH OPTIMIZED CENTERED FIXED DIALOG
 // ============================================================================
+// Page size for the Shop Management screen's cursor pagination - see
+// ShopService.getShops.
+const SHOP_MANAGEMENT_PAGE_SIZE = 20;
+
 function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOpen, searchDispatch }) {
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Infinite-scroll pagination state - `shops` only ever holds the pages
+  // loaded so far, never the whole platform-wide registry.
+  const [nextCursor, setNextCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreSentinelRef = useRef(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  // Client-side live search - the full shop list is already fetched in one
-  // call, so filtering happens instantly on every keystroke with no round-trip.
+  // Search is now server-side (see fetchShops) so pagination stays correct
+  // across pages - debounced before it reaches the server, since every
+  // change now triggers a network request instead of filtering an
+  // already-fully-loaded list.
   const [shopSearchQuery, setShopSearchQuery] = useState('');
+  const [debouncedShopSearchQuery, setDebouncedShopSearchQuery] = useState('');
+  useEffect(() => {
+    const handle = setTimeout(() => setDebouncedShopSearchQuery(shopSearchQuery.trim()), 300);
+    return () => clearTimeout(handle);
+  }, [shopSearchQuery]);
 
   // Picks up a query dispatched from the global header search panel (filter = "Shop").
   useEffect(() => {
@@ -8458,7 +8475,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   };
 
   useEffect(() => {
-    fetchShops();
     fetchSubscriptionPrice();
   }, []);
 
@@ -8472,17 +8488,55 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     setSubEndDate(`${yyyy}-${mm}-${dd}`);
   }, []);
 
+  // Loads the first page for the current search, replacing whatever was
+  // loaded before.
   const fetchShops = async () => {
     setLoading(true);
     try {
-      const res = await api.getShops();
-      setShops(res);
+      const res = await api.getShopsPage({ search: debouncedShopSearchQuery, limit: SHOP_MANAGEMENT_PAGE_SIZE });
+      setShops(res.items);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
   };
+
+  // Appends the next page - triggered by the sentinel scrolling into view or
+  // the manual "Load More" fallback button.
+  const fetchMoreShops = async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await api.getShopsPage({ search: debouncedShopSearchQuery, cursor: nextCursor, limit: SHOP_MANAGEMENT_PAGE_SIZE });
+      setShops((prev) => [...prev, ...res.items]);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchShops();
+  }, [debouncedShopSearchQuery]);
+
+  useEffect(() => {
+    const node = loadMoreSentinelRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) fetchMoreShops();
+      },
+      { rootMargin: '400px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, nextCursor, loadingMore, debouncedShopSearchQuery]);
 
   const executeShopCreation = async (dto) => {
     try {
@@ -8738,13 +8792,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         </div>
 
         {(() => {
-          const q = shopSearchQuery.trim().toLowerCase();
-          const filteredShops = !q ? shops : shops.filter(s =>
-            (s.name || '').toLowerCase().includes(q) ||
-            (s.users?.[0]?.name || '').toLowerCase().includes(q) ||
-            (s.users?.[0]?.email || '').toLowerCase().includes(q)
-          );
-
           if (loading) {
             return (
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 200 }}>
@@ -8754,19 +8801,19 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             );
           }
 
-          if (filteredShops.length === 0) {
+          if (shops.length === 0) {
             return (
               <p style={{ padding: 24, fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600 }}>
-                {shops.length === 0
-                  ? t('noShopsProvisionedYet')
-                  : t('noShopsMatchSearch')}
+                {debouncedShopSearchQuery
+                  ? t('noShopsMatchSearch')
+                  : t('noShopsProvisionedYet')}
               </p>
             );
           }
 
           return (
             <div className="dealer-list stagger-in">
-              {filteredShops.map(s => {
+              {shops.map(s => {
                 let details = {};
                 if (s.companyDetails) {
                   try { details = typeof s.companyDetails === 'string' ? JSON.parse(s.companyDetails) : s.companyDetails; } catch (e) {}
@@ -8843,6 +8890,20 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             </div>
           );
         })()}
+
+        {/* Infinite scroll (sentinel) + manual "Load More" fallback - see
+            PromotionsFeed's identical pattern for why both exist. */}
+        {!loading && hasMore && (
+          <div ref={loadMoreSentinelRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20 }}>
+            {loadingMore ? (
+              <RefreshCw className="animate-spin" style={{ width: 20, height: 20, color: 'var(--gold)' }} />
+            ) : (
+              <button type="button" onClick={fetchMoreShops} className="btn btn-outline btn-sm">
+                {t('loadMoreBtn')}
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {showAddModal && createPortal(

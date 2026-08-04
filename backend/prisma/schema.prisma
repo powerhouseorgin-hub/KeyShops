@@ -152,6 +152,11 @@ model Shop {
   // Backs the public Dealers/Find-a-Shop directory's cursor pagination -
   // WHERE isActive = true ORDER BY createdAt DESC - see ShopService.searchPublicShops.
   @@index([isActive, createdAt])
+  // Backs the Super Admin Shop Management screen's cursor pagination -
+  // unlike the public directory above, this has no isActive filter (Super
+  // Admin manages suspended shops too), just the soft-delete filter - see
+  // ShopService.getShops.
+  @@index([deletedAt, createdAt])
 }
 
 // Append-only ledger recording each successful referral: one row per
