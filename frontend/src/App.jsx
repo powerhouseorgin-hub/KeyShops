@@ -10116,13 +10116,31 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 // ============================================================================
 // COMPONENT 4: MASTER KEY DATABASE CRUD (SUPER ADMIN ONLY)
 // ============================================================================
+// Page size for the Master Catalogue's cursor pagination - see
+// KeyService.getKeys.
+const KEY_CATALOGUE_PAGE_SIZE = 20;
+
 function KeysCatalogView({ t, api, searchDispatch }) {
   const [keys, setKeys] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Infinite-scroll pagination state - `keys` only ever holds the pages
+  // loaded so far, never the whole platform-wide catalog.
+  const [nextCursor, setNextCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreSentinelRef = useRef(null);
   const [showAddModal, setShowAddModal] = useState(false);
   useBackHandler(showAddModal, () => setShowAddModal(false));
   const [editKey, setEditKey] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  // Debounced before it reaches the server - see PromotionsFeed's identical
+  // pattern for why (every change now triggers a network request instead of
+  // filtering an already-fully-loaded list).
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  useEffect(() => {
+    const handle = setTimeout(() => setDebouncedSearchQuery(searchQuery.trim()), 300);
+    return () => clearTimeout(handle);
+  }, [searchQuery]);
 
   // Picks up a query dispatched from the global header search panel (filter = "Key").
   useEffect(() => {
@@ -10137,21 +10155,55 @@ function KeysCatalogView({ t, api, searchDispatch }) {
   const [backImageUrl, setBackImageUrl] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
-  useEffect(() => {
-    fetchKeys();
-  }, []);
-
+  // Loads the first page for the current search, replacing whatever was
+  // loaded before.
   const fetchKeys = async () => {
     setLoading(true);
     try {
-      const res = await api.getMasterKeys();
-      setKeys(res);
+      const res = await api.getMasterKeysPage({ search: debouncedSearchQuery, limit: KEY_CATALOGUE_PAGE_SIZE });
+      setKeys(res.items);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
   };
+
+  // Appends the next page - triggered by the sentinel scrolling into view or
+  // the manual "Load More" fallback button.
+  const fetchMoreKeys = async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await api.getMasterKeysPage({ search: debouncedSearchQuery, cursor: nextCursor, limit: KEY_CATALOGUE_PAGE_SIZE });
+      setKeys((prev) => [...prev, ...res.items]);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchKeys();
+  }, [debouncedSearchQuery]);
+
+  useEffect(() => {
+    const node = loadMoreSentinelRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) fetchMoreKeys();
+      },
+      { rootMargin: '400px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, nextCursor, loadingMore, debouncedSearchQuery]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -10237,26 +10289,16 @@ function KeysCatalogView({ t, api, searchDispatch }) {
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
           <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingCatalogueMsg')}</span>
         </div>
-      ) : (() => {
-        const filteredKeys = keys.filter(k =>
-          (k.keyNumber || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (k.category || '').toLowerCase().includes(searchQuery.toLowerCase())
-        );
-
-        if (filteredKeys.length === 0) {
-          return (
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
-              <div className="icon-badge maroon"><KeyRound /></div>
-              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noKeyBlanksMatch')}</span>
-            </div>
-          );
-        }
-
-        const catalogAccents = ['var(--purple)', 'var(--pink)', 'var(--blue)', 'var(--orange)', 'var(--teal)', 'var(--skyblue)', 'var(--rose)', 'var(--jgreen)'];
-
-        return (
-          <div className="product-grid stagger-in">
-            {filteredKeys.map((k, idx) => (
+      ) : keys.length === 0 ? (
+        <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
+          <div className="icon-badge maroon"><KeyRound /></div>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noKeyBlanksMatch')}</span>
+        </div>
+      ) : (
+        <div className="product-grid stagger-in">
+          {keys.map((k, idx) => {
+            const catalogAccents = ['var(--purple)', 'var(--pink)', 'var(--blue)', 'var(--orange)', 'var(--teal)', 'var(--skyblue)', 'var(--rose)', 'var(--jgreen)'];
+            return (
               <div key={k.id} className="product-card">
                 <div className="product-img" style={{ background: catalogAccents[idx % catalogAccents.length] }}>
                   <KeyRound style={{ color: '#ffffff' }} />
@@ -10287,10 +10329,24 @@ function KeysCatalogView({ t, api, searchDispatch }) {
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        );
-      })()}
+            );
+          })}
+        </div>
+      )}
+
+      {/* Infinite scroll (sentinel) + manual "Load More" fallback - see
+          PromotionsFeed's identical pattern for why both exist. */}
+      {!loading && hasMore && (
+        <div ref={loadMoreSentinelRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20 }}>
+          {loadingMore ? (
+            <RefreshCw className="animate-spin" style={{ width: 20, height: 20, color: 'var(--gold)' }} />
+          ) : (
+            <button type="button" onClick={fetchMoreKeys} className="btn btn-outline btn-sm">
+              {t('loadMoreBtn')}
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Add / Edit Key Modal */}
       {showAddModal && createPortal(

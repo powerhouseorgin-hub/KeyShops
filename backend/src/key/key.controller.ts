@@ -15,10 +15,19 @@ export class KeyController {
   // SUPER ADMIN CRUD ENDPOINTS
   // ==========================================
 
+  // cursor/limit are optional - see KeyService.getKeys for how omitting
+  // `limit` preserves the original unpaginated behavior (used by the global
+  // header search, "Blank Key Search", and the Customer Registration
+  // wizard's key dropdown); the Master Catalogue screen passes `limit` to
+  // page through everything.
   @Get('super/keys')
   @Roles(Role.SUPER_ADMIN)
-  async superGetKeys(@Query('search') search?: string) {
-    return this.keyService.getKeys(search);
+  async superGetKeys(
+    @Query('search') search?: string,
+    @Query('cursor') cursor?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.keyService.getKeys(search, { cursor, limit: limit ? Number(limit) : undefined });
   }
 
   @Post('super/keys')

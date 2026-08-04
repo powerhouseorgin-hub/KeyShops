@@ -217,6 +217,18 @@ export const AuthProvider = ({ children }) => {
         : `/api/shop/keys/search?query=${search}`;
       return request(url);
     },
+    // Cursor-paginated variant of the Super Admin cross-shop key listing,
+    // used only by the Master Catalogue screen's infinite scroll - see
+    // KeyService.getKeys for why this is a separate method rather than
+    // extending getMasterKeys itself (several other call sites depend on
+    // its plain-flat-array, unpaginated shape).
+    getMasterKeysPage: async ({ search = '', cursor, limit } = {}) => {
+      const params = new URLSearchParams();
+      if (search) params.append('search', search);
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
+      return request(`/api/super/keys?${params.toString()}`);
+    },
 
     // Super Admin: create a global catalog key (not tied to a shop)
     createMasterKey: async (dto) => request('/api/super/keys', 'POST', dto),

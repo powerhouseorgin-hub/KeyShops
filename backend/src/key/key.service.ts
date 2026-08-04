@@ -48,8 +48,17 @@ export class KeyService {
     return this.tenantService.prisma.masterKey.delete({ where: { id } });
   }
 
-  // SUPER ADMIN: List/Search Keys across ALL shops (Query filters based on category, keyNumber)
-  async getKeys(search?: string) {
+  // SUPER ADMIN: List/Search Keys across ALL shops (Query filters based on category, keyNumber).
+  //
+  // Pagination is opt-in via `pageOpts.limit`, same additive pattern used
+  // throughout this codebase (PromotionService.getAllPromotions,
+  // CustomerService.getSuperCustomers, etc.) - omitting it preserves the
+  // exact original unpaginated flat-array behavior, since other callers
+  // (the global header search, the "Blank Key Search" screen, and the
+  // Customer Registration wizard's key dropdown) rely on that shape and
+  // aren't part of the Master Catalogue screen this pagination was added for.
+  async getKeys(search?: string, pageOpts: { cursor?: string; limit?: number } = {}) {
+    const { cursor, limit } = pageOpts;
     const whereClause: any = {};
     if (search) {
       whereClause.OR = [
@@ -57,17 +66,35 @@ export class KeyService {
         { category: { contains: search, mode: 'insensitive' } },
       ];
     }
-    return this.tenantService.prisma.masterKey.findMany({
+    const include = {
+      shop: { select: { id: true, name: true } },
+      // Surfaced in the Super Admin "Modify Key" dialog so an admin can see
+      // which customer compliance record(s) this key blank is tied to
+      // before editing/removing it.
+      customers: { select: { id: true, name: true, phone: true } },
+    };
+
+    if (!limit) {
+      return this.tenantService.prisma.masterKey.findMany({
+        where: whereClause,
+        orderBy: { keyNumber: 'asc' },
+        include,
+      });
+    }
+
+    // Cursor pagination here orders by keyNumber (not createdAt, unlike the
+    // other paginated lists in this codebase) to match this screen's
+    // alphabetical catalog browsing - `id` stays the tiebreaker/cursor field.
+    const rows = await this.tenantService.prisma.masterKey.findMany({
       where: whereClause,
-      orderBy: { keyNumber: 'asc' },
-      include: {
-        shop: { select: { id: true, name: true } },
-        // Surfaced in the Super Admin "Modify Key" dialog so an admin can see
-        // which customer compliance record(s) this key blank is tied to
-        // before editing/removing it.
-        customers: { select: { id: true, name: true, phone: true } },
-      },
+      orderBy: [{ keyNumber: 'asc' }, { id: 'asc' }],
+      include,
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     });
+    const hasMore = rows.length > limit;
+    const page = hasMore ? rows.slice(0, limit) : rows;
+    return { items: page, nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
   // SHOP ADMIN: List/Search Keys created within their own shop only
