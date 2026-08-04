@@ -306,8 +306,17 @@ export class CustomerService {
     return { success: true };
   }
 
-  // SUPER ADMIN: Get all customers platform-wide
-  async getSuperCustomers(query?: string) {
+  // SUPER ADMIN: Get all customers platform-wide.
+  //
+  // Pagination is opt-in via `pageOpts.limit`, same additive pattern as
+  // PromotionService.getAllPromotions / ShopService.searchPublicShops -
+  // omitting it preserves the exact original unpaginated flat-array
+  // behavior, since several existing call sites (the global header search,
+  // and a couple of single-record "refetch by id" lookups) rely on that
+  // shape and aren't part of the Customer Registry screen this pagination
+  // was added for. Passing `limit` returns `{ items, nextCursor }` instead.
+  async getSuperCustomers(query?: string, pageOpts: { cursor?: string; limit?: number } = {}) {
+    const { cursor, limit } = pageOpts;
     const whereClause: any = {};
     if (query) {
       whereClause.OR = [
@@ -316,16 +325,31 @@ export class CustomerService {
         { shop: { name: { contains: query, mode: 'insensitive' } } },
       ];
     }
-    const customers = await this.tenantService.prisma.customer.findMany({
+    const include = {
+      documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' as const } },
+      shop: { select: { name: true } },
+      masterKey: { select: { category: true } },
+    };
+
+    if (!limit) {
+      const customers = await this.tenantService.prisma.customer.findMany({
+        where: whereClause,
+        orderBy: { createdAt: 'desc' },
+        include,
+      });
+      return customers.map(c => this.decryptCustomerPII(c));
+    }
+
+    const rows = await this.tenantService.prisma.customer.findMany({
       where: whereClause,
-      orderBy: { createdAt: 'desc' },
-      include: {
-        documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' } },
-        shop: { select: { name: true } },
-        masterKey: { select: { category: true } },
-      },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      include,
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     });
-    return customers.map(c => this.decryptCustomerPII(c));
+    const hasMore = rows.length > limit;
+    const page = hasMore ? rows.slice(0, limit) : rows;
+    return { items: page.map(c => this.decryptCustomerPII(c)), nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
   // SUPER ADMIN: Update customer details (any shop)

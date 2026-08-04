@@ -347,6 +347,18 @@ export const AuthProvider = ({ children }) => {
 
     // --- SUPER CUSTOMERS ---
     getSuperCustomers: async (search = '') => request(`/api/super/customers?search=${search}`),
+    // Cursor-paginated variant of the same endpoint, used only by the
+    // Customer Registry list's infinite scroll - see
+    // CustomerService.getSuperCustomers for why this is a separate method
+    // rather than extending getSuperCustomers itself (several other call
+    // sites depend on its plain-flat-array, unpaginated shape).
+    getSuperCustomersPage: async ({ search = '', cursor, limit } = {}) => {
+      const params = new URLSearchParams();
+      if (search) params.append('search', search);
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
+      return request(`/api/super/customers?${params.toString()}`);
+    },
     createSuperCustomer: async (dto) => request('/api/super/customers', 'POST', dto),
     updateSuperCustomer: async (id, dto) => request(`/api/super/customers/${id}`, 'PUT', dto),
 

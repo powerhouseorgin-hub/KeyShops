@@ -13,9 +13,17 @@ import { Role } from '@prisma/client';
 export class SuperCustomerController {
   constructor(private readonly customerService: CustomerService) {}
 
+  // cursor/limit are optional - see CustomerService.getSuperCustomers for how
+  // omitting `limit` preserves the original unpaginated behavior (used by
+  // the global header search and a couple of single-record lookups); the
+  // Customer Registry screen passes `limit` to page through everything.
   @Get()
-  async getCustomers(@Query('search') search?: string) {
-    return this.customerService.getSuperCustomers(search);
+  async getCustomers(
+    @Query('search') search?: string,
+    @Query('cursor') cursor?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.customerService.getSuperCustomers(search, { cursor, limit: limit ? Number(limit) : undefined });
   }
 
   @Post()

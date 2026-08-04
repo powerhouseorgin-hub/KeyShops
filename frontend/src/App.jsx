@@ -9491,11 +9491,29 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 // ============================================================================
 // COMPONENT 3: SUPER CUSTOMER SUPERVISION VIEW (SUPER ADMIN ONLY)
 // ============================================================================
+// Page size for the Customer Registry's cursor pagination - see
+// CustomerService.getSuperCustomers.
+const CUSTOMER_REGISTRY_PAGE_SIZE = 20;
+
 function SuperCustomersView({ t, api, searchDispatch }) {
   const { user } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(false);
+  // Infinite-scroll pagination state - `customers` only ever holds the pages
+  // loaded so far, never the whole platform-wide registry.
+  const [nextCursor, setNextCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreSentinelRef = useRef(null);
   const [search, setSearch] = useState('');
+  // Debounced before it reaches the server - see PromotionsFeed's identical
+  // pattern for why (every change now triggers a network request instead of
+  // filtering an already-fully-loaded list).
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  useEffect(() => {
+    const handle = setTimeout(() => setDebouncedSearch(search.trim()), 300);
+    return () => clearTimeout(handle);
+  }, [search]);
 
   // Picks up a query dispatched from the global header search panel
   // (filter = "Customer"). The nonce lets the same text be re-submitted.
@@ -9515,21 +9533,55 @@ function SuperCustomersView({ t, api, searchDispatch }) {
   useBackHandler(showCreateWizard, () => setShowCreateWizard(false));
   useBackHandler(!!fullEditCust, () => setFullEditCust(null));
 
-  useEffect(() => {
-    fetchCustomers();
-  }, [search]);
-
+  // Loads the first page for the current search, replacing whatever was
+  // loaded before.
   const fetchCustomers = async () => {
     setLoading(true);
     try {
-      const res = await api.getSuperCustomers(search);
-      setCustomers(res);
+      const res = await api.getSuperCustomersPage({ search: debouncedSearch, limit: CUSTOMER_REGISTRY_PAGE_SIZE });
+      setCustomers(res.items);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
   };
+
+  // Appends the next page - triggered by the sentinel scrolling into view or
+  // the manual "Load More" fallback button.
+  const fetchMoreCustomers = async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await api.getSuperCustomersPage({ search: debouncedSearch, cursor: nextCursor, limit: CUSTOMER_REGISTRY_PAGE_SIZE });
+      setCustomers((prev) => [...prev, ...res.items]);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, [debouncedSearch]);
+
+  useEffect(() => {
+    const node = loadMoreSentinelRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) fetchMoreCustomers();
+      },
+      { rootMargin: '400px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, nextCursor, loadingMore, debouncedSearch]);
 
   const openCreateWizard = async () => {
     setShowCreateWizard(true);
@@ -9788,6 +9840,20 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Infinite scroll (sentinel) + manual "Load More" fallback - see
+            PromotionsFeed's identical pattern for why both exist. */}
+        {!loading && hasMore && (
+          <div ref={loadMoreSentinelRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20 }}>
+            {loadingMore ? (
+              <RefreshCw className="animate-spin" style={{ width: 20, height: 20, color: 'var(--gold)' }} />
+            ) : (
+              <button type="button" onClick={fetchMoreCustomers} className="btn btn-outline btn-sm">
+                {t('loadMoreBtn')}
+              </button>
+            )}
           </div>
         )}
       </div>

@@ -324,6 +324,9 @@ model Customer {
   @@index([masterKeyId])
   @@index([shopId, deletedAt])
   @@index([shopId, phone])
+  // Backs the Super Admin Customer Registry's cross-shop cursor pagination
+  // (no shopId filter, ORDER BY createdAt DESC) - see CustomerService.getSuperCustomers.
+  @@index([deletedAt, createdAt])
 }
 
 model CustomerDocument {
