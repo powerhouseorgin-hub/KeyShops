@@ -19,7 +19,7 @@ describe('PromotionService', () => {
     };
 
     tenantServiceMock = { prisma: prismaMock };
-    service = new PromotionService(tenantServiceMock);
+    service = new PromotionService(tenantServiceMock, {} as any);
   });
 
   describe('getAllPromotions', () => {

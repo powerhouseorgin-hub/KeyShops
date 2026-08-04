@@ -383,6 +383,41 @@ export const compressBase64Image = (base64, callback) => {
   };
 };
 
+// Resizes an image File/Blob down to at most maxDim on its longer side and
+// re-encodes it as a JPEG Blob at the given quality - used before uploading
+// a Machines listing photo or banner ad image (see uploadPromotionImage/
+// uploadAdImage), so a full-resolution phone camera photo (often several MB)
+// doesn't get uploaded as-is. This is a real upload (multipart to file
+// storage), not base64 embedding - see the "why is Used Machines slow"
+// investigation for what happens when a raw photo gets base64-encoded
+// straight into a database column instead.
+const resizeImageFileToBlob = (file, maxDim = 1200, quality = 0.82) => new Promise((resolve, reject) => {
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+  img.onload = () => {
+    URL.revokeObjectURL(objectUrl);
+    let { width, height } = img;
+    if (width > height) {
+      if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+    } else {
+      if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+    canvas.toBlob((blob) => {
+      if (blob) resolve(blob);
+      else reject(new Error('Could not process image'));
+    }, 'image/jpeg', quality);
+  };
+  img.onerror = () => {
+    URL.revokeObjectURL(objectUrl);
+    reject(new Error('Could not read image file'));
+  };
+  img.src = objectUrl;
+});
+
 const LANGUAGES = {
   en: {
     shopsRegistered: 'Shops Registered',
@@ -731,6 +766,7 @@ const LANGUAGES = {
     bannerImageSourceLabel: 'Banner Image Source',
     pasteImageUrlPlaceholder: 'Paste Image URL (or Google Image Link)',
     uploadBtn: 'Upload',
+    uploadingLabel: 'Uploading...',
     adFormatLabel: 'Ad Format',
     mainBannerNoticeOption: 'Main Banner Notice',
     interactiveLoginPopupOption: 'Interactive Login Popup',
@@ -1580,6 +1616,7 @@ const LANGUAGES = {
     bannerImageSourceLabel: 'बैनर छवि स्रोत',
     pasteImageUrlPlaceholder: 'छवि यूआरएल पेस्ट करें (या गूगल इमेज लिंक)',
     uploadBtn: 'अपलोड करें',
+    uploadingLabel: 'अपलोड हो रहा है...',
     adFormatLabel: 'विज्ञापन प्रारूप',
     mainBannerNoticeOption: 'मुख्य बैनर सूचना',
     interactiveLoginPopupOption: 'इंटरैक्टिव लॉगिन पॉपअप',
@@ -2421,6 +2458,7 @@ const LANGUAGES = {
     bannerImageSourceLabel: 'பேனர் பட மூலம்',
     pasteImageUrlPlaceholder: 'பட URL ஒட்டவும் (அல்லது கூகிள் பட இணைப்பு)',
     uploadBtn: 'பதிவேற்று',
+    uploadingLabel: 'பதிவேற்றுகிறது...',
     adFormatLabel: 'விளம்பர வடிவம்',
     mainBannerNoticeOption: 'முதன்மை பேனர் அறிவிப்பு',
     interactiveLoginPopupOption: 'ஊடாடும் உள்நுழைவு பாப்அப்',
@@ -3270,6 +3308,7 @@ const LANGUAGES = {
     bannerImageSourceLabel: 'బ్యానర్ ఇమేజ్ మూలం',
     pasteImageUrlPlaceholder: 'ఇమేజ్ URL పేస్ట్ చేయండి (లేదా గూగుల్ ఇమేజ్ లింక్)',
     uploadBtn: 'అప్‌లోడ్ చేయండి',
+    uploadingLabel: 'అప్‌లోడ్ అవుతోంది...',
     adFormatLabel: 'ప్రకటన ఫార్మాట్',
     mainBannerNoticeOption: 'ప్రధాన బ్యానర్ నోటీసు',
     interactiveLoginPopupOption: 'ఇంటరాక్టివ్ లాగిన్ పాప్అప్',
@@ -4111,6 +4150,7 @@ const LANGUAGES = {
     bannerImageSourceLabel: 'ಬ್ಯಾನರ್ ಚಿತ್ರ ಮೂಲ',
     pasteImageUrlPlaceholder: 'ಚಿತ್ರ URL ಅಂಟಿಸಿ (ಅಥವಾ ಗೂಗಲ್ ಚಿತ್ರ ಲಿಂಕ್)',
     uploadBtn: 'ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+    uploadingLabel: 'ಅಪ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ...',
     adFormatLabel: 'ಜಾಹೀರಾತು ಸ್ವರೂಪ',
     mainBannerNoticeOption: 'ಮುಖ್ಯ ಬ್ಯಾನರ್ ಸೂಚನೆ',
     interactiveLoginPopupOption: 'ಇಂಟರಾಕ್ಟಿವ್ ಲಾಗಿನ್ ಪಾಪ್‌ಅಪ್',
@@ -4960,6 +5000,7 @@ const LANGUAGES = {
     bannerImageSourceLabel: 'ബാനർ ചിത്ര ഉറവിടം',
     pasteImageUrlPlaceholder: 'ചിത്ര URL ഒട്ടിക്കുക (അല്ലെങ്കിൽ ഗൂഗിൾ ചിത്ര ലിങ്ക്)',
     uploadBtn: 'അപ്‌ലോഡ് ചെയ്യുക',
+    uploadingLabel: 'അപ്‌ലോഡ് ചെയ്യുന്നു...',
     adFormatLabel: 'പരസ്യ ഫോർമാറ്റ്',
     mainBannerNoticeOption: 'പ്രധാന ബാനർ അറിയിപ്പ്',
     interactiveLoginPopupOption: 'ഇന്ററാക്ടീവ് ലോഗിൻ പോപ്പ്അപ്പ്',
@@ -10534,6 +10575,10 @@ function AdsManagementView({ t, api }) {
   // Form states
   const [title, setTitle] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  // True only while a picked file is being resized+uploaded (see
+  // handleImageFileSelect) - mirrors PromotionsFeed's identical pattern.
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState('');
   const [type, setType] = useState('BANNER');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -10541,6 +10586,25 @@ function AdsManagementView({ t, api }) {
   const [targetAll, setTargetAll] = useState(true);
   const [targetShops, setTargetShops] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
+
+  // Resizes the picked file client-side, uploads it to real file storage,
+  // and sets imageUrl to the returned URL - see PromotionsFeed's identical
+  // handleImageFileSelect for the full rationale.
+  const handleImageFileSelect = async (file) => {
+    if (!file) return;
+    setImageUploadError('');
+    setImageUploading(true);
+    try {
+      const blob = await resizeImageFileToBlob(file);
+      const { url } = await api.uploadAdImage(blob);
+      setImageUrl(url);
+    } catch (e) {
+      console.error('Failed to upload banner image:', e);
+      setImageUploadError(e.message || 'Failed to upload image');
+    } finally {
+      setImageUploading(false);
+    }
+  };
 
   useEffect(() => {
     fetchAds();
@@ -10597,6 +10661,7 @@ function AdsManagementView({ t, api }) {
     setEditingAdId(null);
     setTitle('');
     setImageUrl('');
+    setImageUploadError('');
     setType('BANNER');
     setStartDate('');
     setEndDate('');
@@ -10784,25 +10849,23 @@ function AdsManagementView({ t, api }) {
                       placeholder={t('pasteImageUrlPlaceholder')}
                     />
                   </div>
-                  <label className="btn btn-ghost btn-sm" style={{ cursor: 'pointer', flexShrink: 0 }}>
-                    <Upload className="h-3.5 w-3.5" />
-                    <span>{t('uploadBtn')}</span>
+                  <label className="btn btn-ghost btn-sm" style={{ cursor: imageUploading ? 'default' : 'pointer', flexShrink: 0, opacity: imageUploading ? 0.6 : 1 }}>
+                    {imageUploading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+                    <span>{imageUploading ? t('uploadingLabel') : t('uploadBtn')}</span>
                     <input
-                      type="file" accept="image/*" className="hidden"
+                      type="file" accept="image/*" className="hidden" disabled={imageUploading}
                       onClick={primeStoragePermission}
                       onChange={(e) => {
                         const file = e.target.files[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
-                            setImageUrl(reader.result);
-                          };
-                          reader.readAsDataURL(file);
-                        }
+                        e.target.value = '';
+                        handleImageFileSelect(file);
                       }}
                     />
                   </label>
                 </div>
+                {imageUploadError && (
+                  <p style={{ marginTop: 6, fontSize: 11, color: 'var(--rose)', fontWeight: 700 }}>{imageUploadError}</p>
+                )}
                 {imageUrl && (
                   <div style={{ marginTop: 10, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', height: 110, background: 'var(--card-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <img src={cleanGoogleImageUrl(imageUrl)} alt="Preview" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
@@ -10899,6 +10962,7 @@ function AdsManagementView({ t, api }) {
                 <button
                   type="submit"
                   className="btn btn-primary"
+                  disabled={imageUploading}
                 >
                   {editingAdId ? t('saveChangesBtn') : t('scheduleCampaignBtn')}
                 </button>
@@ -11058,12 +11122,37 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [imageUrl, setImageUrl] = useState('');
+  // True only while a picked file is being resized+uploaded (see
+  // handleImageFileSelect) - the Upload button is disabled meanwhile so a
+  // second pick can't race the first.
+  const [imageUploading, setImageUploading] = useState(false);
+  const [imageUploadError, setImageUploadError] = useState('');
   const [price, setPrice] = useState('');
   const [productType, setProductType] = useState('');
   const [phone, setPhone] = useState('');
   const [discountPercentage, setDiscountPercentage] = useState('');
   const [validUntil, setValidUntil] = useState('');
   const [linkedPromotionId, setLinkedPromotionId] = useState('');
+
+  // Resizes the picked file client-side, uploads it to real file storage,
+  // and sets imageUrl to the returned URL - replaces the old FileReader
+  // base64-inline approach that was embedding multi-MB photos directly in
+  // the database (see the "why is Used Machines slow" investigation).
+  const handleImageFileSelect = async (file) => {
+    if (!file) return;
+    setImageUploadError('');
+    setImageUploading(true);
+    try {
+      const blob = await resizeImageFileToBlob(file);
+      const { url } = await api.uploadPromotionImage(blob);
+      setImageUrl(url);
+    } catch (e) {
+      console.error('Failed to upload listing photo:', e);
+      setImageUploadError(e.message || 'Failed to upload image');
+    } finally {
+      setImageUploading(false);
+    }
+  };
 
   // Super-Admin-managed list of product types (see ProductType model /
   // api.getProductTypes) that powers the Product Type dropdown below -
@@ -11210,6 +11299,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
     setTitle('');
     setDescription('');
     setImageUrl('');
+    setImageUploadError('');
     setPrice('');
     setProductType(productTypes[0]?.name || '');
     setPhone('');
@@ -11561,25 +11651,23 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                         placeholder={t('pasteImageUrlPlaceholder')}
                       />
                     </div>
-                    <label className="btn btn-ghost btn-sm" style={{ cursor: 'pointer', flexShrink: 0 }}>
-                      <Upload className="h-3.5 w-3.5" />
-                      <span>{t('uploadBtn')}</span>
+                    <label className="btn btn-ghost btn-sm" style={{ cursor: imageUploading ? 'default' : 'pointer', flexShrink: 0, opacity: imageUploading ? 0.6 : 1 }}>
+                      {imageUploading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+                      <span>{imageUploading ? t('uploadingLabel') : t('uploadBtn')}</span>
                       <input
-                        type="file" accept="image/*" className="hidden"
+                        type="file" accept="image/*" className="hidden" disabled={imageUploading}
                         onClick={primeStoragePermission}
                         onChange={(e) => {
                           const file = e.target.files[0];
-                          if (file) {
-                            const reader = new FileReader();
-                            reader.onloadend = () => {
-                              setImageUrl(reader.result);
-                            };
-                            reader.readAsDataURL(file);
-                          }
+                          e.target.value = '';
+                          handleImageFileSelect(file);
                         }}
                       />
                     </label>
                   </div>
+                  {imageUploadError && (
+                    <p style={{ marginTop: 6, fontSize: 11, color: 'var(--rose)', fontWeight: 700 }}>{imageUploadError}</p>
+                  )}
                   {imageUrl && (
                     <div style={{ marginTop: 10, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', height: 110, background: 'var(--card-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <img src={cleanGoogleImageUrl(imageUrl)} alt="Preview" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
@@ -11656,6 +11744,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                 <button
                   type="submit"
                   className="btn btn-primary"
+                  disabled={imageUploading}
                 >
                   {editingId ? t('saveChangesBtn') : t('publishListingBtn')}
                 </button>

@@ -48,10 +48,18 @@ export class FileService implements OnModuleInit {
     }
   }
 
+  // expirySeconds defaults to 7 days, matching the original behavior for
+  // one-off documents (ID proofs, shop licenses) that are typically viewed
+  // shortly after upload and re-fetched/regenerated as needed. Callers
+  // storing a URL that needs to stay valid indefinitely (e.g. a product
+  // listing photo shown on every page load) should pass a much longer value
+  // - see uploadLongLivedFile below - rather than relying on the short
+  // default and having the image go dead a week later.
   async uploadFile(
     originalname: string,
     buffer: Buffer,
     shopId: string,
+    expirySeconds = 60 * 60 * 24 * 7,
   ): Promise<{ fileUrl: string; fileKey: string }> {
     const fileExt = path.extname(originalname);
     const cleanShopId = shopId.replace(/[^a-zA-Z0-9]/g, '');
@@ -67,13 +75,12 @@ export class FileService implements OnModuleInit {
       }
 
       // The bucket is private, so files are only ever served via a signed
-      // URL rather than a public one. 7 days (max allowed lifetime is much
-      // longer, but this keeps stale links from lingering indefinitely) —
-      // callers that need long-lived access re-fetch/regenerate as needed.
+      // URL rather than a public one - expirySeconds controls how long that
+      // URL stays valid (see the parameter doc above).
       const safeName = (originalname || uniqueName).replace(/[^a-zA-Z0-9._-]/g, '_');
       const { data: signedData, error: signError } = await this.supabase.storage
         .from(this.bucket)
-        .createSignedUrl(uniqueName, 60 * 60 * 24 * 7, { download: safeName });
+        .createSignedUrl(uniqueName, expirySeconds, { download: safeName });
       if (signError || !signedData) {
         throw new Error(`Supabase Storage signing failed: ${signError?.message}`);
       }
@@ -84,6 +91,15 @@ export class FileService implements OnModuleInit {
     await fs.promises.writeFile(filePath, buffer);
     const fileUrl = `/api/uploads/${uniqueName}`;
     return { fileUrl, fileKey: uniqueName };
+  }
+
+  // For assets that need to stay reachable indefinitely - marketplace
+  // listing photos and banner ad images shown on every page load, not
+  // one-off documents. 10 years is effectively permanent for this app's
+  // purposes without requiring a second, publicly-readable bucket just to
+  // avoid Supabase Storage's private-bucket signed-URL expiry.
+  async uploadLongLivedFile(originalname: string, buffer: Buffer, namespace: string) {
+    return this.uploadFile(originalname, buffer, namespace, 60 * 60 * 24 * 365 * 10);
   }
 
   async deleteFile(fileKey: string): Promise<void> {

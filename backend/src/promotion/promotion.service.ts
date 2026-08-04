@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TenantService } from '../tenant/tenant.service';
 import { CreatePromotionDto, UpdatePromotionDto } from './dto/promotion.dto';
+import { FileService } from '../customer/file.service';
 
 // Shared include shape so every response (list/create/update) surfaces the
 // creator-identification fields required by the feature spec: shop name,
@@ -14,7 +15,23 @@ const CREATOR_INCLUDE = {
 
 @Injectable()
 export class PromotionService {
-  constructor(private readonly tenantService: TenantService) {}
+  constructor(
+    private readonly tenantService: TenantService,
+    private readonly fileService: FileService,
+  ) {}
+
+  // Uploads a listing photo to real file storage and returns a long-lived
+  // URL - see FileService.uploadLongLivedFile. Deliberately a standalone
+  // upload step (not part of createPromotion/updatePromotion) so the image
+  // never has to pass through the JSON create/update body as base64 - that
+  // was the root cause of the Machines feed shipping ~47MB of embedded
+  // photos per page load (see the "why is Used Machines slow" investigation).
+  // shopId is null for a Super-Admin-created product, matching
+  // createPromotion's own null-shopId convention.
+  async uploadImage(shopId: string | null, file: { originalname: string; buffer: Buffer }) {
+    const { fileUrl } = await this.fileService.uploadLongLivedFile(file.originalname, file.buffer, shopId || 'platform');
+    return { url: fileUrl };
+  }
 
   // Cross-shop feed: every shop (and Super Admin) sees every shop's listings.
   // Promotion is intentionally NOT in TENANT_SCOPED_MODELS (see tenant.service.ts),

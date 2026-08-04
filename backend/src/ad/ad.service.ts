@@ -1,10 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { TenantService } from '../tenant/tenant.service';
 import { CreateAdDto, UpdateAdDto } from './dto/ad.dto';
+import { FileService } from '../customer/file.service';
 
 @Injectable()
 export class AdService {
-  constructor(private readonly tenantService: TenantService) {}
+  constructor(
+    private readonly tenantService: TenantService,
+    private readonly fileService: FileService,
+  ) {}
+
+  // Uploads a banner image to real file storage and returns a long-lived
+  // URL - see FileService.uploadLongLivedFile and the identical rationale
+  // in PromotionService.uploadImage (this had the same base64-in-the-
+  // database bug as listing photos).
+  async uploadImage(file: { originalname: string; buffer: Buffer }) {
+    const { fileUrl } = await this.fileService.uploadLongLivedFile(file.originalname, file.buffer, 'ads');
+    return { url: fileUrl };
+  }
 
   // SUPER ADMIN: Create Ad
   async createAd(dto: CreateAdDto) {

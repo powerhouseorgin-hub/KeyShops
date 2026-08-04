@@ -1,10 +1,29 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, Request, UseGuards, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { PromotionService } from './promotion.service';
 import { CreatePromotionDto, UpdatePromotionDto } from './dto/promotion.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '@prisma/client';
+
+// Same 5MB/JPEG-PNG limits used for every other upload in this app (customer
+// docs, shop docs) - a listing photo has no business being larger than that,
+// especially since the client already resizes it before upload.
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const ALLOWED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+function assertValidImageUpload(file: any) {
+  if (!file) {
+    throw new BadRequestException('An image file is required');
+  }
+  if (file.size > MAX_IMAGE_BYTES) {
+    throw new BadRequestException('Image size exceeds the 5MB limit');
+  }
+  if (!ALLOWED_IMAGE_MIME_TYPES.includes(file.mimetype)) {
+    throw new BadRequestException('Only JPEG, PNG, and WebP images are accepted');
+  }
+}
 
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -55,6 +74,18 @@ export class PromotionController {
   // SHOP ADMIN: create/edit/delete listings owned by their own shop only
   // ==========================================
 
+  // Uploads a listing photo to real file storage, returning a URL to send as
+  // `imageUrl` in the create/update DTO below - a separate step so the
+  // image never has to travel through the JSON request body as base64. See
+  // PromotionService.uploadImage.
+  @Post('shop/promotions/upload-image')
+  @Roles(Role.SHOP_ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadShopPromotionImage(@Request() req, @UploadedFile() file: any) {
+    assertValidImageUpload(file);
+    return this.promotionService.uploadImage(req.user.shopId, file);
+  }
+
   @Post('shop/promotions')
   @Roles(Role.SHOP_ADMIN)
   async createPromotion(@Request() req, @Body() dto: CreatePromotionDto) {
@@ -77,6 +108,14 @@ export class PromotionController {
   // SUPER ADMIN: create/edit/delete listings owned by the Super Admin only
   // (shopId null - independent of every shop's inventory)
   // ==========================================
+
+  @Post('super/promotions/upload-image')
+  @Roles(Role.SUPER_ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadSuperPromotionImage(@UploadedFile() file: any) {
+    assertValidImageUpload(file);
+    return this.promotionService.uploadImage(null, file);
+  }
 
   @Post('super/promotions')
   @Roles(Role.SUPER_ADMIN)

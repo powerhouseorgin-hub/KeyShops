@@ -326,6 +326,14 @@ export const AuthProvider = ({ children }) => {
     createAdvertisement: async (dto) => request('/api/super/advertisements', 'POST', dto),
     updateAdvertisement: async (id, dto) => request(`/api/super/advertisements/${id}`, 'PUT', dto),
     deleteAdvertisement: async (id) => request(`/api/super/advertisements/${id}`, 'DELETE'),
+    // Uploads a banner image to real file storage and returns { url } to use
+    // as imageUrl - see AdService.uploadImage. `file` is a Blob/File, already
+    // resized client-side (see resizeImageFileToBlob).
+    uploadAdImage: async (file) => {
+      const formData = new FormData();
+      formData.append('file', file, 'image.jpg');
+      return request('/api/super/advertisements/upload-image', 'POST', formData, true);
+    },
 
     // --- NOTIFICATIONS ---
     getNotifications: async () => request('/api/shop/notifications'),
@@ -371,6 +379,17 @@ export const AuthProvider = ({ children }) => {
     createPromotion: async (dto) => {
       const url = user.role === 'SUPER_ADMIN' ? '/api/super/promotions' : '/api/shop/promotions';
       return request(url, 'POST', dto);
+    },
+    // Uploads a listing photo to real file storage and returns { url } to
+    // use as imageUrl - see PromotionService.uploadImage. `file` is a
+    // Blob/File, already resized client-side (see resizeImageFileToBlob) -
+    // this is what replaced base64-embedding the raw photo directly in the
+    // create/update request body.
+    uploadPromotionImage: async (file) => {
+      const url = user.role === 'SUPER_ADMIN' ? '/api/super/promotions/upload-image' : '/api/shop/promotions/upload-image';
+      const formData = new FormData();
+      formData.append('file', file, 'image.jpg');
+      return request(url, 'POST', formData, true);
     },
     updatePromotion: async (id, dto) => {
       const url = user.role === 'SUPER_ADMIN' ? `/api/super/promotions/${id}` : `/api/shop/promotions/${id}`;
