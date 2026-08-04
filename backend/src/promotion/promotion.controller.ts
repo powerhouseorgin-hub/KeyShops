@@ -18,9 +18,37 @@ export class PromotionController {
   // includeExpiredOffers is used by the Super Admin's Offer Management screen,
   // which needs to see/manage every offer regardless of expiry. The shared
   // shop-facing marketplace feed omits it, so only "active" offers show.
+  //
+  // cursor/limit/category/search/type/excludeOffers are all optional - see
+  // PromotionService.getAllPromotions for how omitting `limit` preserves the
+  // original unpaginated behavior for the callers that still want it.
+  //
+  // mine=true scopes the result to the requester's own shop (or, for a
+  // Super Admin with no shop, their own listings) - resolved from the JWT via
+  // req.user, never from a client-suppliable shopId, so a caller can only
+  // ever request their own listings this way.
   @Get('promotions')
-  async getAllPromotions(@Query('includeExpiredOffers') includeExpiredOffers?: string) {
-    return this.promotionService.getAllPromotions(includeExpiredOffers === 'true');
+  async getAllPromotions(
+    @Request() req,
+    @Query('includeExpiredOffers') includeExpiredOffers?: string,
+    @Query('cursor') cursor?: string,
+    @Query('limit') limit?: string,
+    @Query('category') category?: string,
+    @Query('search') search?: string,
+    @Query('type') type?: 'PRODUCT' | 'AD' | 'OFFER',
+    @Query('excludeOffers') excludeOffers?: string,
+    @Query('mine') mine?: string,
+  ) {
+    return this.promotionService.getAllPromotions({
+      includeExpiredOffers: includeExpiredOffers === 'true',
+      cursor,
+      limit: limit ? Number(limit) : undefined,
+      category: category || undefined,
+      search: search || undefined,
+      type: type || undefined,
+      excludeOffers: excludeOffers === 'true',
+      ...(mine === 'true' ? { ownerShopId: req.user.shopId ?? null, ownerUserId: req.user.id } : {}),
+    });
   }
 
   // ==========================================

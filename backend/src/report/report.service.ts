@@ -9,72 +9,61 @@ export class ReportService {
   // SUPER ADMIN DASHBOARD
   // ==========================================
   async getSuperDashboard() {
-    const totalShops = await this.tenantService.prisma.shop.count();
-    const activeShops = await this.tenantService.prisma.shop.count({ where: { isActive: true } });
-    const inactiveShops = totalShops - activeShops;
+    const now = new Date();
+    const in10Days = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
 
-    const totalCustomers = await this.tenantService.prisma.customer.count();
-    const totalDocuments = await this.tenantService.prisma.customerDocument.count();
-
-    // Sum of storageUsed across all shops
-    const shopsStorage = await this.tenantService.prisma.shop.aggregate({
-      _sum: {
-        storageUsed: true,
-      },
-    });
-    const totalStorageBytes = Number(shopsStorage._sum.storageUsed || 0);
-
-    // Platform-wide popular keys: Group by keyNumber in Customer
-    const popularKeysRaw = await this.tenantService.prisma.customer.groupBy({
-      by: ['keyNumber'],
-      _count: {
-        id: true,
-      },
-      orderBy: {
-        _count: {
-          id: 'desc',
+    // All of these queries are independent of one another (none needs another's
+    // result), so they're fired concurrently via Promise.all instead of one
+    // at a time - each round-trip to the DB adds real latency, and awaiting
+    // them sequentially was making this endpoint take as long as the sum of
+    // all 9 queries instead of the slowest one.
+    const [
+      totalShops,
+      activeShops,
+      totalCustomers,
+      totalDocuments,
+      shopsStorage,
+      popularKeysRaw,
+      expiringSubscriptions,
+      recentRevenue,
+      platformConfig,
+      subscriptionCount,
+    ] = await Promise.all([
+      this.tenantService.prisma.shop.count(),
+      this.tenantService.prisma.shop.count({ where: { isActive: true } }),
+      this.tenantService.prisma.customer.count(),
+      this.tenantService.prisma.customerDocument.count(),
+      this.tenantService.prisma.shop.aggregate({ _sum: { storageUsed: true } }),
+      this.tenantService.prisma.customer.groupBy({
+        by: ['keyNumber'],
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: 5,
+      }),
+      this.tenantService.prisma.subscription.findMany({
+        where: {
+          status: 'ACTIVE',
+          endDate: { gte: now, lte: in10Days },
         },
-      },
-      take: 5,
-    });
+        include: {
+          shop: { select: { name: true } },
+        },
+      }),
+      this.tenantService.prisma.revenueRecord.findMany({
+        orderBy: [{ year: 'desc' }, { month: 'desc' }],
+        take: 6,
+      }),
+      this.tenantService.prisma.platformConfig.findUnique({ where: { id: 'default' } }),
+      this.tenantService.prisma.subscription.count(),
+    ]);
+
+    const inactiveShops = totalShops - activeShops;
+    const totalStorageBytes = Number(shopsStorage._sum.storageUsed || 0);
     const popularKeys = popularKeysRaw.map(item => ({
       keyNumber: item.keyNumber,
       count: item._count.id,
     }));
-
-    // Subscriptions nearing expiry (ends in next 10 days)
-    const now = new Date();
-    const in10Days = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
-    const expiringSubscriptions = await this.tenantService.prisma.subscription.findMany({
-      where: {
-        status: 'ACTIVE',
-        endDate: {
-          gte: now,
-          lte: in10Days,
-        },
-      },
-      include: {
-        shop: {
-          select: { name: true },
-        },
-      },
-    });
-
-    // Recent revenue records
-    const recentRevenue = await this.tenantService.prisma.revenueRecord.findMany({
-      orderBy: [
-        { year: 'desc' },
-        { month: 'desc' },
-      ],
-      take: 6,
-    });
-
-    // Compute total subscription revenue using the single configurable yearly price
-    const platformConfig = await this.tenantService.prisma.platformConfig.findUnique({
-      where: { id: 'default' },
-    });
     const subscriptionPrice = platformConfig?.subscriptionPrice ?? 999;
-    const subscriptionCount = await this.tenantService.prisma.subscription.count();
     const subscriptionTotal = subscriptionCount * subscriptionPrice;
 
     return {
@@ -142,69 +131,55 @@ export class ReportService {
     const todayEnd = new Date();
     todayEnd.setHours(23, 59, 59, 999);
 
-    // Today's registered customers
-    const todayCustomers = await this.tenantService.prisma.customer.count({
-      where: {
-        shopId,
-        createdAt: {
-          gte: todayStart,
-          lte: todayEnd,
-        },
-      },
-    });
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
-    // Total registered customers
-    const totalCustomers = await this.tenantService.prisma.customer.count({
-      where: { shopId },
-    });
+    // Independent queries fired concurrently instead of one at a time - see
+    // the same fix/rationale in getSuperDashboard() above.
+    const [
+      todayCustomers,
+      totalCustomers,
+      recentCustomers,
+      popularKeysRaw,
+      subscription,
+      customersForGraph,
+    ] = await Promise.all([
+      this.tenantService.prisma.customer.count({
+        where: { shopId, createdAt: { gte: todayStart, lte: todayEnd } },
+      }),
+      this.tenantService.prisma.customer.count({ where: { shopId } }),
+      this.tenantService.prisma.customer.findMany({
+        where: { shopId },
+        orderBy: { createdAt: 'desc' },
+        take: 5,
+      }),
+      this.tenantService.prisma.customer.groupBy({
+        by: ['keyNumber'],
+        where: { shopId },
+        _count: { id: true },
+        orderBy: { _count: { id: 'desc' } },
+        take: 5,
+      }),
+      this.tenantService.prisma.subscription.findFirst({
+        where: { shopId, status: 'ACTIVE' },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.tenantService.prisma.customer.findMany({
+        where: { shopId, createdAt: { gte: sixMonthsAgo } },
+        select: { createdAt: true },
+      }),
+    ]);
 
-    // Recent customers (last 5)
-    const recentCustomers = await this.tenantService.prisma.customer.findMany({
-      where: { shopId },
-      orderBy: { createdAt: 'desc' },
-      take: 5,
-    });
-
-    // Popular keys in this specific shop
-    const popularKeysRaw = await this.tenantService.prisma.customer.groupBy({
-      by: ['keyNumber'],
-      where: { shopId },
-      _count: {
-        id: true,
-      },
-      orderBy: {
-        _count: {
-          id: 'desc',
-        },
-      },
-      take: 5,
-    });
     const popularKeys = popularKeysRaw.map(item => ({
       keyNumber: item.keyNumber,
       count: item._count.id,
     }));
-
-    // Subscription status
-    const subscription = await this.tenantService.prisma.subscription.findFirst({
-      where: { shopId, status: 'ACTIVE' },
-      orderBy: { createdAt: 'desc' },
-    });
 
     let daysRemaining = 0;
     if (subscription) {
       const diffTime = subscription.endDate.getTime() - Date.now();
       daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
     }
-
-    const sixMonthsAgo = new Date();
-    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
-    const customersForGraph = await this.tenantService.prisma.customer.findMany({
-      where: {
-        shopId,
-        createdAt: { gte: sixMonthsAgo },
-      },
-      select: { createdAt: true },
-    });
 
     const monthlyCounts: { [monthStr: string]: number } = {};
     for (let i = 5; i >= 0; i--) {

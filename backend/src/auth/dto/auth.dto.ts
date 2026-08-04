@@ -123,22 +123,28 @@ export class RegisterShopDto {
   @IsNotEmpty()
   location: string;
 
-  // City & state are auto-filled on the frontend from reverse-geocoding the
+  // City/state/PIN code are only ever auto-filled from reverse-geocoding the
   // GPS position captured by the "Current Location" button (Nominatim's
-  // district/state fields - see geo.controller.ts) but stay editable, so
-  // they're still required here rather than derived server-side.
+  // district/state fields - see geo.controller.ts) - there is no manual input
+  // for them on the form (the visible Address field is the only editable
+  // location text). Making these required blocked registration entirely
+  // whenever GPS/reverse-geocoding failed (no permission, GPS disabled, no
+  // signal, etc.), since there was then no way to ever satisfy them - see
+  // the "Current Location" bug fix in App.jsx's Shop Registration Continue
+  // handler. `location` (the free-text address) remains the one truly
+  // required location field.
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  city: string;
+  city?: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  state: string;
+  state?: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   @Matches(/^\d{6}$/, { message: 'PIN code must be exactly 6 digits' })
-  pinCode: string;
+  pinCode?: string;
 
   // Optional - captured as a plain 12-digit number (not an uploaded
   // document) and encrypted at rest, see AuthService.registerShop().

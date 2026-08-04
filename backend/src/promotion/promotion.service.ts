@@ -24,18 +24,85 @@ export class PromotionService {
   // public/shared feed only shows "active" offers per the feature spec).
   // Pass includeExpiredOffers=true for admin moderation screens that need to
   // see/manage every offer regardless of expiry.
-  async getAllPromotions(includeExpiredOffers = false) {
-    const where = includeExpiredOffers
-      ? undefined
-      : {
-          OR: [{ type: { not: 'OFFER' as const } }, { validUntil: null }, { validUntil: { gte: new Date() } }],
-        };
+  //
+  // Pagination is opt-in: passing `limit` switches to cursor-based paging
+  // (ORDER BY createdAt DESC, backed by the createdAt index added alongside
+  // this - see schema.prisma) and returns `{ items, nextCursor }` instead of
+  // a flat array, so the Machines/Inventory feed can load 20 at a time
+  // instead of the whole table. Existing callers that don't pass `limit`
+  // (the global header search, and the offer-linking dropdown's "everything"
+  // lookup) are completely unaffected - they keep getting the full flat
+  // array exactly as before.
+  async getAllPromotions(opts: {
+    includeExpiredOffers?: boolean;
+    cursor?: string;
+    limit?: number;
+    category?: string;
+    search?: string;
+    type?: 'PRODUCT' | 'AD' | 'OFFER';
+    excludeOffers?: boolean;
+    // Resolved server-side from the caller's JWT (see PromotionController) -
+    // never accepted as a raw client-suppliable shopId, so this can only ever
+    // scope a query to the requester's own shop (or, for a Super Admin with
+    // no shop, their own createdById), never anyone else's.
+    ownerShopId?: string | null;
+    ownerUserId?: string;
+  } = {}) {
+    const { includeExpiredOffers = false, cursor, limit, category, search, type, excludeOffers, ownerShopId, ownerUserId } = opts;
 
-    return this.tenantService.prisma.promotion.findMany({
+    const andConditions: any[] = [];
+    if (!includeExpiredOffers) {
+      andConditions.push({ OR: [{ type: { not: 'OFFER' as const } }, { validUntil: null }, { validUntil: { gte: new Date() } }] });
+    }
+    if (category) {
+      andConditions.push({ productType: category });
+    }
+    if (type) {
+      andConditions.push({ type });
+    }
+    if (excludeOffers) {
+      andConditions.push({ type: { not: 'OFFER' as const } });
+    }
+    if (ownerUserId !== undefined) {
+      andConditions.push(ownerShopId ? { shopId: ownerShopId } : { shopId: null, createdById: ownerUserId });
+    }
+    if (search) {
+      andConditions.push({
+        OR: [
+          { title: { contains: search, mode: 'insensitive' as const } },
+          { description: { contains: search, mode: 'insensitive' as const } },
+          { productType: { contains: search, mode: 'insensitive' as const } },
+        ],
+      });
+    }
+    const where = andConditions.length === 0
+      ? undefined
+      : andConditions.length === 1
+        ? andConditions[0]
+        : { AND: andConditions };
+
+    if (!limit) {
+      return this.tenantService.prisma.promotion.findMany({
+        where,
+        include: CREATOR_INCLUDE,
+        orderBy: { createdAt: 'desc' },
+      });
+    }
+
+    // Fetch one extra row to know whether there's a next page without a
+    // separate count query. `id` as the cursor field (paired with `id: 'desc'`
+    // as the orderBy tiebreaker) keeps paging stable even when multiple rows
+    // share the same createdAt millisecond.
+    const rows = await this.tenantService.prisma.promotion.findMany({
       where,
       include: CREATOR_INCLUDE,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     });
+    const hasMore = rows.length > limit;
+    const items = hasMore ? rows.slice(0, limit) : rows;
+    return { items, nextCursor: hasMore ? items[items.length - 1].id : null };
   }
 
   // Create a listing. shopId is null for a Super-Admin-created product, which

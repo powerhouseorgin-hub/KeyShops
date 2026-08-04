@@ -343,7 +343,7 @@ function SearchPage({ api }) {
     setLoading(true);
     setError('');
     try {
-      const results = await api.searchPublicShops(q);
+      const results = await api.searchPublicShops({ query: q });
       setShops(Array.isArray(results) ? results : []);
     } catch (err) {
       setError(err.message || 'Could not load shops right now.');

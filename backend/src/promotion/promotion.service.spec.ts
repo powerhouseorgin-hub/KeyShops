@@ -41,7 +41,7 @@ describe('PromotionService', () => {
     it('includes expired offers when includeExpiredOffers is true (Super Admin Offer Management)', async () => {
       prismaMock.promotion.findMany.mockResolvedValue([]);
 
-      await service.getAllPromotions(true);
+      await service.getAllPromotions({ includeExpiredOffers: true });
 
       const callArgs = prismaMock.promotion.findMany.mock.calls[0][0];
       expect(callArgs.where).toBeUndefined();

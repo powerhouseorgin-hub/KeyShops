@@ -4,7 +4,11 @@ import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { useAuth } from './context/AuthContext';
 import { getAssetUrl, downloadAsset, filenameForAsset, API_BASE } from './apiConfig';
-import { buildCustomerReportPdf } from './utils/customerReportPdf';
+// buildCustomerReportPdf is loaded lazily (dynamic import) at each call site
+// instead of a static top-level import - it pulls in jspdf + html2canvas,
+// which are heavy and only ever needed when a report is actually generated,
+// not on every page load. See the `await import('./utils/customerReportPdf')`
+// calls below.
 import { VEHICLE_CATEGORIES, isAutomobileCategory } from './utils/vehicleCategory';
 import twoWheelerIcon from './assets/categories/two-wheeler.png';
 import fourWheelerIcon from './assets/categories/four-wheeler.png';
@@ -742,6 +746,7 @@ const LANGUAGES = {
     newListingBtn: 'Add Machines',
     allCategoriesLabel: 'All Categories',
     loadingListingsMsg: 'Loading listings...',
+    loadMoreBtn: 'Load More',
     noOffersPublishedYet: 'No offers published yet',
     noInventoryListedYet: 'No inventory listed yet',
     expiredLabel: 'Expired',
@@ -1590,6 +1595,7 @@ const LANGUAGES = {
     newListingBtn: 'मशीन जोड़ें',
     allCategoriesLabel: 'सभी श्रेणियाँ',
     loadingListingsMsg: 'लिस्टिंग लोड हो रही हैं...',
+    loadMoreBtn: 'और लोड करें',
     noOffersPublishedYet: 'अभी तक कोई ऑफर प्रकाशित नहीं हुआ',
     noInventoryListedYet: 'अभी तक कोई इन्वेंटरी सूचीबद्ध नहीं है',
     expiredLabel: 'समाप्त',
@@ -2430,6 +2436,7 @@ const LANGUAGES = {
     newListingBtn: 'இயந்திரம் சேர்',
     allCategoriesLabel: 'அனைத்து வகைகள்',
     loadingListingsMsg: 'பட்டியல்கள் ஏற்றப்படுகின்றன...',
+    loadMoreBtn: 'மேலும் ஏற்று',
     noOffersPublishedYet: 'இதுவரை சலுகைகள் வெளியிடப்படவில்லை',
     noInventoryListedYet: 'இதுவரை சரக்கு பட்டியலிடப்படவில்லை',
     expiredLabel: 'காலாவதியானது',
@@ -3278,6 +3285,7 @@ const LANGUAGES = {
     newListingBtn: 'మెషీన్ జోడించండి',
     allCategoriesLabel: 'అన్ని వర్గాలు',
     loadingListingsMsg: 'లిస్టింగ్‌లు లోడ్ అవుతున్నాయి...',
+    loadMoreBtn: 'మరిన్ని లోడ్ చేయండి',
     noOffersPublishedYet: 'ఇంకా ఆఫర్‌లు ప్రచురించబడలేదు',
     noInventoryListedYet: 'ఇంకా ఇన్వెంటరీ జాబితా చేయబడలేదు',
     expiredLabel: 'గడువు ముగిసింది',
@@ -4118,6 +4126,7 @@ const LANGUAGES = {
     newListingBtn: 'ಯಂತ್ರ ಸೇರಿಸಿ',
     allCategoriesLabel: 'ಎಲ್ಲಾ ವರ್ಗಗಳು',
     loadingListingsMsg: 'ಪಟ್ಟಿಗಳು ಲೋಡ್ ಆಗುತ್ತಿವೆ...',
+    loadMoreBtn: 'ಇನ್ನಷ್ಟು ಲೋಡ್ ಮಾಡಿ',
     noOffersPublishedYet: 'ಇನ್ನೂ ಯಾವುದೇ ಕೊಡುಗೆಗಳನ್ನು ಪ್ರಕಟಿಸಲಾಗಿಲ್ಲ',
     noInventoryListedYet: 'ಇನ್ನೂ ಯಾವುದೇ ದಾಸ್ತಾನು ಪಟ್ಟಿ ಮಾಡಿಲ್ಲ',
     expiredLabel: 'ಅವಧಿ ಮುಗಿದಿದೆ',
@@ -4966,6 +4975,7 @@ const LANGUAGES = {
     newListingBtn: 'മെഷീൻ ചേർക്കുക',
     allCategoriesLabel: 'എല്ലാ വിഭാഗങ്ങളും',
     loadingListingsMsg: 'ലിസ്റ്റിംഗുകൾ ലോഡ് ചെയ്യുന്നു...',
+    loadMoreBtn: 'കൂടുതൽ ലോഡ് ചെയ്യുക',
     noOffersPublishedYet: 'ഇതുവരെ ഓഫറുകളൊന്നും പ്രസിദ്ധീകരിച്ചിട്ടില്ല',
     noInventoryListedYet: 'ഇതുവരെ ഇൻവെന്ററി ലിസ്റ്റ് ചെയ്തിട്ടില്ല',
     expiredLabel: 'കാലഹരണപ്പെട്ടു',
@@ -6185,6 +6195,7 @@ export default function App() {
             };
           }
 
+          const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
           const pdf = await buildCustomerReportPdf({
             customer: customerData,
             shop: customerData.shop || shopData,
@@ -6988,15 +6999,28 @@ export default function App() {
                               </div>
                               <div className="input-wrap">
                                 <input
-                                  type="text" required value={regLocation} onChange={(e) => setRegLocation(e.target.value)}
+                                  type="text" required value={regLocation}
+                                  onChange={(e) => {
+                                    setRegLocation(e.target.value);
+                                    // Once the owner starts typing their own address, the
+                                    // stale "Current Location" failure banner no longer
+                                    // applies - they've moved on to manual entry, which is
+                                    // fully valid on its own (see the Continue handler below).
+                                    if (regLocError) {
+                                      setRegLocError('');
+                                      setRegLocErrorKind('');
+                                    }
+                                  }}
                                   placeholder={t('streetLandmarkPlaceholder')}
                                 />
                               </div>
                               {/* GPS coordinates captured via the button above are reverse-geocoded
                         server-side and used to silently fill City/State/PIN Code (regCity/
-                        regState/regPinCode - required by the backend but no longer shown as
-                        separate fields), as well as being shown here so the owner can confirm
-                        what will be stored alongside the free-text address. */}
+                        regState/regPinCode) as optional metadata alongside the free-text
+                        address, and shown here so the owner can confirm what will be stored -
+                        but none of the three are required to proceed (see Continue below);
+                        Address is the one location field the owner must always be able to
+                        fill in by hand when GPS/reverse-geocoding isn't available. */}
                               {regLat != null && regLng != null && (
                                 <p style={{ marginTop: 6, fontSize: 11, color: 'var(--text-3)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
                                   <MapPin style={{ width: 11, height: 11 }} /> {regLat.toFixed(5)}, {regLng.toFixed(5)}
@@ -7167,10 +7191,10 @@ export default function App() {
                                   alert(t('pleaseFillRequiredRegFieldsMsg'));
                                   return;
                                 }
-                                if (!regCity || !regState || !regPinCode) {
-                                  alert(t('pleaseUseCurrentLocationMsg'));
-                                  return;
-                                }
+                                // City/State/PIN Code are optional, GPS-derived metadata only
+                                // (see the reg-field block above) - Continue must never depend
+                                // on "Current Location" having succeeded. A manually-typed
+                                // Address on its own is a complete, valid submission.
                                 if (regEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
                                   alert(t('pleaseEnterValidEmailMsg'));
                                   return;
@@ -9552,6 +9576,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
     setReportBusyId(`${c.id}:download`);
     try {
       const shopRes = await getFullShopDetails(c);
+      const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
       const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
       const safeName = `${(c.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
       await downloadPdf(pdf, safeName);
@@ -9567,6 +9592,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
     setReportBusyId(`${c.id}:whatsapp`);
     try {
       const shopRes = await getFullShopDetails(c);
+      const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
       const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
       const safeName = `${(c.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
       const queryParams = new URLSearchParams({
@@ -9925,6 +9951,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                   onClick={async () => {
                     try {
                       const shopRes = await getFullShopDetails(viewCust);
+                      const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
                       const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
                       const safeName = `${(viewCust.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
                       await downloadPdf(pdf, safeName);
@@ -9943,6 +9970,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                   onClick={async () => {
                     try {
                       const shopRes = await getFullShopDetails(viewCust);
+                      const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
                       const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
                       const safeName = `${(viewCust.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
                       const queryParams = new URLSearchParams({
@@ -10813,9 +10841,20 @@ function SuperBannerOfferManagementView({ t, api, user, initialTab = 'banners' }
   );
 }
 
+// Page size for the Machines/Inventory feed's cursor pagination - see
+// PromotionService.getAllPromotions.
+const PROMOTIONS_PAGE_SIZE = 20;
+
 function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Infinite-scroll pagination state - `promotions` above only ever holds
+  // the pages loaded so far, never the whole table (see fetchPromotions/
+  // fetchMorePromotions below).
+  const [nextCursor, setNextCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreSentinelRef = useRef(null);
   const [showAddModal, setShowAddModal] = useState(false);
   useBackHandler(showAddModal, () => setShowAddModal(false));
   const [editingId, setEditingId] = useState(null);
@@ -10848,15 +10887,25 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   // replaces what used to be a hardcoded PRODUCT_TYPES array.
   const [productTypes, setProductTypes] = useState([]);
 
-  // OLX-style category filter chip, applied client-side over the fetched feed.
+  // OLX-style category filter chip - now applied server-side (see
+  // fetchPromotions) so it stays correct across paginated pages instead of
+  // only filtering whatever happened to be loaded already.
   const [categoryFilter, setCategoryFilter] = useState('ALL');
 
   // Free-text query, either typed locally or dispatched from the global
   // header search panel (filter = "Product Type" / "Location" / "Anything").
+  // Debounced into `debouncedQuery` below before it reaches the server, since
+  // (unlike the old client-side filter) every change now triggers a network
+  // request - without debouncing, fast typing would fire one request per
+  // keystroke.
   const [textQuery, setTextQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  useEffect(() => {
+    const handle = setTimeout(() => setDebouncedQuery(textQuery.trim()), 300);
+    return () => clearTimeout(handle);
+  }, [textQuery]);
 
   useEffect(() => {
-    fetchPromotions();
     api.getProductTypes()
       .then((res) => {
         setProductTypes(res || []);
@@ -10882,19 +10931,95 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
     }
   }, [searchDispatch?.nonce]);
 
+  // Loads the first page for the current filters (category chip / search /
+  // onlyOffers) - called on mount and whenever any of those filters change,
+  // replacing whatever was loaded before rather than appending to it.
   const fetchPromotions = async () => {
     setLoading(true);
     try {
-      // Offer Management (Super Admin) needs every offer regardless of expiry
-      // for moderation; the plain marketplace feed only shows active offers.
-      const res = await api.getPromotions(onlyOffers);
-      setPromotions(onlyOffers ? res.filter(p => p.type === 'OFFER') : res);
+      const res = await api.getPromotions({
+        // Offer Management (Super Admin) needs every offer regardless of
+        // expiry for moderation; the plain marketplace feed only shows
+        // active offers.
+        includeExpiredOffers: onlyOffers,
+        type: onlyOffers ? 'OFFER' : undefined,
+        limit: PROMOTIONS_PAGE_SIZE,
+        category: !onlyOffers && categoryFilter !== 'ALL' ? categoryFilter : undefined,
+        search: debouncedQuery || undefined,
+      });
+      setPromotions(res.items);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
     } catch (e) {
       console.error(e);
     } finally {
       setLoading(false);
     }
   };
+
+  // Appends the next page, triggered by the sentinel div's IntersectionObserver
+  // scrolling into view (see the effect below) - never replaces what's
+  // already loaded.
+  const fetchMorePromotions = async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await api.getPromotions({
+        includeExpiredOffers: onlyOffers,
+        type: onlyOffers ? 'OFFER' : undefined,
+        limit: PROMOTIONS_PAGE_SIZE,
+        cursor: nextCursor,
+        category: !onlyOffers && categoryFilter !== 'ALL' ? categoryFilter : undefined,
+        search: debouncedQuery || undefined,
+      });
+      setPromotions((prev) => [...prev, ...res.items]);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Re-fetch page 1 whenever a filter changes (also covers the initial
+  // mount-time load).
+  useEffect(() => {
+    fetchPromotions();
+  }, [categoryFilter, debouncedQuery, onlyOffers]);
+
+  // Infinite scroll: fetch the next page as soon as the sentinel div at the
+  // bottom of the grid scrolls into view. Re-observing on every relevant
+  // state change (rather than memoizing fetchMorePromotions) keeps this
+  // simple and correct - the observer callback always closes over the
+  // latest hasMore/nextCursor/filters.
+  useEffect(() => {
+    const node = loadMoreSentinelRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) fetchMorePromotions();
+      },
+      { rootMargin: '400px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, nextCursor, loadingMore, categoryFilter, debouncedQuery, onlyOffers]);
+
+  // The Offer create/edit form's "link to one of your own listings" dropdown
+  // needs the caller's own full PRODUCT/AD listing set (not paginated - it's
+  // inherently small, one shop's own inventory), fetched separately and only
+  // while actually needed rather than as part of the main paginated feed.
+  const [linkableListings, setLinkableListings] = useState([]);
+  useEffect(() => {
+    if (!showAddModal || type !== 'OFFER') {
+      setLinkableListings([]);
+      return;
+    }
+    api.getPromotions({ mine: true, excludeOffers: true })
+      .then((res) => setLinkableListings(Array.isArray(res) ? res : []))
+      .catch((e) => console.error('Failed to load linkable listings:', e));
+  }, [showAddModal, type]);
 
   const resetForm = () => {
     setEditingId(null);
@@ -10983,28 +11108,21 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
 
   const isExpiredOffer = (promo) => promo.type === 'OFFER' && promo.validUntil && new Date(promo.validUntil) < new Date();
 
-  // A shop may only link an OFFER to one of that same shop's own PRODUCT/AD listings.
-  const editingPromo = promotions.find(p => p.id === editingId);
-  const linkShopId = editingId ? editingPromo?.shopId : user.shopId;
-  const linkableListings = promotions.filter(p => p.shopId === linkShopId && p.type !== 'OFFER' && p.id !== editingId);
+  // linkableListings (the Offer form's "link to one of your own listings"
+  // dropdown, filtered to the caller's own shop server-side) is fetched
+  // separately above - see the effect keyed on [showAddModal, type].
+  const linkableListingsFiltered = linkableListings.filter(p => p.id !== editingId);
 
-  // OLX-style category chips: only meaningful on the default mixed feed (not
-  // the Offer Management moderation screen), and only shown once there's
-  // more than one distinct productType actually present in the feed.
-  const availableCategories = !onlyOffers
-    ? Array.from(new Set(promotions.map(p => p.productType).filter(Boolean)))
-    : [];
-  const byCategory = categoryFilter === 'ALL'
-    ? promotions
-    : promotions.filter(p => p.productType === categoryFilter);
-  const q = textQuery.trim().toLowerCase();
-  const visiblePromotions = !q ? byCategory : byCategory.filter(p =>
-    (p.title || '').toLowerCase().includes(q) ||
-    (p.description || '').toLowerCase().includes(q) ||
-    (p.productType || '').toLowerCase().includes(q) ||
-    (p.shop?.name || '').toLowerCase().includes(q) ||
-    (p.createdBy?.name || '').toLowerCase().includes(q)
-  );
+  // OLX-style category chips: sourced from the Super-Admin-curated product
+  // type list (already fetched above), not from whatever page of the feed
+  // happens to be loaded - otherwise a category with no listings on page 1
+  // would be missing until the user scrolled far enough to see one.
+  const availableCategories = !onlyOffers ? productTypes.map(pt => pt.name) : [];
+
+  // `promotions` is already exactly the current filtered/paginated set from
+  // the server (category + search + onlyOffers all applied there now - see
+  // fetchPromotions) - no further client-side filtering needed.
+  const visiblePromotions = promotions;
 
   return (
     <div>
@@ -11070,7 +11188,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
               <div key={promo.id} className="product-card">
                 <div className="product-img" style={{ height: 150, aspectRatio: '1 / 1', maxHeight: 190 }}>
                   {promo.imageUrl ? (
-                    <img src={cleanGoogleImageUrl(promo.imageUrl)} alt={promo.title} className="w-full h-full object-cover" style={{ opacity: 0.9 }} />
+                    <img src={cleanGoogleImageUrl(promo.imageUrl)} alt={promo.title} loading="lazy" className="w-full h-full object-cover" style={{ opacity: 0.9 }} />
                   ) : (
                     <div className={`icon-badge ${meta.color}`}><Icon /></div>
                   )}
@@ -11171,6 +11289,25 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Infinite scroll: the sentinel div triggers fetchMorePromotions as
+          soon as it scrolls into view (see the IntersectionObserver effect
+          above). The "Load More" button underneath is a manual fallback for
+          the rare case scrolling proximity doesn't fire it (very short
+          viewports, WebView IntersectionObserver quirks) - both call the
+          same fetchMorePromotions, so there's no risk of double-fetching
+          beyond what the loadingMore guard already prevents. */}
+      {!loading && hasMore && (
+        <div ref={loadMoreSentinelRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20 }}>
+          {loadingMore ? (
+            <RefreshCw className="animate-spin" style={{ width: 20, height: 20, color: 'var(--gold)' }} />
+          ) : (
+            <button type="button" onClick={fetchMorePromotions} className="btn btn-outline btn-sm">
+              {t('loadMoreBtn')}
+            </button>
+          )}
         </div>
       )}
 
@@ -11319,7 +11456,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                       value={linkedPromotionId} onChange={setLinkedPromotionId}
                       options={[
                         { value: '', label: t('noLinkedListingOption') },
-                        ...linkableListings.map(p => ({ value: p.id, label: `${p.title} (${p.type === 'AD' ? t('advertisementLabel') : t('productLabel')})` })),
+                        ...linkableListingsFiltered.map(p => ({ value: p.id, label: `${p.title} (${p.type === 'AD' ? t('advertisementLabel') : t('productLabel')})` })),
                       ]}
                     />
                   </div>
@@ -11496,7 +11633,7 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
   const fetchDealers = async () => {
     setLoading(true);
     try {
-      const res = await api.searchPublicShops(query, categoryKey);
+      const res = await api.searchPublicShops({ query, category: categoryKey });
       setDealers(Array.isArray(res) ? res : []);
     } catch (e) {
       console.error('Failed to fetch category dealers', e);
@@ -11527,27 +11664,9 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
     accentColor = 'var(--teal)';
   }
 
-  const filteredShops = dealers.filter((dealer) => {
-    const catName = (dealer.category || '').toLowerCase();
-    const shopName = (dealer.name || '').toLowerCase();
-
-    let matchesCategory = false;
-    if (categoryKey === 'KEY_SHOPS') {
-      const isOtherCategory = catName.includes('ecm') || catName.includes('meter') || catName.includes('scan') || catName.includes('dealer') ||
-                              shopName.includes('ecm') || shopName.includes('meter') || shopName.includes('scan') || shopName.includes('dealer');
-      matchesCategory = !isOtherCategory;
-    } else if (categoryKey === 'ECM') {
-      matchesCategory = catName.includes('ecm') || shopName.includes('ecm');
-    } else if (categoryKey === 'METER') {
-      matchesCategory = catName.includes('meter') || shopName.includes('meter');
-    } else if (categoryKey === 'SCANNER') {
-      matchesCategory = catName.includes('scan') || shopName.includes('scan');
-    } else {
-      matchesCategory = true;
-    }
-
-    return matchesCategory;
-  });
+  // `dealers` is already exactly-filtered to this category server-side (see
+  // ShopService.searchPublicShops's `category` where-clause) - no client-side
+  // re-filtering needed here anymore.
 
   return (
     <div className="animate-fade-in">
@@ -11585,7 +11704,7 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: accentColor }} />
           <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingEllipsis')}</span>
         </div>
-      ) : filteredShops.length === 0 ? (
+      ) : dealers.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge" style={{ background: accentColor, color: '#ffffff' }}>
             {IconComponent ? <IconComponent style={{ width: 24, height: 24 }} /> : <Store style={{ width: 24, height: 24 }} />}
@@ -11594,7 +11713,7 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
         </div>
       ) : (
         <div className="dealer-list stagger-in">
-          {filteredShops.map((dealer) => (
+          {dealers.map((dealer) => (
             <div key={dealer.id} className="dealer-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                 <div className="dealer-logo" style={{ background: 'var(--card-2)', padding: 4 }}>
@@ -11655,22 +11774,40 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
 // Displays registered public shop/dealer listings across India with non-scrollable
 // category filter cards (All, Key Shops, ECM, Meter, Scanning).
 // ============================================================================
+// Page size for the Dealers directory's cursor pagination - see
+// ShopService.searchPublicShops.
+const DEALERS_PAGE_SIZE = 20;
+
 function DealersView({ t, api }) {
   const [dealers, setDealers] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Infinite-scroll pagination state - `dealers` only ever holds the pages
+  // loaded so far, never the whole directory (see fetchDealers/fetchMoreDealers).
+  const [nextCursor, setNextCursor] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreSentinelRef = useRef(null);
   const [query, setQuery] = useState('');
+  // Debounced before it reaches the server - see PromotionsFeed's identical
+  // pattern for why (every change now triggers a network request).
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+  useEffect(() => {
+    const handle = setTimeout(() => setDebouncedQuery(query.trim()), 300);
+    return () => clearTimeout(handle);
+  }, [query]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');
 
-  useEffect(() => {
-    fetchDealers();
-  }, [query, selectedCategory]);
-
+  // Loads the first page for the current filters, replacing whatever was
+  // loaded before. The category filter is already applied server-side (see
+  // ShopService.searchPublicShops) - no client-side re-filtering needed.
   const fetchDealers = async () => {
     setLoading(true);
     try {
       const categoryParam = selectedCategory === 'ALL' ? '' : selectedCategory;
-      const res = await api.searchPublicShops(query, categoryParam);
-      setDealers(Array.isArray(res) ? res : []);
+      const res = await api.searchPublicShops({ query: debouncedQuery, category: categoryParam, limit: DEALERS_PAGE_SIZE });
+      setDealers(res.items);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
     } catch (e) {
       console.error('Failed to fetch dealers', e);
     } finally {
@@ -11678,24 +11815,40 @@ function DealersView({ t, api }) {
     }
   };
 
-  const filteredDealers = dealers.filter((dealer) => {
-    if (selectedCategory === 'ALL') return true;
-    const catName = (dealer.category || '').toLowerCase();
-    const shopName = (dealer.name || '').toLowerCase();
-
-    if (selectedCategory === 'KEY_SHOPS') {
-      const isOtherCategory = catName.includes('ecm') || catName.includes('meter') || catName.includes('scan') || catName.includes('dealer') ||
-                              shopName.includes('ecm') || shopName.includes('meter') || shopName.includes('scan') || shopName.includes('dealer');
-      return !isOtherCategory;
-    } else if (selectedCategory === 'ECM') {
-      return catName.includes('ecm') || shopName.includes('ecm');
-    } else if (selectedCategory === 'METER') {
-      return catName.includes('meter') || shopName.includes('meter');
-    } else if (selectedCategory === 'SCANNER') {
-      return catName.includes('scan') || shopName.includes('scan');
+  // Appends the next page - triggered by the sentinel scrolling into view or
+  // the manual "Load More" fallback button.
+  const fetchMoreDealers = async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const categoryParam = selectedCategory === 'ALL' ? '' : selectedCategory;
+      const res = await api.searchPublicShops({ query: debouncedQuery, category: categoryParam, cursor: nextCursor, limit: DEALERS_PAGE_SIZE });
+      setDealers((prev) => [...prev, ...res.items]);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
+    } catch (e) {
+      console.error('Failed to fetch more dealers', e);
+    } finally {
+      setLoadingMore(false);
     }
-    return true;
-  });
+  };
+
+  useEffect(() => {
+    fetchDealers();
+  }, [debouncedQuery, selectedCategory]);
+
+  useEffect(() => {
+    const node = loadMoreSentinelRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) fetchMoreDealers();
+      },
+      { rootMargin: '400px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, nextCursor, loadingMore, debouncedQuery, selectedCategory]);
 
   const categories = [
     { id: 'ALL', keyName: 'allCategoriesCard', defaultLabel: 'All', icon: Store, accent: 'var(--gold)' },
@@ -11775,14 +11928,14 @@ function DealersView({ t, api }) {
           <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
           <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingEllipsis')}</span>
         </div>
-      ) : filteredDealers.length === 0 ? (
+      ) : dealers.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge rose"><Store /></div>
           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noDealersFoundMsg') || 'No dealers found matching your search.'}</span>
         </div>
       ) : (
         <div className="dealer-list stagger-in">
-          {filteredDealers.map((dealer) => (
+          {dealers.map((dealer) => (
             <div key={dealer.id} className="dealer-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                 <div className="dealer-logo">
@@ -11828,6 +11981,20 @@ function DealersView({ t, api }) {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Infinite scroll (sentinel) + manual "Load More" fallback - see
+          PromotionsFeed's identical pattern for why both exist. */}
+      {!loading && hasMore && (
+        <div ref={loadMoreSentinelRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20 }}>
+          {loadingMore ? (
+            <RefreshCw className="animate-spin" style={{ width: 20, height: 20, color: 'var(--gold)' }} />
+          ) : (
+            <button type="button" onClick={fetchMoreDealers} className="btn btn-outline btn-sm">
+              {t('loadMoreBtn')}
+            </button>
+          )}
         </div>
       )}
     </div>
@@ -12639,32 +12806,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setIsCapturingGps(false);
   };
 
-  // Auto-retry "Current Location" once the user comes back to this screen
-  // after granting permission / turning on GPS from the location-error popup's
-  // action button (Settings apps don't hand control back with any event of
-  // their own, so app-resume / tab-visible is the only signal available that
-  // "the user might have just fixed it"). Only wired up while an error is
-  // actually pending - closing the popup clears gpsError, which stops this
-  // from firing again until "Current Location" is tapped once more.
-  useEffect(() => {
-    if (!gpsError) return;
-    const retry = () => captureCustomerLocation();
-
-    if (IS_NATIVE_APP) {
-      let handle;
-      CapacitorApp.addListener('appStateChange', (state) => {
-        if (state.isActive) retry();
-      }).then((h) => { handle = h; });
-      return () => { handle?.remove(); };
-    }
-
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'visible') retry();
-    };
-    document.addEventListener('visibilitychange', onVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
-  }, [gpsError]);
-
   const handleDocumentFile = (file) => {
     setUploadError('');
     if (!file) return;
@@ -12928,6 +13069,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       createdAt: new Date().toISOString(),
       documents: uploadedDocs,
     };
+    const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
     return buildCustomerReportPdf({ customer: customerLike, shop, registeredByName: user?.name });
   };
 
@@ -13112,7 +13254,19 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     </button>
                   </div>
                   <div className="input-wrap">
-                    <input type="text" required value={addressLine} onChange={(e) => setAddressLine(e.target.value)} placeholder={t('addressLinePlaceholderEg')} />
+                    <input
+                      type="text" required value={addressLine}
+                      onChange={(e) => {
+                        setAddressLine(e.target.value);
+                        // Manual entry supersedes a failed GPS lookup - clear the stale
+                        // error banner instead of leaving it displayed indefinitely.
+                        if (gpsError) {
+                          setGpsError('');
+                          setGpsErrorKind('');
+                        }
+                      }}
+                      placeholder={t('addressLinePlaceholderEg')}
+                    />
                   </div>
                   {latitude && longitude && !gpsError && (
                     <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 6 }}>{t('gpsCapturedTemplate').split('{lat}')[0]}{latitude.toFixed(5)}{t('gpsCapturedTemplate').split('{lat}')[1].split('{long}')[0]}{longitude.toFixed(5)}</p>
@@ -13849,6 +14003,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     setReportBusyId(`${c.id}:download`);
     try {
       const shop = await ensureShopInfo();
+      const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
       const pdf = await buildCustomerReportPdf({ customer: c, shop, registeredByName: user?.name });
       const safeName = `${(c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Key_Registration_Report.pdf`;
       await downloadPdf(pdf, safeName);
@@ -13864,6 +14019,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     setReportBusyId(`${c.id}:whatsapp`);
     try {
       const shop = await ensureShopInfo();
+      const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
       const pdf = await buildCustomerReportPdf({ customer: c, shop, registeredByName: user?.name });
       const safeName = `${(c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Key_Registration_Report.pdf`;
       const downloadUrl = `https://keee-7d6cb.web.app/?downloadDoc=${c.id}`;

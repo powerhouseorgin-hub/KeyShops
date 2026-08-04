@@ -177,11 +177,19 @@ export const AuthProvider = ({ children }) => {
       return response.json();
     },
 
-    // Public landing-page shop search (no auth) - used by the "Find a Shop" search page.
-    searchPublicShops: async (query = '', category = '') => {
+    // Public landing-page shop search (no auth) - used by the "Find a Shop"
+    // search page, the Dealers directory, and the ECM/Meter/Scanning/Key
+    // Shops category screens. Pagination is opt-in via `limit` - omit it
+    // (the default) for the original flat, top-50 array; pass `limit` to get
+    // `{ items, nextCursor }` pages instead (used by the Dealers directory's
+    // infinite scroll).
+    searchPublicShops: async (opts = {}) => {
+      const { query = '', category = '', cursor, limit } = opts;
       const params = new URLSearchParams();
       if (query) params.append('query', query);
       if (category) params.append('category', category);
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
       const qs = params.toString();
       const url = `${API_BASE}/api/public/shops${qs ? `?${qs}` : ''}`;
       const response = await fetch(url);
@@ -306,8 +314,24 @@ export const AuthProvider = ({ children }) => {
 
     // --- CROSS-SHOP PROMOTIONS (advertisements & promotional products, visible to every shop) ---
     // GET is a shared feed: every shop admin and the super admin see every shop's listings.
-    getPromotions: async (includeExpiredOffers = false) =>
-      request(`/api/promotions${includeExpiredOffers ? '?includeExpiredOffers=true' : ''}`),
+    // Pagination is opt-in via `limit` - omit it (the default) to get the full
+    // flat array exactly as before (used by the global header search and the
+    // offer-linking dropdown); pass `limit` to get `{ items, nextCursor }`
+    // pages instead (used by the Machines/Inventory feed's infinite scroll).
+    getPromotions: async (opts = {}) => {
+      const { includeExpiredOffers = false, cursor, limit, category, search, type, excludeOffers, mine } = opts;
+      const params = new URLSearchParams();
+      if (includeExpiredOffers) params.append('includeExpiredOffers', 'true');
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
+      if (category) params.append('category', category);
+      if (search) params.append('search', search);
+      if (type) params.append('type', type);
+      if (excludeOffers) params.append('excludeOffers', 'true');
+      if (mine) params.append('mine', 'true');
+      const qs = params.toString();
+      return request(`/api/promotions${qs ? `?${qs}` : ''}`);
+    },
     createPromotion: async (dto) => {
       const url = user.role === 'SUPER_ADMIN' ? '/api/super/promotions' : '/api/shop/promotions';
       return request(url, 'POST', dto);

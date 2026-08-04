@@ -488,6 +488,29 @@ export class AuthService implements OnModuleInit {
         },
       });
 
+      // 3b. Record this subscription's (simulated) payment as platform
+      // revenue, once, at the moment the account is created - feeds the
+      // Super Admin Revenue Report (see ReportService.getSuperDashboard /
+      // getRevenueRecords). Always INSERTs a new row - unlike
+      // ReportService.logRevenue's manual one-row-per-month upsert - since
+      // multiple shops can register in the same month and each is its own
+      // distinct income event, not a figure to be overwritten. This can only
+      // ever run once per shop: registerShop can't be re-run for the same
+      // account (the email/phone uniqueness check above rejects
+      // re-registration), and nothing else in the app creates a
+      // RevenueRecord tied to a shop, so later edits/updates to the shop can
+      // never duplicate or touch this entry.
+      const platformConfig = await tx.platformConfig.findUnique({ where: { id: 'default' } });
+      const subscriptionPrice = platformConfig?.subscriptionPrice ?? 999;
+      await tx.revenueRecord.create({
+        data: {
+          month: subStartDate.getMonth() + 1,
+          year: subStartDate.getFullYear(),
+          amount: subscriptionPrice,
+          notes: `Revenue generated from a new Shop Account subscription — ${dto.shopName}.`,
+        },
+      });
+
       // 4. Credit the referring shop, only after this shop's account creation
       // and (simulated) payment above have both succeeded. The Referral row's
       // unique referredShopId means this can only ever run once for this shop

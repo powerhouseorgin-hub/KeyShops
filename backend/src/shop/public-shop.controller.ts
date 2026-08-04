@@ -9,8 +9,18 @@ import { ShopService } from './shop.service';
 export class PublicShopController {
   constructor(private readonly shopService: ShopService) {}
 
+  // cursor/limit are optional - see ShopService.searchPublicShops for how
+  // omitting `limit` preserves the original unpaginated (top-50) behavior
+  // for callers not yet converted to paginate (the public marketing site's
+  // "Find a Shop" search, and the ECM/Meter/Scanning/Key Shops category
+  // screens); the Dealers directory passes `limit` to page through everything.
   @Get()
-  async search(@Query('query') query?: string, @Query('category') category?: string) {
-    return this.shopService.searchPublicShops(query, category);
+  async search(
+    @Query('query') query?: string,
+    @Query('category') category?: string,
+    @Query('cursor') cursor?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.shopService.searchPublicShops({ query, category, cursor, limit: limit ? Number(limit) : undefined });
   }
 }

@@ -149,6 +149,9 @@ model Shop {
 
   @@index([deletedAt])
   @@index([categoryId])
+  // Backs the public Dealers/Find-a-Shop directory's cursor pagination -
+  // WHERE isActive = true ORDER BY createdAt DESC - see ShopService.searchPublicShops.
+  @@index([isActive, createdAt])
 }
 
 // Append-only ledger recording each successful referral: one row per
@@ -457,6 +460,11 @@ model Promotion {
   @@index([deletedAt])
   @@index([type])
   @@index([linkedPromotionId])
+  // Backs the Machines/Inventory feed's cursor pagination (ORDER BY createdAt
+  // DESC) and its category filter chips (WHERE productType = ...) - see
+  // PromotionService.getAllPromotions.
+  @@index([createdAt])
+  @@index([productType])
 }
 
 model ActivityLog {

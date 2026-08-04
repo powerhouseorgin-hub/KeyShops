@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 import * as path from 'path';
+import * as compression from 'compression';
 
 // Prisma returns BigInt for BigInt columns (e.g. Shop.storageUsed), which
 // JSON.stringify cannot serialize natively — this makes every API response
@@ -18,6 +19,10 @@ async function bootstrap() {
   // customer photo payloads sent by the customer registration form
   // (raised "PayloadTooLargeError: request entity too large").
   const app = await NestFactory.create(AppModule, { bodyParser: false });
+  // Gzip every response over Express's default 1kb threshold - JSON list
+  // endpoints (customers, shops, keys) are the main beneficiaries, especially
+  // over the slower mobile connections this app is mostly used on.
+  app.use(compression());
   app.use(express.json({ limit: '15mb' }));
   app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 

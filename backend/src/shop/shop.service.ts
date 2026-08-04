@@ -172,11 +172,50 @@ export class ShopService {
     });
   }
 
-  // PUBLIC: Search/list shops for the public landing page's "find a shop" search.
+  // Shared row -> public-safe DTO mapper for searchPublicShops - only safe,
+  // non-sensitive fields (no GST/financial info, no user/admin records, no
+  // documents), used by both the unpaginated and cursor-paginated return paths.
+  private mapPublicShop(shop: {
+    id: string; name: string; themeColor: string; companyDetails: string | null;
+    category: { name: string } | null;
+  }) {
+    let address: string | null = null;
+    let phone: string | null = null;
+    let website: string | null = null;
+    if (shop.companyDetails) {
+      try {
+        const details = JSON.parse(shop.companyDetails);
+        address = details.address || null;
+        phone = details.phone || null;
+        website = details.website || null;
+      } catch {
+        // companyDetails wasn't valid JSON - ignore, just omit address/phone/website.
+      }
+    }
+    return {
+      id: shop.id,
+      name: shop.name,
+      themeColor: shop.themeColor,
+      address,
+      phone,
+      website,
+      category: shop.category?.name || null,
+    };
+  }
+
+  // PUBLIC: Search/list shops for the public landing page's "find a shop" search,
+  // the Dealers directory, and the ECM/Meter/Scanning/Key Shops category screens.
   // Deliberately unauthenticated (see PublicShopController) and therefore must only
   // ever return safe, non-sensitive fields - no GST/financial info, no user/admin
   // records, no documents. Only active shops are visible publicly.
-  async searchPublicShops(query?: string, category?: string) {
+  //
+  // Pagination is opt-in, same pattern as PromotionService.getAllPromotions:
+  // omitting `limit` preserves the exact original behavior (a flat array,
+  // capped at 50) for callers that haven't been converted to paginate yet;
+  // passing `limit` switches to cursor-based paging and returns
+  // `{ items, nextCursor }` instead.
+  async searchPublicShops(opts: { query?: string; category?: string; cursor?: string; limit?: number } = {}) {
+    const { query, category, cursor, limit } = opts;
     const whereClause: any = { isActive: true };
 
     if (category) {
@@ -222,44 +261,39 @@ export class ShopService {
       }
     }
 
-    const shops = await this.tenantService.prisma.shop.findMany({
-      where: whereClause,
-      select: {
-        id: true,
-        name: true,
-        themeColor: true,
-        companyDetails: true,
-        createdAt: true,
-        category: { select: { name: true } },
-      },
-      orderBy: { createdAt: 'desc' },
-      take: 50,
-    });
+    const select = {
+      id: true,
+      name: true,
+      themeColor: true,
+      companyDetails: true,
+      createdAt: true,
+      category: { select: { name: true } },
+    };
 
-    return shops.map((shop) => {
-      let address: string | null = null;
-      let phone: string | null = null;
-      let website: string | null = null;
-      if (shop.companyDetails) {
-        try {
-          const details = JSON.parse(shop.companyDetails);
-          address = details.address || null;
-          phone = details.phone || null;
-          website = details.website || null;
-        } catch {
-          // companyDetails wasn't valid JSON - ignore, just omit address/phone.
-        }
-      }
-      return {
-        id: shop.id,
-        name: shop.name,
-        themeColor: shop.themeColor,
-        address,
-        phone,
-        website,
-        category: shop.category?.name || null,
-      };
+    if (!limit) {
+      const shops = await this.tenantService.prisma.shop.findMany({
+        where: whereClause,
+        select,
+        orderBy: { createdAt: 'desc' },
+        take: 50,
+      });
+      return shops.map((shop) => this.mapPublicShop(shop));
+    }
+
+    // Fetch one extra row to know whether there's a next page, same approach
+    // as PromotionService.getAllPromotions. `id` as the cursor field (paired
+    // with `id: 'desc'` as the orderBy tiebreaker) keeps paging stable even
+    // when multiple shops share the same createdAt millisecond.
+    const rows = await this.tenantService.prisma.shop.findMany({
+      where: whereClause,
+      select,
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: limit + 1,
+      ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     });
+    const hasMore = rows.length > limit;
+    const page = hasMore ? rows.slice(0, limit) : rows;
+    return { items: page.map((shop) => this.mapPublicShop(shop)), nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
   // SHOP ADMIN: Get Settings
