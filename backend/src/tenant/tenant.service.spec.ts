@@ -27,21 +27,31 @@ describe('TenantService.prisma (soft-delete + tenant-scoping extension)', () => 
 
   afterAll(async () => {
     // Hard cleanup via raw (unextended) delegates - deliberately bypasses
-    // the soft-delete rewrite so test data doesn't linger.
-    for (const id of createdNotificationIds) {
-      await tenantService.notification.delete({ where: { id } }).catch(() => undefined);
-    }
-    for (const shopId of createdShopIds) {
-      await tenantService.activityLog.deleteMany({ where: { shopId } }).catch(() => undefined);
-      await tenantService.customer.deleteMany({ where: { shopId } }).catch(() => undefined);
-      await tenantService.shopDocument.deleteMany({ where: { shopId } }).catch(() => undefined);
-      await tenantService.shop.delete({ where: { id: shopId } }).catch(() => undefined);
-    }
-    for (const userId of createdUserIds) {
-      await tenantService.user.delete({ where: { id: userId } }).catch(() => undefined);
-    }
+    // the soft-delete rewrite so test data doesn't linger. Cleanup across
+    // different shops/notifications/users runs in parallel (each shop's own
+    // steps stay sequential - FK order requires children before the shop
+    // itself) - this suite creates ~10 shops, and the old fully-sequential
+    // version of this loop was exceeding jest's default 5s hook timeout,
+    // which aborted the loop partway through and left orphaned shops behind
+    // in the real database this suite runs against (see the class-level
+    // comment above). The explicit timeout below is a safety margin on top
+    // of that, not a substitute for it.
+    await Promise.all(
+      createdNotificationIds.map((id) => tenantService.notification.delete({ where: { id } }).catch(() => undefined)),
+    );
+    await Promise.all(
+      createdShopIds.map(async (shopId) => {
+        await tenantService.activityLog.deleteMany({ where: { shopId } }).catch(() => undefined);
+        await tenantService.customer.deleteMany({ where: { shopId } }).catch(() => undefined);
+        await tenantService.shopDocument.deleteMany({ where: { shopId } }).catch(() => undefined);
+        await tenantService.shop.delete({ where: { id: shopId } }).catch(() => undefined);
+      }),
+    );
+    await Promise.all(
+      createdUserIds.map((userId) => tenantService.user.delete({ where: { id: userId } }).catch(() => undefined)),
+    );
     await tenantService.$disconnect();
-  });
+  }, 30000);
 
   async function createTestShop(suffix: string) {
     const shop = await tenantService.shop.create({
@@ -115,7 +125,10 @@ describe('TenantService.prisma (soft-delete + tenant-scoping extension)', () => 
           shopId: shop.id,
         },
       });
-      createdUserIds.push(user.id);
+      // Not pushed to createdUserIds - User.shopId cascades on delete (see
+      // schema.prisma), so this row is already removed for free when
+      // afterAll deletes `shop` above; an explicit delete here would just
+      // fail (row already gone) and print a benign-but-noisy Prisma error.
 
       const log = await tenantService.prisma.activityLog.create({
         data: { shopId: shop.id, userId: user.id, action: 'TEST_ACTION', details: '{}' },
