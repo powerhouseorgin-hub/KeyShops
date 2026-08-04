@@ -8423,13 +8423,19 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
 // ShopService.getShops.
 const SHOP_MANAGEMENT_PAGE_SIZE = 20;
 
+// Caches only the first page of the default (no-search) list - module
+// scope. This view unmounts/remounts on every tab switch, so without this
+// every revisit blanked to a spinner and re-fetched page 1 from scratch
+// even with an empty search box.
+let shopsFirstPageCache = null;
+
 function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOpen, searchDispatch }) {
-  const [shops, setShops] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [shops, setShops] = useState(shopsFirstPageCache ? shopsFirstPageCache.items : []);
+  const [loading, setLoading] = useState(!shopsFirstPageCache);
   // Infinite-scroll pagination state - `shops` only ever holds the pages
   // loaded so far, never the whole platform-wide registry.
-  const [nextCursor, setNextCursor] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(shopsFirstPageCache ? shopsFirstPageCache.nextCursor : null);
+  const [hasMore, setHasMore] = useState(shopsFirstPageCache ? shopsFirstPageCache.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -8544,12 +8550,18 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchShops = async () => {
-    setLoading(true);
+    // Only blank to a spinner for a real search or a genuinely empty
+    // screen - a bare revisit renders the cached first page instantly and
+    // refreshes silently in the background.
+    if (debouncedShopSearchQuery || shops.length === 0) setLoading(true);
     try {
       const res = await api.getShopsPage({ search: debouncedShopSearchQuery, limit: SHOP_MANAGEMENT_PAGE_SIZE });
       setShops(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
+      if (!debouncedShopSearchQuery) {
+        shopsFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -9609,14 +9621,18 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 // CustomerService.getSuperCustomers.
 const CUSTOMER_REGISTRY_PAGE_SIZE = 20;
 
+// Caches only the first page of the default (no-search) list - module
+// scope, same rationale as shopsFirstPageCache above.
+let customersFirstPageCache = null;
+
 function SuperCustomersView({ t, api, searchDispatch }) {
   const { user } = useAuth();
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState(customersFirstPageCache ? customersFirstPageCache.items : []);
   const [loading, setLoading] = useState(false);
   // Infinite-scroll pagination state - `customers` only ever holds the pages
   // loaded so far, never the whole platform-wide registry.
-  const [nextCursor, setNextCursor] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(customersFirstPageCache ? customersFirstPageCache.nextCursor : null);
+  const [hasMore, setHasMore] = useState(customersFirstPageCache ? customersFirstPageCache.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [search, setSearch] = useState('');
@@ -9650,12 +9666,18 @@ function SuperCustomersView({ t, api, searchDispatch }) {
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchCustomers = async () => {
-    setLoading(true);
+    // Only blank to a spinner for a real search or a genuinely empty
+    // screen - a bare revisit renders the cached first page instantly and
+    // refreshes silently in the background.
+    if (debouncedSearch || customers.length === 0) setLoading(true);
     try {
       const res = await api.getSuperCustomersPage({ search: debouncedSearch, limit: CUSTOMER_REGISTRY_PAGE_SIZE });
       setCustomers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
+      if (!debouncedSearch) {
+        customersFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -9699,9 +9721,15 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 
   const openCreateWizard = async () => {
     setShowCreateWizard(true);
+    // Shows the cached platform shop list instantly if we have one (shared
+    // with AdsManagementView's cache - shops rarely change) while
+    // refreshing in the background, instead of the wizard's shop-selector
+    // always waiting on a fresh full-table fetch before it's usable.
+    if (platformShopsCache) setShops(platformShopsCache);
     try {
       const res = await api.getShops();
       setShops(res || []);
+      platformShopsCache = res || [];
     } catch (e) {
       console.error(e);
     }
@@ -10234,13 +10262,17 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 // KeyService.getKeys.
 const KEY_CATALOGUE_PAGE_SIZE = 20;
 
+// Caches only the first page of the default (no-search) list - module
+// scope, same rationale as shopsFirstPageCache above.
+let keysFirstPageCache = null;
+
 function KeysCatalogView({ t, api, searchDispatch }) {
-  const [keys, setKeys] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [keys, setKeys] = useState(keysFirstPageCache ? keysFirstPageCache.items : []);
+  const [loading, setLoading] = useState(!keysFirstPageCache);
   // Infinite-scroll pagination state - `keys` only ever holds the pages
   // loaded so far, never the whole platform-wide catalog.
-  const [nextCursor, setNextCursor] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(keysFirstPageCache ? keysFirstPageCache.nextCursor : null);
+  const [hasMore, setHasMore] = useState(keysFirstPageCache ? keysFirstPageCache.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -10272,12 +10304,18 @@ function KeysCatalogView({ t, api, searchDispatch }) {
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchKeys = async () => {
-    setLoading(true);
+    // Only blank to a spinner for a real search or a genuinely empty
+    // screen - a bare revisit renders the cached first page instantly and
+    // refreshes silently in the background.
+    if (debouncedSearchQuery || keys.length === 0) setLoading(true);
     try {
       const res = await api.getMasterKeysPage({ search: debouncedSearchQuery, limit: KEY_CATALOGUE_PAGE_SIZE });
       setKeys(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
+      if (!debouncedSearchQuery) {
+        keysFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -10576,10 +10614,21 @@ function KeysCatalogView({ t, api, searchDispatch }) {
 // ============================================================================
 // COMPONENT 6: ADVERTISEMENTS CRUD (SUPER ADMIN ONLY)
 // ============================================================================
+// In-memory caches (module scope) - the Banner/Offer Management sub-tab
+// toggle unmounts/remounts this view on every click between "Banner
+// Management" and "Offer Management", which admins do repeatedly in one
+// visit, so without this every toggle blanked to a spinner and re-fetched
+// both the ad list and the platform-wide shop dropdown from scratch. Shops
+// list is also shared with the Create Customer wizard's shop-selector,
+// which rarely needs the platform list to have changed since it was last
+// fetched.
+let adsListCache = null;
+let platformShopsCache = null;
+
 function AdsManagementView({ t, api }) {
-  const [ads, setAds] = useState([]);
-  const [shops, setShops] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [ads, setAds] = useState(adsListCache || []);
+  const [shops, setShops] = useState(platformShopsCache || []);
+  const [loading, setLoading] = useState(!adsListCache);
   const [showAddModal, setShowAddModal] = useState(false);
   useBackHandler(showAddModal, () => setShowAddModal(false));
   const [editingAdId, setEditingAdId] = useState(null);
@@ -10624,10 +10673,13 @@ function AdsManagementView({ t, api }) {
   }, []);
 
   const fetchAds = async () => {
-    setLoading(true);
+    // Only blank to a spinner when there's nothing on screen yet - a
+    // revisit renders the cached list instantly and refreshes silently.
+    if (ads.length === 0) setLoading(true);
     try {
       const res = await api.getAdvertisements();
       setAds(res);
+      adsListCache = res;
     } catch (e) {
       console.error(e);
     } finally {
@@ -10639,6 +10691,7 @@ function AdsManagementView({ t, api }) {
     try {
       const res = await api.getShops();
       setShops(res);
+      platformShopsCache = res;
     } catch (e) {
       console.error(e);
     }
@@ -11905,20 +11958,40 @@ function OffersAdsBannersView({ t, api }) {
 // Displays shops belonging specifically to Key Shops, ECM, Meter, or Scanning.
 // Each screen has its own Title, Search, Filter, and Responsive Layout.
 // ============================================================================
+// In-memory cache per category (module scope, public data so no user-scoping
+// needed) - this view unmounts/remounts on every tab switch (Key Shops/ECM/
+// Meter/Scanning each mount a fresh instance), so without this every bare
+// revisit blanked to a spinner before showing anything, same root cause as
+// the DashboardView fix.
+const categoryShopsCache = {};
+
 function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) {
-  const [dealers, setDealers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cachedDealers = categoryShopsCache[categoryKey] || null;
+  const [dealers, setDealers] = useState(cachedDealers || []);
+  const [loading, setLoading] = useState(!cachedDealers);
   const [query, setQuery] = useState('');
 
+  // Debounced (350ms, matching Blank Key Search) - this previously fired a
+  // fresh request (and blanked the list to a spinner) on every keystroke,
+  // with no debounce at all.
   useEffect(() => {
-    fetchDealers();
+    const timer = setTimeout(() => {
+      fetchDealers();
+    }, 350);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, categoryKey]);
 
   const fetchDealers = async () => {
-    setLoading(true);
+    // Only blank to a spinner when there's nothing on screen yet - a bare
+    // revisit renders the last-fetched list instantly from cache above and
+    // refreshes silently in the background.
+    if (dealers.length === 0) setLoading(true);
     try {
       const res = await api.searchPublicShops({ query, category: categoryKey });
-      setDealers(Array.isArray(res) ? res : []);
+      const list = Array.isArray(res) ? res : [];
+      setDealers(list);
+      if (!query) categoryShopsCache[categoryKey] = list;
     } catch (e) {
       console.error('Failed to fetch category dealers', e);
     } finally {
@@ -12062,13 +12135,17 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
 // ShopService.searchPublicShops.
 const DEALERS_PAGE_SIZE = 20;
 
+// Caches only the first page of the default (no search, "ALL" category)
+// list - module scope, same rationale as shopsFirstPageCache above.
+let dealersFirstPageCache = null;
+
 function DealersView({ t, api }) {
-  const [dealers, setDealers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [dealers, setDealers] = useState(dealersFirstPageCache ? dealersFirstPageCache.items : []);
+  const [loading, setLoading] = useState(!dealersFirstPageCache);
   // Infinite-scroll pagination state - `dealers` only ever holds the pages
   // loaded so far, never the whole directory (see fetchDealers/fetchMoreDealers).
-  const [nextCursor, setNextCursor] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(dealersFirstPageCache ? dealersFirstPageCache.nextCursor : null);
+  const [hasMore, setHasMore] = useState(dealersFirstPageCache ? dealersFirstPageCache.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [query, setQuery] = useState('');
@@ -12085,13 +12162,20 @@ function DealersView({ t, api }) {
   // loaded before. The category filter is already applied server-side (see
   // ShopService.searchPublicShops) - no client-side re-filtering needed.
   const fetchDealers = async () => {
-    setLoading(true);
+    const isDefaultView = !debouncedQuery && selectedCategory === 'ALL';
+    // Only blank to a spinner for a real filter/search or a genuinely empty
+    // screen - a bare revisit renders the cached first page instantly and
+    // refreshes silently in the background.
+    if (!isDefaultView || dealers.length === 0) setLoading(true);
     try {
       const categoryParam = selectedCategory === 'ALL' ? '' : selectedCategory;
       const res = await api.searchPublicShops({ query: debouncedQuery, category: categoryParam, limit: DEALERS_PAGE_SIZE });
       setDealers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
+      if (isDefaultView) {
+        dealersFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+      }
     } catch (e) {
       console.error('Failed to fetch dealers', e);
     } finally {
@@ -12288,9 +12372,12 @@ function DealersView({ t, api }) {
 // ============================================================================
 // COMPONENT 7: REVENUE MANAGEMENT (SUPER ADMIN ONLY)
 // ============================================================================
+// In-memory cache (module scope) - same rationale as dashboardCache above.
+let revenueRecordsCache = null;
+
 function RevenueManagementView({ t, api }) {
-  const [records, setRecords] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [records, setRecords] = useState(revenueRecordsCache || []);
+  const [loading, setLoading] = useState(!revenueRecordsCache);
 
   // Form states
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -12303,10 +12390,11 @@ function RevenueManagementView({ t, api }) {
   }, []);
 
   const fetchRevenue = async () => {
-    setLoading(true);
+    if (records.length === 0) setLoading(true);
     try {
       const res = await api.getRevenue();
       setRecords(res);
+      revenueRecordsCache = res;
     } catch (e) {
       console.error(e);
     } finally {
@@ -14277,14 +14365,23 @@ function FullCustomerEditModal({ t, api, customer, superAdminMode = false, shops
 // CustomerService.getCustomers.
 const CUSTOMER_HISTORY_PAGE_SIZE = 20;
 
+// Caches only the first page of the default (no-search) list - module
+// scope, same rationale as shopsFirstPageCache above. Keyed by shopId since
+// Super Admin can view multiple shops' histories via this same component
+// (see CustomerHistoryView's shopId usage below).
+let customerHistoryFirstPageCache = null;
+
 function CustomerHistoryView({ t, api, searchDispatch }) {
   const { user } = useAuth();
-  const [customers, setCustomers] = useState([]);
+  const cachedHistoryPage = customerHistoryFirstPageCache && customerHistoryFirstPageCache.shopId === user.shopId
+    ? customerHistoryFirstPageCache
+    : null;
+  const [customers, setCustomers] = useState(cachedHistoryPage ? cachedHistoryPage.items : []);
   const [loading, setLoading] = useState(false);
   // Infinite-scroll pagination state - `customers` only ever holds the pages
   // loaded so far, never this shop's whole compliance history.
-  const [nextCursor, setNextCursor] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(cachedHistoryPage ? cachedHistoryPage.nextCursor : null);
+  const [hasMore, setHasMore] = useState(cachedHistoryPage ? cachedHistoryPage.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [search, setSearch] = useState('');
@@ -14420,12 +14517,18 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchHistory = async () => {
-    setLoading(true);
+    // Only blank to a spinner for a real search or a genuinely empty
+    // screen - a bare revisit renders the cached first page instantly and
+    // refreshes silently in the background.
+    if (debouncedSearch || customers.length === 0) setLoading(true);
     try {
       const res = await api.getCustomersPage({ search: debouncedSearch, limit: CUSTOMER_HISTORY_PAGE_SIZE });
       setCustomers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
+      if (!debouncedSearch) {
+        customerHistoryFirstPageCache = { shopId: user.shopId, items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+      }
     } catch (e) {
       console.error(e);
     } finally {
@@ -14943,12 +15046,21 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
   );
 }
 
+// In-memory cache (module scope, platform-wide singleton config, no
+// user-scoping needed) - shared by both CustomerCareView and
+// SupportContactView below, which read the exact same config for two
+// different read-only displays. Not used by SupportConfigView's own
+// fetchConfig (the Super Admin's editable form) - showing stale cached
+// values there and having them silently jump mid-edit would be worse than
+// a brief spinner on a screen that's visited rarely to begin with.
+let supportConfigCache = null;
+
 // ============================================================================
 // COMPONENT 11.5: CUSTOMER CARE VIEW (SUPPORT & SKILLS TRAINING)
 // ============================================================================
 export function CustomerCareView({ t, api }) {
-  const [config, setConfig] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [config, setConfig] = useState(supportConfigCache);
+  const [loading, setLoading] = useState(!supportConfigCache);
 
   useEffect(() => {
     fetchConfig();
@@ -14958,6 +15070,7 @@ export function CustomerCareView({ t, api }) {
     try {
       const res = await api.getSupportConfig();
       setConfig(res);
+      supportConfigCache = res;
     } catch (e) {
       console.error('Failed to load support config:', e);
     } finally {
@@ -15057,13 +15170,15 @@ export function CustomerCareView({ t, api }) {
 // number, WhatsApp, email) - distinct from CustomerCareView above, which
 // only shows training videos.
 export function SupportContactView({ t, api }) {
-  const [config, setConfig] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [config, setConfig] = useState(supportConfigCache);
+  const [loading, setLoading] = useState(!supportConfigCache);
 
   useEffect(() => {
     (async () => {
       try {
-        setConfig(await api.getSupportConfig());
+        const res = await api.getSupportConfig();
+        setConfig(res);
+        supportConfigCache = res;
       } catch (e) {
         console.error('Failed to load support config:', e);
       } finally {
@@ -15628,12 +15743,22 @@ export function SupportConfigView({ t, api }) {
   );
 }
 
+// In-memory cache (module scope, keyed by shopId since Super Admin can open
+// this for different shops) for the read-only Referral & Rewards overview
+// section - unlike the rest of this screen (an editable settings form,
+// deliberately left uncached so a revisit never shows stale values mid-edit),
+// this is a passive display, safe to render instantly from cache while
+// refreshing silently.
+const referralOverviewCache = {};
+
 // shopId is only passed when the Super Admin is managing a specific shop's
 // settings from Shops Management (see ShopsManagementView's "Manage Settings"
 // button) - a normal Shop Admin visiting their own Settings tab omits it and
 // the backend falls back to req.user.shopId.
 function ShopSettingsView({ t, api, shopId }) {
   const { user } = useAuth();
+  const referralCacheKey = shopId || 'own';
+  const cachedReferral = referralOverviewCache[referralCacheKey] || null;
   const [shopName, setShopName] = useState('');
   const [address, setAddress] = useState('');
   const [gst, setGst] = useState('');
@@ -15642,14 +15767,14 @@ function ShopSettingsView({ t, api, shopId }) {
   const [docUploading, setDocUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [settingsError, setSettingsError] = useState('');
-  const [referralCode, setReferralCode] = useState(null);
+  const [referralCode, setReferralCode] = useState(cachedReferral ? cachedReferral.referralCode : null);
   const [referralGenerating, setReferralGenerating] = useState(false);
   const [referralCopied, setReferralCopied] = useState(false);
   const [linkCopied, setLinkCopied] = useState(false);
-  const [referralPoints, setReferralPoints] = useState(0);
-  const [totalReferrals, setTotalReferrals] = useState(0);
-  const [referralHistory, setReferralHistory] = useState([]);
-  const [referralOverviewLoading, setReferralOverviewLoading] = useState(true);
+  const [referralPoints, setReferralPoints] = useState(cachedReferral ? cachedReferral.referralPoints : 0);
+  const [totalReferrals, setTotalReferrals] = useState(cachedReferral ? cachedReferral.totalReferrals : 0);
+  const [referralHistory, setReferralHistory] = useState(cachedReferral ? cachedReferral.history : []);
+  const [referralOverviewLoading, setReferralOverviewLoading] = useState(!cachedReferral);
 
   // Verification states
   const [revealPassword, setRevealPassword] = useState(false);
@@ -15802,13 +15927,23 @@ function ShopSettingsView({ t, api, shopId }) {
   };
 
   const fetchReferralOverview = async () => {
-    setReferralOverviewLoading(true);
+    // Only blank to a spinner when there's nothing cached yet for this shop
+    // - a revisit renders the last-fetched overview instantly and refreshes
+    // silently in the background.
+    if (!referralOverviewCache[referralCacheKey]) setReferralOverviewLoading(true);
     try {
       const res = await api.getReferralOverview(shopId);
-      setReferralCode(res.referralCode || null);
-      setReferralPoints(res.referralPoints || 0);
-      setTotalReferrals(res.totalReferrals || 0);
-      setReferralHistory(res.history || []);
+      const overview = {
+        referralCode: res.referralCode || null,
+        referralPoints: res.referralPoints || 0,
+        totalReferrals: res.totalReferrals || 0,
+        history: res.history || [],
+      };
+      setReferralCode(overview.referralCode);
+      setReferralPoints(overview.referralPoints);
+      setTotalReferrals(overview.totalReferrals);
+      setReferralHistory(overview.history);
+      referralOverviewCache[referralCacheKey] = overview;
     } catch (e) {
       console.error(e);
     } finally {
