@@ -8146,10 +8146,21 @@ function DashCardGrid({ items }) {
   );
 }
 
+// In-memory cache (module scope, resets on a full page reload) so coming
+// back to the Dashboard after visiting another tab shows the last-fetched
+// data instantly instead of blanking to a loading spinner every time -
+// DashboardView unmounts/remounts on every tab switch (see the
+// `activeTab === 'dashboard' &&` gate around its render site), so without
+// this every single revisit paid a full network round-trip before showing
+// anything. Keyed by user.id so switching accounts (logout -> a different
+// login, same page session) can't leak stale data across users.
+let dashboardCache = null;
+
 function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal, setAutoOpenOffersTab, setDealersCategoryFilter }) {
   const { user, api } = useAuth();
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const cachedData = dashboardCache && dashboardCache.userId === user.id ? dashboardCache.data : null;
+  const [data, setData] = useState(cachedData);
+  const [loading, setLoading] = useState(!cachedData);
   const [popupAds, setPopupAds] = useState([]);
 
   // Tapping Key Shops, ECM, Meter, or Scanning category cards on the Dashboard navigates to
@@ -8223,10 +8234,14 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
   };
 
   const fetchDashboardData = async () => {
-    setLoading(true);
+    // Only show the spinner on a genuinely first load for this user - if
+    // we're rendering from cache already, refresh silently in the
+    // background instead of blanking the screen the visitor just saw.
+    if (!data) setLoading(true);
     try {
       const res = await api.getDashboard();
       setData(res);
+      dashboardCache = { userId: user.id, data: res };
     } catch (e) {
       console.error(e);
     } finally {
