@@ -6135,7 +6135,6 @@ export default function App() {
   };
   const [autoOpenShopModal, setAutoOpenShopModal] = useState(false);
   const [autoOpenListingModal, setAutoOpenListingModal] = useState(false);
-  const [autoOpenOffersTab, setAutoOpenOffersTab] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLangDialog, setShowLangDialog] = useState(false);
   const [downloadToastVisible, setDownloadToastVisible] = useState(false);
@@ -7878,7 +7877,7 @@ export default function App() {
               </div>
             </header>
 
-            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} setAutoOpenOffersTab={setAutoOpenOffersTab} setDealersCategoryFilter={setDealersCategoryFilter} />}
+            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} setDealersCategoryFilter={setDealersCategoryFilter} />}
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
             {activeTab === 'dealers' && <DealersView t={t} api={api} />}
             {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" icon={KeyRound} t={t} api={api} />}
@@ -7888,7 +7887,7 @@ export default function App() {
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
-            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} initiallyOpenOffersTab={autoOpenOffersTab} onCloseInitiallyOpenOffersTab={() => setAutoOpenOffersTab(false)} />}
+            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} />}
             {(activeTab === 'banner-offer-management' || activeTab === 'banner-management' || activeTab === 'offer-management') && (
               <SuperBannerOfferManagementView t={t} api={api} user={user} initialTab={activeTab === 'offer-management' ? 'offers' : 'banners'} />
             )}
@@ -8177,7 +8176,7 @@ function DashCardGrid({ items }) {
 // login, same page session) can't leak stale data across users.
 let dashboardCache = null;
 
-function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal, setAutoOpenOffersTab, setDealersCategoryFilter }) {
+function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal, setDealersCategoryFilter }) {
   const { user, api } = useAuth();
   const cachedData = dashboardCache && dashboardCache.userId === user.id ? dashboardCache.data : null;
   const [data, setData] = useState(cachedData);
@@ -8223,11 +8222,13 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
     setActiveTab('promotions');
   };
 
-  // Super Admin "Offers" quick action jumps to the Inventory screen and
-  // auto-selects its Offer Management sub-tab.
+  // Super Admin "Offers" quick action jumps straight to the Offers sub-tab
+  // of Banner & Offer Management - not the plain Inventory/Machines feed
+  // ('promotions'), which is a different screen entirely (see
+  // SuperBannerOfferManagementView, rendered for activeTab ===
+  // 'offer-management' with initialTab='offers').
   const goToOffers = () => {
-    setAutoOpenOffersTab(true);
-    setActiveTab('promotions');
+    setActiveTab('offer-management');
   };
 
   const dismissPopupAds = () => {
@@ -11092,30 +11093,8 @@ function AdsManagementView({ t, api }) {
 // create/edit form; every new listing is created as a plain PRODUCT and
 // categorized purely via this list.
 
-function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, initiallyOpenOffersTab, onCloseInitiallyOpenOffersTab }) {
+function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
-  const [subTab, setSubTab] = useState('feed'); // feed | banners | offers (banners/offers = Super Admin only)
-
-  // A query dispatched from the global header search panel always targets
-  // the plain Inventory Feed, never the Banner/Offer moderation sub-tabs.
-  useEffect(() => {
-    if (searchDispatch) setSubTab('feed');
-  }, [searchDispatch?.nonce]);
-
-  // The Dashboard "Add Machines" quick action always targets the plain
-  // Inventory Feed, never the Banner/Offer moderation sub-tabs.
-  useEffect(() => {
-    if (initiallyOpenAddModal) setSubTab('feed');
-  }, [initiallyOpenAddModal]);
-
-  // The Dashboard "Offers" quick action (Super Admin only) jumps straight to
-  // the Offer Management sub-tab.
-  useEffect(() => {
-    if (initiallyOpenOffersTab) {
-      setSubTab('offers');
-      onCloseInitiallyOpenOffersTab();
-    }
-  }, [initiallyOpenOffersTab]);
 
   return (
     <div className="animate-fade-in">
