@@ -1233,6 +1233,7 @@ const LANGUAGES = {
     shopOnboardingEyebrow: 'Shop onboarding',
     signInLeadDesc: 'Sign in to run your duplicate-key shop — orders, customers and inventory, all in one place.',
     signInToKeyShopBtn: 'Sign in to Key Shop',
+    serverWakingUpMsg: 'Still connecting — the server may be waking up. This can take up to a minute.',
     signInWithNewCredentialsMsg: 'You can now sign in with your new credentials.',
     smartGoldStandardWaySpan: 'the smart, gold-standard way.',
     streetLandmarkPlaceholder: 'Street / landmark',
@@ -2083,6 +2084,7 @@ const LANGUAGES = {
     shopOnboardingEyebrow: 'दुकान ऑनबोर्डिंग',
     signInLeadDesc: 'अपनी डुप्लिकेट-की दुकान चलाने के लिए साइन इन करें — ऑर्डर, ग्राहक और इन्वेंट्री, सब एक ही जगह।',
     signInToKeyShopBtn: 'की शॉप में साइन इन करें',
+    serverWakingUpMsg: 'अभी भी कनेक्ट हो रहा है — सर्वर शुरू हो रहा हो सकता है। इसमें एक मिनट तक लग सकता है।',
     signInWithNewCredentialsMsg: 'अब आप अपने नए क्रेडेंशियल्स के साथ साइन इन कर सकते हैं।',
     smartGoldStandardWaySpan: 'स्मार्ट, स्वर्ण-मानक तरीके से।',
     streetLandmarkPlaceholder: 'सड़क / लैंडमार्क',
@@ -2925,6 +2927,7 @@ const LANGUAGES = {
     shopOnboardingEyebrow: 'கடை இணைப்பு',
     signInLeadDesc: 'உங்கள் நகல்-சாவி கடையை நடத்த உள்நுழையவும் — ஆர்டர்கள், வாடிக்கையாளர்கள் மற்றும் சரக்கு, அனைத்தும் ஒரே இடத்தில்.',
     signInToKeyShopBtn: 'கீ ஷாப்பில் உள்நுழையவும்',
+    serverWakingUpMsg: 'இன்னும் இணைக்கிறது — சேவையகம் தொடங்கி வரலாம். இதற்கு ஒரு நிமிடம் வரை ஆகலாம்.',
     signInWithNewCredentialsMsg: 'இப்போது உங்கள் புதிய நற்சான்றிதழ்களுடன் உள்நுழையலாம்.',
     smartGoldStandardWaySpan: 'ஸ்மார்ட், தங்க-தரமான வழியில்.',
     streetLandmarkPlaceholder: 'தெரு / அடையாளம்',
@@ -3775,6 +3778,7 @@ const LANGUAGES = {
     shopOnboardingEyebrow: 'దుకాణం ఆన్‌బోర్డింగ్',
     signInLeadDesc: 'మీ డూప్లికేట్-కీ దుకాణాన్ని నడపడానికి సైన్ ఇన్ చేయండి — ఆర్డర్లు, కస్టమర్లు మరియు ఇన్వెంటరీ, అన్నీ ఒకే చోట.',
     signInToKeyShopBtn: 'కీ షాప్‌లో సైన్ ఇన్ చేయండి',
+    serverWakingUpMsg: 'ఇంకా కనెక్ట్ అవుతోంది — సర్వర్ మేల్కొంటూ ఉండవచ్చు. దీనికి ఒక నిమిషం వరకు పట్టవచ్చు.',
     signInWithNewCredentialsMsg: 'ఇప్పుడు మీరు మీ కొత్త ఆధారాలతో సైన్ ఇన్ కావచ్చు.',
     smartGoldStandardWaySpan: 'స్మార్ట్, గోల్డ్-స్టాండర్డ్ మార్గంలో.',
     streetLandmarkPlaceholder: 'వీధి / ల్యాండ్‌మార్క్',
@@ -4617,6 +4621,7 @@ const LANGUAGES = {
     shopOnboardingEyebrow: 'ಅಂಗಡಿ ಆನ್‌ಬೋರ್ಡಿಂಗ್',
     signInLeadDesc: 'ನಿಮ್ಮ ಡುಪ್ಲಿಕೇಟ್-ಕೀ ಅಂಗಡಿಯನ್ನು ನಡೆಸಲು ಸೈನ್ ಇನ್ ಮಾಡಿ — ಆರ್ಡರ್‌ಗಳು, ಗ್ರಾಹಕರು ಮತ್ತು ದಾಸ್ತಾನು, ಎಲ್ಲವೂ ಒಂದೇ ಸ್ಥಳದಲ್ಲಿ.',
     signInToKeyShopBtn: 'ಕೀ ಶಾಪ್‌ಗೆ ಸೈನ್ ಇನ್ ಮಾಡಿ',
+    serverWakingUpMsg: 'ಇನ್ನೂ ಸಂಪರ್ಕಗೊಳ್ಳುತ್ತಿದೆ — ಸರ್ವರ್ ಎಚ್ಚರಗೊಳ್ಳುತ್ತಿರಬಹುದು. ಇದು ಒಂದು ನಿಮಿಷದವರೆಗೆ ತೆಗೆದುಕೊಳ್ಳಬಹುದು.',
     signInWithNewCredentialsMsg: 'ಈಗ ನೀವು ನಿಮ್ಮ ಹೊಸ ರುಜುವಾತುಗಳೊಂದಿಗೆ ಸೈನ್ ಇನ್ ಮಾಡಬಹುದು.',
     smartGoldStandardWaySpan: 'ಸ್ಮಾರ್ಟ್, ಚಿನ್ನದ-ಗುಣಮಟ್ಟದ ರೀತಿಯಲ್ಲಿ.',
     streetLandmarkPlaceholder: 'ರಸ್ತೆ / ಹೆಗ್ಗುರುತು',
@@ -5467,6 +5472,7 @@ const LANGUAGES = {
     shopOnboardingEyebrow: 'ഷോപ്പ് ഓൺബോർഡിംഗ്',
     signInLeadDesc: 'നിങ്ങളുടെ ഡ്യൂപ്ലിക്കേറ്റ്-കീ ഷോപ്പ് നടത്താൻ സൈൻ ഇൻ ചെയ്യുക — ഓർഡറുകൾ, ഉപഭോക്താക്കൾ, ഇൻവെന്ററി, എല്ലാം ഒരിടത്ത്.',
     signInToKeyShopBtn: 'കീ ഷോപ്പിലേക്ക് സൈൻ ഇൻ ചെയ്യുക',
+    serverWakingUpMsg: 'ഇപ്പോഴും ബന്ധിപ്പിക്കുന്നു — സെർവർ ഉണരുകയായിരിക്കാം. ഇതിന് ഒരു മിനിറ്റ് വരെ എടുത്തേക്കാം.',
     signInWithNewCredentialsMsg: 'ഇപ്പോൾ നിങ്ങളുടെ പുതിയ ക്രെഡൻഷ്യലുകൾ ഉപയോഗിച്ച് സൈൻ ഇൻ ചെയ്യാം.',
     smartGoldStandardWaySpan: 'സ്മാർട്ട്, ഗോൾഡ്-സ്റ്റാൻഡേർഡ് രീതിയിൽ.',
     streetLandmarkPlaceholder: 'തെരുവ് / ലാൻഡ്‌മാർക്ക്',
@@ -6093,6 +6099,12 @@ export default function App() {
   const [authPassword, setAuthPassword] = useState('');
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
+  // Shown only if login is still pending after a few seconds - the backend
+  // host spins down after ~15 min idle, and the first request after that
+  // pays a real 30-70s cold-start penalty (unrelated to any app bug). A
+  // bare spinner for that long reads as broken; this reassures the user
+  // it's just waking up.
+  const [authSlowNotice, setAuthSlowNotice] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
@@ -6420,12 +6432,16 @@ export default function App() {
     e.preventDefault();
     setAuthError('');
     setAuthLoading(true);
+    setAuthSlowNotice(false);
+    const slowTimer = setTimeout(() => setAuthSlowNotice(true), 4000);
     try {
       await login(authEmail, authPassword);
       resetToDashboard();
     } catch (err) {
       setAuthError(err.message || t('loginFailedCheckCredentialsMsg'));
     } finally {
+      clearTimeout(slowTimer);
+      setAuthSlowNotice(false);
       setAuthLoading(false);
     }
   };
@@ -6752,6 +6768,11 @@ export default function App() {
                   >
                     {authLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <>{t('signInToKeyShopBtn')} <ArrowRight /></>}
                   </button>
+                  {authSlowNotice && (
+                    <p style={{ fontSize: 12, color: 'var(--text-3)', textAlign: 'center', marginTop: 10 }}>
+                      {t('serverWakingUpMsg')}
+                    </p>
+                  )}
                 </form>
 
                 {/* Shop Admin accounts can't sign in on web (see auth.service.ts) -
@@ -8162,6 +8183,15 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
   const [data, setData] = useState(cachedData);
   const [loading, setLoading] = useState(!cachedData);
   const [popupAds, setPopupAds] = useState([]);
+  // Shown only if the very first load (no cache yet) is still pending after
+  // a few seconds - see authSlowNotice's identical rationale (free-tier
+  // backend cold-start after inactivity).
+  const [slowNotice, setSlowNotice] = useState(false);
+  useEffect(() => {
+    if (!loading) { setSlowNotice(false); return; }
+    const timer = setTimeout(() => setSlowNotice(true), 4000);
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   // Tapping Key Shops, ECM, Meter, or Scanning category cards on the Dashboard navigates to
   // their dedicated category screens (key-shops, ecm, meter, scanning).
@@ -8254,6 +8284,9 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
       <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
         <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
         <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingDashboard')}</span>
+        {slowNotice && (
+          <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-3)', textAlign: 'center', maxWidth: 260 }}>{t('serverWakingUpMsg')}</span>
+        )}
       </div>
     );
   }

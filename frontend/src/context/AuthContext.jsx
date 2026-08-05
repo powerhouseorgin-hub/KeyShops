@@ -23,6 +23,14 @@ export const AuthProvider = ({ children }) => {
       setToken(savedToken);
     }
     setLoading(false);
+
+    // Fire-and-forget - the free-tier backend host spins down after ~15 min
+    // of inactivity, and the first real request after that (often the
+    // login submit itself) pays a 30-70s cold-start penalty. Pinging health
+    // here, the instant the app boots, overlaps that wake-up time with
+    // however long the user takes to read the screen / type their
+    // credentials, instead of it stacking entirely after they hit "Sign in".
+    fetch(`${API_BASE}/api/health`).catch(() => {});
   }, []);
 
   const login = async (email, password) => {
