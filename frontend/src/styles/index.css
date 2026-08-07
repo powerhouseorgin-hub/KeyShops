@@ -1263,7 +1263,7 @@ select.sel:focus { border-color: var(--gold); }
 .public-hero-ghost-btn:hover:not(:disabled) { background: rgba(255, 255, 255, .2); transform: translateY(-1px); }
 .public-hero-panel-visual { padding: 40px; display: flex; justify-content: center; position: relative; z-index: 1; }
 .public-hero-panel-visual img { width: 240px; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .35)); }
-@media (max-width: 860px) { .public-hero-panel-visual { padding: 0 40px 40px; } }
+@media (max-width: 860px) { .public-hero-panel-visual { display: none; } }
 
 /* floating stat cards, overlapping the hero panel's bottom edge */
 .public-stats-row {

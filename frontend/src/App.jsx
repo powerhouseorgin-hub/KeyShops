@@ -5786,7 +5786,10 @@ export default function App() {
   // bootstrapping/auth-loading spinner below) - a plain useState is enough
   // since App() only mounts once per session; internal navigation never
   // remounts it, so this never reappears until the app is fully restarted.
-  const [showIntro, setShowIntro] = useState(true);
+  // Native-app only: the landing page (web) never shows it - it starts
+  // already false there so App() falls straight through to the normal
+  // loading/PublicSite/login flow below.
+  const [showIntro, setShowIntro] = useState(IS_NATIVE_APP);
 
   // Navigation stack for proper Android Back button / back-swipe-gesture
   // support. This app has no router (activeTab is a flat string, switched by
@@ -15153,10 +15156,15 @@ export function SupportContactView({ t, api }) {
   }
 
   const hasContactInfo = !!(config?.customerCareNumber || config?.whatsapp || config?.email);
+  // Plain tel:/https:wa.me/mailto: links - Capacitor's default WebViewClient
+  // hands non-http(s) schemes off to a system ACTION_VIEW intent (dialer,
+  // WhatsApp) inside the native app, and the browser does the equivalent on
+  // web, so no extra native plugin/JS is needed (same pattern already used
+  // for dealer phone/WhatsApp buttons elsewhere in this file).
   const rows = [
-    { icon: Phone, color: 'maroon', label: t('customerCareNumberLabel'), value: config?.customerCareNumber },
-    { icon: MessageCircle, color: 'jgreen', label: t('whatsappNumberLabel'), value: config?.whatsapp },
-    { icon: Mail, color: 'purple', label: t('emailAddressLabel'), value: config?.email },
+    { icon: Phone, color: 'maroon', label: t('customerCareNumberLabel'), value: config?.customerCareNumber, href: config?.customerCareNumber ? `tel:${config.customerCareNumber}` : null },
+    { icon: MessageCircle, color: 'jgreen', label: t('whatsappNumberLabel'), value: config?.whatsapp, href: config?.whatsapp ? `https://wa.me/${config.whatsapp.replace(/[^0-9]/g, '')}` : null, external: true },
+    { icon: Mail, color: 'purple', label: t('emailAddressLabel'), value: config?.email, href: config?.email ? `mailto:${config.email}` : null },
   ].filter(r => r.value);
 
   return (
@@ -15173,7 +15181,13 @@ export function SupportContactView({ t, api }) {
         {hasContactInfo ? (
           <div className="space-y-3">
             {rows.map((r, idx) => (
-              <div key={idx} className="loc-box">
+              <a
+                key={idx}
+                href={r.href}
+                {...(r.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                className="loc-box"
+                style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+              >
                 <div className="loc-info">
                   <div className={`icon-badge ${r.color}`}><r.icon /></div>
                   <div className="loc-text">
@@ -15181,7 +15195,8 @@ export function SupportContactView({ t, api }) {
                     <span className="t2">{r.label}</span>
                   </div>
                 </div>
-              </div>
+                <ChevronRight className="h-4 w-4" style={{ color: 'var(--text-3)', flexShrink: 0 }} />
+              </a>
             ))}
           </div>
         ) : (
