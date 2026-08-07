@@ -54,7 +54,6 @@ function infoRow(icon, label, value) {
 // Builds a single branded, comprehensive PDF report containing all customer registration details
 export async function buildCustomerReportPdf({ customer, shop, registeredByName }) {
   const idSource = customer.id || `DRAFT${Date.now()}`;
-  const reportId = `RPT-KEY-${idSource.replace(/[^a-zA-Z0-9]+/g, '').slice(0, 8).toUpperCase()}`;
 
   const gpsCaptured = !!(customer.latitude && customer.longitude);
   const catRaw = (customer.vehicleCategory || customer.lockCategory || customer.keyType || '').toUpperCase();
@@ -123,7 +122,7 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
            Report ID corner is guaranteed to render fully on-canvas regardless of
            how much space the left-hand shop info takes up. -->
       <div style="position:relative; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:20px 24px;">
-        <div style="display:flex; align-items:flex-start; gap:14px; padding-right:150px;">
+        <div style="display:flex; align-items:flex-start; gap:14px; padding-right:110px;">
           <img src="${keyShopLogo}" style="width:52px; height:52px; object-fit:contain; background:#fff; border-radius:50%; padding:3px; flex-shrink:0;" />
           <div style="min-width:0;">
             <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:19px; letter-spacing:.02em; line-height:1.3; word-break:break-word;">${esc(shopName)}</div>
@@ -132,11 +131,9 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
             <div style="color:#f0d9b5; font-size:10px; margin-top:2px; line-height:1.4; word-break:break-word;">Phone: ${esc(shopPhone)}</div>
           </div>
         </div>
-        <div style="position:absolute; top:20px; right:24px; width:126px; text-align:right;">
-          <div style="color:${GOLD_BRIGHT}; font-size:8.5px; font-weight:800; letter-spacing:.1em; line-height:1.4;">REPORT ID</div>
-          <div style="background:#fff; color:${MAROON_DARK}; font-weight:800; font-size:11px; line-height:1.4; padding:4px 9px; border-radius:5px; margin:4px 0 6px; white-space:nowrap; display:inline-block;">${esc(reportId)}</div>
-          <div style="color:#f0d9b5; font-size:8.5px; line-height:1.4;">Registration Date</div>
-          <div style="color:#fff; font-size:10.5px; font-weight:700; line-height:1.4; white-space:nowrap;">${formatDateTime(customer.createdAt)}</div>
+        <div style="position:absolute; top:20px; right:24px; width:100px; text-align:right;">
+          <div style="color:${GOLD_BRIGHT}; font-size:8.5px; font-weight:800; letter-spacing:.1em; line-height:1.4;">Registration Date</div>
+          <div style="color:#fff; font-size:10.5px; font-weight:700; line-height:1.4; white-space:nowrap; margin-top:4px;">${formatDateTime(customer.createdAt)}</div>
         </div>
       </div>
 
