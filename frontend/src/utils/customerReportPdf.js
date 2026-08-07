@@ -114,8 +114,16 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   <div style="width:794px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a; box-sizing:border-box;">
     <div>
       <!-- Top Header Banner: Shop Information -->
-      <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:20px 24px;">
-        <div style="display:flex; align-items:flex-start; gap:14px; min-width:0; flex:1;">
+      <!-- position:relative + an absolutely-positioned Report ID block instead of a
+           flex "space-between" pair - html2canvas doesn't always reproduce a flex
+           row's computed widths perfectly (especially once flex-wrap enters the
+           picture), which was letting the right-hand block get pushed partly
+           outside the 794px canvas depending on how long the shop name/address
+           rendered. Absolute positioning is exact pixel math instead, so the
+           Report ID corner is guaranteed to render fully on-canvas regardless of
+           how much space the left-hand shop info takes up. -->
+      <div style="position:relative; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:20px 24px;">
+        <div style="display:flex; align-items:flex-start; gap:14px; padding-right:150px;">
           <img src="${keyShopLogo}" style="width:52px; height:52px; object-fit:contain; background:#fff; border-radius:50%; padding:3px; flex-shrink:0;" />
           <div style="min-width:0;">
             <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:19px; letter-spacing:.02em; line-height:1.3; word-break:break-word;">${esc(shopName)}</div>
@@ -124,11 +132,11 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
             <div style="color:#f0d9b5; font-size:10px; margin-top:2px; line-height:1.4; word-break:break-word;">Phone: ${esc(shopPhone)}</div>
           </div>
         </div>
-        <div style="text-align:right; flex-shrink:0;">
-          <div style="color:${GOLD_BRIGHT}; font-size:8.5px; font-weight:800; letter-spacing:.1em;">REPORT ID</div>
-          <div style="background:#fff; color:${MAROON_DARK}; font-weight:800; font-size:11px; padding:4px 9px; border-radius:5px; margin:4px 0 6px; white-space:nowrap; display:inline-block;">${esc(reportId)}</div>
-          <div style="color:#f0d9b5; font-size:8.5px;">Registration Date</div>
-          <div style="color:#fff; font-size:10.5px; font-weight:700; white-space:nowrap;">${formatDateTime(customer.createdAt)}</div>
+        <div style="position:absolute; top:20px; right:24px; width:126px; text-align:right;">
+          <div style="color:${GOLD_BRIGHT}; font-size:8.5px; font-weight:800; letter-spacing:.1em; line-height:1.4;">REPORT ID</div>
+          <div style="background:#fff; color:${MAROON_DARK}; font-weight:800; font-size:11px; line-height:1.4; padding:4px 9px; border-radius:5px; margin:4px 0 6px; white-space:nowrap; display:inline-block;">${esc(reportId)}</div>
+          <div style="color:#f0d9b5; font-size:8.5px; line-height:1.4;">Registration Date</div>
+          <div style="color:#fff; font-size:10.5px; font-weight:700; line-height:1.4; white-space:nowrap;">${formatDateTime(customer.createdAt)}</div>
         </div>
       </div>
 
@@ -138,8 +146,8 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
           <!-- BOX A: Customer Information -->
           <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff;">
             <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
-              <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128100;</span>
-              <span style="font-weight:800; font-size:12.5px; letter-spacing:.02em;">Customer Information</span>
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; line-height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128100;</span>
+              <span style="font-weight:800; font-size:12.5px; line-height:18px; letter-spacing:.02em;">Customer Information</span>
             </div>
             <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
               ${infoRow('&#128100;', 'Customer Name', customer.name)}
@@ -158,8 +166,8 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
           <!-- BOX B: Dynamic Key Details (Home / Office / Vehicle) -->
           <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff;">
             <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
-              <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128273;</span>
-              <span style="font-weight:800; font-size:12.5px; letter-spacing:.02em;">${esc(boxBTitle)}</span>
+              <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; line-height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128273;</span>
+              <span style="font-weight:800; font-size:12.5px; line-height:18px; letter-spacing:.02em;">${esc(boxBTitle)}</span>
             </div>
             <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
               ${boxBRows}
@@ -170,8 +178,8 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
         <!-- BOX C: Billing & Financial Information Box -->
         <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:18px;">
           <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
-            <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128176;</span>
-            <span style="font-weight:800; font-size:12.5px; letter-spacing:.02em;">Bill & Payment Details</span>
+            <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; line-height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128176;</span>
+            <span style="font-weight:800; font-size:12.5px; line-height:18px; letter-spacing:.02em;">Bill & Payment Details</span>
           </div>
           <div style="padding:16px 20px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px; background:#FAFAFA;">
             <div style="min-width:140px;">
