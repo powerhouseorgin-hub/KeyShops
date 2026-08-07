@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 import * as path from 'path';
 import * as compression from 'compression';
+import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
 // Prisma returns BigInt for BigInt columns (e.g. Shop.storageUsed), which
 // JSON.stringify cannot serialize natively — this makes every API response
@@ -11,6 +12,21 @@ import * as compression from 'compression';
 (BigInt.prototype as any).toJSON = function () {
   return Number(this);
 };
+
+// Node kills the entire process on an unhandled rejection or uncaught
+// exception by default - that would take down every shop's in-flight
+// request, not just whatever triggered it, on what is currently a single
+// backend instance. Registered as early as possible (before bootstrap) so
+// nothing that runs during startup is missed either. The backend has no
+// in-memory session/cache state (auth is JWT, OTPs are DB-backed - see
+// auth.service.ts) so continuing to run after logging is safe rather than
+// risking a corrupted in-process state.
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason);
+});
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err);
+});
 
 async function bootstrap() {
   // bodyParser: false so we can register express.json/urlencoded ourselves
@@ -56,6 +72,12 @@ async function bootstrap() {
     transform: true,
     forbidNonWhitelisted: true,
   }));
+
+  // Safety net for anything a controller/service throws that isn't already
+  // an HttpException (a raw Prisma error, a null-deref TypeError, etc.) -
+  // logs full detail server-side and returns a safe, consistently-shaped
+  // response instead of a bare unformatted 500.
+  app.useGlobalFilters(new AllExceptionsFilter());
 
   const port = process.env.PORT || 4000;
   await app.listen(port);
