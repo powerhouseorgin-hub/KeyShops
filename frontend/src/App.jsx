@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
+import { SplashScreen } from '@capacitor/splash-screen';
 import { useAuth } from './context/AuthContext';
 import { getAssetUrl, downloadAsset, filenameForAsset, API_BASE } from './apiConfig';
 // buildCustomerReportPdf is loaded lazily (dynamic import) at each call site
@@ -5781,6 +5782,20 @@ export default function App() {
   const [lang, setLang] = useState(localStorage.getItem('kee_lang') || 'en');
   const t = (key) => LANGUAGES[lang]?.[key] || LANGUAGES['en']?.[key] || key;
 
+  // capacitor.config.json sets SplashScreen.launchAutoHide: false, so the
+  // native splash (logo on white, see styles.xml) stays on screen until this
+  // fires - without it, Android's default behavior dismisses the splash as
+  // soon as the WebView has ANY content attached (often a blank frame,
+  // before React has mounted), producing a "logo, then blank, then logo
+  // again" flash on cold start. This effect runs after the very first
+  // render commits - since the branded loading screen below (logo + red
+  // bar) is what App() always paints first (loading starts true), the
+  // native splash hands off directly to an already-painted, visually
+  // identical screen instead of a gap.
+  useEffect(() => {
+    if (IS_NATIVE_APP) SplashScreen.hide();
+  }, []);
+
   // Navigation stack for proper Android Back button / back-swipe-gesture
   // support. This app has no router (activeTab is a flat string, switched by
   // conditional rendering below) so the WebView's own history stack stays
@@ -6634,12 +6649,12 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center" style={{ background: 'var(--bg-0)' }}>
+      <div className="flex h-screen items-center justify-center" style={{ background: '#ffffff' }}>
         <div className="flex flex-col items-center gap-5 animate-fade-in">
           <div className="brand">
             <img src={keyShopLogo} alt="Key Shop" className="brand-logo-lg" style={{ height: 120, width: 'auto' }} />
           </div>
-          <RefreshCw className="h-6 w-6 animate-spin" style={{ color: 'var(--gold)' }} />
+          <div className="brand-loading-track"><div className="brand-loading-fill" /></div>
           <p style={{ color: 'var(--text-3)' }} className="text-sm font-semibold">{t('bootstrappingWorkspace')}</p>
         </div>
       </div>
@@ -8308,8 +8323,8 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
 
   if (loading) {
     return (
-      <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
-        <RefreshCw className="animate-spin" style={{ width: 28, height: 28, color: 'var(--gold)' }} />
+      <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, minHeight: 260 }}>
+        <div className="brand-loading-track"><div className="brand-loading-fill" /></div>
         <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('loadingDashboard')}</span>
         {slowNotice && (
           <span style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-3)', textAlign: 'center', maxWidth: 260 }}>{t('serverWakingUpMsg')}</span>

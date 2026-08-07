@@ -17,6 +17,7 @@
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/geolocation": "^8.2.0",
     "@capacitor/share": "^8.0.1",
+    "@capacitor/splash-screen": "^8.0.2",
     "capacitor-native-settings": "^8.1.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.344.0",

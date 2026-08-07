@@ -10,5 +10,10 @@
       "res.cloudinary.com",
       "*.cloudinary.com"
     ]
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": false
+    }
   }
 }

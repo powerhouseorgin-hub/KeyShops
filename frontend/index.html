@@ -11,6 +11,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Applies instantly, before the bundled stylesheet loads/parses - matches
+         the native Android launch theme's white background so there's no
+         flash between the native splash screen and the app's own branded
+         loading screen taking over. -->
+    <style>html, body { background: #ffffff; margin: 0; }</style>
   </head>
   <body class="min-h-screen selection:bg-primary-500 selection:text-white antialiased overflow-x-hidden">
     <div id="root"></div>
