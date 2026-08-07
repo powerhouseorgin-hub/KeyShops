@@ -9,14 +9,33 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- android:background was @null - once the system splash screen above
+         dismisses and hands off to this theme, a null background shows
+         through to whatever's beneath (black, on most devices) for the
+         brief window before Capacitor's WebView finishes initializing and
+         paints the actual page - the white flash then black flash then app
+         sequence. A solid white background here (matching the splash
+         screen's own background) keeps that handoff visually continuous. -->
     <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:background">@null</item>
+        <item name="android:background">@android:color/white</item>
     </style>
 
 
+    <!-- targetSdkVersion 36 means Android 12+'s mandatory SplashScreen API
+         governs this activity's launch theme - it only recognizes
+         windowSplashScreenBackground (a color, shown instantly) and
+         windowSplashScreenAnimatedIcon (a small centered icon), not the old
+         pre-Android-12 android:background="@drawable/splash" convention.
+         Without the correct attributes the system falls back to a plain
+         black window while it waits for the Activity/WebView to draw the
+         first frame, which is the black-screen delay on launch - this uses
+         the app's own branded launcher icon (already correctly sized/
+         formatted for this purpose) instead of the black default. -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
-        <item name="android:background">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">@android:color/white</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
     </style>
 </resources>
