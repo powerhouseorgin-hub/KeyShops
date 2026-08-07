@@ -21,7 +21,6 @@ import { downloadPdf, sharePdf } from './utils/pdfDelivery';
 import PublicSite from './components/PublicSite';
 import CustomSelect from './components/CustomSelect';
 import OtpVerificationModal from './components/OtpVerificationModal';
-import IntroScreen from './components/IntroScreen';
 import {
   Key, Users, Shield, Radio, BarChart3, Database, LogOut, Check, X,
   Plus, Settings, FileText, Search, Filter, UserCheck, MapPin, Camera, AlertTriangle,
@@ -5782,14 +5781,6 @@ export default function App() {
   const [lang, setLang] = useState(localStorage.getItem('kee_lang') || 'en');
   const t = (key) => LANGUAGES[lang]?.[key] || LANGUAGES['en']?.[key] || key;
 
-  // Shown once per app launch, before anything else (including the
-  // bootstrapping/auth-loading spinner below) - a plain useState is enough
-  // since App() only mounts once per session; internal navigation never
-  // remounts it, so this never reappears until the app is fully restarted.
-  // Native-app only: the landing page (web) never shows it - it starts
-  // already false there so App() falls straight through to the normal
-  // loading/PublicSite/login flow below.
-  const [showIntro, setShowIntro] = useState(IS_NATIVE_APP);
 
   // Navigation stack for proper Android Back button / back-swipe-gesture
   // support. This app has no router (activeTab is a flat string, switched by
@@ -6641,10 +6632,6 @@ export default function App() {
     setRegPaySuccess(false);
     setRegStep(1);
   };
-
-  if (showIntro) {
-    return <IntroScreen onFinish={() => setShowIntro(false)} />;
-  }
 
   if (loading) {
     return (
