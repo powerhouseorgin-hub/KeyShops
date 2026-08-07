@@ -16,16 +16,31 @@ export class KeyTypeService {
     });
   }
 
-  // SUPER ADMIN: Create a key type
+  // SUPER ADMIN: Create a key type. If a key type with this name was
+  // previously soft-deleted, revives that row instead of inserting a new
+  // one - `name` has a hard DB-level unique constraint that isn't
+  // deletedAt-aware, so a plain create() here would fail with a raw Prisma
+  // unique-constraint error even though the name looks "free" once the
+  // active-only list filters the old row out.
   async createKeyType(dto: CreateKeyTypeDto) {
+    const trimmedName = dto.name.trim();
     const existing = await this.tenantService.prisma.keyType.findFirst({
-      where: { name: { equals: dto.name.trim(), mode: 'insensitive' }, deletedAt: null },
+      where: { name: { equals: trimmedName, mode: 'insensitive' } },
     });
-    if (existing) {
+
+    if (existing && !existing.deletedAt) {
       throw new ConflictException('A key type with this name already exists');
     }
+
+    if (existing) {
+      return this.tenantService.prisma.keyType.update({
+        where: { id: existing.id },
+        data: { name: trimmedName, deletedAt: null },
+      });
+    }
+
     return this.tenantService.prisma.keyType.create({
-      data: { name: dto.name.trim() },
+      data: { name: trimmedName },
     });
   }
 

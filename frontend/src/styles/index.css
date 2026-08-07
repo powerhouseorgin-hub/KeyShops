@@ -233,6 +233,8 @@
 .reg-action-btn.download:hover:not(:disabled) { background: rgba(37, 99, 235, 0.08); }
 .reg-action-btn.share { background: #fff; border-color: rgba(37, 211, 102, 0.35); }
 .reg-action-btn.share:hover:not(:disabled) { background: rgba(37, 211, 102, 0.08); }
+.reg-action-btn.review { background: #2563EB; color: #fff; box-shadow: 0 10px 20px -8px rgba(37, 99, 235, 0.5); }
+.reg-action-btn.review:hover:not(:disabled) { filter: brightness(1.08); }
 
 /* pill badge */
 .pill-badge {

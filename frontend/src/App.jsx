@@ -6306,6 +6306,10 @@ export default function App() {
   const [showRegisterShop, setShowRegisterShop] = useState(false);
   const [regShopName, setRegShopName] = useState('');
   const [regOwnerName, setRegOwnerName] = useState('');
+  // Optional shop email, gated behind an ON/OFF toggle that defaults OFF -
+  // same pattern as regWebsiteUrlEnabled below (the field is only rendered,
+  // and only sent to the backend, when enabled).
+  const [regEmailEnabled, setRegEmailEnabled] = useState(false);
   const [regEmail, setRegEmail] = useState('');
   const [regPhone, setRegPhone] = useState('');
   const [regLocation, setRegLocation] = useState('');
@@ -6552,7 +6556,7 @@ export default function App() {
         shopName: regShopName,
         ownerName: regOwnerName,
         categoryId: regCategoryId,
-        email: regEmail ? regEmail.trim() : undefined,
+        email: regEmailEnabled && regEmail ? regEmail.trim() : undefined,
         phone: regPhone,
         location: regLocation,
         city: regCity,
@@ -7123,6 +7127,25 @@ export default function App() {
                             </div>
                             <div className="reg-field">
                               <div className="toggle-field-row">
+                                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
+                                <button
+                                  type="button" className={`toggle-switch ${regEmailEnabled ? 'on' : ''}`}
+                                  onClick={() => setRegEmailEnabled(!regEmailEnabled)} aria-pressed={regEmailEnabled}
+                                >
+                                  <span className="toggle-thumb" />
+                                </button>
+                              </div>
+                              {regEmailEnabled && (
+                                <div className="input-wrap">
+                                  <input
+                                    type="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
+                                    placeholder="you@example.com"
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            <div className="reg-field">
+                              <div className="toggle-field-row">
                                 <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Link2 /></div><b>{t('websiteUrlLabel')}</b></div>
                                 <button
                                   type="button" className={`toggle-switch ${regWebsiteUrlEnabled ? 'on' : ''}`}
@@ -7159,15 +7182,6 @@ export default function App() {
                                 emptyLabel={t('noShopCategoriesAvailableMsg')}
                                 options={regCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
                               />
-                            </div>
-                            <div className="reg-field">
-                              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>{t('emailAddressLabel')} <span style={{ color: 'var(--text-3)', fontWeight: 600 }}>({t('optionalLabel')})</span></b></div>
-                              <div className="input-wrap">
-                                <input
-                                  type="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
-                                  placeholder="you@example.com"
-                                />
-                              </div>
                             </div>
                             <div className="reg-field">
                               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('mobileNumberLabel')} <span className="req">*</span></b></div>
@@ -7255,7 +7269,7 @@ export default function App() {
                                 // (see the reg-field block above) - Continue must never depend
                                 // on "Current Location" having succeeded. A manually-typed
                                 // Address on its own is a complete, valid submission.
-                                if (regEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
+                                if (regEmailEnabled && regEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail)) {
                                   alert(t('pleaseEnterValidEmailMsg'));
                                   return;
                                 }
@@ -12119,20 +12133,19 @@ function DealersView({ t, api }) {
     const handle = setTimeout(() => setDebouncedQuery(query.trim()), 300);
     return () => clearTimeout(handle);
   }, [query]);
-  const [selectedCategory, setSelectedCategory] = useState('ALL');
 
-  // Loads the first page for the current filters, replacing whatever was
-  // loaded before. The category filter is already applied server-side (see
-  // ShopService.searchPublicShops) - no client-side re-filtering needed.
+  // Loads the first page for the current search, replacing whatever was
+  // loaded before. The category filter cards were removed - this always
+  // browses every category now (see ShopService.searchPublicShops's
+  // `category` param, simply omitted here).
   const fetchDealers = async () => {
-    const isDefaultView = !debouncedQuery && selectedCategory === 'ALL';
-    // Only blank to a spinner for a real filter/search or a genuinely empty
+    const isDefaultView = !debouncedQuery;
+    // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
     if (!isDefaultView || dealers.length === 0) setLoading(true);
     try {
-      const categoryParam = selectedCategory === 'ALL' ? '' : selectedCategory;
-      const res = await api.searchPublicShops({ query: debouncedQuery, category: categoryParam, limit: DEALERS_PAGE_SIZE });
+      const res = await api.searchPublicShops({ query: debouncedQuery, limit: DEALERS_PAGE_SIZE });
       setDealers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -12152,8 +12165,7 @@ function DealersView({ t, api }) {
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
     try {
-      const categoryParam = selectedCategory === 'ALL' ? '' : selectedCategory;
-      const res = await api.searchPublicShops({ query: debouncedQuery, category: categoryParam, cursor: nextCursor, limit: DEALERS_PAGE_SIZE });
+      const res = await api.searchPublicShops({ query: debouncedQuery, cursor: nextCursor, limit: DEALERS_PAGE_SIZE });
       setDealers((prev) => [...prev, ...res.items]);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -12166,7 +12178,7 @@ function DealersView({ t, api }) {
 
   useEffect(() => {
     fetchDealers();
-  }, [debouncedQuery, selectedCategory]);
+  }, [debouncedQuery]);
 
   useEffect(() => {
     const node = loadMoreSentinelRef.current;
@@ -12179,15 +12191,7 @@ function DealersView({ t, api }) {
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasMore, nextCursor, loadingMore, debouncedQuery, selectedCategory]);
-
-  const categories = [
-    { id: 'ALL', keyName: 'allCategoriesCard', defaultLabel: 'All', icon: Store, accent: 'var(--gold)' },
-    { id: 'KEY_SHOPS', keyName: 'keyShops', defaultLabel: 'Key Shops', image: keyShopLogo, accent: 'var(--purple)' },
-    { id: 'ECM', keyName: 'ecm', defaultLabel: 'ECM', image: ecmServiceImg, accent: 'var(--orange)' },
-    { id: 'METER', keyName: 'meter', defaultLabel: 'Meter', image: meterServiceImg, accent: 'var(--skyblue)' },
-    { id: 'SCANNER', keyName: 'scanning', defaultLabel: 'Scanning', image: scanningServiceImg, accent: 'var(--teal)' },
-  ];
+  }, [hasMore, nextCursor, loadingMore, debouncedQuery]);
 
   return (
     <div className="animate-fade-in">
@@ -12197,45 +12201,6 @@ function DealersView({ t, api }) {
           <h1>{t('dealersPageTitle')}</h1>
           <p>{t('dealersPageDesc')}</p>
         </div>
-      </div>
-
-      {/* REDESIGNED CATEGORY CARDS GRID */}
-      <div className="dealer-cat-grid">
-        {categories.map((cat) => {
-          const isSelected = selectedCategory === cat.id;
-          const label = t(cat.keyName) || cat.defaultLabel;
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`dealer-cat-card ${isSelected ? 'active' : ''}`}
-              style={{
-                borderColor: isSelected ? cat.accent : undefined,
-                background: isSelected ? `linear-gradient(180deg, var(--card-1), ${cat.accent}18)` : undefined,
-                boxShadow: isSelected ? `0 4px 14px ${cat.accent}35` : undefined
-              }}
-            >
-              {/* TOP: Large Category Image / Icon (Primary Visual Element) */}
-              <div className="dealer-cat-img-box">
-                {cat.image ? (
-                  <img src={cat.image} alt={label} />
-                ) : (
-                  <div className="dealer-cat-icon-fallback" style={isSelected ? { background: cat.accent } : {}}>
-                    <cat.icon />
-                  </div>
-                )}
-              </div>
-
-              {/* BOTTOM: Separate Category Title */}
-              <div className="dealer-cat-label-box" style={{ borderTopColor: isSelected ? `${cat.accent}44` : undefined }}>
-                <span className="dealer-cat-name" style={{ color: isSelected ? cat.accent : undefined }}>
-                  {label}
-                </span>
-              </div>
-            </button>
-          );
-        })}
       </div>
 
       {/* Search Panel */}
@@ -13809,14 +13774,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <ArrowLeft style={{ width: 18, height: 18 }} /> {t('btnBack')}
                 </button>
                 <div className="wizard-foot-right" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                  <button
-                    type="button" className={`reg-action-btn save ${isEditMode ? 'px-4' : ''}`}
-                    disabled={duplicateKeyWarning || (superAdminMode && !selectedShopId && !isEditMode)}
-                    onClick={handleFinalSubmit}
-                    title={isEditMode ? 'Update Customer' : t('saveRecordBtn')}
-                    style={isEditMode ? { width: 'auto', padding: '0 16px', gap: 6 } : {}}
-                  >
-                    {isEditMode ? <><Check className="h-4 w-4" /><span style={{ fontSize: 13, fontWeight: 800 }}>Update Customer</span></> : <Save />}
+                  <button type="button" onClick={() => setShowReviewModal(true)} className="reg-action-btn review" title={t('reviewStepLabel')}>
+                    <Eye />
                   </button>
                   <button type="button" onClick={handleDownloadRegistration} disabled={pdfAction !== null} className="reg-action-btn download" title={t('downloadBtn')}>
                     {pdfAction === 'download' ? <RefreshCw className="animate-spin" /> : <Download />}
@@ -13826,8 +13785,15 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                       <svg viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z" /></svg>
                     )}
                   </button>
-                  <button type="button" onClick={() => setShowReviewModal(true)} className="btn btn-primary" style={{ minWidth: 150 }}>
-                    <Eye style={{ width: 20, height: 20 }} /> {t('reviewStepLabel')}
+                  <button
+                    type="button" className="btn btn-primary"
+                    disabled={duplicateKeyWarning || (superAdminMode && !selectedShopId && !isEditMode)}
+                    onClick={handleFinalSubmit}
+                    title={isEditMode ? 'Update Customer' : t('saveRecordBtn')}
+                    style={{ minWidth: 150 }}
+                  >
+                    {isEditMode ? <Check style={{ width: 20, height: 20 }} /> : <Save style={{ width: 20, height: 20 }} />}
+                    {isEditMode ? 'Update Customer' : t('saveRecordBtn')}
                   </button>
                 </div>
               </div>
