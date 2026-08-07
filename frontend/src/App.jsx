@@ -7888,9 +7888,7 @@ export default function App() {
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
             {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} />}
-            {(activeTab === 'banner-offer-management' || activeTab === 'banner-management' || activeTab === 'offer-management') && (
-              <SuperBannerOfferManagementView t={t} api={api} user={user} initialTab={activeTab === 'offer-management' ? 'offers' : 'banners'} />
-            )}
+            {activeTab === 'banner-offer-management' && <AdsManagementView t={t} api={api} />}
             {activeTab === 'offers-ads-banners' && <OffersAdsBannersView t={t} api={api} />}
             {activeTab === 'search-keys' && <KeysSearchView t={t} api={api} searchDispatch={activeTab === 'search-keys' ? searchDispatch : null} />}
             {activeTab === 'register' && <CustomerRegistrationWizard t={t} api={api} />}
@@ -8222,13 +8220,11 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
     setActiveTab('promotions');
   };
 
-  // Super Admin "Offers" quick action jumps straight to the Offers sub-tab
-  // of Banner & Offer Management - not the plain Inventory/Machines feed
-  // ('promotions'), which is a different screen entirely (see
-  // SuperBannerOfferManagementView, rendered for activeTab ===
-  // 'offer-management' with initialTab='offers').
+  // Super Admin "Offers" quick action jumps straight to Banner & Offer
+  // Management (Advertisement Campaigns) - not the plain Inventory/Machines
+  // feed ('promotions'), which is a different screen entirely.
   const goToOffers = () => {
-    setActiveTab('offer-management');
+    setActiveTab('banner-offer-management');
   };
 
   const dismissPopupAds = () => {
@@ -11116,51 +11112,6 @@ function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, o
         initiallyOpenAddModal={initiallyOpenAddModal}
         onCloseInitiallyOpen={onCloseInitiallyOpen}
       />
-    </div>
-  );
-}
-
-function SuperBannerOfferManagementView({ t, api, user, initialTab = 'banners' }) {
-  const [subTab, setSubTab] = useState(initialTab);
-
-  useEffect(() => {
-    setSubTab(initialTab);
-  }, [initialTab]);
-
-  return (
-    <div className="animate-fade-in">
-      <div className="page-head">
-        <div>
-          <div className="eyebrow"><Sparkles /> {t('fromKeyShopHqLabel')}</div>
-          <h1>Banner &amp; Offer Management</h1>
-          <p>{t('manageSharedInventoryDesc') || 'Manage app banners, advertisements, and promotional offer campaigns.'}</p>
-        </div>
-      </div>
-
-      <div className="store-tabs" style={{ marginBottom: 20 }}>
-        <button
-          type="button"
-          className={`store-tab ${subTab === 'banners' ? 'active' : ''}`}
-          onClick={() => setSubTab('banners')}
-        >
-          <Megaphone className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
-          {t('bannerManagementTab') || 'Banner Management'}
-        </button>
-        <button
-          type="button"
-          className={`store-tab ${subTab === 'offers' ? 'active' : ''}`}
-          onClick={() => setSubTab('offers')}
-        >
-          <BadgePercent className="h-3.5 w-3.5" style={{ display: 'inline', marginRight: 6, verticalAlign: '-2px' }} />
-          {t('offerManagementTab') || 'Offer Management'}
-        </button>
-      </div>
-
-      {subTab === 'banners' ? (
-        <AdsManagementView t={t} api={api} />
-      ) : (
-        <PromotionsFeed key="offers" t={t} api={api} user={user} isSuperAdmin={true} onlyOffers={true} />
-      )}
     </div>
   );
 }
