@@ -5781,7 +5781,6 @@ export default function App() {
   const [lang, setLang] = useState(localStorage.getItem('kee_lang') || 'en');
   const t = (key) => LANGUAGES[lang]?.[key] || LANGUAGES['en']?.[key] || key;
 
-
   // Navigation stack for proper Android Back button / back-swipe-gesture
   // support. This app has no router (activeTab is a flat string, switched by
   // conditional rendering below) so the WebView's own history stack stays
