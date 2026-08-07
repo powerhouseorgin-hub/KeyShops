@@ -446,6 +446,8 @@ export const AuthProvider = ({ children }) => {
     createShopCategory: async (name) => request('/api/super/shop-categories', 'POST', { name }),
     updateShopCategory: async (id, name) => request(`/api/super/shop-categories/${id}`, 'PUT', { name }),
     deleteShopCategory: async (id) => request(`/api/super/shop-categories/${id}`, 'DELETE'),
+    // `ids` is every active category's id, in the new display order.
+    reorderShopCategories: async (ids) => request('/api/super/shop-categories/reorder', 'PUT', { ids }),
 
     // --- PRODUCT TYPES ---
     // Requires login (unlike shop categories, this only powers screens that

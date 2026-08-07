@@ -8,11 +8,14 @@ export class ShopCategoryService {
 
   // PUBLIC: List active categories - used both to populate the Category
   // dropdown on the pre-login self-registration wizard and by the Super
-  // Admin's Shop Categories management screen.
+  // Admin's Shop Categories management screen. Ordered by the Super
+  // Admin-controlled sortOrder (see reorderCategories) rather than name, so
+  // dragging categories in the management screen actually changes what
+  // shop owners see in the dropdown.
   async getAllCategories() {
     return this.tenantService.prisma.shopCategory.findMany({
       where: { deletedAt: null },
-      orderBy: { name: 'asc' },
+      orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
     });
   }
 
@@ -32,16 +35,44 @@ export class ShopCategoryService {
       throw new ConflictException('A shop category with this name already exists');
     }
 
+    // New/revived categories are appended after whatever currently has the
+    // highest sortOrder, so they land at the end of the dropdown instead of
+    // jumping to wherever their old position (or the default 0) happens to
+    // sort - matches how a newly-added item is expected to behave.
+    const highest = await this.tenantService.prisma.shopCategory.aggregate({ _max: { sortOrder: true } });
+    const nextSortOrder = (highest._max.sortOrder ?? -1) + 1;
+
     if (existing) {
       return this.tenantService.prisma.shopCategory.update({
         where: { id: existing.id },
-        data: { name: trimmedName, deletedAt: null },
+        data: { name: trimmedName, deletedAt: null, sortOrder: nextSortOrder },
       });
     }
 
     return this.tenantService.prisma.shopCategory.create({
-      data: { name: trimmedName },
+      data: { name: trimmedName, sortOrder: nextSortOrder },
     });
+  }
+
+  // SUPER ADMIN: Persist a new drag-and-drop display order. `orderedIds`
+  // must be every active category's id, in the order they should appear -
+  // each one's sortOrder becomes its index in that array.
+  async reorderCategories(orderedIds: string[]) {
+    const categories = await this.tenantService.prisma.shopCategory.findMany({
+      where: { id: { in: orderedIds }, deletedAt: null },
+      select: { id: true },
+    });
+    if (categories.length !== orderedIds.length) {
+      throw new NotFoundException('One or more shop categories were not found');
+    }
+
+    await this.tenantService.prisma.$transaction(
+      orderedIds.map((id, index) =>
+        this.tenantService.prisma.shopCategory.update({ where: { id }, data: { sortOrder: index } }),
+      ),
+    );
+
+    return this.getAllCategories();
   }
 
   // SUPER ADMIN: Rename a category

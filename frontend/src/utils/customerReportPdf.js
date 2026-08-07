@@ -43,11 +43,11 @@ function formatDateTime(value) {
 function infoRow(icon, label, value) {
   return `
     <tr>
-      <td style="width:28px; padding:6px 5px; border-bottom:1px solid ${BORDER}; vertical-align:middle; text-align:center;">
-        <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; font-size:11px; line-height:1; vertical-align:middle;">${icon}</span>
+      <td style="width:30px; padding:11px 6px; border-bottom:1px solid ${BORDER}; vertical-align:top; text-align:center;">
+        <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; font-size:11px; line-height:1; margin-top:1px;">${icon}</span>
       </td>
-      <td style="width:150px; padding:6px 5px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:11px; vertical-align:middle; line-height:1.2;">${esc(label)}</td>
-      <td style="padding:6px 8px; border-bottom:1px solid ${BORDER}; font-size:11px; color:#2a2a2a; vertical-align:middle; line-height:1.2; word-break:break-word;">${esc(naVal(value))}</td>
+      <td style="width:135px; padding:11px 8px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:11px; vertical-align:top; line-height:1.5; word-break:break-word; overflow-wrap:break-word;">${esc(label)}</td>
+      <td style="padding:11px 10px; border-bottom:1px solid ${BORDER}; font-size:11px; color:#2a2a2a; vertical-align:top; line-height:1.5; word-break:break-word; overflow-wrap:anywhere; white-space:normal;">${esc(naVal(value))}</td>
     </tr>`;
 }
 
@@ -111,37 +111,37 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   });
 
   const html = `
-  <div style="width:794px; min-height:1120px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a; box-sizing:border-box; display:flex; flex-direction:column; justify-content:space-between;">
+  <div style="width:794px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a; box-sizing:border-box;">
     <div>
       <!-- Top Header Banner: Shop Information -->
-      <div style="display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:18px 24px;">
-        <div style="display:flex; align-items:center; gap:14px;">
+      <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:12px; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:20px 24px;">
+        <div style="display:flex; align-items:flex-start; gap:14px; min-width:0; flex:1;">
           <img src="${keyShopLogo}" style="width:52px; height:52px; object-fit:contain; background:#fff; border-radius:50%; padding:3px; flex-shrink:0;" />
-          <div>
-            <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:19px; letter-spacing:.02em;">${esc(shopName)}</div>
-            <div style="color:#fff; font-size:11px; font-weight:700; margin-top:2px;">Owner / Admin: ${esc(ownerName)}</div>
-            <div style="color:#f0d9b5; font-size:10px; margin-top:1px;">Address: ${esc(shopAddress)}</div>
-            <div style="color:#f0d9b5; font-size:10px;">Phone: ${esc(shopPhone)}</div>
+          <div style="min-width:0;">
+            <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:19px; letter-spacing:.02em; line-height:1.3; word-break:break-word;">${esc(shopName)}</div>
+            <div style="color:#fff; font-size:11px; font-weight:700; margin-top:4px; line-height:1.4; word-break:break-word;">Owner / Admin: ${esc(ownerName)}</div>
+            <div style="color:#f0d9b5; font-size:10px; margin-top:3px; line-height:1.4; word-break:break-word;">Address: ${esc(shopAddress)}</div>
+            <div style="color:#f0d9b5; font-size:10px; margin-top:2px; line-height:1.4; word-break:break-word;">Phone: ${esc(shopPhone)}</div>
           </div>
         </div>
-        <div style="text-align:right;">
+        <div style="text-align:right; flex-shrink:0;">
           <div style="color:${GOLD_BRIGHT}; font-size:8.5px; font-weight:800; letter-spacing:.1em;">REPORT ID</div>
-          <div style="background:#fff; color:${MAROON_DARK}; font-weight:800; font-size:11px; padding:3px 8px; border-radius:5px; margin:3px 0 5px; white-space:nowrap; display:inline-block;">${esc(reportId)}</div>
+          <div style="background:#fff; color:${MAROON_DARK}; font-weight:800; font-size:11px; padding:4px 9px; border-radius:5px; margin:4px 0 6px; white-space:nowrap; display:inline-block;">${esc(reportId)}</div>
           <div style="color:#f0d9b5; font-size:8.5px;">Registration Date</div>
           <div style="color:#fff; font-size:10.5px; font-weight:700; white-space:nowrap;">${formatDateTime(customer.createdAt)}</div>
         </div>
       </div>
 
-      <div style="padding:18px 24px 8px;">
+      <div style="padding:20px 24px 16px;">
         <!-- Grid 2-column: Customer Information Box & Key / Vehicle Details Box -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
           <!-- BOX A: Customer Information -->
-          <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; display:flex; flex-direction:column;">
-            <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 12px;">
+          <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff;">
+            <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
               <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128100;</span>
               <span style="font-weight:800; font-size:12.5px; letter-spacing:.02em;">Customer Information</span>
             </div>
-            <table style="width:100%; border-collapse:collapse; table-layout:fixed; flex:1;">
+            <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
               ${infoRow('&#128100;', 'Customer Name', customer.name)}
               ${infoRow('&#128241;', 'Mobile Number', customer.phone)}
               ${infoRow('&#128205;', 'Address', customer.address || customer.capturedAddress)}
@@ -156,47 +156,47 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
           </div>
 
           <!-- BOX B: Dynamic Key Details (Home / Office / Vehicle) -->
-          <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; display:flex; flex-direction:column;">
-            <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 12px;">
+          <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff;">
+            <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
               <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128273;</span>
               <span style="font-weight:800; font-size:12.5px; letter-spacing:.02em;">${esc(boxBTitle)}</span>
             </div>
-            <table style="width:100%; border-collapse:collapse; table-layout:fixed; flex:1;">
+            <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
               ${boxBRows}
             </table>
           </div>
         </div>
 
         <!-- BOX C: Billing & Financial Information Box -->
-        <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:14px;">
-          <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:8px 12px;">
+        <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:18px;">
+          <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
             <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128176;</span>
             <span style="font-weight:800; font-size:12.5px; letter-spacing:.02em;">Bill & Payment Details</span>
           </div>
-          <div style="padding:14px 18px; display:flex; align-items:center; justify-content:space-between; background:#FAFAFA;">
-            <div>
+          <div style="padding:16px 20px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px; background:#FAFAFA;">
+            <div style="min-width:140px;">
               <div style="font-size:10px; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Bill ID / Number</div>
-              <div style="font-size:14px; font-weight:800; color:${MAROON_DARK}; margin-top:2px;">${esc(naVal(billId))}</div>
+              <div style="font-size:14px; font-weight:800; color:${MAROON_DARK}; margin-top:4px; line-height:1.4; word-break:break-word;">${esc(naVal(billId))}</div>
             </div>
-            <div style="text-align:right;">
+            <div style="text-align:right; min-width:140px;">
               <div style="font-size:10px; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Total Bill Amount</div>
-              <div style="font-size:20px; font-weight:900; color:${MAROON}; margin-top:2px;">${esc(billAmountFormatted)}</div>
+              <div style="font-size:20px; font-weight:900; color:${MAROON}; margin-top:4px; line-height:1.3; word-break:break-word;">${esc(billAmountFormatted)}</div>
             </div>
           </div>
         </div>
 
         <!-- Confirmation Declaration Strip -->
-        <div style="background:#fff; border:1px solid ${BORDER}; border-radius:8px; padding:10px 14px;">
-          <p style="font-size:9.5px; color:#4a4a4a; line-height:1.35; margin:0;">I hereby confirm that the above key registration details are accurate and verified during customer registration.</p>
+        <div style="background:#fff; border:1px solid ${BORDER}; border-radius:8px; padding:12px 16px;">
+          <p style="font-size:9.5px; color:#4a4a4a; line-height:1.5; margin:0;">I hereby confirm that the above key registration details are accurate and verified during customer registration.</p>
         </div>
       </div>
     </div>
 
     <!-- Footer Strip at Bottom -->
-    <div style="display:flex; align-items:center; justify-content:space-between; background:${MAROON_DARK}; color:#fff; padding:12px 24px; font-size:10px; gap:16px;">
-      <div>Generated On<br/><b>${formatDateTime(new Date())}</b></div>
-      <div>Generated By<br/><b>${esc(naVal(registeredByName))}</b></div>
-      <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:12px; text-align:right;">THANK YOU FOR CHOOSING KEY SHOPS</div>
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; background:${MAROON_DARK}; color:#fff; padding:14px 24px; font-size:10px; line-height:1.5; gap:16px;">
+      <div style="min-width:110px; word-break:break-word;">Generated On<br/><b>${formatDateTime(new Date())}</b></div>
+      <div style="min-width:110px; word-break:break-word; flex:1;">Generated By<br/><b>${esc(naVal(registeredByName))}</b></div>
+      <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:12px; text-align:right; word-break:break-word;">THANK YOU FOR CHOOSING KEY SHOPS</div>
     </div>
   </div>`;
 
@@ -222,13 +222,35 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
     const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
     const pageWidth = pdf.internal.pageSize.getWidth();
     const pageHeight = pdf.internal.pageSize.getHeight();
+    const margin = 24;
+    const usableWidth = pageWidth - margin * 2;
+    const usableHeight = pageHeight - margin * 2;
 
-    const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
-    const imgWidth = canvas.width * ratio;
-    const imgHeight = canvas.height * ratio;
-    const x = (pageWidth - imgWidth) / 2;
+    const imgWidth = usableWidth;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const imgData = canvas.toDataURL('image/jpeg', 0.95);
 
-    pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, 0, imgWidth, imgHeight);
+    // The report's real height only ever exceeds one A4 page for unusually
+    // long content (many wrapped addresses/documents). Rather than shrinking
+    // the whole page to force a fit - which can make text illegibly small -
+    // draw the same full-height image on successive pages, shifting it
+    // upward each time so the next unshown slice lands at the top margin.
+    // jsPDF clips anything past the physical page edge, so each page shows
+    // only its own slice; no content is lost, it simply continues onto the
+    // next page.
+    let heightLeft = imgHeight;
+    let renderedHeight = 0;
+
+    pdf.addImage(imgData, 'JPEG', margin, margin, imgWidth, imgHeight);
+    heightLeft -= usableHeight;
+    renderedHeight += usableHeight;
+
+    while (heightLeft > 0) {
+      pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', margin, margin - renderedHeight, imgWidth, imgHeight);
+      heightLeft -= usableHeight;
+      renderedHeight += usableHeight;
+    }
 
     return pdf;
   } finally {

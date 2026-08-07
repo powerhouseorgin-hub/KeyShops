@@ -700,17 +700,23 @@
    grouping is derived purely in code (see utils/vehicleCategory.js) - never
    shown here as text. */
 .category-icon-grid {
-  display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 9px;
+  display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-bottom: 9px;
 }
 .category-icon-btn {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   background: var(--card-2); border: 1.5px solid var(--border-2); border-radius: 14px;
-  padding: 7px 4px; cursor: pointer; transition: border-color .15s ease, background .15s ease, transform .1s ease;
+  padding: 7px 2px; cursor: pointer; transition: border-color .15s ease, background .15s ease, transform .1s ease;
   color: var(--text-2);
+  /* Grid items default to min-width: auto, which lets a card's own content
+     (the label text especially) force it wider than its 1fr share instead
+     of shrinking to fit - the whole grid then overflows its container
+     rather than compressing evenly, clipping the last card off-screen.
+     minmax(0, 1fr) on the columns above + min-width: 0 here override that. */
+  min-width: 0;
 }
 .category-icon-btn svg { width: 20px; height: 20px; }
 .category-icon-btn img { width: 100%; max-width: 40px; height: 26px; object-fit: contain; }
-.category-icon-btn span { font-size: 9.5px; font-weight: 800; text-align: center; line-height: 1.2; text-transform: uppercase; letter-spacing: .02em; }
+.category-icon-btn span { font-size: 9px; font-weight: 800; text-align: center; line-height: 1.2; text-transform: uppercase; letter-spacing: .01em; word-break: break-word; }
 .category-icon-btn:active { transform: scale(0.96); }
 .category-icon-btn.active {
   border-color: var(--gold); background: rgba(245, 184, 0, 0.14); color: var(--gold);

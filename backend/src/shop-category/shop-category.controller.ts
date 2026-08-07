@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
 import { ShopCategoryService } from './shop-category.service';
-import { CreateShopCategoryDto, UpdateShopCategoryDto } from './dto/shop-category.dto';
+import { CreateShopCategoryDto, UpdateShopCategoryDto, ReorderShopCategoriesDto } from './dto/shop-category.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -23,6 +23,16 @@ export class ShopCategoryController {
   @Roles(Role.SUPER_ADMIN)
   async createShopCategory(@Body() dto: CreateShopCategoryDto) {
     return this.shopCategoryService.createCategory(dto);
+  }
+
+  // Declared before the ':id' PUT route below - a static path segment like
+  // "reorder" would otherwise be captured as the :id param, since NestJS
+  // matches routes in class-declaration order.
+  @Put('super/shop-categories/reorder')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.SUPER_ADMIN)
+  async reorderShopCategories(@Body() dto: ReorderShopCategoriesDto) {
+    return this.shopCategoryService.reorderCategories(dto.ids);
   }
 
   @Put('super/shop-categories/:id')

@@ -188,6 +188,12 @@ model ShopCategory {
   id   String @id @default(uuid())
   name String @unique
 
+  // Super Admin-controlled display order for the public self-registration
+  // wizard's Category dropdown (see ShopCategoryService.getAllCategories'
+  // orderBy and the reorderCategories drag-and-drop endpoint) - defaults to
+  // 0 so existing rows sort first/stably until explicitly reordered.
+  sortOrder Int @default(0)
+
   shops Shop[]
 
   deletedAt DateTime?
@@ -196,6 +202,7 @@ model ShopCategory {
   updatedAt DateTime @updatedAt
 
   @@index([deletedAt])
+  @@index([sortOrder])
 }
 
 // Super-Admin-managed reference list of Inventory "product types" (e.g. Key

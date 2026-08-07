@@ -27,6 +27,7 @@ export default function CustomSelect({
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState(null);
   const triggerRef = useRef(null);
+  const menuRef = useRef(null);
 
   const normalized = options.map((o) =>
     typeof o === 'string' || typeof o === 'number' ? { value: o, label: String(o) } : o
@@ -55,15 +56,29 @@ export default function CustomSelect({
 
   useEffect(() => {
     if (!open) return;
-    // Any scroll/resize while open can invalidate the trigger's bounding
-    // box, so just close rather than risk a menu floating in the wrong
-    // spot - matches how the header's "search by" dropdown behaves.
-    window.addEventListener('scroll', close, true);
+    // Scrolling the PAGE behind the menu can invalidate the trigger's
+    // snapshotted bounding box, so close rather than risk the menu floating
+    // in the wrong spot - matches how the header's "search by" dropdown
+    // behaves. But the capture-phase listener also sees scroll events
+    // bubbling up from the menu's own option list (it has its own
+    // overflow-y scroll for long lists like Shop Management's shop
+    // picker) - without excluding those, the menu closed itself the
+    // instant a user tried to scroll through options to find one.
+    const handleScroll = (e) => {
+      // e.target is the window object (not a Node) when the scroll event
+      // fires on the document/viewport itself rather than a scrollable
+      // element - contains() throws a TypeError given a non-Node argument,
+      // which would otherwise abort this handler and leave the menu stuck
+      // open exactly when scrolling the page behind it.
+      if (e.target instanceof Node && menuRef.current && menuRef.current.contains(e.target)) return;
+      close();
+    };
+    window.addEventListener('scroll', handleScroll, true);
     window.addEventListener('resize', close);
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
     return () => {
-      window.removeEventListener('scroll', close, true);
+      window.removeEventListener('scroll', handleScroll, true);
       window.removeEventListener('resize', close);
       window.removeEventListener('keydown', onKey);
     };
@@ -89,7 +104,7 @@ export default function CustomSelect({
       {open && menuStyle && createPortal(
         <>
           <div className="custom-select-backdrop" onClick={close} />
-          <div className="custom-select-menu animate-fade-in" style={menuStyle} role="listbox">
+          <div ref={menuRef} className="custom-select-menu animate-fade-in" style={menuStyle} role="listbox">
             {normalized.length === 0 ? (
               <div className="custom-select-empty">{emptyLabel}</div>
             ) : normalized.map((opt) => (

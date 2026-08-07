@@ -34,7 +34,8 @@ import {
   Tag, Package, Boxes, Percent, Image as ImageIcon, Megaphone, BadgePercent,
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
   Download, Fingerprint, Palette, Menu, Home, Languages, Globe,
-  Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2
+  Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2,
+  GripVertical
 } from 'lucide-react';
 
 // Product photos shown on the Dashboard's product-type cards instead of the
@@ -1059,6 +1060,7 @@ const LANGUAGES = {
     failedUpdateCategoryTemplate: 'Failed to update category: {msg}',
     deleteCategoryConfirmTemplate: 'Delete the "{name}" category? Shops already using it keep it, but it will no longer be offered on the registration form.',
     failedDeleteCategoryTemplate: 'Failed to delete category: {msg}',
+    failedReorderCategoriesTemplate: 'Failed to reorder categories: {msg}',
     pleaseEnterProductTypeNameMsg: 'Please enter a product type name.',
     failedAddProductTypeTemplate: 'Failed to add product type: {msg}',
     failedUpdateProductTypeTemplate: 'Failed to update product type: {msg}',
@@ -1087,9 +1089,9 @@ const LANGUAGES = {
     registrationSuccessDesc: 'The customer has been registered successfully.',
     verifyOtpModalTitle: 'Verify Mobile Number',
     locationPermissionRequiredTitle: 'Location Permission Required',
-    locationPermissionRequiredMsg: 'Location permission is required to capture your current location. Please grant permission to continue.',
+    locationPermissionRequiredMsg: "Location permission is required to capture your current location. Please grant permission AND make sure your device's Location Services (GPS) are turned on, then try again.",
     locationServicesDisabledTitle: 'Enable Location Services',
-    locationServicesDisabledMsg: "Your device's location services (GPS) are turned off. Please enable them to capture your current location.",
+    locationServicesDisabledMsg: "Your device's location services (GPS) are turned off. Please turn them on AND make sure location permission is granted for this app, then try again.",
     locationUnavailableTitle: 'Location Unavailable',
     locationUnavailableMsg: 'Unable to fetch your current location. Please ensure that location services are enabled and location permission has been granted.',
     loadingWorkspaceSettingsMsg: 'Loading workspace settings…',
@@ -1910,6 +1912,7 @@ const LANGUAGES = {
     failedUpdateCategoryTemplate: 'श्रेणी अपडेट करने में विफल: {msg}',
     deleteCategoryConfirmTemplate: '"{name}" श्रेणी हटाएं? पहले से इसका उपयोग करने वाली दुकानें इसे बनाए रखेंगी, लेकिन यह अब पंजीकरण फ़ॉर्म पर उपलब्ध नहीं होगी।',
     failedDeleteCategoryTemplate: 'श्रेणी हटाने में विफल: {msg}',
+    failedReorderCategoriesTemplate: 'श्रेणियों को पुनः क्रमबद्ध करने में विफल: {msg}',
     pleaseEnterProductTypeNameMsg: 'कृपया एक उत्पाद प्रकार नाम दर्ज करें।',
     failedAddProductTypeTemplate: 'उत्पाद प्रकार जोड़ने में विफल: {msg}',
     failedUpdateProductTypeTemplate: 'उत्पाद प्रकार अपडेट करने में विफल: {msg}',
@@ -1938,9 +1941,9 @@ const LANGUAGES = {
     registrationSuccessDesc: 'ग्राहक सफलतापूर्वक पंजीकृत हो गया है।',
     verifyOtpModalTitle: 'मोबाइल नंबर सत्यापित करें',
     locationPermissionRequiredTitle: 'लोकेशन अनुमति आवश्यक है',
-    locationPermissionRequiredMsg: 'आपकी वर्तमान लोकेशन प्राप्त करने के लिए लोकेशन अनुमति आवश्यक है। कृपया जारी रखने के लिए अनुमति दें।',
+    locationPermissionRequiredMsg: 'आपकी वर्तमान लोकेशन प्राप्त करने के लिए लोकेशन अनुमति आवश्यक है। कृपया अनुमति दें और सुनिश्चित करें कि आपके डिवाइस की लोकेशन सेवाएं (जीपीएस) चालू हैं, फिर पुनः प्रयास करें।',
     locationServicesDisabledTitle: 'लोकेशन सेवाएं सक्षम करें',
-    locationServicesDisabledMsg: 'आपके डिवाइस की लोकेशन सेवाएं (जीपीएस) बंद हैं। कृपया अपनी वर्तमान लोकेशन प्राप्त करने के लिए उन्हें सक्षम करें।',
+    locationServicesDisabledMsg: 'आपके डिवाइस की लोकेशन सेवाएं (जीपीएस) बंद हैं। कृपया उन्हें चालू करें और सुनिश्चित करें कि इस ऐप के लिए लोकेशन अनुमति दी गई है, फिर पुनः प्रयास करें।',
     locationUnavailableTitle: 'लोकेशन उपलब्ध नहीं है',
     locationUnavailableMsg: 'आपकी वर्तमान लोकेशन प्राप्त करने में असमर्थ। कृपया सुनिश्चित करें कि लोकेशन सेवाएं सक्षम हैं और लोकेशन अनुमति दी गई है।',
     loadingWorkspaceSettingsMsg: 'वर्कस्पेस सेटिंग्स लोड हो रही हैं…',
@@ -2753,6 +2756,7 @@ const LANGUAGES = {
     failedUpdateCategoryTemplate: 'வகையைப் புதுப்பிக்க முடியவில்லை: {msg}',
     deleteCategoryConfirmTemplate: '"{name}" வகையை நீக்கவா? ஏற்கனவே இதைப் பயன்படுத்தும் கடைகள் அதை வைத்திருக்கும், ஆனால் அது இனி பதிவு படிவத்தில் வழங்கப்படாது.',
     failedDeleteCategoryTemplate: 'வகையை நீக்க முடியவில்லை: {msg}',
+    failedReorderCategoriesTemplate: 'வகைகளை மறுவரிசைப்படுத்த முடியவில்லை: {msg}',
     pleaseEnterProductTypeNameMsg: 'தயவுசெய்து ஒரு தயாரிப்பு வகை பெயரை உள்ளிடவும்.',
     failedAddProductTypeTemplate: 'தயாரிப்பு வகையைச் சேர்க்க முடியவில்லை: {msg}',
     failedUpdateProductTypeTemplate: 'தயாரிப்பு வகையைப் புதுப்பிக்க முடியவில்லை: {msg}',
@@ -2781,9 +2785,9 @@ const LANGUAGES = {
     registrationSuccessDesc: 'வாடிக்கையாளர் வெற்றிகரமாக பதிவு செய்யப்பட்டுள்ளார்.',
     verifyOtpModalTitle: 'மொபைல் எண்ணை சரிபார்க்கவும்',
     locationPermissionRequiredTitle: 'இருப்பிட அனுமதி தேவை',
-    locationPermissionRequiredMsg: 'உங்கள் தற்போதைய இருப்பிடத்தைப் பெற இருப்பிட அனுமதி தேவை. தொடர அனுமதி வழங்கவும்.',
+    locationPermissionRequiredMsg: 'உங்கள் தற்போதைய இருப்பிடத்தைப் பெற இருப்பிட அனுமதி தேவை. அனுமதி வழங்கி, உங்கள் சாதனத்தின் இருப்பிட சேவைகள் (ஜிபிஎஸ்) இயக்கத்தில் உள்ளதா என்பதை உறுதிசெய்து, மீண்டும் முயற்சிக்கவும்.',
     locationServicesDisabledTitle: 'இருப்பிட சேவைகளை இயக்கவும்',
-    locationServicesDisabledMsg: 'உங்கள் சாதனத்தின் இருப்பிட சேவைகள் (ஜிபிஎஸ்) அணைக்கப்பட்டுள்ளன. உங்கள் தற்போதைய இருப்பிடத்தைப் பெற அவற்றை இயக்கவும்.',
+    locationServicesDisabledMsg: 'உங்கள் சாதனத்தின் இருப்பிட சேவைகள் (ஜிபிஎஸ்) அணைக்கப்பட்டுள்ளன. அவற்றை இயக்கி, இந்த ஆப்ஸிற்கு இருப்பிட அனுமதி வழங்கப்பட்டுள்ளதா என்பதை உறுதிசெய்து, மீண்டும் முயற்சிக்கவும்.',
     locationUnavailableTitle: 'இருப்பிடம் கிடைக்கவில்லை',
     locationUnavailableMsg: 'உங்கள் தற்போதைய இருப்பிடத்தைப் பெற முடியவில்லை. இருப்பிட சேவைகள் இயக்கப்பட்டு, இருப்பிட அனுமதி வழங்கப்பட்டுள்ளதா என்பதை உறுதிப்படுத்தவும்.',
     loadingWorkspaceSettingsMsg: 'பணிமனை அமைப்புகள் ஏற்றப்படுகின்றன…',
@@ -3604,6 +3608,7 @@ const LANGUAGES = {
     failedUpdateCategoryTemplate: 'వర్గాన్ని నవీకరించడంలో విఫలమైంది: {msg}',
     deleteCategoryConfirmTemplate: '"{name}" వర్గాన్ని తొలగించాలా? దీన్ని ఇప్పటికే ఉపయోగిస్తున్న షాపులు దాన్ని కలిగి ఉంటాయి, కానీ ఇది ఇకపై నమోదు ఫారమ్‌లో అందించబడదు.',
     failedDeleteCategoryTemplate: 'వర్గాన్ని తొలగించడంలో విఫలమైంది: {msg}',
+    failedReorderCategoriesTemplate: 'వర్గాలను తిరిగి క్రమబద్ధీకరించడంలో విఫలమైంది: {msg}',
     pleaseEnterProductTypeNameMsg: 'దయచేసి ఉత్పత్తి రకం పేరును నమోదు చేయండి.',
     failedAddProductTypeTemplate: 'ఉత్పత్తి రకాన్ని జోడించడంలో విఫలమైంది: {msg}',
     failedUpdateProductTypeTemplate: 'ఉత్పత్తి రకాన్ని నవీకరించడంలో విఫలమైంది: {msg}',
@@ -3632,9 +3637,9 @@ const LANGUAGES = {
     registrationSuccessDesc: 'కస్టమర్ విజయవంతంగా నమోదు చేయబడ్డారు.',
     verifyOtpModalTitle: 'మొబైల్ నంబర్‌ను ధృవీకరించండి',
     locationPermissionRequiredTitle: 'లొకేషన్ అనుమతి అవసరం',
-    locationPermissionRequiredMsg: 'మీ ప్రస్తుత లొకేషన్‌ను పొందడానికి లొకేషన్ అనుమతి అవసరం. కొనసాగించడానికి దయచేసి అనుమతి ఇవ్వండి.',
+    locationPermissionRequiredMsg: 'మీ ప్రస్తుత లొకేషన్‌ను పొందడానికి లొకేషన్ అనుమతి అవసరం. దయచేసి అనుమతి ఇచ్చి, మీ పరికరం యొక్క లొకేషన్ సేవలు (జీపీఎస్) ఆన్‌లో ఉన్నాయని నిర్ధారించుకుని, మళ్లీ ప్రయత్నించండి.',
     locationServicesDisabledTitle: 'లొకేషన్ సేవలను ప్రారంభించండి',
-    locationServicesDisabledMsg: 'మీ పరికరం యొక్క లొకేషన్ సేవలు (జీపీఎస్) ఆఫ్‌లో ఉన్నాయి. మీ ప్రస్తుత లొకేషన్‌ను పొందడానికి వాటిని ప్రారంభించండి.',
+    locationServicesDisabledMsg: 'మీ పరికరం యొక్క లొకేషన్ సేవలు (జీపీఎస్) ఆఫ్‌లో ఉన్నాయి. వాటిని ఆన్ చేసి, ఈ యాప్‌కు లొకేషన్ అనుమతి ఇవ్వబడిందని నిర్ధారించుకుని, మళ్లీ ప్రయత్నించండి.',
     locationUnavailableTitle: 'లొకేషన్ అందుబాటులో లేదు',
     locationUnavailableMsg: 'మీ ప్రస్తుత లొకేషన్‌ను పొందడం సాధ్యం కాలేదు. లొకేషన్ సేవలు ప్రారంభించబడ్డాయని మరియు లొకేషన్ అనుమతి మంజూరు చేయబడిందని నిర్ధారించుకోండి.',
     loadingWorkspaceSettingsMsg: 'వర్క్‌స్పేస్ సెట్టింగ్‌లు లోడ్ అవుతున్నాయి…',
@@ -4447,6 +4452,7 @@ const LANGUAGES = {
     failedUpdateCategoryTemplate: 'ವರ್ಗವನ್ನು ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
     deleteCategoryConfirmTemplate: '"{name}" ವರ್ಗವನ್ನು ಅಳಿಸುವುದೇ? ಇದನ್ನು ಈಗಾಗಲೇ ಬಳಸುತ್ತಿರುವ ಅಂಗಡಿಗಳು ಅದನ್ನು ಉಳಿಸಿಕೊಳ್ಳುತ್ತವೆ, ಆದರೆ ಅದು ಇನ್ನು ಮುಂದೆ ನೋಂದಣಿ ಫಾರ್ಮ್‌ನಲ್ಲಿ ನೀಡಲಾಗುವುದಿಲ್ಲ.',
     failedDeleteCategoryTemplate: 'ವರ್ಗವನ್ನು ಅಳಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
+    failedReorderCategoriesTemplate: 'ವರ್ಗಗಳನ್ನು ಮರುಕ್ರಮಗೊಳಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
     pleaseEnterProductTypeNameMsg: 'ದಯವಿಟ್ಟು ಉತ್ಪನ್ನ ಪ್ರಕಾರದ ಹೆಸರನ್ನು ನಮೂದಿಸಿ.',
     failedAddProductTypeTemplate: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ಸೇರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
     failedUpdateProductTypeTemplate: 'ಉತ್ಪನ್ನ ಪ್ರಕಾರವನ್ನು ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ: {msg}',
@@ -4475,9 +4481,9 @@ const LANGUAGES = {
     registrationSuccessDesc: 'ಗ್ರಾಹಕರನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನೋಂದಾಯಿಸಲಾಗಿದೆ.',
     verifyOtpModalTitle: 'ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ',
     locationPermissionRequiredTitle: 'ಸ್ಥಳ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ',
-    locationPermissionRequiredMsg: 'ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ಸ್ಥಳ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ. ಮುಂದುವರಿಯಲು ದಯವಿಟ್ಟು ಅನುಮತಿ ನೀಡಿ.',
+    locationPermissionRequiredMsg: 'ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ಸ್ಥಳ ಅನುಮತಿ ಅಗತ್ಯವಿದೆ. ದಯವಿಟ್ಟು ಅನುಮತಿ ನೀಡಿ ಮತ್ತು ನಿಮ್ಮ ಸಾಧನದ ಸ್ಥಳ ಸೇವೆಗಳು (ಜಿಪಿಎಸ್) ಆನ್ ಆಗಿವೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಂಡು, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
     locationServicesDisabledTitle: 'ಸ್ಥಳ ಸೇವೆಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ',
-    locationServicesDisabledMsg: 'ನಿಮ್ಮ ಸಾಧನದ ಸ್ಥಳ ಸೇವೆಗಳು (ಜಿಪಿಎಸ್) ಆಫ್ ಆಗಿವೆ. ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ದಯವಿಟ್ಟು ಅವುಗಳನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ.',
+    locationServicesDisabledMsg: 'ನಿಮ್ಮ ಸಾಧನದ ಸ್ಥಳ ಸೇವೆಗಳು (ಜಿಪಿಎಸ್) ಆಫ್ ಆಗಿವೆ. ಅವುಗಳನ್ನು ಆನ್ ಮಾಡಿ ಮತ್ತು ಈ ಆ್ಯಪ್‌ಗೆ ಸ್ಥಳ ಅನುಮತಿ ನೀಡಲಾಗಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಂಡು, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.',
     locationUnavailableTitle: 'ಸ್ಥಳ ಲಭ್ಯವಿಲ್ಲ',
     locationUnavailableMsg: 'ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಸ್ಥಳವನ್ನು ಪಡೆಯಲು ಸಾಧ್ಯವಾಗಲಿಲ್ಲ. ಸ್ಥಳ ಸೇವೆಗಳು ಸಕ್ರಿಯವಾಗಿವೆ ಮತ್ತು ಸ್ಥಳ ಅನುಮತಿ ನೀಡಲಾಗಿದೆ ಎಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳಿ.',
     loadingWorkspaceSettingsMsg: 'ಕಾರ್ಯಸ್ಥಳ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗುತ್ತಿದೆ…',
@@ -5298,6 +5304,7 @@ const LANGUAGES = {
     failedUpdateCategoryTemplate: 'വിഭാഗം അപ്ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
     deleteCategoryConfirmTemplate: '"{name}" വിഭാഗം ഇല്ലാതാക്കണോ? ഇത് ഇതിനകം ഉപയോഗിക്കുന്ന ഷോപ്പുകൾ അത് നിലനിർത്തും, പക്ഷേ ഇത് ഇനി രജിസ്ട്രേഷൻ ഫോമിൽ നൽകില്ല.',
     failedDeleteCategoryTemplate: 'വിഭാഗം ഇല്ലാതാക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
+    failedReorderCategoriesTemplate: 'വിഭാഗങ്ങൾ പുനഃക്രമീകരിക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
     pleaseEnterProductTypeNameMsg: 'ദയവായി ഒരു ഉൽപ്പന്ന തരത്തിന്റെ പേര് നൽകുക.',
     failedAddProductTypeTemplate: 'ഉൽപ്പന്ന തരം ചേർക്കുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
     failedUpdateProductTypeTemplate: 'ഉൽപ്പന്ന തരം അപ്ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു: {msg}',
@@ -5326,9 +5333,9 @@ const LANGUAGES = {
     registrationSuccessDesc: 'ഉപഭോക്താവിനെ വിജയകരമായി രജിസ്റ്റർ ചെയ്തിട്ടുണ്ട്.',
     verifyOtpModalTitle: 'മൊബൈൽ നമ്പർ പരിശോധിക്കുക',
     locationPermissionRequiredTitle: 'ലൊക്കേഷൻ അനുമതി ആവശ്യമാണ്',
-    locationPermissionRequiredMsg: 'നിങ്ങളുടെ നിലവിലെ ലൊക്കേഷൻ ലഭ്യമാക്കാൻ ലൊക്കേഷൻ അനുമതി ആവശ്യമാണ്. തുടരാൻ ദയവായി അനുമതി നൽകുക.',
+    locationPermissionRequiredMsg: 'നിങ്ങളുടെ നിലവിലെ ലൊക്കേഷൻ ലഭ്യമാക്കാൻ ലൊക്കേഷൻ അനുമതി ആവശ്യമാണ്. ദയവായി അനുമതി നൽകുകയും നിങ്ങളുടെ ഉപകരണത്തിന്റെ ലൊക്കേഷൻ സേവനങ്ങൾ (ജിപിഎസ്) ഓണാണെന്ന് ഉറപ്പാക്കുകയും ചെയ്ത ശേഷം വീണ്ടും ശ്രമിക്കുക.',
     locationServicesDisabledTitle: 'ലൊക്കേഷൻ സേവനങ്ങൾ പ്രവർത്തനക്ഷമമാക്കുക',
-    locationServicesDisabledMsg: 'നിങ്ങളുടെ ഉപകരണത്തിന്റെ ലൊക്കേഷൻ സേവനങ്ങൾ (ജിപിഎസ്) ഓഫാണ്. നിങ്ങളുടെ നിലവിലെ ലൊക്കേഷൻ ലഭ്യമാക്കാൻ അവ പ്രവർത്തനക്ഷമമാക്കുക.',
+    locationServicesDisabledMsg: 'നിങ്ങളുടെ ഉപകരണത്തിന്റെ ലൊക്കേഷൻ സേവനങ്ങൾ (ജിപിഎസ്) ഓഫാണ്. അവ ഓണാക്കുകയും ഈ ആപ്പിന് ലൊക്കേഷൻ അനുമതി നൽകിയിട്ടുണ്ടെന്ന് ഉറപ്പാക്കുകയും ചെയ്ത ശേഷം വീണ്ടും ശ്രമിക്കുക.',
     locationUnavailableTitle: 'ലൊക്കേഷൻ ലഭ്യമല്ല',
     locationUnavailableMsg: 'നിങ്ങളുടെ നിലവിലെ ലൊക്കേഷൻ ലഭ്യമാക്കാൻ കഴിഞ്ഞില്ല. ലൊക്കേഷൻ സേവനങ്ങൾ പ്രവർത്തനക്ഷമമാണെന്നും ലൊക്കേഷൻ അനുമതി നൽകിയിട്ടുണ്ടെന്നും ഉറപ്പാക്കുക.',
     loadingWorkspaceSettingsMsg: 'വർക്ക്‌സ്‌പേസ് ക്രമീകരണങ്ങൾ ലോഡ് ചെയ്യുന്നു…',
@@ -5574,19 +5581,28 @@ const TERMS_AND_CONDITIONS_BODY = `By creating an account and using this applica
 // So instead we sample multiple updates via watchPosition() for up to ~9s
 // and keep whichever reading has the smallest accuracy radius, resolving
 // early the moment a good-enough fix (<=20m accuracy) comes in.
+// A failure here can genuinely be either cause (denied permission vs GPS/
+// Location Services switched off) - the OS/browser doesn't always report
+// which one clearly, and guessing wrong sends the user to fix the wrong
+// setting. So every message mentions BOTH requirements together instead of
+// picking one; `kind` is kept distinct only to drive which follow-up
+// shortcut button is most likely to help (e.g. "Open App Settings" for a
+// permission denial).
+const LOCATION_TROUBLESHOOT_MSG = "Couldn't get your current location. Please make sure location permission is allowed for this app AND that your device's Location Services (GPS) is turned on, then try again.";
+
 function classifyLocationError(e) {
   const msg = ((e && e.message) || '').toLowerCase();
   if ((e && e.code === 1) || msg.includes('permission') || msg.includes('denied')) {
-    const err = new Error('Location permission is required to capture your current location.');
+    const err = new Error(LOCATION_TROUBLESHOOT_MSG);
     err.kind = 'permission';
     return err;
   }
   if (msg.includes('not enabled') || msg.includes('disabled') || msg.includes('location services') || msg.includes('turned off')) {
-    const err = new Error('Please enable Location Services to capture your current location.');
+    const err = new Error(LOCATION_TROUBLESHOOT_MSG);
     err.kind = 'disabled';
     return err;
   }
-  const err = new Error('Unable to fetch current location. Please allow location access or enter the address manually.');
+  const err = new Error(LOCATION_TROUBLESHOOT_MSG);
   err.kind = 'unavailable';
   return err;
 }
@@ -5605,13 +5621,13 @@ async function resolveCurrentLocation() {
       try {
         status = await Geolocation.requestPermissions();
       } catch (e) {
-        const err = new Error('Location permission is required to capture your current location.');
+        const err = new Error(LOCATION_TROUBLESHOOT_MSG);
         err.kind = 'permission';
         throw err;
       }
     }
     if (status.location !== 'granted' && status.coarseLocation !== 'granted') {
-      const err = new Error('Location permission is required to capture your current location.');
+      const err = new Error(LOCATION_TROUBLESHOOT_MSG);
       err.kind = 'permission';
       throw err;
     }
@@ -15189,6 +15205,12 @@ export function SupportConfigView({ t, api }) {
   const [addingCategory, setAddingCategory] = useState(false);
   const [editingCatId, setEditingCatId] = useState(null);
   const [editingCatName, setEditingCatName] = useState('');
+  // Drag-and-drop reordering (native HTML5 DnD - this screen is Super
+  // Admin-only and used from the web console, so no touch-drag polyfill is
+  // needed). `draggedId` tracks which row is mid-drag; `savingOrder` blocks
+  // further drags while the reorder request is in flight.
+  const [draggedCatId, setDraggedCatId] = useState(null);
+  const [savingOrder, setSavingOrder] = useState(false);
   const [savingCatId, setSavingCatId] = useState(null);
 
   // Product Types management - the Super-Admin-curated list of Inventory
@@ -15300,6 +15322,46 @@ export function SupportConfigView({ t, api }) {
       alert(t('failedDeleteCategoryTemplate').split('{msg}')[0] + e.message);
     } finally {
       setSavingCatId(null);
+    }
+  };
+
+  // Drag-and-drop reordering for the Shop Categories list - this is the
+  // order shown in the public self-registration wizard's Category dropdown
+  // (see ShopCategoryService.getAllCategories), so dragging here directly
+  // controls what shop owners see. Reorders the local list immediately for
+  // a responsive drag, then persists it; on failure, re-fetches the real
+  // order from the server instead of leaving the UI showing a state that
+  // was never actually saved.
+  const handleCategoryDragStart = (catId) => {
+    if (editingCatId || savingOrder) return;
+    setDraggedCatId(catId);
+  };
+
+  const handleCategoryDragOver = (e, overCatId) => {
+    e.preventDefault();
+    if (!draggedCatId || draggedCatId === overCatId) return;
+    setCategories((prev) => {
+      const fromIndex = prev.findIndex((c) => c.id === draggedCatId);
+      const toIndex = prev.findIndex((c) => c.id === overCatId);
+      if (fromIndex === -1 || toIndex === -1) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+  };
+
+  const handleCategoryDrop = async () => {
+    const orderedIds = categories.map((c) => c.id);
+    setDraggedCatId(null);
+    setSavingOrder(true);
+    try {
+      await api.reorderShopCategories(orderedIds);
+    } catch (e) {
+      alert(t('failedReorderCategoriesTemplate').split('{msg}')[0] + e.message);
+      await fetchCategories();
+    } finally {
+      setSavingOrder(false);
     }
   };
 
@@ -15557,7 +15619,20 @@ export function SupportConfigView({ t, api }) {
           ) : (
             <div className="space-y-3" style={{ maxHeight: 340, overflowY: 'auto', paddingRight: 4 }}>
               {categories.map((cat) => (
-                <div key={cat.id} style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 14px', marginBottom: 8 }}>
+                <div
+                  key={cat.id}
+                  draggable={!editingCatId && !savingOrder}
+                  onDragStart={() => handleCategoryDragStart(cat.id)}
+                  onDragOver={(e) => handleCategoryDragOver(e, cat.id)}
+                  onDrop={handleCategoryDrop}
+                  onDragEnd={() => setDraggedCatId(null)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 10, background: 'var(--card-2)',
+                    border: '1px solid var(--border-2)', borderRadius: 12, padding: '10px 14px', marginBottom: 8,
+                    opacity: draggedCatId === cat.id ? 0.4 : 1,
+                    cursor: !editingCatId && !savingOrder ? 'grab' : 'default',
+                  }}
+                >
                   {editingCatId === cat.id ? (
                     <>
                       <input
@@ -15574,6 +15649,7 @@ export function SupportConfigView({ t, api }) {
                     </>
                   ) : (
                     <>
+                      <GripVertical style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
                       <Tag style={{ width: 16, height: 16, color: 'var(--text-3)', flexShrink: 0 }} />
                       <span style={{ flex: 1, fontWeight: 700, fontSize: 13 }}>{cat.name}</span>
                       <button type="button" onClick={() => handleStartEditCategory(cat)} className="icon-btn" title={t('btnEdit')}>
