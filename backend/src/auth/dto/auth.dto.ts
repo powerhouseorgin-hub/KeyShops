@@ -183,4 +183,20 @@ export class RegisterShopDto {
   @IsOptional()
   @IsUrl({}, { message: 'Please enter a valid website URL' })
   website?: string;
+
+  // Razorpay Checkout's success-handler response for the subscription order
+  // created via PaymentService.createSubscriptionOrder just before this
+  // form was submitted - verified server-side in AuthService.registerShop
+  // before the shop account is created (see PaymentService.verifyPaymentSignature).
+  @IsString()
+  @IsNotEmpty()
+  razorpayOrderId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  razorpayPaymentId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  razorpaySignature: string;
 }

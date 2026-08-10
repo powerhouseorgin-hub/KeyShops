@@ -19,6 +19,7 @@ import officeCategoryIcon from './assets/categories/office.png';
 import addKeyIcon from './assets/addlostkeys/bluekey.png';
 import lostKeyIcon from './assets/addlostkeys/redkey.png';
 import { downloadPdf, sharePdf } from './utils/pdfDelivery';
+import { openRazorpayCheckout } from './utils/razorpay';
 import PublicSite from './components/PublicSite';
 import CustomSelect from './components/CustomSelect';
 import OtpVerificationModal from './components/OtpVerificationModal';
@@ -1226,6 +1227,7 @@ const LANGUAGES = {
     returnToLoginBtn: 'Return to login',
     runYourShopHeading: 'Run your shop',
     scanQrCodeAppsDesc: 'Scan QR code using GooglePay, PhonePe, or Paytm',
+    securePaymentGatewayDesc: 'You\'ll be redirected to Razorpay\'s secure checkout to pay by card, UPI, netbanking, or wallet.',
     secureRecoveryWorkspaceDesc: 'Secure recovery for your workspace',
     selectShopCategoryPlaceholder: 'Select shop category',
     selectVerificationMethodDesc: 'Select your verification method to recover your workspace credentials.',
@@ -2078,6 +2080,7 @@ const LANGUAGES = {
     returnToLoginBtn: 'लॉगिन पर वापस जाएं',
     runYourShopHeading: 'अपनी दुकान चलाएं',
     scanQrCodeAppsDesc: 'GooglePay, PhonePe, या Paytm का उपयोग करके QR कोड स्कैन करें',
+    securePaymentGatewayDesc: 'कार्ड, यूपीआई, नेटबैंकिंग या वॉलेट से भुगतान करने के लिए आपको Razorpay के सुरक्षित चेकआउट पर भेजा जाएगा।',
     secureRecoveryWorkspaceDesc: 'आपके वर्कस्पेस के लिए सुरक्षित पुनर्प्राप्ति',
     selectShopCategoryPlaceholder: 'दुकान श्रेणी चुनें',
     selectVerificationMethodDesc: 'अपने वर्कस्पेस क्रेडेंशियल्स को पुनर्प्राप्त करने के लिए अपनी सत्यापन विधि चुनें।',
@@ -2922,6 +2925,7 @@ const LANGUAGES = {
     returnToLoginBtn: 'உள்நுழைவுக்குத் திரும்பு',
     runYourShopHeading: 'உங்கள் கடையை நடத்துங்கள்',
     scanQrCodeAppsDesc: 'GooglePay, PhonePe, அல்லது Paytm ஐப் பயன்படுத்தி QR குறியீட்டை ஸ்கேன் செய்யவும்',
+    securePaymentGatewayDesc: 'கார்டு, UPI, நெட்பேங்கிங் அல்லது வாலட் மூலம் செலுத்த Razorpay-இன் பாதுகாப்பான செக்அவுட்டிற்கு அழைத்துச் செல்லப்படுவீர்கள்.',
     secureRecoveryWorkspaceDesc: 'உங்கள் பணிமனைக்கான பாதுகாப்பான மீட்பு',
     selectShopCategoryPlaceholder: 'கடை வகையைத் தேர்ந்தெடுக்கவும்',
     selectVerificationMethodDesc: 'உங்கள் பணிமனை நற்சான்றிதழ்களை மீட்டெடுக்க உங்கள் சரிபார்ப்பு முறையைத் தேர்ந்தெடுக்கவும்.',
@@ -3774,6 +3778,7 @@ const LANGUAGES = {
     returnToLoginBtn: 'లాగిన్‌కు తిరిగి వెళ్ళండి',
     runYourShopHeading: 'మీ దుకాణాన్ని నడపండి',
     scanQrCodeAppsDesc: 'GooglePay, PhonePe, లేదా Paytm ఉపయోగించి QR కోడ్‌ను స్కాన్ చేయండి',
+    securePaymentGatewayDesc: 'కార్డ్, UPI, నెట్‌బ్యాంకింగ్ లేదా వాలెట్ ద్వారా చెల్లించడానికి మిమ్మల్ని Razorpay సురక్షిత చెక్అవుట్‌కు తీసుకెళ్తారు.',
     secureRecoveryWorkspaceDesc: 'మీ వర్క్‌స్పేస్ కోసం సురక్షిత రికవరీ',
     selectShopCategoryPlaceholder: 'దుకాణం వర్గాన్ని ఎంచుకోండి',
     selectVerificationMethodDesc: 'మీ వర్క్‌స్పేస్ ఆధారాలను తిరిగి పొందడానికి మీ ధృవీకరణ పద్ధతిని ఎంచుకోండి.',
@@ -4618,6 +4623,7 @@ const LANGUAGES = {
     returnToLoginBtn: 'ಲಾಗಿನ್‌ಗೆ ಹಿಂತಿರುಗಿ',
     runYourShopHeading: 'ನಿಮ್ಮ ಅಂಗಡಿಯನ್ನು ನಡೆಸಿ',
     scanQrCodeAppsDesc: 'GooglePay, PhonePe, ಅಥವಾ Paytm ಬಳಸಿ QR ಕೋಡ್ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ',
+    securePaymentGatewayDesc: 'ಕಾರ್ಡ್, UPI, ನೆಟ್‌ಬ್ಯಾಂಕಿಂಗ್ ಅಥವಾ ವಾಲೆಟ್ ಮೂಲಕ ಪಾವತಿಸಲು ನಿಮ್ಮನ್ನು Razorpay ಸುರಕ್ಷಿತ ಚೆಕ್‌ಔಟ್‌ಗೆ ಕರೆದೊಯ್ಯಲಾಗುತ್ತದೆ.',
     secureRecoveryWorkspaceDesc: 'ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಾಗಿ ಸುರಕ್ಷಿತ ಮರುಪಡೆಯುವಿಕೆ',
     selectShopCategoryPlaceholder: 'ಅಂಗಡಿ ವರ್ಗ ಆಯ್ಕೆಮಾಡಿ',
     selectVerificationMethodDesc: 'ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ರುಜುವಾತುಗಳನ್ನು ಮರುಪಡೆಯಲು ನಿಮ್ಮ ಪರಿಶೀಲನಾ ವಿಧಾನವನ್ನು ಆಯ್ಕೆಮಾಡಿ.',
@@ -5470,6 +5476,7 @@ const LANGUAGES = {
     returnToLoginBtn: 'ലോഗിനിലേക്ക് മടങ്ങുക',
     runYourShopHeading: 'നിങ്ങളുടെ ഷോപ്പ് നടത്തുക',
     scanQrCodeAppsDesc: 'GooglePay, PhonePe, അല്ലെങ്കിൽ Paytm ഉപയോഗിച്ച് QR കോഡ് സ്കാൻ ചെയ്യുക',
+    securePaymentGatewayDesc: 'കാർഡ്, UPI, നെറ്റ്ബാങ്കിംഗ് അല്ലെങ്കിൽ വാലറ്റ് വഴി പണമടയ്ക്കാൻ നിങ്ങളെ Razorpay-യുടെ സുരക്ഷിത ചെക്ക്ഔട്ടിലേക്ക് കൊണ്ടുപോകും.',
     secureRecoveryWorkspaceDesc: 'നിങ്ങളുടെ വർക്ക്‌സ്‌പേസിനുള്ള സുരക്ഷിത വീണ്ടെടുക്കൽ',
     selectShopCategoryPlaceholder: 'ഷോപ്പ് വിഭാഗം തിരഞ്ഞെടുക്കുക',
     selectVerificationMethodDesc: 'നിങ്ങളുടെ വർക്ക്‌സ്‌പേസ് ക്രെഡൻഷ്യലുകൾ വീണ്ടെടുക്കാൻ നിങ്ങളുടെ വെരിഫിക്കേഷൻ രീതി തിരഞ്ഞെടുക്കുക.',
@@ -6402,13 +6409,9 @@ export default function App() {
   const [regOtpVerified, setRegOtpVerified] = useState(false);
   const [showRegOtpModal, setShowRegOtpModal] = useState(false);
 
-  // Self-Registration Payment states - plan selection and payment now live
-  // on the same Step 2 screen (see the combined form below).
-  const [regPayMethod, setRegPayMethod] = useState('card');
-  const [regCardNumber, setRegCardNumber] = useState('');
-  const [regCardExpiry, setRegCardExpiry] = useState('');
-  const [regCardCvv, setRegCardCvv] = useState('');
-  const [regCardHolder, setRegCardHolder] = useState('');
+  // Self-Registration Payment state - Step 2 opens the real Razorpay
+  // Checkout widget (which offers card/UPI/netbanking/wallet on its own),
+  // so there's no in-app payment-method form to hold state for anymore.
   const [regPayProcessing, setRegPayProcessing] = useState(false);
   const [regPaySuccess, setRegPaySuccess] = useState(false);
 
@@ -6569,46 +6572,76 @@ export default function App() {
 
   const handleRegCheckout = async (e) => {
     e.preventDefault();
+    setRegError('');
     setRegPayProcessing(true);
 
-    const logs = [
-      'Establishing secure payment tunnel...',
-      'Verifying account assets & fraud parameters...',
-      'Settling subscription merchant account...',
-      'Confirming tokenized gateway response...'
-    ];
-
-    for (let i = 0; i < logs.length; i++) {
-      await new Promise(r => setTimeout(r, 600));
-    }
-
+    // Order is created server-side for the platform's real subscription
+    // price (the client never sends an amount) - see PaymentService.createSubscriptionOrder.
+    let order;
     try {
-      const res = await api.registerShop({
-        shopName: regShopName,
-        ownerName: regOwnerName,
-        categoryId: regCategoryId,
-        email: regEmailEnabled && regEmail ? regEmail.trim() : undefined,
-        phone: regPhone,
-        location: regLocation,
-        city: regCity,
-        state: regState,
-        pinCode: regPinCode,
-        aadhaarNumber: regAadhaarNumber || undefined,
-        website: regWebsiteUrlEnabled && regWebsiteUrl ? regWebsiteUrl.trim() : undefined,
-        referralCode: regReferralCode || undefined,
-        password: regPassword,
-        latitude: regLat ?? undefined,
-        longitude: regLng ?? undefined,
-      });
-
-      setRegPayProcessing(false);
-      setRegPaySuccess(true);
-      setRegLoginEmail(res.loginEmail || '');
-      setRegSuccessMessage(res.message || t('registrationSuccessfulShopActiveMsg'));
+      order = await api.createPaymentOrder();
     } catch (err) {
       setRegPayProcessing(false);
-      setRegError(err.message || t('selfRegistrationFailedMsg'));
+      setRegError(err.message || t('failedInitCheckout'));
+      return;
     }
+
+    // Hand off to Razorpay's own Checkout modal (card/UPI/netbanking/wallet
+    // all built in) - drop our own "processing" overlay while it's open so
+    // the two don't visually stack.
+    setRegPayProcessing(false);
+
+    openRazorpayCheckout({
+      order,
+      prefill: {
+        name: regOwnerName,
+        contact: regPhone,
+        ...(regEmailEnabled && regEmail ? { email: regEmail.trim() } : {}),
+      },
+      description: `${regShopName} - Yearly Subscription`,
+      onSuccess: async (response) => {
+        setRegPayProcessing(true);
+        try {
+          const res = await api.registerShop({
+            shopName: regShopName,
+            ownerName: regOwnerName,
+            categoryId: regCategoryId,
+            email: regEmailEnabled && regEmail ? regEmail.trim() : undefined,
+            phone: regPhone,
+            location: regLocation,
+            city: regCity,
+            state: regState,
+            pinCode: regPinCode,
+            aadhaarNumber: regAadhaarNumber || undefined,
+            website: regWebsiteUrlEnabled && regWebsiteUrl ? regWebsiteUrl.trim() : undefined,
+            referralCode: regReferralCode || undefined,
+            password: regPassword,
+            latitude: regLat ?? undefined,
+            longitude: regLng ?? undefined,
+            // Verified server-side (HMAC against the key secret) before the
+            // shop account is created - see AuthService.registerShop.
+            razorpayOrderId: response.razorpay_order_id,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpaySignature: response.razorpay_signature,
+          });
+
+          setRegPayProcessing(false);
+          setRegPaySuccess(true);
+          setRegLoginEmail(res.loginEmail || '');
+          setRegSuccessMessage(res.message || t('registrationSuccessfulShopActiveMsg'));
+        } catch (err) {
+          setRegPayProcessing(false);
+          setRegError(err.message || t('selfRegistrationFailedMsg'));
+        }
+      },
+      // User closed the Razorpay modal without paying - just stop showing
+      // "processing"; no shop account was touched, they can hit Pay again.
+      onDismiss: () => setRegPayProcessing(false),
+      onError: (err) => {
+        setRegPayProcessing(false);
+        setRegError(err.message);
+      },
+    });
   };
 
   const resetRegisterShopFlow = () => {
@@ -6637,11 +6670,6 @@ export default function App() {
     setRegLoginEmail('');
     setRegOtpVerified(false);
     setShowRegOtpModal(false);
-    setRegPayMethod('card');
-    setRegCardNumber('');
-    setRegCardExpiry('');
-    setRegCardCvv('');
-    setRegCardHolder('');
     setRegPayProcessing(false);
     setRegPaySuccess(false);
     setRegStep(1);
@@ -7308,7 +7336,7 @@ export default function App() {
                                   alert(`${t('mobileNumberLabel')}: ${PHONE_REGEX_MESSAGE}`);
                                   return;
                                 }
-                                if (!/^\d{6}$/.test(regPinCode)) {
+                                if (regPinCode && !/^\d{6}$/.test(regPinCode)) {
                                   alert(t('pinCodeMustBe6DigitsMsg'));
                                   return;
                                 }
@@ -7386,75 +7414,10 @@ export default function App() {
                             </span>
                           </div>
 
-                          <div style={{ marginBottom: 18 }}>
-                            <label style={{ display: 'block', fontSize: 12.5, fontWeight: 800, color: 'var(--text-1)', marginBottom: 8, fontFamily: 'var(--display)' }}>{t('choosePaymentChannelLabel')}</label>
-                            <div className="grid grid-cols-2 gap-2">
-                              <button
-                                type="button" onClick={() => setRegPayMethod('card')}
-                                className={`store-tab ${regPayMethod === 'card' ? 'active' : ''}`}
-                                style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
-                              >
-                                <CreditCard className="h-4 w-4" />
-                                <span style={{ fontSize: 10 }}>{t('creditCardLabel')}</span>
-                              </button>
-                              <button
-                                type="button" onClick={() => setRegPayMethod('upi')}
-                                className={`store-tab ${regPayMethod === 'upi' ? 'active' : ''}`}
-                                style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
-                              >
-                                <QrCode className="h-4 w-4" />
-                                <span style={{ fontSize: 10 }}>{t('upiQrScanLabel')}</span>
-                              </button>
-                            </div>
+                          <div className="animate-fade-in" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 20, borderRadius: 16, textAlign: 'center' }}>
+                            <ShieldCheck className="h-8 w-8" style={{ color: 'var(--gold)', margin: '0 auto 10px' }} />
+                            <p style={{ color: 'var(--text-3)', fontSize: 11.5, fontWeight: 600, lineHeight: 1.6 }}>{t('securePaymentGatewayDesc')}</p>
                           </div>
-
-                          {regPayMethod === 'card' ? (
-                            <div className="animate-fade-in reg-section">
-                              <div className="reg-field">
-                                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>{t('cardNumberLabel')} <span className="req">*</span></b></div>
-                                <div className="input-wrap">
-                                  <input
-                                    type="text" required maxLength={16} placeholder="4111 2222 3333 4444" value={regCardNumber} onChange={(e) => setRegCardNumber(e.target.value.replace(/\D/g, ''))}
-                                    style={{ fontFamily: 'monospace' }}
-                                  />
-                                </div>
-                              </div>
-                              <div className="reg-field">
-                                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><UserCheck /></div><b>{t('cardholderNameLabel')} <span className="req">*</span></b></div>
-                                <div className="input-wrap">
-                                  <input
-                                    type="text" required placeholder="RAJESH KUMAR" value={regCardHolder} onChange={(e) => setRegCardHolder(e.target.value.toUpperCase())}
-                                  />
-                                </div>
-                              </div>
-                              <div className="row2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                                <div className="reg-field" style={{ marginBottom: 0 }}>
-                                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Calendar /></div><b>{t('expiryLabel')} <span className="req">*</span></b></div>
-                                  <div className="input-wrap">
-                                    <input
-                                      type="text" required maxLength={5} placeholder="MM/YY" value={regCardExpiry} onChange={(e) => setRegCardExpiry(e.target.value)}
-                                      style={{ textAlign: 'center' }}
-                                    />
-                                  </div>
-                                </div>
-                                <div className="reg-field" style={{ marginBottom: 0 }}>
-                                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Lock /></div><b>{t('cvvLabel')} <span className="req">*</span></b></div>
-                                  <div className="input-wrap">
-                                    <input
-                                      type="password" required maxLength={3} placeholder="***" value={regCardCvv} onChange={(e) => setRegCardCvv(e.target.value.replace(/\D/g, ''))}
-                                      style={{ textAlign: 'center', fontFamily: 'monospace' }}
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="animate-fade-in" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 24, borderRadius: 16, textAlign: 'center' }}>
-                              <QrCode className="h-12 w-12" style={{ color: 'var(--gold)', margin: '0 auto 12px' }} />
-                              <p style={{ color: 'var(--text-3)', fontSize: 11, fontWeight: 600, marginBottom: 8 }}>{t('scanQrCodeAppsDesc')}</p>
-                              <span style={{ fontWeight: 800, fontSize: 13, fontFamily: 'monospace', color: 'var(--text-0)' }}>UPI: keeplace.register@icici</span>
-                            </div>
-                          )}
 
                           <div className="flex gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                             <button type="button" onClick={() => setRegStep(1)} className="btn btn-ghost" style={{ flex: 1 }}>

@@ -185,6 +185,23 @@ export const AuthProvider = ({ children }) => {
       return response.json();
     },
 
+    // Creates a Razorpay order for the current platform-wide subscription
+    // price (server reads PlatformConfig itself - the client never sends an
+    // amount). Public/unauthenticated - called before the shop account
+    // exists, right before opening Razorpay Checkout on the registration
+    // wizard's payment step.
+    createPaymentOrder: async () => {
+      const response = await fetch(`${API_BASE}/api/payment/create-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Failed to initialize payment');
+      }
+      return response.json();
+    },
+
     // Public landing-page shop search (no auth) - used by the "Find a Shop"
     // search page, the Dealers directory, and the ECM/Meter/Scanning/Key
     // Shops category screens. Pagination is opt-in via `limit` - omit it

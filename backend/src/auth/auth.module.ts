@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { RolesGuard } from './roles.guard';
+import { PaymentModule } from '../payment/payment.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { RolesGuard } from './roles.guard';
       secret: process.env.JWT_SECRET || 'kee-jwt-super-secret-key-2026-phase-1',
       signOptions: { expiresIn: '24h' },
     }),
+    PaymentModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, RolesGuard],

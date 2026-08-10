@@ -15,6 +15,7 @@ describe('CustomerService', () => {
       masterKey: { upsert: jest.fn() },
       customer: { create: jest.fn() },
       activityLog: { create: jest.fn() },
+      notification: { create: jest.fn() },
     };
     prismaMock = {
       customer: { findFirst: jest.fn() },

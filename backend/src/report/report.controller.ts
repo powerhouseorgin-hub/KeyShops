@@ -61,11 +61,6 @@ export class ReportController {
     return this.reportService.getShopDashboard(req.user.shopId);
   }
 
-  @Get('support-config')
-  async getSupportConfig() {
-    return this.reportService.getSupportConfig();
-  }
-
   @Post('super/support-config')
   @Roles(Role.SUPER_ADMIN)
   async updateSupportConfig(

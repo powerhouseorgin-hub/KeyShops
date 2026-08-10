@@ -7,6 +7,7 @@ import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto } 
 import { Role } from '@prisma/client';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 import { CryptoService } from '../crypto/crypto.service';
+import { PaymentService } from '../payment/payment.service';
 
 // bcrypt's cost factor is exponential (each +1 roughly doubles the CPU time
 // spent per hash/compare) - 12 was fine on typical hardware (~200-300ms) but
@@ -23,6 +24,7 @@ export class AuthService implements OnModuleInit {
     private readonly tenantService: TenantService,
     private readonly jwtService: JwtService,
     private readonly cryptoService: CryptoService,
+    private readonly paymentService: PaymentService,
   ) {}
 
   async onModuleInit() {
@@ -380,6 +382,21 @@ export class AuthService implements OnModuleInit {
   // both stored as login identifiers on the User record - either can be
   // used to sign in afterwards with the same password (see AuthService.login).
   async registerShop(dto: RegisterShopDto) {
+    // Real payment gate: the order was created server-side (see
+    // PaymentService.createSubscriptionOrder) for the exact platform-wide
+    // subscription price, so a valid signature here cryptographically proves
+    // that exact amount was actually captured by Razorpay against this
+    // order - not just that the client claims it was. Checked before any
+    // other validation/DB write so an unpaid request never reaches them.
+    const paymentValid = this.paymentService.verifyPaymentSignature(
+      dto.razorpayOrderId,
+      dto.razorpayPaymentId,
+      dto.razorpaySignature,
+    );
+    if (!paymentValid) {
+      throw new BadRequestException('Payment verification failed. Please try again.');
+    }
+
     // Referral code is optional, but if the owner entered one it must match
     // another shop's referralCode - which is that shop's own registered
     // mobile number (see below - not a random code), so the lookup is
@@ -514,8 +531,9 @@ export class AuthService implements OnModuleInit {
         },
       });
 
-      // 3b. Record this subscription's (simulated) payment as platform
-      // revenue, once, at the moment the account is created - feeds the
+      // 3b. Record this subscription's payment (verified against Razorpay
+      // above) as platform revenue, once, at the moment the account is
+      // created - feeds the
       // Super Admin Revenue Report (see ReportService.getSuperDashboard /
       // getRevenueRecords). Always INSERTs a new row - unlike
       // ReportService.logRevenue's manual one-row-per-month upsert - since

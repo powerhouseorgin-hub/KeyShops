@@ -8,7 +8,10 @@
       "*.onrender.com",
       "storage.googleapis.com",
       "res.cloudinary.com",
-      "*.cloudinary.com"
+      "*.cloudinary.com",
+      "*.razorpay.com",
+      "checkout.razorpay.com",
+      "api.razorpay.com"
     ]
   },
   "plugins": {
