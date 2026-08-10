@@ -246,6 +246,18 @@ export const AuthProvider = ({ children }) => {
       return response.json();
     },
 
+    // Full-screen poster shown every time the native app opens/resumes -
+    // see PublicMobileApp.jsx App Poster overlay + AdService.getPublicAppPoster.
+    // Returns null (not an error) when there's nothing active to show.
+    getPublicAppPoster: async () => {
+      const response = await fetch(`${API_BASE}/api/public/ads/poster`);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Failed to load app poster');
+      }
+      return response.json();
+    },
+
     // Pre-login mobile app's Machines/Products directory (backed by
     // Promotion rows of type PRODUCT). Same opt-in-`limit` pagination
     // convention as searchPublicShops.

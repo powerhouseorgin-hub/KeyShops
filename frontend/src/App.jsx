@@ -39,7 +39,7 @@ import {
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
   Download, Fingerprint, Palette, Menu, Home, Languages, Globe,
   Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2,
-  GripVertical
+  GripVertical, Smartphone
 } from 'lucide-react';
 
 // Product photos shown on the Dashboard's product-type cards instead of the
@@ -716,6 +716,7 @@ const LANGUAGES = {
     interactivePopupLabel: 'Interactive Popup',
     textNoticeLabel: 'Text Notice',
     mainBannerLabel: 'Main Banner',
+    appOpenPosterLabel: 'App Open Poster',
     growthMarketingLabel: 'Growth & Marketing',
     adCampaignsTitle: 'Advertisement Campaigns',
     publishBannersPopupsDesc: 'Publish banners and popups targeted to shop dashboard screens.',
@@ -731,7 +732,7 @@ const LANGUAGES = {
     targetedShopSingular: '{n} targeted shop',
     targetedShopsPlural: '{n} targeted shops',
     editBtn: 'Edit',
-    cancelCampaignBtn: 'Cancel Campaign',
+    cancelCampaignBtn: 'Cancel',
     adCampaignLabel: 'Ad Campaign',
     editAdCampaignTitle: 'Edit Ad Campaign',
     newVisualAdCampaignTitle: 'New Visual Ad Campaign',
@@ -745,6 +746,7 @@ const LANGUAGES = {
     mainBannerNoticeOption: 'Main Banner Notice',
     interactiveLoginPopupOption: 'Interactive Login Popup',
     dashboardTextNoticeOption: 'Dashboard Text Notice',
+    appOpenPosterOption: 'App Open Poster (shown every app launch)',
     campaignPriorityLabel: 'Campaign Priority',
     startDateLabel: 'Start Date',
     endDateLabelShort: 'End Date',
@@ -1567,6 +1569,7 @@ const LANGUAGES = {
     failedScheduleCampaign: 'अभियान शेड्यूल करने में विफल',
     confirmTerminateAdCampaign: 'क्या आप वाकई इस विज्ञापन अभियान को समाप्त करना चाहते हैं?',
     interactivePopupLabel: 'इंटरैक्टिव पॉपअप',
+    appOpenPosterLabel: 'ऐप ओपन पोस्टर',
     textNoticeLabel: 'टेक्स्ट सूचना',
     mainBannerLabel: 'मुख्य बैनर',
     growthMarketingLabel: 'ग्रोथ और मार्केटिंग',
@@ -1584,7 +1587,7 @@ const LANGUAGES = {
     targetedShopSingular: '{n} लक्षित दुकान',
     targetedShopsPlural: '{n} लक्षित दुकानें',
     editBtn: 'संपादित करें',
-    cancelCampaignBtn: 'अभियान रद्द करें',
+    cancelCampaignBtn: 'रद्द करें',
     adCampaignLabel: 'विज्ञापन अभियान',
     editAdCampaignTitle: 'विज्ञापन अभियान संपादित करें',
     newVisualAdCampaignTitle: 'नया विज़ुअल विज्ञापन अभियान',
@@ -1598,6 +1601,7 @@ const LANGUAGES = {
     mainBannerNoticeOption: 'मुख्य बैनर सूचना',
     interactiveLoginPopupOption: 'इंटरैक्टिव लॉगिन पॉपअप',
     dashboardTextNoticeOption: 'डैशबोर्ड टेक्स्ट सूचना',
+    appOpenPosterOption: 'ऐप ओपन पोस्टर (हर बार ऐप खोलने पर दिखेगा)',
     campaignPriorityLabel: 'अभियान प्राथमिकता',
     startDateLabel: 'प्रारंभ तिथि',
     endDateLabelShort: 'समाप्ति तिथि',
@@ -2412,6 +2416,7 @@ const LANGUAGES = {
     failedScheduleCampaign: 'பிரச்சாரத்தை திட்டமிட முடியவில்லை',
     confirmTerminateAdCampaign: 'இந்த விளம்பர பிரச்சாரத்தை நிறுத்த விரும்புகிறீர்களா?',
     interactivePopupLabel: 'ஊடாடும் பாப்அப்',
+    appOpenPosterLabel: 'ஆப் திறப்பு போஸ்டர்',
     textNoticeLabel: 'உரை அறிவிப்பு',
     mainBannerLabel: 'முதன்மை பேனர்',
     growthMarketingLabel: 'வளர்ச்சி & சந்தைப்படுத்தல்',
@@ -2429,7 +2434,7 @@ const LANGUAGES = {
     targetedShopSingular: '{n} இலக்கு கடை',
     targetedShopsPlural: '{n} இலக்கு கடைகள்',
     editBtn: 'திருத்து',
-    cancelCampaignBtn: 'பிரச்சாரத்தை ரத்து செய்',
+    cancelCampaignBtn: 'ரத்து செய்',
     adCampaignLabel: 'விளம்பர பிரச்சாரம்',
     editAdCampaignTitle: 'விளம்பர பிரச்சாரத்தைத் திருத்து',
     newVisualAdCampaignTitle: 'புதிய காட்சி விளம்பர பிரச்சாரம்',
@@ -2443,6 +2448,7 @@ const LANGUAGES = {
     mainBannerNoticeOption: 'முதன்மை பேனர் அறிவிப்பு',
     interactiveLoginPopupOption: 'ஊடாடும் உள்நுழைவு பாப்அப்',
     dashboardTextNoticeOption: 'டாஷ்போர்டு உரை அறிவிப்பு',
+    appOpenPosterOption: 'ஆப் திறப்பு போஸ்டர் (ஒவ்வொரு முறையும் ஆப் திறக்கும்போது காட்டப்படும்)',
     campaignPriorityLabel: 'பிரச்சார முன்னுரிமை',
     startDateLabel: 'தொடக்க தேதி',
     endDateLabelShort: 'முடிவு தேதி',
@@ -3265,6 +3271,7 @@ const LANGUAGES = {
     failedScheduleCampaign: 'క్యాంపెయిన్‌ను షెడ్యూల్ చేయడంలో విఫలమైంది',
     confirmTerminateAdCampaign: 'ఈ ప్రకటన ప్రచారాన్ని ముగించాలనుకుంటున్నారా?',
     interactivePopupLabel: 'ఇంటరాక్టివ్ పాప్అప్',
+    appOpenPosterLabel: 'యాప్ ఓపెన్ పోస్టర్',
     textNoticeLabel: 'టెక్స్ట్ నోటీసు',
     mainBannerLabel: 'ప్రధాన బ్యానర్',
     growthMarketingLabel: 'వృద్ధి & మార్కెటింగ్',
@@ -3282,7 +3289,7 @@ const LANGUAGES = {
     targetedShopSingular: '{n} లక్ష్య షాప్',
     targetedShopsPlural: '{n} లక్ష్య షాప్‌లు',
     editBtn: 'సవరించండి',
-    cancelCampaignBtn: 'ప్రచారాన్ని రద్దు చేయండి',
+    cancelCampaignBtn: 'రద్దు చేయండి',
     adCampaignLabel: 'ప్రకటన ప్రచారం',
     editAdCampaignTitle: 'ప్రకటన ప్రచారాన్ని సవరించండి',
     newVisualAdCampaignTitle: 'కొత్త విజువల్ ప్రకటన ప్రచారం',
@@ -3296,6 +3303,7 @@ const LANGUAGES = {
     mainBannerNoticeOption: 'ప్రధాన బ్యానర్ నోటీసు',
     interactiveLoginPopupOption: 'ఇంటరాక్టివ్ లాగిన్ పాప్అప్',
     dashboardTextNoticeOption: 'డాష్‌బోర్డ్ టెక్స్ట్ నోటీసు',
+    appOpenPosterOption: 'యాప్ ఓపెన్ పోస్టర్ (ప్రతిసారి యాప్ తెరిచినప్పుడు కనిపిస్తుంది)',
     campaignPriorityLabel: 'ప్రచార ప్రాధాన్యత',
     startDateLabel: 'ప్రారంభ తేదీ',
     endDateLabelShort: 'ముగింపు తేదీ',
@@ -4110,6 +4118,7 @@ const LANGUAGES = {
     failedScheduleCampaign: 'ಅಭಿಯಾನವನ್ನು ನಿಗದಿಪಡಿಸಲು ವಿಫಲವಾಗಿದೆ',
     confirmTerminateAdCampaign: 'ಈ ಜಾಹೀರಾತು ಅಭಿಯಾನವನ್ನು ಕೊನೆಗೊಳಿಸಲು ಖಚಿತವಾಗಿ ಬಯಸುವಿರಾ?',
     interactivePopupLabel: 'ಇಂಟರಾಕ್ಟಿವ್ ಪಾಪ್‌ಅಪ್',
+    appOpenPosterLabel: 'ಆ್ಯಪ್ ಓಪನ್ ಪೋಸ್ಟರ್',
     textNoticeLabel: 'ಪಠ್ಯ ಸೂಚನೆ',
     mainBannerLabel: 'ಮುಖ್ಯ ಬ್ಯಾನರ್',
     growthMarketingLabel: 'ಬೆಳವಣಿಗೆ & ಮಾರ್ಕೆಟಿಂಗ್',
@@ -4127,7 +4136,7 @@ const LANGUAGES = {
     targetedShopSingular: '{n} ಗುರಿ ಅಂಗಡಿ',
     targetedShopsPlural: '{n} ಗುರಿ ಅಂಗಡಿಗಳು',
     editBtn: 'ಸಂಪಾದಿಸಿ',
-    cancelCampaignBtn: 'ಅಭಿಯಾನ ರದ್ದುಗೊಳಿಸಿ',
+    cancelCampaignBtn: 'ರದ್ದುಗೊಳಿಸಿ',
     adCampaignLabel: 'ಜಾಹೀರಾತು ಅಭಿಯಾನ',
     editAdCampaignTitle: 'ಜಾಹೀರಾತು ಅಭಿಯಾನ ಸಂಪಾದಿಸಿ',
     newVisualAdCampaignTitle: 'ಹೊಸ ದೃಶ್ಯ ಜಾಹೀರಾತು ಅಭಿಯಾನ',
@@ -4141,6 +4150,7 @@ const LANGUAGES = {
     mainBannerNoticeOption: 'ಮುಖ್ಯ ಬ್ಯಾನರ್ ಸೂಚನೆ',
     interactiveLoginPopupOption: 'ಇಂಟರಾಕ್ಟಿವ್ ಲಾಗಿನ್ ಪಾಪ್‌ಅಪ್',
     dashboardTextNoticeOption: 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್ ಪಠ್ಯ ಸೂಚನೆ',
+    appOpenPosterOption: 'ಆ್ಯಪ್ ಓಪನ್ ಪೋಸ್ಟರ್ (ಪ್ರತಿ ಬಾರಿ ಆ್ಯಪ್ ತೆರೆದಾಗ ಕಾಣಿಸುತ್ತದೆ)',
     campaignPriorityLabel: 'ಅಭಿಯಾನ ಆದ್ಯತೆ',
     startDateLabel: 'ಪ್ರಾರಂಭ ದಿನಾಂಕ',
     endDateLabelShort: 'ಅಂತ್ಯ ದಿನಾಂಕ',
@@ -4963,6 +4973,7 @@ const LANGUAGES = {
     failedScheduleCampaign: 'കാമ്പെയ്‌ൻ ഷെഡ്യൂൾ ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു',
     confirmTerminateAdCampaign: 'ഈ പരസ്യ കാമ്പെയ്ൻ അവസാനിപ്പിക്കണമെന്ന് തീർച്ചയാണോ?',
     interactivePopupLabel: 'ഇന്ററാക്ടീവ് പോപ്പ്അപ്പ്',
+    appOpenPosterLabel: 'ആപ്പ് ഓപ്പൺ പോസ്റ്റർ',
     textNoticeLabel: 'ടെക്സ്റ്റ് നോട്ടീസ്',
     mainBannerLabel: 'പ്രധാന ബാനർ',
     growthMarketingLabel: 'വളർച്ച & മാർക്കറ്റിംഗ്',
@@ -4980,7 +4991,7 @@ const LANGUAGES = {
     targetedShopSingular: '{n} ലക്ഷ്യ ഷോപ്പ്',
     targetedShopsPlural: '{n} ലക്ഷ്യ ഷോപ്പുകൾ',
     editBtn: 'എഡിറ്റ് ചെയ്യുക',
-    cancelCampaignBtn: 'കാമ്പെയ്ൻ റദ്ദാക്കുക',
+    cancelCampaignBtn: 'റദ്ദാക്കുക',
     adCampaignLabel: 'പരസ്യ കാമ്പെയ്ൻ',
     editAdCampaignTitle: 'പരസ്യ കാമ്പെയ്ൻ എഡിറ്റ് ചെയ്യുക',
     newVisualAdCampaignTitle: 'പുതിയ വിഷ്വൽ പരസ്യ കാമ്പെയ്ൻ',
@@ -4994,6 +5005,7 @@ const LANGUAGES = {
     mainBannerNoticeOption: 'പ്രധാന ബാനർ അറിയിപ്പ്',
     interactiveLoginPopupOption: 'ഇന്ററാക്ടീവ് ലോഗിൻ പോപ്പ്അപ്പ്',
     dashboardTextNoticeOption: 'ഡാഷ്‌ബോർഡ് ടെക്സ്റ്റ് അറിയിപ്പ്',
+    appOpenPosterOption: 'ആപ്പ് ഓപ്പൺ പോസ്റ്റർ (ആപ്പ് തുറക്കുമ്പോഴെല്ലാം കാണിക്കും)',
     campaignPriorityLabel: 'കാമ്പെയ്ൻ മുൻഗണന',
     startDateLabel: 'ആരംഭ തീയതി',
     endDateLabelShort: 'അവസാന തീയതി',
@@ -5755,6 +5767,22 @@ async function primeStoragePermission() {
   }
 }
 
+// Full-screen App Poster (AdType.APP_POSTER) - see App()'s appStateChange
+// effect below. Rendered above everything (auth or not), so it's a plain
+// standalone overlay rather than something tucked inside the authenticated
+// dashboard or PublicMobileApp's own screen stack.
+function AppPosterOverlay({ ad, onClose }) {
+  return (
+    <div className="app-poster-overlay">
+      <button type="button" className="app-poster-close" onClick={onClose} aria-label="Close"><X /></button>
+      <div className="app-poster-media">
+        {ad.imageUrl && <img src={ad.imageUrl} alt={ad.title || ''} />}
+      </div>
+      {ad.title && <div className="app-poster-title">{ad.title}</div>}
+    </div>
+  );
+}
+
 export default function App() {
   const { user, isAuthenticated, loading, login, logout, api } = useAuth();
   const [lang, setLang] = useState(localStorage.getItem('kee_lang') || 'en');
@@ -5772,6 +5800,26 @@ export default function App() {
   // identical screen instead of a gap.
   useEffect(() => {
     if (IS_NATIVE_APP) SplashScreen.hide();
+  }, []);
+
+  // App Poster (AdType.APP_POSTER) - a full-screen promo shown every time the
+  // native app is opened OR resumes from the background, regardless of
+  // login state (unlike the shop-admin-only "Interactive Login Popup" type).
+  // Re-fetches on every foreground transition rather than caching, so a
+  // freshly-scheduled/updated poster (or one whose date window just ended)
+  // is always current - Super Admin ad campaigns are low-volume/manually
+  // curated, so this is a cheap call.
+  const [appPoster, setAppPoster] = useState(null);
+  useEffect(() => {
+    if (!IS_NATIVE_APP) return;
+    const fetchAppPoster = () => {
+      api.getPublicAppPoster().then((ad) => setAppPoster(ad || null)).catch(() => {});
+    };
+    fetchAppPoster();
+    const handle = CapacitorApp.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) fetchAppPoster();
+    });
+    return () => { handle.remove(); };
   }, []);
 
   // Navigation stack for proper Android Back button / back-swipe-gesture
@@ -6110,6 +6158,15 @@ export default function App() {
   // screen to browsing - set right before switching publicPage back, e.g. by
   // the login screen's own bottom nav (see the login-shell render branch).
   const [publicInitialTab, setPublicInitialTab] = useState('home');
+
+  // Native app's login is an overlay dialog on top of PublicMobileApp (not a
+  // full-page navigation) - hardware Back should just close it back to
+  // whichever public tab was showing underneath, same as tapping the
+  // backdrop. Registers on the same shared backHandlerStack every other
+  // modal in the app uses, so it's popped before any tab-level back handling
+  // inside the still-mounted PublicMobileApp underneath.
+  useBackHandler(IS_NATIVE_APP && publicPage === 'login', () => setPublicPage('home'));
+
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [authError, setAuthError] = useState('');
@@ -6668,16 +6725,17 @@ export default function App() {
 
   return (
     <>
+      {appPoster && <AppPosterOverlay ad={appPoster} onClose={() => setAppPoster(null)} />}
       {!isAuthenticated ? (
-        publicPage !== 'login' ? (
-          IS_NATIVE_APP ? (
-            <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} />
-          ) : (
-            <PublicSite page={publicPage} onNavigate={setPublicPage} api={api} />
-          )
+        <>
+        {IS_NATIVE_APP && (
+          <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} />
+        )}
+        {publicPage !== 'login' ? (
+          !IS_NATIVE_APP && <PublicSite page={publicPage} onNavigate={setPublicPage} api={api} />
         ) : (
           <>
-          <div className="login-shell">
+          <div className={`login-shell${IS_NATIVE_APP ? ' native-login login-overlay' : ''}`}>
             <div className="login-side" style={IS_NATIVE_APP ? { display: 'none' } : undefined}>
               <div className="glow"></div>
               <div className="side-copy">
@@ -7422,7 +7480,8 @@ export default function App() {
             />
           )}
           </>
-        )
+        )}
+        </>
       ) : (
         <div className="min-h-[calc(100vh-40px)] flex flex-col md:flex-row">
           {/* Mobile nav backdrop - must sit above every other fixed/sticky
@@ -10666,8 +10725,11 @@ function AdsManagementView({ t, api }) {
   const [imageUploading, setImageUploading] = useState(false);
   const [imageUploadError, setImageUploadError] = useState('');
   const [type, setType] = useState('BANNER');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  // Default both dates to today rather than leaving them blank - a fresh
+  // campaign almost always starts today, and it saves having to open the
+  // date picker just to set a sensible default.
+  const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [endDate, setEndDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [priority, setPriority] = useState(0);
   const [targetAll, setTargetAll] = useState(true);
   const [targetShops, setTargetShops] = useState([]);
@@ -10753,8 +10815,8 @@ function AdsManagementView({ t, api }) {
     setImageUrl('');
     setImageUploadError('');
     setType('BANNER');
-    setStartDate('');
-    setEndDate('');
+    setStartDate(new Date().toISOString().slice(0, 10));
+    setEndDate(new Date().toISOString().slice(0, 10));
     setPriority(0);
     setTargetAll(true);
     setTargetShops([]);
@@ -10796,6 +10858,7 @@ function AdsManagementView({ t, api }) {
   const adTypeMeta = (type) => {
     if (type === 'POPUP') return { label: t('interactivePopupLabel'), icon: Sparkles };
     if (type === 'NOTICE') return { label: t('textNoticeLabel'), icon: Bell };
+    if (type === 'APP_POSTER') return { label: t('appOpenPosterLabel'), icon: Smartphone };
     return { label: t('mainBannerLabel'), icon: Radio };
   };
 
@@ -10932,29 +10995,19 @@ function AdsManagementView({ t, api }) {
 
               <div className="field">
                 <label>{t('bannerImageSourceLabel')}</label>
-                <div className="flex gap-2">
-                  <div className="input-wrap" style={{ flex: 1 }}>
-                    <ImageIcon />
-                    <input
-                      type="text" required value={imageUrl}
-                      onChange={(e) => setImageUrl(cleanGoogleImageUrl(e.target.value))}
-                      placeholder={t('pasteImageUrlPlaceholder')}
-                    />
-                  </div>
-                  <label className="btn btn-ghost btn-sm" style={{ cursor: imageUploading ? 'default' : 'pointer', flexShrink: 0, opacity: imageUploading ? 0.6 : 1 }}>
-                    {imageUploading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
-                    <span>{imageUploading ? t('uploadingLabel') : t('uploadBtn')}</span>
-                    <input
-                      type="file" accept="image/*" className="hidden" disabled={imageUploading}
-                      onClick={primeStoragePermission}
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        e.target.value = '';
-                        handleImageFileSelect(file);
-                      }}
-                    />
-                  </label>
-                </div>
+                <label className="btn btn-ghost btn-sm" style={{ cursor: imageUploading ? 'default' : 'pointer', opacity: imageUploading ? 0.6 : 1 }}>
+                  {imageUploading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
+                  <span>{imageUploading ? t('uploadingLabel') : t('uploadBtn')}</span>
+                  <input
+                    type="file" accept="image/*" className="hidden" disabled={imageUploading}
+                    onClick={primeStoragePermission}
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      e.target.value = '';
+                      handleImageFileSelect(file);
+                    }}
+                  />
+                </label>
                 {imageUploadError && (
                   <p style={{ marginTop: 6, fontSize: 11, color: 'var(--rose)', fontWeight: 700 }}>{imageUploadError}</p>
                 )}
@@ -10973,7 +11026,7 @@ function AdsManagementView({ t, api }) {
                     options={[
                       { value: 'BANNER', label: t('mainBannerNoticeOption') },
                       { value: 'POPUP', label: t('interactiveLoginPopupOption') },
-                      { value: 'NOTICE', label: t('dashboardTextNoticeOption') },
+                      { value: 'APP_POSTER', label: t('appOpenPosterOption') },
                     ]}
                   />
                 </div>

@@ -15,8 +15,21 @@
          brief window before Capacitor's WebView finishes initializing and
          paints the actual page - the white flash then black flash then app
          sequence. A solid white background here (matching the splash
-         screen's own background) keeps that handoff visually continuous. -->
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+         screen's own background) keeps that handoff visually continuous.
+
+         Parent is Theme.AppCompat.Light (not ...DayNight...) deliberately -
+         DayNight resolves to a dark variant when the device is in system
+         dark mode, and while our own WebView content is always hard-coded
+         light (no dark mode support anywhere in the app's CSS), *native*
+         Android dialogs invoked from the WebView - e.g. the date/time
+         picker behind <input type="date">/<input type="time"> - inherit
+         their colors from this Activity theme, not from the page. Under
+         DayNight + system dark mode that produced a picker with light-on-
+         light (invisible) day/month/year text on its white dialog
+         background. Locking this theme to always-Light keeps every native
+         dialog's colors consistent with the rest of the app regardless of
+         the device's system theme. -->
+    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">@android:color/white</item>

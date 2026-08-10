@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Home, Store, Wrench, Megaphone, Search, Bell, LogIn, X, ChevronLeft, ChevronRight,
-  MapPin, Phone, Globe, Tag, ShieldCheck, RefreshCw, Package, IndianRupee,
+  MapPin, Phone, Globe, Tag, RefreshCw, Package, IndianRupee,
+  MessageCircle,
 } from 'lucide-react';
 import { useBackHandler } from '../utils/backHandler';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
@@ -27,6 +28,15 @@ function safeUrl(url) {
   return url.startsWith('http') ? url : `https://${url}`;
 }
 
+// No separate WhatsApp number exists on Shop/Promotion (only `phone`), so the
+// WhatsApp action reuses the same contact number - the standard assumption
+// for a small-business listing where one number serves both.
+function waLink(phone) {
+  const digits = (phone || '').replace(/\D/g, '');
+  if (!digits) return null;
+  return `https://wa.me/${digits.length === 10 ? `91${digits}` : digits}`;
+}
+
 function AdCarousel({ api }) {
   const [ads, setAds] = useState([]);
   // `pos` indexes into `slides` below, which has one extra clone slide
@@ -47,7 +57,7 @@ function AdCarousel({ api }) {
 
   useEffect(() => {
     if (ads.length < 2) return;
-    const id = setInterval(() => setPos((p) => p + 1), 4000);
+    const id = setInterval(() => setPos((p) => p + 1), 3000);
     return () => clearInterval(id);
   }, [ads.length]);
 
@@ -87,18 +97,19 @@ function AdCarousel({ api }) {
   };
 
   return (
-    <div className="ad-carousel" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-      <div
-        className="ad-carousel-track"
-        onTransitionEnd={handleTransitionEnd}
-        style={{ transform: `translateX(-${pos * 100}%)`, transition: noTransition ? 'none' : undefined }}
-      >
-        {slides.map((ad, i) => (
-          <div className="ad-carousel-slide" key={`${ad.id}-${i}`}>
-            <img src={ad.imageUrl} alt={ad.title} />
-            {ad.title && <div className="ad-carousel-caption">{ad.title}</div>}
-          </div>
-        ))}
+    <div className="ad-carousel-wrap">
+      <div className="ad-carousel" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <div
+          className="ad-carousel-track"
+          onTransitionEnd={handleTransitionEnd}
+          style={{ transform: `translateX(-${pos * 100}%)`, transition: noTransition ? 'none' : undefined }}
+        >
+          {slides.map((ad, i) => (
+            <div className="ad-carousel-slide" key={`${ad.id}-${i}`}>
+              <img src={ad.imageUrl} alt={ad.title || ''} />
+            </div>
+          ))}
+        </div>
       </div>
       {ads.length > 1 && (
         <div className="ad-carousel-dots">
@@ -111,35 +122,63 @@ function AdCarousel({ api }) {
   );
 }
 
+// Shared card system for Popular Shops + Machines & Products (both the Home
+// strips and the dedicated Shops/Machines tab grids) - deliberately its own
+// `.pub-card*` classes rather than reusing PublicSite.jsx's `.public-shop-
+// card`/`.icon-badge.solid`/`.pill-badge` (those are gold-accented and used
+// by the untouched web marketing site - see file header). Fixed media/body
+// heights + `overflow: hidden` + `text-overflow: ellipsis` on every text row
+// keep every card exactly the same size no matter how long the content is.
 function PublicShopCard({ shop, onOpen }) {
   return (
-    <button type="button" className="card public-shop-card" onClick={() => onOpen(shop.id)} style={{ width: '100%', textAlign: 'left', cursor: 'pointer' }}>
-      <div className="public-shop-card-top">
-        <div className="icon-badge solid"><Store /></div>
-        <div>
-          <h3>{shop.name}</h3>
-          <span className="pill-badge"><ShieldCheck className="h-3.5 w-3.5" /> Verified Kee shop</span>
+    <button type="button" className="pub-shop-card" onClick={() => onOpen(shop.id)}>
+      <div className="pub-shop-card-icon"><Store className="h-5 w-5" /></div>
+      <div className="pub-shop-card-name">{shop.name}</div>
+      {shop.address && <div className="pub-card-meta pub-card-meta-wrap"><MapPin className="h-3 w-3" /><span>{shop.address}</span></div>}
+      {shop.phone && <div className="pub-card-meta"><Phone className="h-3 w-3" /><span>{shop.phone}</span></div>}
+      {shop.website && <div className="pub-card-meta"><Globe className="h-3 w-3" /><span>{shop.website}</span></div>}
+      {shop.phone && (
+        <div className="pub-card-actions" onClick={(e) => e.stopPropagation()}>
+          <a href={`tel:${shop.phone}`} className="pub-card-action-btn call"><Phone className="h-3.5 w-3.5" /> Call</a>
+          <a href={waLink(shop.phone)} target="_blank" rel="noreferrer" className="pub-card-action-btn whatsapp"><MessageCircle className="h-3.5 w-3.5" /> WhatsApp</a>
         </div>
-      </div>
-      {shop.category && <div className="public-shop-meta"><Tag className="h-3.5 w-3.5" /> {shop.category}</div>}
-      {shop.address && <div className="public-shop-meta"><MapPin className="h-3.5 w-3.5" /> {shop.address}</div>}
-      {shop.phone && <div className="public-shop-meta"><Phone className="h-3.5 w-3.5" /> {shop.phone}</div>}
-      {shop.website && <div className="public-shop-meta"><Globe className="h-3.5 w-3.5" /> {shop.website}</div>}
+      )}
     </button>
   );
 }
 
+function SkeletonShopCard() { return <div className="pub-skeleton pub-shop-card-skeleton" />; }
+function SkeletonMachineCard() { return <div className="pub-skeleton pub-card-skeleton" />; }
+
+// Product photos aren't a fixed aspect ratio - a tall/portrait photo shown
+// with object-fit:contain inside the card's fixed-height media box ends up
+// narrow and pillarboxed (lots of empty space on either side). Once the
+// image loads, if it's clearly portrait, switch to object-fit:cover so it
+// fills the card's full width instead (cropping top/bottom as needed) -
+// landscape/square photos keep the uncropped contain fit.
+function handleCardImageLoad(setFillWidth) {
+  return (e) => setFillWidth(e.target.naturalHeight > e.target.naturalWidth * 1.2);
+}
+
 function PublicMachineCard({ item, onOpen }) {
+  const [fillWidth, setFillWidth] = useState(false);
   return (
-    <button type="button" className="card public-machine-card" onClick={() => onOpen(item.id)} style={{ width: '100%', textAlign: 'left', cursor: 'pointer' }}>
-      <div className="public-machine-card-img">
-        {item.imageUrl ? <img src={item.imageUrl} alt={item.title} /> : <Package className="h-8 w-8" />}
+    <button type="button" className="pub-card" onClick={() => onOpen(item.id)}>
+      <div className="pub-card-media">
+        {item.imageUrl ? (
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            style={fillWidth ? { objectFit: 'cover' } : undefined}
+            onLoad={handleCardImageLoad(setFillWidth)}
+          />
+        ) : <Package className="h-7 w-7" />}
       </div>
-      <div className="public-machine-card-body">
-        <h4>{item.title}</h4>
-        {item.productType && <span className="public-shop-meta"><Tag className="h-3.5 w-3.5" /> {item.productType}</span>}
-        {item.shop?.name && <span className="public-shop-meta"><Store className="h-3.5 w-3.5" /> {item.shop.name}</span>}
-        {item.price != null && <span className="public-machine-price"><IndianRupee className="h-3.5 w-3.5" /> {Number(item.price).toLocaleString('en-IN')}</span>}
+      <div className="pub-card-body">
+        <div className="pub-card-title">{item.title}</div>
+        {item.productType && <div className="pub-card-meta"><Tag className="h-3 w-3" /><span>{item.productType}</span></div>}
+        {item.shop?.name && <div className="pub-card-meta"><Store className="h-3 w-3" /><span>{item.shop.name}</span></div>}
+        {item.price != null && <div className="pub-card-price"><IndianRupee className="h-3 w-3" />{Number(item.price).toLocaleString('en-IN')}</div>}
       </div>
     </button>
   );
@@ -158,15 +197,6 @@ function LoadingState() {
   return (
     <div className="public-empty-state">
       <RefreshCw className="h-6 w-6 animate-spin" />
-    </div>
-  );
-}
-
-function LoginPrompt({ message, onLogin }) {
-  return (
-    <div className="public-login-prompt">
-      <p>{message}</p>
-      <button type="button" className="btn btn-primary btn-sm" onClick={onLogin}><LogIn className="h-3.5 w-3.5" /> Login</button>
     </div>
   );
 }
@@ -197,7 +227,7 @@ const HOME_STRIP_LIMIT = 5;
 
 function ShowMoreCard({ onClick }) {
   return (
-    <button type="button" className="card public-show-more-card" onClick={onClick}>
+    <button type="button" className="public-show-more-card" onClick={onClick}>
       <ChevronRight className="h-6 w-6" />
       <span>Show More</span>
     </button>
@@ -224,7 +254,11 @@ function PublicHomeTab({ api, onOpenShop, onOpenMachine, onGoTab }) {
           <h3>Popular Shops</h3>
           <button type="button" className="btn-link-sm" onClick={() => onGoTab('shops')}>See all</button>
         </div>
-        {shops === null ? <LoadingState /> : shops.length === 0 ? <EmptyState icon={Store} text="No shops found." /> : (
+        {shops === null ? (
+          <div className="public-mobile-hscroll">
+            {[1, 2, 3].map((i) => <div className="public-mobile-hcard" key={i}><SkeletonShopCard /></div>)}
+          </div>
+        ) : shops.length === 0 ? <EmptyState icon={Store} text="No shops found." /> : (
           <div className="public-mobile-hscroll">
             {shops.slice(0, HOME_STRIP_LIMIT).map((s) => <div className="public-mobile-hcard" key={s.id}><PublicShopCard shop={s} onOpen={onOpenShop} /></div>)}
             {shops.length > HOME_STRIP_LIMIT && <div className="public-mobile-hcard"><ShowMoreCard onClick={() => onGoTab('shops')} /></div>}
@@ -237,7 +271,11 @@ function PublicHomeTab({ api, onOpenShop, onOpenMachine, onGoTab }) {
           <h3>Machines &amp; Products</h3>
           <button type="button" className="btn-link-sm" onClick={() => onGoTab('machines')}>See all</button>
         </div>
-        {machines === null ? <LoadingState /> : machines.length === 0 ? <EmptyState icon={Package} text="No machines available." /> : (
+        {machines === null ? (
+          <div className="public-mobile-hscroll">
+            {[1, 2, 3].map((i) => <div className="public-mobile-hcard" key={i}><SkeletonMachineCard /></div>)}
+          </div>
+        ) : machines.length === 0 ? <EmptyState icon={Package} text="No machines available." /> : (
           <div className="public-mobile-hscroll">
             {machines.slice(0, HOME_STRIP_LIMIT).map((m) => <div className="public-mobile-hcard" key={m.id}><PublicMachineCard item={m} onOpen={onOpenMachine} /></div>)}
             {machines.length > HOME_STRIP_LIMIT && <div className="public-mobile-hcard"><ShowMoreCard onClick={() => onGoTab('machines')} /></div>}
@@ -276,14 +314,20 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
 
   return (
     <div className="public-mobile-tab">
+      <div className="pub-page-header">
+        <span className="pub-page-header-icon" style={{ background: 'var(--purple)' }}><Store className="h-5 w-5" /></span>
+        <h2 className="pub-page-title">Shops</h2>
+      </div>
       <CategoryChips options={categories} value={category} onChange={setCategory} />
-      {items === null ? <LoadingState /> : error ? (
+      {items === null ? (
+        <div className="pub-card-grid">{[1, 2, 3, 4].map((i) => <SkeletonShopCard key={i} />)}</div>
+      ) : error ? (
         <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." />
       ) : items.length === 0 ? (
         <EmptyState icon={Store} text="No shops found." />
       ) : (
         <>
-          <div className="public-shop-grid" style={{ gridTemplateColumns: '1fr' }}>
+          <div className="pub-card-grid">
             {items.map((s) => <PublicShopCard key={s.id} shop={s} onOpen={onOpenShop} />)}
           </div>
           {nextCursor && (
@@ -325,14 +369,20 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory }
 
   return (
     <div className="public-mobile-tab">
+      <div className="pub-page-header">
+        <span className="pub-page-header-icon" style={{ background: 'var(--teal)' }}><Wrench className="h-5 w-5" /></span>
+        <h2 className="pub-page-title">Machines &amp; Products</h2>
+      </div>
       <CategoryChips options={productTypes} value={category} onChange={setCategory} />
-      {items === null ? <LoadingState /> : error ? (
+      {items === null ? (
+        <div className="pub-card-grid">{[1, 2, 3, 4].map((i) => <SkeletonMachineCard key={i} />)}</div>
+      ) : error ? (
         <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." />
       ) : items.length === 0 ? (
         <EmptyState icon={Package} text="No machines available." />
       ) : (
         <>
-          <div className="public-machine-grid">
+          <div className="pub-card-grid">
             {items.map((m) => <PublicMachineCard key={m.id} item={m} onOpen={onOpenMachine} />)}
           </div>
           {nextCursor && (
@@ -346,23 +396,69 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory }
   );
 }
 
-function PublicMyAdsTab({ api, onLogin, onOpenMachine }) {
-  const [items, setItems] = useState(null);
+function PublicAdCard({ ad, onOpen }) {
+  const [fillWidth, setFillWidth] = useState(false);
+  return (
+    <button type="button" className="pub-card" onClick={() => onOpen(ad)}>
+      <div className="pub-card-media" style={{ height: 140 }}>
+        {ad.imageUrl ? (
+          <img
+            src={ad.imageUrl}
+            alt={ad.title || ''}
+            style={fillWidth ? { objectFit: 'cover' } : undefined}
+            onLoad={handleCardImageLoad(setFillWidth)}
+          />
+        ) : <Megaphone className="h-7 w-7" />}
+      </div>
+      {ad.title && (
+        <div className="pub-card-body" style={{ height: 'auto' }}>
+          <div className="pub-card-title" style={{ whiteSpace: 'normal' }}>{ad.title}</div>
+        </div>
+      )}
+    </button>
+  );
+}
+
+// Full-view poster overlay - tapping an ad card shows the poster at full
+// size with its title, since v1 ads have no other detail (no CTA/link/
+// description field on Advertisement) to navigate to.
+function PublicAdViewer({ ad, onClose }) {
+  useBackHandler(true, onClose);
+  return (
+    <div className="pub-ad-viewer">
+      <button type="button" className="pub-ad-viewer-close" onClick={onClose} aria-label="Close"><X /></button>
+      <div className="pub-ad-viewer-media">
+        {ad.imageUrl ? <img src={ad.imageUrl} alt={ad.title || ''} /> : <Megaphone className="h-10 w-10" />}
+      </div>
+      {ad.title && <div className="pub-ad-viewer-title">{ad.title}</div>}
+    </div>
+  );
+}
+
+function PublicMyAdsTab({ api }) {
+  const [ads, setAds] = useState(null);
+  const [viewAd, setViewAd] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
-    api.getPublicMachines({ limit: 20 }).then((res) => { if (!cancelled) setItems(res.items); }).catch(() => setItems([]));
+    api.getPublicAds().then((res) => { if (!cancelled) setAds(res || []); }).catch(() => setAds([]));
     return () => { cancelled = true; };
   }, []);
 
   return (
     <div className="public-mobile-tab">
-      <LoginPrompt message="Login to view your saved or personalized ads." onLogin={onLogin} />
-      {items === null ? <LoadingState /> : items.length === 0 ? <EmptyState icon={Megaphone} text="No ads available." /> : (
-        <div className="public-machine-grid">
-          {items.map((m) => <PublicMachineCard key={m.id} item={m} onOpen={onOpenMachine} />)}
+      <div className="pub-page-header">
+        <span className="pub-page-header-icon" style={{ background: 'var(--rose)' }}><Megaphone className="h-5 w-5" /></span>
+        <h2 className="pub-page-title">My Ads</h2>
+      </div>
+      {ads === null ? (
+        <div className="pub-card-grid">{[1, 2, 3, 4].map((i) => <SkeletonMachineCard key={i} />)}</div>
+      ) : ads.length === 0 ? <EmptyState icon={Megaphone} text="No ads available." /> : (
+        <div className="pub-card-grid">
+          {ads.map((ad) => <PublicAdCard key={ad.id} ad={ad} onOpen={setViewAd} />)}
         </div>
       )}
+      {viewAd && <PublicAdViewer ad={viewAd} onClose={() => setViewAd(null)} />}
     </div>
   );
 }
@@ -386,10 +482,9 @@ function PublicShopDetailsScreen({ api, shopId, onBack, onOpenMachine }) {
       {!shop && !error ? <LoadingState /> : error ? <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." /> : (
         <div className="card public-shop-card" style={{ marginTop: 14 }}>
           <div className="public-shop-card-top">
-            <div className="icon-badge solid"><Store /></div>
+            <div className="icon-badge blue"><Store /></div>
             <div>
               <h3>{shop.name}</h3>
-              <span className="pill-badge"><ShieldCheck className="h-3.5 w-3.5" /> Verified Kee shop</span>
             </div>
           </div>
           {shop.category && <div className="public-shop-meta"><Tag className="h-3.5 w-3.5" /> {shop.category}</div>}
@@ -400,7 +495,7 @@ function PublicShopDetailsScreen({ api, shopId, onBack, onOpenMachine }) {
           {shop.products && shop.products.length > 0 && (
             <div style={{ marginTop: 18 }}>
               <h4 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>Machines/products available</h4>
-              <div className="public-machine-grid">
+              <div className="pub-card-grid">
                 {shop.products.map((m) => <PublicMachineCard key={m.id} item={m} onOpen={onOpenMachine} />)}
               </div>
             </div>
@@ -411,37 +506,65 @@ function PublicShopDetailsScreen({ api, shopId, onBack, onOpenMachine }) {
   );
 }
 
-function PublicMachineDetailsScreen({ api, machineId, onBack }) {
+function PublicMachineDetailsScreen({ api, machineId, onBack, onOpenMachine }) {
   const [item, setItem] = useState(null);
+  const [related, setRelated] = useState(null);
   const [error, setError] = useState(false);
   useBackHandler(true, onBack);
 
   useEffect(() => {
     let cancelled = false;
     setItem(null);
+    setRelated(null);
     setError(false);
     api.getPublicMachineById(machineId).then((res) => { if (!cancelled) setItem(res); }).catch(() => { if (!cancelled) setError(true); });
     return () => { cancelled = true; };
   }, [machineId]);
 
+  // "Related products" strip - other listings sharing this item's product
+  // type, so browsing a machine surfaces alternatives without going back to
+  // the full Machines tab. Filters the current item out of its own results.
+  useEffect(() => {
+    if (!item) return;
+    if (!item.productType) { setRelated([]); return; }
+    let cancelled = false;
+    api.getPublicMachines({ category: item.productType, limit: 7 })
+      .then((res) => { if (!cancelled) setRelated((res.items || []).filter((m) => m.id !== item.id).slice(0, 6)); })
+      .catch(() => { if (!cancelled) setRelated([]); });
+    return () => { cancelled = true; };
+  }, [item]);
+
   return (
-    <div className="public-mobile-tab">
+    <div className="public-mobile-tab" style={{ paddingBottom: item?.phone ? 66 : 0 }}>
       <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}><ChevronLeft className="h-4 w-4" /> Back</button>
       {!item && !error ? <LoadingState /> : error ? <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." /> : (
-        <div className="card" style={{ marginTop: 14 }}>
-          <div className="public-machine-card-img" style={{ height: 180, borderRadius: 14, marginBottom: 14 }}>
-            {item.imageUrl ? <img src={item.imageUrl} alt={item.title} /> : <Package className="h-10 w-10" />}
+        <>
+          <div className="card" style={{ marginTop: 12, padding: 14 }}>
+            <div className="pub-card-media" style={{ height: 170, borderRadius: 14, marginBottom: 12 }}>
+              {item.imageUrl ? <img src={item.imageUrl} alt={item.title} /> : <Package className="h-10 w-10" />}
+            </div>
+            <h3 style={{ marginBottom: 4 }}>{item.title}</h3>
+            {item.productType && <div className="public-shop-meta" style={{ marginTop: 2 }}><Tag className="h-3.5 w-3.5" /> {item.productType}</div>}
+            {item.shop?.name && <div className="public-shop-meta" style={{ marginTop: 4 }}><Store className="h-3.5 w-3.5" /> {item.shop.name}</div>}
+            {item.price != null && <div className="pub-card-price" style={{ fontSize: 15, marginTop: 8 }}><IndianRupee className="h-3.5 w-3.5" /> {Number(item.price).toLocaleString('en-IN')}</div>}
+            {item.description && <p style={{ marginTop: 10, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.5 }}>{item.description}</p>}
           </div>
-          <h3 style={{ marginBottom: 6 }}>{item.title}</h3>
-          {item.productType && <div className="public-shop-meta"><Tag className="h-3.5 w-3.5" /> {item.productType}</div>}
-          {item.shop?.name && <div className="public-shop-meta"><Store className="h-3.5 w-3.5" /> {item.shop.name}</div>}
-          {item.price != null && <div className="public-machine-price"><IndianRupee className="h-3.5 w-3.5" /> {Number(item.price).toLocaleString('en-IN')}</div>}
-          {item.description && <p style={{ marginTop: 12, fontSize: 13, color: 'var(--text-2)' }}>{item.description}</p>}
-          {item.phone && (
-            <a href={`tel:${item.phone}`} className="btn btn-primary btn-sm" style={{ marginTop: 16 }}>
-              <Phone className="h-3.5 w-3.5" /> Call {item.phone}
-            </a>
+
+          {related && related.length > 0 && (
+            <div className="public-mobile-section" style={{ marginTop: 20 }}>
+              <div className="public-mobile-section-head"><h3>Related Products</h3></div>
+              <div className="pub-card-grid">
+                {related.map((m) => <PublicMachineCard key={m.id} item={m} onOpen={onOpenMachine} />)}
+              </div>
+            </div>
           )}
+        </>
+      )}
+      {item?.phone && (
+        <div className="pub-sticky-call-bar">
+          <a href={`tel:${item.phone}`} className="btn btn-primary">
+            <Phone className="h-4 w-4" /> Call {item.phone}
+          </a>
         </div>
       )}
     </div>
@@ -485,7 +608,7 @@ function PublicSearchOverlay({ api, onClose, onOpenShop, onOpenMachine }) {
             {results.shops.length > 0 && (
               <div className="public-mobile-section">
                 <div className="public-mobile-section-head"><h3>Shops</h3></div>
-                <div className="public-shop-grid" style={{ gridTemplateColumns: '1fr' }}>
+                <div className="pub-card-grid">
                   {results.shops.map((s) => <PublicShopCard key={s.id} shop={s} onOpen={(id) => { onOpenShop(id); onClose(); }} />)}
                 </div>
               </div>
@@ -493,7 +616,7 @@ function PublicSearchOverlay({ api, onClose, onOpenShop, onOpenMachine }) {
             {results.machines.length > 0 && (
               <div className="public-mobile-section">
                 <div className="public-mobile-section-head"><h3>Machines &amp; Products</h3></div>
-                <div className="public-machine-grid">
+                <div className="pub-card-grid">
                   {results.machines.map((m) => <PublicMachineCard key={m.id} item={m} onOpen={(id) => { onOpenMachine(id); onClose(); }} />)}
                 </div>
               </div>
@@ -588,13 +711,13 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
   if (screen.type === 'shop') {
     body = <PublicShopDetailsScreen api={api} shopId={screen.id} onBack={backToTab} onOpenMachine={openMachine} />;
   } else if (screen.type === 'machine') {
-    body = <PublicMachineDetailsScreen api={api} machineId={screen.id} onBack={backToTab} />;
+    body = <PublicMachineDetailsScreen api={api} machineId={screen.id} onBack={backToTab} onOpenMachine={openMachine} />;
   } else if (publicTab === 'shops') {
     body = <PublicShopsTab api={api} categories={categories} onOpenShop={openShop} initialCategory={tabCategoryHint} />;
   } else if (publicTab === 'machines') {
     body = <PublicMachinesTab api={api} productTypes={productTypes} onOpenMachine={openMachine} initialCategory={tabCategoryHint} />;
   } else if (publicTab === 'myads') {
-    body = <PublicMyAdsTab api={api} onLogin={onLogin} onOpenMachine={openMachine} />;
+    body = <PublicMyAdsTab api={api} />;
   } else {
     body = <PublicHomeTab api={api} onOpenShop={openShop} onOpenMachine={openMachine} onGoTab={goTab} />;
   }

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,600&family=Manrope:wght@500;600;700;800&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -104,6 +104,25 @@
   width: 160px; height: 4px; border-radius: 999px; background: rgba(0, 0, 0, 0.08);
   overflow: hidden; position: relative;
 }
+
+/* App Poster (AdType.APP_POSTER) - full-screen promo shown on every native
+   app open/resume, above everything else in the app (auth or not) - see
+   App.jsx's appStateChange listener. Deliberately plain literal colors
+   rather than theme variables, since it can render on top of either the
+   public site's or the authenticated dashboard's theme. */
+.app-poster-overlay {
+  position: fixed; inset: 0; z-index: 999; background: rgba(10, 10, 14, 0.96);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px; gap: 16px;
+}
+.app-poster-close {
+  position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px;
+  width: 38px; height: 38px; border-radius: 999px; background: rgba(255,255,255,0.14);
+  color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.app-poster-media { width: 100%; max-width: 480px; display: flex; align-items: center; justify-content: center; }
+.app-poster-media img { width: 100%; max-height: 75vh; object-fit: contain; border-radius: 14px; }
+.app-poster-title { color: #fff; font-weight: 800; font-size: 16px; text-align: center; }
 .brand-loading-fill {
   position: absolute; top: 0; bottom: 0; width: 40%; border-radius: 999px;
   background: #E11D2E;
@@ -626,6 +645,14 @@
   width: 100%; background: var(--card-2); border: 1.5px solid var(--border-2);
   color: var(--text-0); border-radius: 13px; padding: 13px 15px 13px 42px;
   font-size: 14px; outline: none; transition: border-color .2s ease, background .2s ease;
+}
+/* Force the native date/time picker popup to render in light mode - without
+   this, on a device in system dark mode the popup's day/month/year text can
+   inherit a dark color against a dark popup background and become
+   unreadable (the page itself is always light, but this native control
+   isn't styled by our CSS - only color-scheme controls it). */
+input[type="date"], input[type="month"], input[type="time"], input[type="datetime-local"] {
+  color-scheme: light;
 }
 .input-wrap input:focus, .input-wrap select:focus { border-color: var(--gold); background: #FFFFFF; }
 .input-wrap input::placeholder { color: var(--text-3); }
@@ -1199,6 +1226,44 @@ select.sel:focus { border-color: var(--gold); }
 }
 .back-to-home-link:hover { color: var(--gold); }
 .back-to-home-link svg { width: 14px; height: 14px; }
+
+/* Native app's login screen only (.login-side is hidden there, see App.jsx) -
+   the plain white page looked empty with nothing but a centered form, so it
+   gets a branded maroon backdrop with the form presented as a floating white
+   dialog card instead of a full-bleed page. Scoped to .native-login so the
+   desktop/web 2-column login (marketing panel + form) is untouched. The
+   maroon backdrop only applies when NOT also .login-overlay (see below) -
+   in overlay mode the backdrop is the dimmed PublicMobileApp page instead. */
+.login-shell.native-login:not(.login-overlay) {
+  background: linear-gradient(160deg, var(--maroon) 0%, var(--maroon-dark) 100%);
+}
+.login-shell.native-login .login-form-side {
+  padding: 64px 20px 32px;
+}
+.login-shell.native-login .login-box {
+  background: #ffffff; border-radius: 22px; padding: 28px 22px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+}
+.login-shell.native-login .back-to-home-link { margin-bottom: 8px; }
+.login-shell.native-login .brand-logo { height: 64px; }
+
+/* Native login as an overlay dialog on top of PublicMobileApp (not a
+   full-page navigation) - PublicMobileApp stays mounted underneath, dimmed
+   by this backdrop, and only the centered dialog card is interactive.
+   Tapping the backdrop or hardware Back closes it (see App.jsx). z-index
+   sits above PublicMobileApp's own topbar/bottom nav (z-index 30/40). */
+.login-shell.login-overlay {
+  position: fixed; inset: 0; z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(10, 10, 14, 0.6);
+  padding: 20px; overflow-y: auto;
+}
+.login-shell.login-overlay .login-form-side {
+  padding: 0; flex: none; width: 100%; max-width: 420px; margin: auto;
+}
+.login-shell.login-overlay .login-box {
+  max-height: 85vh; overflow-y: auto;
+}
 
 /* nav */
 .public-nav {
@@ -1788,24 +1853,46 @@ select.sel:focus { border-color: var(--gold); }
 
 /* ===================== Public Mobile App (pre-login, native app only) ===================== */
 /* See src/components/PublicMobileApp.jsx - the packaged Android app's
-   pre-login browsing experience. Reuses .mobile-bottom-nav/.mbn-item,
-   .search-box, .store-tabs/.store-tab, .card/.icon-badge/.pill-badge and
-   .public-shop-card* (from PublicSite.jsx's marketing site) as-is; only the
-   genuinely new pieces (carousel, topbar, machine cards, search overlay,
-   empty/login-prompt states) get their own classes below. */
+   pre-login browsing experience. Reuses .mobile-bottom-nav/.mbn-item and
+   .store-tabs/.store-tab as-is; everything else (including the Shop/Machine
+   card system below) is deliberately its own class set rather than reusing
+   PublicSite.jsx's gold-accented `.public-shop-card`/`.icon-badge.solid`/
+   `.pill-badge` (the web marketing site those belong to stays untouched -
+   this app must have zero gold/yellow anywhere).
+   Redesign note: rather than rewriting every rule below, `.public-mobile-app`
+   locally re-declares the app's global theme tokens (--bg-0/--card/--card-2/
+   --border/--border-2/--text-0/--text-2/--text-3/--blue/--display) to a
+   neutral white/gray + blue "premium" palette. CSS custom properties only
+   cascade down the DOM, so this reskins every existing rule that already
+   references those tokens (topbar, cards, chips, empty states, search
+   overlay...) without touching the real global tokens used by the
+   authenticated dashboard or PublicSite.jsx. */
 
 .public-mobile-app {
+  --bg-0: #F7F8FA;
+  --card: #FFFFFF;
+  --card-2: #F1F3F6;
+  --border: #E5E7EB;
+  --border-2: #D9DCE3;
+  --text-0: #1A1D24;
+  --text-2: #5B6270;
+  --text-3: #9AA1AC;
+  --blue: #2563EB;
+  --display: 'Manrope', 'Nunito', sans-serif;
+  font-family: 'Manrope', 'Nunito', sans-serif;
   display: flex; flex-direction: column; min-height: 100vh; background: var(--bg-0);
 }
 
 .public-mobile-topbar {
   position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  padding: 9px 16px; padding-top: calc(9px + env(safe-area-inset-top, 0px));
   background: var(--card); border-bottom: 1px solid var(--border);
 }
-.public-mobile-logo { height: 28px; width: auto; }
-.public-mobile-topbar-actions { display: flex; align-items: center; gap: 8px; }
+.public-mobile-logo { height: 36px; width: auto; }
+.public-mobile-topbar-actions { display: flex; align-items: center; gap: 6px; }
+.public-mobile-topbar .icon-btn { width: 34px; height: 34px; }
+.public-mobile-topbar .btn-primary.btn-sm { padding: 7px 12px; font-size: 12px; }
 
 .public-notif-popover {
   position: absolute; top: calc(100% + 8px); right: 0; z-index: 35;
@@ -1819,60 +1906,189 @@ select.sel:focus { border-color: var(--gold); }
   max-width: 720px; margin: 0 auto; width: 100%; box-sizing: border-box;
 }
 .public-mobile-tab { animation: fadeIn .2s ease; }
+.pub-page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.pub-page-header-icon {
+  width: 40px; height: 40px; border-radius: 13px; color: #fff; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+}
+.pub-page-title {
+  font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--text-0);
+  margin: 0; letter-spacing: -0.2px;
+}
+
+/* Full-view ad poster overlay - tapping an ad card in My Ads shows the
+   poster at full size with its title (v1 ads have no other detail to
+   navigate to - just an image + title, see Advertisement model). */
+.pub-ad-viewer {
+  position: fixed; inset: 0; z-index: 50; background: rgba(15, 17, 22, 0.94);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px; gap: 18px;
+}
+.pub-ad-viewer-close {
+  position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px;
+  width: 38px; height: 38px; border-radius: 999px; background: rgba(255,255,255,0.12);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+}
+.pub-ad-viewer-media { width: 100%; max-width: 480px; display: flex; align-items: center; justify-content: center; }
+.pub-ad-viewer-media img { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 12px; }
+.pub-ad-viewer-title { color: #fff; font-family: var(--display); font-weight: 800; font-size: 16px; text-align: center; }
 
 .public-mobile-section { margin-bottom: 26px; }
 .public-mobile-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
 .public-mobile-section-head h3 { font-size: 14.5px; font-weight: 800; font-family: var(--display); color: var(--text-0); }
-.btn-link-sm { background: none; border: none; color: var(--gold); font-weight: 700; font-size: 12.5px; cursor: pointer; }
+.btn-link-sm { background: none; border: none; color: var(--blue); font-weight: 700; font-size: 12.5px; cursor: pointer; }
 
-.public-mobile-hscroll { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
-.public-mobile-hcard { flex: 0 0 260px; }
-
-/* Ad carousel */
-.ad-carousel { position: relative; border-radius: 18px; overflow: hidden; margin-bottom: 22px; background: var(--card-2); }
-.ad-carousel-track { display: flex; transition: transform .35s ease; }
-.ad-carousel-slide { flex: 0 0 100%; position: relative; aspect-ratio: 16 / 7; }
-.ad-carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ad-carousel-caption {
-  position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 16px 12px;
-  background: linear-gradient(0deg, rgba(0,0,0,0.65), rgba(0,0,0,0));
-  color: #fff; font-weight: 800; font-size: 13.5px; font-family: var(--display);
+/* Horizontal strips (Popular Shops / Machines on Home) - scrollbar hidden
+   cross-browser while touch/wheel scrolling keeps working normally. */
+.public-mobile-hscroll {
+  display: flex; gap: 12px; overflow-x: auto; padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none;
 }
-.ad-carousel-dots { position: absolute; bottom: 8px; right: 12px; display: flex; gap: 5px; }
-.ad-carousel-dot { width: 6px; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.5); }
-.ad-carousel-dot.active { background: #ffffff; width: 16px; border-radius: 999px; transition: width .2s ease; }
+.public-mobile-hscroll::-webkit-scrollbar { display: none; height: 0; width: 0; }
+.public-mobile-hcard { flex: 0 0 152px; width: 152px; }
 
-/* "Show More" card - trailing item in Home's Popular Shops/Machines strips */
+/* Category filter chips (.store-tabs/.store-tab are the shared authenticated
+   -app classes, reused as-is here) - scoped scrollbar-hiding + a slightly
+   more compact chip so the horizontal scroll strip never shows a visible
+   scrollbar line under it, matching .public-mobile-hscroll's treatment. */
+.public-mobile-app .store-tabs {
+  overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+}
+.public-mobile-app .store-tabs::-webkit-scrollbar { display: none; height: 0; width: 0; }
+.public-mobile-app .store-tab { padding: 7px 14px; font-size: 12.5px; }
+
+/* Ad carousel - a large hero banner (~75-80% of viewport height) that fills
+   its box completely (object-fit:cover, both width and height 100%) so the
+   poster reads as a full-bleed banner rather than a small letterboxed
+   thumbnail. No gradient/caption overlay on the poster itself - the ad image
+   is shown exactly as uploaded; pagination dots sit below the poster, not on
+   top of it. */
+.ad-carousel-wrap { margin-bottom: 24px; }
+.ad-carousel { position: relative; border-radius: 18px; overflow: hidden; background: var(--card-2); border: 1px solid var(--border); box-shadow: 0 4px 16px rgba(15,23,42,0.08); }
+.ad-carousel-track { display: flex; transition: transform .18s ease; }
+.ad-carousel-slide {
+  flex: 0 0 100%; position: relative; height: 76vh; min-height: 380px; max-height: 640px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--card-2);
+}
+.ad-carousel-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ad-carousel-dots { display: flex; align-items: center; justify-content: center; gap: 5px; margin-top: 10px; }
+.ad-carousel-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--border-2); }
+.ad-carousel-dot.active { background: var(--blue); width: 16px; border-radius: 999px; transition: width .2s ease; }
+
+/* Machine/Product card - "e-commerce style", image-forward with
+   object-fit:contain (never cropped) inside a light fixed-height media
+   block. Fixed media + body heights (with ellipsis truncation on every text
+   row) so every card is exactly the same size no matter the content, in
+   both the Home hscroll strip and the full Machines tab grid
+   (.pub-card-grid, 2 columns). */
+.pub-card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.pub-card {
+  display: flex; flex-direction: column; width: 100%; height: 100%;
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  overflow: hidden; text-align: left; cursor: pointer; padding: 0;
+  transition: transform .15s ease, box-shadow .15s ease;
+  box-shadow: 0 1px 3px rgba(15,23,42,0.04);
+}
+.pub-card:active { transform: scale(.98); }
+.pub-card-media {
+  width: 100%; height: 108px; flex-shrink: 0; background: var(--card-2);
+  display: flex; align-items: center; justify-content: center; overflow: hidden; color: var(--blue);
+  padding: 8px; box-sizing: border-box; position: relative;
+}
+
+/* Shop card's Call/WhatsApp action bar - two equal-width (50/50) pill
+   buttons at the bottom of the card, tinted rather than solid-filled so they
+   read as secondary actions under the shop's own info. */
+.pub-card-actions { display: flex; gap: 8px; margin-top: 8px; }
+.pub-card-action-btn {
+  flex: 1 1 0; display: flex; align-items: center; justify-content: center; gap: 5px;
+  padding: 8px 4px; border-radius: 10px; font-size: 12px; font-weight: 800; text-decoration: none;
+}
+.pub-card-action-btn:active { transform: scale(.96); }
+.pub-card-action-btn.call { background: #EFF4FF; color: var(--blue); }
+.pub-card-action-btn.whatsapp { background: #E7F9EE; color: #128C4A; }
+.pub-card-media img { width: 100%; height: 100%; object-fit: contain; }
+.pub-card-body {
+  flex: 1; min-width: 0; height: 82px; box-sizing: border-box;
+  padding: 9px 11px 11px; display: flex; flex-direction: column; gap: 4px; overflow: hidden;
+}
+.pub-card-title {
+  font-family: var(--display); font-weight: 800; font-size: 13px; color: var(--text-0);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pub-card-meta {
+  display: flex; align-items: center; gap: 4px; min-width: 0;
+  font-size: 11px; font-weight: 600; color: var(--text-2);
+}
+.pub-card-meta svg { flex-shrink: 0; color: var(--text-3); }
+.pub-card-meta span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pub-card-meta.pub-card-meta-wrap { align-items: flex-start; }
+.pub-card-meta.pub-card-meta-wrap svg { margin-top: 2px; }
+.pub-card-meta.pub-card-meta-wrap span {
+  white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.pub-card-price { display: flex; align-items: center; gap: 3px; color: var(--blue); font-weight: 800; font-size: 13.5px; margin-top: 2px; }
+
+/* Shop card - compact list-style (small icon avatar + name + address/phone/
+   website stacked below), deliberately NOT an image-block card like the
+   machine card above: shops don't have photos, so treating them as
+   "photo-less product cards" wasted a lot of vertical space and made the
+   icon look small/awkward inside a big empty media block. */
+.pub-shop-card {
+  display: flex; flex-direction: column; gap: 4px; width: 100%; height: 100%; box-sizing: border-box;
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 13px 13px 12px; text-align: left; cursor: pointer;
+  transition: transform .15s ease;
+  box-shadow: 0 1px 4px rgba(15,23,42,0.06);
+}
+.pub-shop-card:active { transform: scale(.98); }
+.pub-shop-card-icon {
+  width: 38px; height: 38px; border-radius: 11px; background: var(--blue); color: #fff;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 5px; flex-shrink: 0;
+}
+.pub-shop-card-name {
+  font-family: var(--display); font-weight: 800; font-size: 14px; color: var(--text-0);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px;
+}
+
+/* "Show More" card - trailing item in Home's Popular Shops/Machines strips,
+   sized to sit flush against whichever card type shares its row. */
 .public-show-more-card {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  width: 100%; height: 100%; min-height: 140px; cursor: pointer;
-  color: var(--gold); font-weight: 800; font-size: 12.5px; font-family: var(--display);
-  background: var(--card-2); border: 1.5px dashed var(--border-2);
+  width: 100%; height: 100%; min-height: 150px; cursor: pointer;
+  color: var(--blue); font-weight: 800; font-size: 12.5px; font-family: var(--display);
+  background: var(--card-2); border: 1.5px dashed var(--border-2); border-radius: 16px;
 }
 
-/* Machine/product cards */
-.public-machine-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-@media (max-width: 420px) { .public-machine-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
-.public-machine-card { padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-.public-machine-card-img {
-  width: 100%; aspect-ratio: 1.3; border-radius: 12px; background: var(--card-2);
-  display: flex; align-items: center; justify-content: center; overflow: hidden; color: var(--text-3);
+/* Skeleton loaders - shimmer placeholders shown while Shops/Machines/Home
+   lists are loading, sized to match the real cards so content doesn't jump
+   into place once data arrives. */
+@keyframes pubShimmer { 0% { background-position: -300% 0; } 100% { background-position: 300% 0; } }
+.pub-skeleton {
+  border-radius: 16px; background: linear-gradient(90deg, var(--card-2) 25%, #E7E9ED 37%, var(--card-2) 63%);
+  background-size: 400% 100%; animation: pubShimmer 1.4s ease infinite; border: 1px solid var(--border);
 }
-.public-machine-card-img img { width: 100%; height: 100%; object-fit: cover; }
-.public-machine-card-body h4 { font-size: 13px; font-weight: 800; margin-bottom: 2px; }
-.public-machine-price { display: flex; align-items: center; gap: 4px; color: var(--gold); font-weight: 800; font-size: 13px; margin-top: 4px; }
+.pub-skeleton.pub-card-skeleton { height: 190px; }
+.pub-skeleton.pub-shop-card-skeleton { height: 150px; }
 
 /* Empty / loading / login-prompt states */
 .public-empty-state {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
   padding: 50px 20px; color: var(--text-3); font-size: 13px; font-weight: 700; text-align: center;
 }
-.public-login-prompt {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  background: var(--card-2); border: 1px solid var(--border-2); border-radius: 14px;
-  padding: 12px 14px; margin-bottom: 18px;
+/* Sticky bottom Call button on the machine/product details screen - sits
+   just above the 4-item bottom nav (see .mobile-bottom-nav's own height)
+   rather than inline in the scrolling content, so it's always reachable
+   without scrolling. */
+.pub-sticky-call-bar {
+  position: fixed; left: 0; right: 0; bottom: calc(62px + env(safe-area-inset-bottom, 0px));
+  z-index: 39; max-width: 720px; margin: 0 auto;
+  padding: 10px 16px; background: var(--card); border-top: 1px solid var(--border);
 }
-.public-login-prompt p { font-size: 12.5px; font-weight: 700; color: var(--text-2); }
+.pub-sticky-call-bar .btn { width: 100%; }
 
 /* Search overlay */
 .public-search-overlay {
