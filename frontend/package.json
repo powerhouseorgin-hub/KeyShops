@@ -1,7 +1,7 @@
 {
   "name": "kee-frontend",
   "private": true,
-  "version": "1.43.2",
+  "version": "1.43.3",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,6 +19,7 @@
     "@capacitor/share": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.2",
     "capacitor-native-settings": "^8.1.0",
+    "capacitor-razorpay": "^1.3.0",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.344.0",
     "react": "^18.2.0",

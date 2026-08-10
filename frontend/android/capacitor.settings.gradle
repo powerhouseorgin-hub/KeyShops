@@ -22,3 +22,6 @@ project(':capacitor-splash-screen').projectDir = new File('../node_modules/@capa
 
 include ':capacitor-native-settings'
 project(':capacitor-native-settings').projectDir = new File('../node_modules/capacitor-native-settings/android')
+
+include ':capacitor-razorpay'
+project(':capacitor-razorpay').projectDir = new File('../node_modules/capacitor-razorpay/android')
