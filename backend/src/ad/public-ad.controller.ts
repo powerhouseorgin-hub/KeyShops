@@ -13,4 +13,12 @@ export class PublicAdController {
   async getPublicAds() {
     return this.adService.getPublicAds();
   }
+
+  // Route registered before any :id-style route would exist on this
+  // controller (there isn't one today, but this ordering avoids ever
+  // shadowing one added later) - the full-screen app-open poster.
+  @Get('poster')
+  async getPublicAppPoster() {
+    return this.adService.getPublicAppPoster();
+  }
 }

@@ -34,6 +34,9 @@ enum AdType {
   POPUP
   BANNER
   NOTICE
+  // Full-screen poster shown every time the native app is opened or
+  // resumed from the background - see AdService.getPublicAppPoster().
+  APP_POSTER
 }
 
 enum PromotionType {
