@@ -158,22 +158,34 @@ export class AuthService implements OnModuleInit {
         }
       }
     } else {
-      const sid = process.env.TWILIO_ACCOUNT_SID || '';
-      const token = process.env.TWILIO_AUTH_TOKEN || '';
-      const fromPhone = process.env.TWILIO_PHONE_NUMBER || '';
+      // MSG91's OTP-send endpoint, passed our own bcrypt-hashed-and-stored
+      // `otpCode` as the `otp` query param rather than letting MSG91 generate
+      // and verify it themselves - keeps verifyOtp() below (DB-backed,
+      // already working) as the single source of truth, MSG91 is purely a
+      // delivery channel. template_id must be an approved OTP template in
+      // the MSG91 dashboard (DLT-registered, required for Indian numbers).
+      const authKey = process.env.MSG91_AUTH_KEY || '';
+      const templateId = process.env.MSG91_OTP_TEMPLATE_ID || '';
 
-      if (sid && token && fromPhone) {
+      if (authKey && templateId) {
         try {
-          const twilio = require('twilio');
-          const client = twilio(sid, token);
-          await client.messages.create({
-            body: `Your KEE OTP code is: ${otpCode}`,
-            from: fromPhone,
-            to: dto.identifier,
+          const digits = dto.identifier.replace(/\D/g, '');
+          const mobile = digits.length === 10 ? `91${digits}` : digits;
+          const params = new URLSearchParams({
+            authkey: authKey,
+            template_id: templateId,
+            mobile,
+            otp: otpCode,
           });
-          delivered = true;
+          const res = await fetch(`https://control.msg91.com/api/v5/otp?${params.toString()}`, { method: 'POST' });
+          const body = await res.json();
+          if (res.ok && body.type === 'success') {
+            delivered = true;
+          } else {
+            console.error('MSG91 SMS send failed:', body);
+          }
         } catch (err) {
-          console.error('Twilio SMS send failed:', err.message);
+          console.error('MSG91 SMS send failed:', err.message);
         }
       }
     }
@@ -182,11 +194,11 @@ export class AuthService implements OnModuleInit {
       console.log(`[OTP dev fallback] No ${dto.method} provider configured — code for ${dto.identifier}: ${otpCode}`);
     }
 
-    // No SMTP/Twilio provider is configured yet, so there is currently no other way
+    // No SMTP/MSG91 provider is configured yet, so there is currently no other way
     // for a real (or testing) user to receive the code - surface it in the API
     // response so the frontend can log it to the browser console. This is only ever
     // included when delivery via a real provider failed/wasn't attempted, so as soon
-    // as SMTP_HOST/TWILIO_* env vars are set on this environment, delivered becomes
+    // as SMTP_HOST/MSG91_* env vars are set on this environment, delivered becomes
     // true and the code stops being exposed here automatically.
     const devCode = !delivered ? otpCode : undefined;
 
