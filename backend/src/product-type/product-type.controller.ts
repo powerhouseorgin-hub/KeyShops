@@ -6,13 +6,12 @@ import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '@prisma/client';
 
-// Unlike ShopCategoryController, this doesn't need a pre-login public route
-// (Inventory Product Creation only happens after login), so every route
-// here requires a valid JWT - GET is open to any authenticated role (Shop
-// Admin needs it for the Product Type dropdown), while create/update/delete
-// stay Super Admin-only. Mirrors ReportController's support-config routes.
+// GET is now also PUBLIC (no auth) - it powers the pre-login mobile app's
+// Machines/Products filter chips in addition to the authenticated Product
+// Type dropdown, so the class-level guard is split per-route the same way
+// ShopCategoryController already does: no class-level @UseGuards, only the
+// mutating Super-Admin routes below carry their own guard.
 @Controller()
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductTypeController {
   constructor(private readonly productTypeService: ProductTypeService) {}
 
@@ -22,18 +21,21 @@ export class ProductTypeController {
   }
 
   @Post('super/product-types')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN)
   async createProductType(@Body() dto: CreateProductTypeDto) {
     return this.productTypeService.createProductType(dto);
   }
 
   @Put('super/product-types/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN)
   async updateProductType(@Param('id') id: string, @Body() dto: UpdateProductTypeDto) {
     return this.productTypeService.updateProductType(id, dto);
   }
 
   @Delete('super/product-types/:id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.SUPER_ADMIN)
   async deleteProductType(@Param('id') id: string) {
     return this.productTypeService.deleteProductType(id);

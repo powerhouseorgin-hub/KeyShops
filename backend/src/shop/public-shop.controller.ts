@@ -1,13 +1,19 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
 import { ShopService } from './shop.service';
+import { PromotionService } from '../promotion/promotion.service';
 
 // Deliberately NOT behind JwtAuthGuard/RolesGuard - this powers the public
-// landing page's shop search (by name or location) for anonymous visitors.
-// Only ShopService.searchPublicShops() may be called from here, since it's
-// the one method vetted to return safe, non-sensitive fields only.
+// landing page's shop search (by name or location) for anonymous visitors,
+// plus the pre-login mobile app's shop-details screen. Only
+// ShopService.searchPublicShops()/getPublicShopById() and
+// PromotionService.getPublicPromotions() may be called from here, since
+// those are the methods vetted to return safe, non-sensitive fields only.
 @Controller('public/shops')
 export class PublicShopController {
-  constructor(private readonly shopService: ShopService) {}
+  constructor(
+    private readonly shopService: ShopService,
+    private readonly promotionService: PromotionService,
+  ) {}
 
   // cursor/limit are optional - see ShopService.searchPublicShops for how
   // omitting `limit` preserves the original unpaginated (top-50) behavior
@@ -22,5 +28,17 @@ export class PublicShopController {
     @Query('limit') limit?: string,
   ) {
     return this.shopService.searchPublicShops({ query, category, cursor, limit: limit ? Number(limit) : undefined });
+  }
+
+  // Declared after the bare GET above - a static path segment would
+  // otherwise never be reachable here anyway since there is none, but kept
+  // in this order for consistency with the rest of the codebase's
+  // static-before-:id route convention.
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    const shop = await this.shopService.getPublicShopById(id);
+    if (!shop) throw new NotFoundException('Shop not found');
+    const products = await this.promotionService.getPublicPromotions({ shopId: id, limit: 20 });
+    return { ...shop, products: products.items };
   }
 }

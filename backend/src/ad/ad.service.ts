@@ -85,4 +85,24 @@ export class AdService {
     // Filter by targeting on application layer
     return ads.filter(ad => ad.targetAll || ad.targetShops.includes(shopId));
   }
+
+  // PUBLIC (no auth): active, platform-wide ads only - shop-targeted ads
+  // (targetAll: false) are meant for a specific shop admin's dashboard, not
+  // anonymous visitors, so they're excluded at the query level rather than
+  // filtered after the fact like getTargetedAds does. Never returns
+  // targetShops (a raw shop-ID array with no business being public).
+  async getPublicAds() {
+    const now = new Date();
+    const ads = await this.tenantService.prisma.advertisement.findMany({
+      where: {
+        startDate: { lte: now },
+        endDate: { gte: now },
+        targetAll: true,
+      },
+      orderBy: { priority: 'desc' },
+      take: 20,
+      select: { id: true, title: true, imageUrl: true, type: true, priority: true },
+    });
+    return ads;
+  }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
+import { backHandlerStack, useBackHandler } from './utils/backHandler';
 import { App as CapacitorApp } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { useAuth } from './context/AuthContext';
@@ -21,6 +22,7 @@ import lostKeyIcon from './assets/addlostkeys/redkey.png';
 import { downloadPdf, sharePdf } from './utils/pdfDelivery';
 import { openRazorpayCheckout } from './utils/razorpay';
 import PublicSite from './components/PublicSite';
+import PublicMobileApp, { PublicBottomNav } from './components/PublicMobileApp';
 import CustomSelect from './components/CustomSelect';
 import OtpVerificationModal from './components/OtpVerificationModal';
 import {
@@ -53,17 +55,6 @@ import customerSupportIcon from './assets/dashboard-icons/customer-support.png';
 import dealerIcon from './assets/dashboard-icons/dealer.png';
 import keyShopLogo from './assets/branding/keyshop-logo.png';
 
-// Shared registry so the hardware Back button/gesture (see the
-// CapacitorApp.addListener('backButton', ...) effect in the root App
-// component below) can close whatever modal/dialog/in-progress wizard step is
-// currently on top, instead of always falling straight through to top-level
-// screen navigation. Every modal and multi-step wizard in the app registers
-// itself here via useBackHandler() while it's open; the Back listener always
-// invokes only the most-recently-opened one first (LIFO), matching how a
-// real screen/dialog stack behaves - open two things, Back closes the most
-// recent one first.
-const backHandlerStack = [];
-
 const ALL_DOC_TYPES = [
   'Aadhaar Card',
   'Driving License',
@@ -73,26 +64,6 @@ const ALL_DOC_TYPES = [
   'PAN Card',
   'Additional Document'
 ];
-
-// Registers `onBack` to run once the next time hardware Back is pressed,
-// for as long as `active` is true (e.g. `showAddModal`, or `step > 1` in a
-// wizard). Automatically unregisters when `active` flips back to false or
-// the owning component unmounts, so a closed modal never intercepts Back for
-// whatever screen is now underneath it.
-function useBackHandler(active, onBack) {
-  const onBackRef = useRef(onBack);
-  onBackRef.current = onBack;
-
-  useEffect(() => {
-    if (!active) return;
-    const handler = () => onBackRef.current();
-    backHandlerStack.push(handler);
-    return () => {
-      const idx = backHandlerStack.lastIndexOf(handler);
-      if (idx !== -1) backHandlerStack.splice(idx, 1);
-    };
-  }, [active]);
-}
 
 export function cleanGoogleImageUrl(url) {
   if (!url) return '';
@@ -6127,12 +6098,18 @@ export default function App() {
     document.title = PAGE_TITLES[activeTab] ? `${PAGE_TITLES[activeTab]} | Key Shop` : 'Key Shop';
   }, [activeTab, lang]);
 
-  // Public (unauthenticated) marketing site page: home | search | about | contact | login.
-  // Anonymous visitors land on 'home'; clicking "Login" (nav or hero CTA) switches this
-  // to 'login', which renders the existing, unmodified login-shell UI below.
-  // The native mobile app (IS_NATIVE_APP) has no use for the marketing site -
-  // it starts straight on 'login' and the render below never shows PublicSite.
-  const [publicPage, setPublicPage] = useState(IS_NATIVE_APP ? 'login' : 'home');
+  // Public (unauthenticated) page state, shared by both the web marketing
+  // site (PublicSite: home | search | about | contact | login) and the
+  // native app's public mobile browsing experience (PublicMobileApp - only
+  // cares about the 'login' vs "anything else" distinction, since it owns
+  // its own internal Home/Shops/Machines/My Ads tab state). Anonymous
+  // visitors land on 'home' either way; tapping Login switches this to
+  // 'login', which renders the existing, unmodified login-shell UI below.
+  const [publicPage, setPublicPage] = useState('home');
+  // Which PublicMobileApp tab to land on when native returns from the login
+  // screen to browsing - set right before switching publicPage back, e.g. by
+  // the login screen's own bottom nav (see the login-shell render branch).
+  const [publicInitialTab, setPublicInitialTab] = useState('home');
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
   const [authError, setAuthError] = useState('');
@@ -6692,11 +6669,16 @@ export default function App() {
   return (
     <>
       {!isAuthenticated ? (
-        !IS_NATIVE_APP && publicPage !== 'login' ? (
-          <PublicSite page={publicPage} onNavigate={setPublicPage} api={api} />
+        publicPage !== 'login' ? (
+          IS_NATIVE_APP ? (
+            <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} />
+          ) : (
+            <PublicSite page={publicPage} onNavigate={setPublicPage} api={api} />
+          )
         ) : (
+          <>
           <div className="login-shell">
-            <div className="login-side">
+            <div className="login-side" style={IS_NATIVE_APP ? { display: 'none' } : undefined}>
               <div className="glow"></div>
               <div className="side-copy">
                 <span className="pill-badge" style={{ marginBottom: 18 }}>
@@ -6748,11 +6730,9 @@ export default function App() {
             <div className="login-form-side">
               <div className="login-box animate-fade-in">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                  {!IS_NATIVE_APP ? (
-                    <button type="button" className="back-to-home-link" onClick={() => setPublicPage('home')}>
-                      <ArrowLeft className="h-3.5 w-3.5" /> {t('backToHomeLink')}
-                    </button>
-                  ) : <div />}
+                  <button type="button" className="back-to-home-link" onClick={() => { setPublicInitialTab('home'); setPublicPage('home'); }}>
+                    <ArrowLeft className="h-3.5 w-3.5" /> {t('backToHomeLink')}
+                  </button>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--card-2)', border: '1.5px solid var(--border-2)', borderRadius: 999, padding: '4px 12px' }}>
                     <Globe className="h-3.5 w-3.5" style={{ color: 'var(--gold)' }} />
                     <select
@@ -7435,6 +7415,13 @@ export default function App() {
               </div>
             )}
           </div>
+          {IS_NATIVE_APP && (
+            <PublicBottomNav
+              activeTab={publicInitialTab}
+              onGoTab={(tab) => { setPublicInitialTab(tab); setPublicPage('home'); }}
+            />
+          )}
+          </>
         )
       ) : (
         <div className="min-h-[calc(100vh-40px)] flex flex-col md:flex-row">
@@ -7641,7 +7628,7 @@ export default function App() {
                 </div>
               </div>
               <button
-                onClick={logout}
+                onClick={() => { logout(); if (IS_NATIVE_APP) { setPublicInitialTab('home'); setPublicPage('home'); } }}
                 className="side-link"
                 style={{ color: 'var(--red)' }}
               >
@@ -10889,15 +10876,17 @@ function AdsManagementView({ t, api }) {
                     <button
                       onClick={() => handleEditClick(ad)}
                       className="btn btn-ghost btn-sm btn-block"
+                      style={{ whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.2 }}
                     >
-                      <Edit className="h-3.5 w-3.5" />
+                      <Edit className="h-3.5 w-3.5" style={{ flexShrink: 0 }} />
                       <span>{t('editBtn')}</span>
                     </button>
                     <button
                       onClick={() => handleDelete(ad.id)}
                       className="btn btn-danger-outline btn-sm btn-block"
+                      style={{ whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.2 }}
                     >
-                      <Trash className="h-3.5 w-3.5" />
+                      <Trash className="h-3.5 w-3.5" style={{ flexShrink: 0 }} />
                       <span>{t('cancelCampaignBtn')}</span>
                     </button>
                   </div>

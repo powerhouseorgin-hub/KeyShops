@@ -343,6 +343,21 @@ export class ShopService {
     return { items: page.map((shop) => this.mapPublicShop(shop)), nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
+  // PUBLIC: Single shop's details for the public mobile app's shop-details
+  // screen - same safe projection/mapper as searchPublicShops. Returns null
+  // (controller 404s) for a missing or deactivated shop rather than throwing,
+  // so a stale/guessed id just looks like "not found" to an anonymous caller.
+  async getPublicShopById(id: string) {
+    const shop = await this.tenantService.prisma.shop.findFirst({
+      where: { id, isActive: true },
+      select: {
+        id: true, name: true, themeColor: true, companyDetails: true,
+        createdAt: true, category: { select: { name: true } },
+      },
+    });
+    return shop ? this.mapPublicShop(shop) : null;
+  }
+
   // SHOP ADMIN: Get Settings
   async getSettings(shopId: string) {
     const shop = await this.tenantService.prisma.shop.findUnique({

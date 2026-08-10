@@ -225,6 +225,78 @@ export const AuthProvider = ({ children }) => {
       return response.json();
     },
 
+    // Single shop's public details (business/public fields + its product
+    // listings) - powers the pre-login mobile app's shop-details screen.
+    getPublicShopById: async (id) => {
+      const response = await fetch(`${API_BASE}/api/public/shops/${id}`);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Shop not found');
+      }
+      return response.json();
+    },
+
+    // Pre-login mobile app's ad carousel - active, platform-wide ads only.
+    getPublicAds: async () => {
+      const response = await fetch(`${API_BASE}/api/public/ads`);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Failed to load ads');
+      }
+      return response.json();
+    },
+
+    // Pre-login mobile app's Machines/Products directory (backed by
+    // Promotion rows of type PRODUCT). Same opt-in-`limit` pagination
+    // convention as searchPublicShops.
+    getPublicMachines: async (opts = {}) => {
+      const { category = '', search = '', cursor, limit, shopId } = opts;
+      const params = new URLSearchParams();
+      if (category) params.append('category', category);
+      if (search) params.append('search', search);
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
+      if (shopId) params.append('shopId', shopId);
+      const qs = params.toString();
+      const response = await fetch(`${API_BASE}/api/public/machines${qs ? `?${qs}` : ''}`);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Failed to load machines');
+      }
+      return response.json();
+    },
+
+    getPublicMachineById: async (id) => {
+      const response = await fetch(`${API_BASE}/api/public/machines/${id}`);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Listing not found');
+      }
+      return response.json();
+    },
+
+    // Combined Shops+Machines search for the pre-login mobile app's search
+    // overlay. Never touches Customer data - see PublicSearchController.
+    getPublicSearch: async (q) => {
+      const response = await fetch(`${API_BASE}/api/public/search?q=${encodeURIComponent(q)}`);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Search failed');
+      }
+      return response.json();
+    },
+
+    // Product type filter chips for the Machines tab - now a public route
+    // (see ProductTypeController).
+    getPublicProductTypes: async () => {
+      const response = await fetch(`${API_BASE}/api/product-types`);
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Failed to load product types');
+      }
+      return response.json();
+    },
+
     // --- SUPER ADMIN: SHOPS ---
     // `search` is optional and filters server-side (name/admin name/admin
     // email) while still returning the full flat-array shape (no `limit`
