@@ -102,7 +102,7 @@ function AdCarousel({ api }) {
         <div
           className="ad-carousel-track"
           onTransitionEnd={handleTransitionEnd}
-          style={{ transform: `translateX(-${pos * 100}%)`, transition: noTransition ? 'none' : undefined }}
+          style={{ transform: `translateX(-${pos * 100}%) translateZ(0)`, transition: noTransition ? 'none' : undefined }}
         >
           {slides.map((ad, i) => (
             <div className="ad-carousel-slide" key={`${ad.id}-${i}`}>

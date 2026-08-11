@@ -5778,7 +5778,6 @@ function AppPosterOverlay({ ad, onClose }) {
       <div className="app-poster-media">
         {ad.imageUrl && <img src={ad.imageUrl} alt={ad.title || ''} />}
       </div>
-      {ad.title && <div className="app-poster-title">{ad.title}</div>}
     </div>
   );
 }
