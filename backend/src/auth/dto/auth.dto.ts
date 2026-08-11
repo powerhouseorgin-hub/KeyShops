@@ -82,6 +82,25 @@ export class VerifyOtpDto {
   code: string;
 }
 
+// Native app's phone verification via Firebase Phone Auth (see
+// AuthService.verifyFirebasePhoneToken) - the OTP itself was already
+// generated, sent, and checked entirely by Firebase on the device; this
+// DTO just carries the resulting ID token in for the backend to confirm
+// it's genuine and actually covers the phone number being verified.
+export class VerifyFirebasePhoneDto {
+  @IsString()
+  @IsNotEmpty()
+  identifier: string; // the phone number the caller claims this token verifies
+
+  @IsOptional()
+  @IsString()
+  purpose?: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Firebase ID token is required' })
+  idToken: string;
+}
+
 // Public self-registration wizard's payload - two steps on the frontend:
 // Step 1 (basic details - name, shop name, address+GPS, city, state, PIN
 // code, optional Aadhaar number, email, OTP-verified mobile number,

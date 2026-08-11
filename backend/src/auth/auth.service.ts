@@ -3,11 +3,13 @@ import { JwtService } from '@nestjs/jwt';
 import { TenantService } from '../tenant/tenant.service';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
-import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto } from './dto/auth.dto';
+import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, VerifyFirebasePhoneDto } from './dto/auth.dto';
 import { Role } from '@prisma/client';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 import { CryptoService } from '../crypto/crypto.service';
 import { PaymentService } from '../payment/payment.service';
+import { getFirebaseAdminApp } from './firebase-admin';
+import { getAuth } from 'firebase-admin/auth';
 
 // bcrypt's cost factor is exponential (each +1 roughly doubles the CPU time
 // spent per hash/compare) - 12 was fine on typical hardware (~200-300ms) but
@@ -229,6 +231,38 @@ export class AuthService implements OnModuleInit {
       where: { id: record.id },
       data: { consumed: true },
     });
+
+    return { success: true };
+  }
+
+  // NATIVE APP: phone verification via Firebase Phone Auth. The OTP itself
+  // was already generated, texted, and checked entirely by Firebase on the
+  // device (see the Capacitor Firebase Authentication plugin flow in
+  // OtpVerificationModal.jsx) - this only confirms the resulting ID token is
+  // genuine and actually covers the phone number the caller claims to be
+  // verifying, so one verified phone's token can't be replayed to verify a
+  // different number.
+  async verifyFirebasePhoneToken(dto: VerifyFirebasePhoneDto) {
+    const app = getFirebaseAdminApp();
+    if (!app) {
+      throw new BadRequestException('Firebase phone verification is not configured on this server.');
+    }
+
+    let decoded;
+    try {
+      decoded = await getAuth(app).verifyIdToken(dto.idToken);
+    } catch (err) {
+      throw new BadRequestException('Invalid or expired verification token. Please try again.');
+    }
+
+    const tokenPhone = (decoded.phone_number || '').replace(/\D/g, '');
+    const claimedPhone = dto.identifier.replace(/\D/g, '');
+    // Compare by last 10 digits so a country-code prefix mismatch (+91 vs
+    // none) between what Firebase returns and what the form stored doesn't
+    // falsely reject a legitimate match.
+    if (!tokenPhone || tokenPhone.slice(-10) !== claimedPhone.slice(-10)) {
+      throw new BadRequestException('Verification token does not match the phone number being verified.');
+    }
 
     return { success: true };
   }

@@ -17,6 +17,10 @@
   "plugins": {
     "SplashScreen": {
       "launchAutoHide": false
+    },
+    "FirebaseAuthentication": {
+      "skipNativeAuth": false,
+      "providers": ["phone"]
     }
   }
 }

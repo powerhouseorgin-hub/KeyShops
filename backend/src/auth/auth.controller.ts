@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, SendOtpDto, VerifyOtpDto } from './dto/auth.dto';
+import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, SendOtpDto, VerifyOtpDto, VerifyFirebasePhoneDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
@@ -20,6 +20,11 @@ export class AuthController {
   @Post('verify-otp')
   async verifyOtp(@Body() dto: VerifyOtpDto) {
     return this.authService.verifyOtp(dto);
+  }
+
+  @Post('verify-firebase-phone')
+  async verifyFirebasePhone(@Body() dto: VerifyFirebasePhoneDto) {
+    return this.authService.verifyFirebasePhoneToken(dto);
   }
 
   @Post('register-shop')

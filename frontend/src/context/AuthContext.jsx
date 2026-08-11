@@ -172,6 +172,24 @@ export const AuthProvider = ({ children }) => {
       return response.json();
     },
 
+    // Native app's phone verification - the OTP itself was already sent and
+    // checked by Firebase on-device (see OtpVerificationModal.jsx's
+    // Capacitor Firebase Authentication flow); this just has the backend
+    // confirm the resulting ID token is genuine before treating the phone
+    // as verified.
+    verifyFirebasePhoneToken: async (identifier, purpose, idToken) => {
+      const response = await fetch(`${API_BASE}/api/auth/verify-firebase-phone`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier, purpose, idToken })
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.message || 'Phone verification failed');
+      }
+      return response.json();
+    },
+
     registerShop: async (dto) => {
       const response = await fetch(`${API_BASE}/api/auth/register-shop`, {
         method: 'POST',

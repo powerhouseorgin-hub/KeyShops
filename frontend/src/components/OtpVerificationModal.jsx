@@ -1,6 +1,20 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { ShieldCheck, X, RefreshCw } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+
+const IS_NATIVE_APP = Capacitor.isNativePlatform();
+
+// India-only normalization to E.164 for Firebase Phone Auth - matches the
+// same bare-10-digit-number assumption already made elsewhere in this app
+// (see waLink() in PublicMobileApp.jsx).
+function toE164(phone) {
+  const digits = (phone || '').replace(/\D/g, '');
+  if (digits.length === 12 && digits.startsWith('91')) return `+${digits}`;
+  if (digits.length === 10) return `+91${digits}`;
+  return phone.startsWith('+') ? phone : `+${digits}`;
+}
 
 // Shared OTP entry dialog used by every verification flow in the app (Shop
 // Registration, Customer Registration, Forgot Password, Shop Settings
@@ -9,6 +23,13 @@ import { ShieldCheck, X, RefreshCw } from 'lucide-react';
 // itself automatically once the code is verified - callers only need to
 // supply the identifier/method/purpose to verify and a callback for what
 // happens next.
+//
+// Phone verification in the native app goes through Firebase Phone Auth
+// (the Capacitor plugin) instead of the backend's send-otp/verify-otp
+// endpoints - Firebase generates, texts, and checks the code itself on
+// the device; the backend's only role is confirming the resulting ID
+// token afterward (see AuthContext.verifyFirebasePhoneToken). Email
+// verification and web phone verification are unaffected.
 export default function OtpVerificationModal({
   open,
   onClose,
@@ -30,6 +51,11 @@ export default function OtpVerificationModal({
   const [verifying, setVerifying] = useState(false);
   const intervalRef = useRef(null);
 
+  const useFirebasePhoneAuth = IS_NATIVE_APP && method === 'phone';
+  const codeLength = useFirebasePhoneAuth ? 6 : 4;
+  const verificationIdRef = useRef(null);
+  const hasSentOnceRef = useRef(false);
+
   const startCooldown = useCallback(() => {
     setSecondsLeft(resendCooldownSeconds);
     if (intervalRef.current) clearInterval(intervalRef.current);
@@ -49,21 +75,50 @@ export default function OtpVerificationModal({
     setOtpError('');
     setDevCode('');
     try {
-      const result = await api.sendOtp(identifier, method, purpose);
-      if (result?.devCode) setDevCode(result.devCode);
+      if (useFirebasePhoneAuth) {
+        await FirebaseAuthentication.signInWithPhoneNumber({
+          phoneNumber: toE164(identifier),
+          resendCode: hasSentOnceRef.current,
+        });
+        hasSentOnceRef.current = true;
+      } else {
+        const result = await api.sendOtp(identifier, method, purpose);
+        if (result?.devCode) setDevCode(result.devCode);
+      }
       startCooldown();
     } catch (e) {
       setOtpError(e.message || t('failedSendOtpMsg'));
     } finally {
       setSending(false);
     }
-  }, [api, identifier, method, purpose, startCooldown, t]);
+  }, [api, identifier, method, purpose, startCooldown, t, useFirebasePhoneAuth]);
+
+  // Firebase's own events for the phone-auth path - registered only while
+  // this modal is open for a phone verification, torn down on close so a
+  // stale listener from a previous open never fires into a later attempt.
+  useEffect(() => {
+    if (!open || !useFirebasePhoneAuth) return;
+    let codeSentHandle;
+    let failedHandle;
+    FirebaseAuthentication.addListener('phoneCodeSent', (event) => {
+      verificationIdRef.current = event.verificationId;
+    }).then((h) => { codeSentHandle = h; });
+    FirebaseAuthentication.addListener('phoneVerificationFailed', (event) => {
+      setOtpError(event.message || t('failedSendOtpMsg'));
+    }).then((h) => { failedHandle = h; });
+    return () => {
+      codeSentHandle?.remove();
+      failedHandle?.remove();
+    };
+  }, [open, useFirebasePhoneAuth, t]);
 
   useEffect(() => {
     if (open) {
       setEnteredOtp('');
       setOtpError('');
       setDevCode('');
+      verificationIdRef.current = null;
+      hasSentOnceRef.current = false;
       sendCode();
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -82,7 +137,18 @@ export default function OtpVerificationModal({
     setVerifying(true);
     setOtpError('');
     try {
-      await api.verifyOtp(identifier, method, purpose, enteredOtp);
+      if (useFirebasePhoneAuth) {
+        if (!verificationIdRef.current) throw new Error(t('failedSendOtpMsg'));
+        await FirebaseAuthentication.confirmVerificationCode({
+          verificationId: verificationIdRef.current,
+          verificationCode: enteredOtp,
+        });
+        const { token } = await FirebaseAuthentication.getIdToken();
+        await api.verifyFirebasePhoneToken(identifier, purpose, token);
+        FirebaseAuthentication.signOut().catch(() => {});
+      } else {
+        await api.verifyOtp(identifier, method, purpose, enteredOtp);
+      }
       onVerified?.();
       onClose?.();
     } catch (e) {
@@ -119,9 +185,9 @@ export default function OtpVerificationModal({
         )}
 
         <input
-          type="text" maxLength={4} value={enteredOtp}
+          type="text" maxLength={codeLength} value={enteredOtp}
           onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
-          placeholder="1234"
+          placeholder={codeLength === 6 ? '123456' : '1234'}
           style={{
             width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)',
             borderRadius: 13, padding: '11px 15px', fontSize: 20, outline: 'none',
