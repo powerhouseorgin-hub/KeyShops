@@ -3,18 +3,9 @@ import { createPortal } from 'react-dom';
 import { ShieldCheck, X, RefreshCw } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
 import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
+import { normalizePhone, toE164, PHONE_REGEX_MESSAGE } from '../utils/phone';
 
 const IS_NATIVE_APP = Capacitor.isNativePlatform();
-
-// India-only normalization to E.164 for Firebase Phone Auth - matches the
-// same bare-10-digit-number assumption already made elsewhere in this app
-// (see waLink() in PublicMobileApp.jsx).
-function toE164(phone) {
-  const digits = (phone || '').replace(/\D/g, '');
-  if (digits.length === 12 && digits.startsWith('91')) return `+${digits}`;
-  if (digits.length === 10) return `+91${digits}`;
-  return phone.startsWith('+') ? phone : `+${digits}`;
-}
 
 // Shared OTP entry dialog used by every verification flow in the app (Shop
 // Registration, Customer Registration, Forgot Password, Shop Settings
@@ -74,6 +65,15 @@ export default function OtpVerificationModal({
     setSending(true);
     setOtpError('');
     setDevCode('');
+    // Validated here (inside the already-open popup) rather than by the
+    // caller before opening it, so an invalid number shown in the field
+    // still opens this dialog and explains what's wrong instead of a
+    // blocking browser alert() that prevents the popup from ever appearing.
+    if (method === 'phone' && !normalizePhone(identifier)) {
+      setOtpError(PHONE_REGEX_MESSAGE);
+      setSending(false);
+      return;
+    }
     try {
       if (useFirebasePhoneAuth) {
         await FirebaseAuthentication.signInWithPhoneNumber({
@@ -162,7 +162,17 @@ export default function OtpVerificationModal({
   const ss = String(secondsLeft % 60).padStart(2, '0');
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
+    <div
+      className="fixed inset-0 flex items-center justify-center p-4"
+      // Explicit inline z-index (not Tailwind's z-50/z-index:50) - this modal
+      // can be opened from inside the Shop Registration/Forgot Password
+      // screens, which are themselves a `.login-shell.login-overlay` with
+      // z-index:500 on native (see the blurred login overlay backdrop) -
+      // z-50 rendered this dialog visibly buried behind that overlay
+      // despite being open, since 50 < 500. Must stay above every other
+      // overlay z-index used in this app.
+      style={{ background: 'rgba(5,4,3,0.72)', zIndex: 600 }}
+    >
       <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 420, padding: 28 }}>
         <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
           <div className="icon-badge orange" style={{ width: 44, height: 44, borderRadius: '50%' }}>

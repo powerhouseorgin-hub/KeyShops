@@ -12,6 +12,7 @@ import { getAssetUrl, downloadAsset, filenameForAsset, API_BASE } from './apiCon
 // not on every page load. See the `await import('./utils/customerReportPdf')`
 // calls below.
 import { VEHICLE_CATEGORIES, isAutomobileCategory } from './utils/vehicleCategory';
+import { normalizePhone } from './utils/phone';
 import twoWheelerIcon from './assets/categories/two-wheeler.png';
 import fourWheelerIcon from './assets/categories/four-wheeler.png';
 import truckLorryIcon from './assets/categories/truck-lorry.png';
@@ -425,11 +426,11 @@ const LANGUAGES = {
     keyShopsDesc: 'Explore verified key shop partners',
     dealers: 'Dealers',
     dealersDesc: 'Verified dealers & locksmith partners',
-    ecm: 'ECM',
+    ecm: 'ECM Service Center',
     ecmDesc: 'Manage ECM records',
-    scanning: 'Scanning',
+    scanning: 'Scanning Center',
     scanningDesc: 'Scan & process compliance entries',
-    meter: 'Meter',
+    meter: 'Meter Service Center',
     meterDesc: 'Track and manage meter records',
     usedMachines: 'Used Machines',
     usedMachinesDesc: 'View and manage used machines',
@@ -992,6 +993,11 @@ const LANGUAGES = {
     subscriptionPriceLabel: 'Yearly Subscription Price (₹)',
     subscriptionPricePlaceholderEg: 'e.g. 999',
     subscriptionPriceHint: 'Applied platform-wide wherever the subscription amount is displayed or charged.',
+    gstPercentLabel: 'GST (%)',
+    gstPercentHint: 'Added on top of the subscription price when charging via Razorpay - shown as a Base + GST breakdown at checkout.',
+    baseAmountLabel: 'Base Amount',
+    gstAmountLabel: 'GST',
+    totalAmountLabel: 'Total Payable',
     supportContactEyebrow: 'Support Contact',
     supportContactTitle: 'Support Contact',
     supportContactDesc: 'Reach out to the Key Shop team directly using the contact details below.',
@@ -1004,6 +1010,18 @@ const LANGUAGES = {
     customerCareNumberPlaceholderEg: 'e.g. +91 90520 88853',
     supportConfigEmailPlaceholderEg: 'e.g. keyshops666@gmail.com',
     noContactInfoConfiguredMsg: 'Contact details have not been configured yet.',
+    companyDetailsTitle: 'Company Details',
+    companyLabel: 'Company',
+    companySentence: 'keyshops.in company is a yourprinting.in group companies.',
+    addressLabel: 'Address',
+    addressSentence: 'Coimbatore, Tamil Nadu, South India.',
+    feedbackTitle: 'Feedback & Suggestions',
+    feedbackBody: 'We would love to hear from you. Share your feedback, report an issue, or suggest an improvement, and our team will get back to you.',
+    sendFeedbackBtn: 'Send Feedback',
+    navMoreSection: 'More',
+    menuTermsConditions: 'Terms & Conditions',
+    menuFeedback: 'Feedback & Suggestions',
+    contactNavLabel: 'Contact',
     ownerContactSectionTitle: 'Contact Details',
     ownerContactSectionDesc: 'These details are shown to every shop on the Support Contact screen.',
     videoSingularLabel: 'video',
@@ -6383,6 +6401,7 @@ export default function App() {
   const [regEmailEnabled, setRegEmailEnabled] = useState(false);
   const [regEmail, setRegEmail] = useState('');
   const [regPhone, setRegPhone] = useState('');
+  const [regPhoneError, setRegPhoneError] = useState('');
   const [regLocation, setRegLocation] = useState('');
   // Raw GPS coordinates from captureShopLocation, kept alongside the
   // free-text `regLocation` address so they can be sent to the backend and
@@ -6421,6 +6440,7 @@ export default function App() {
   // Single yearly plan platform-wide - price is Super Admin-configurable
   // (see SupportConfigView / PlatformConfig.subscriptionPrice).
   const [regSubscriptionPrice, setRegSubscriptionPrice] = useState(999);
+  const [regGstPercent, setRegGstPercent] = useState(18);
   const [regError, setRegError] = useState('');
   const [regSuccessMessage, setRegSuccessMessage] = useState('');
   // Login email returned by the backend (echoes dto.email - see
@@ -6476,7 +6496,10 @@ export default function App() {
   useEffect(() => {
     if (!showRegisterShop) return;
     api.getSupportConfig()
-      .then((cfg) => setRegSubscriptionPrice(cfg.subscriptionPrice ?? 999))
+      .then((cfg) => {
+        setRegSubscriptionPrice(cfg.subscriptionPrice ?? 999);
+        setRegGstPercent(cfg.gstPercent ?? 18);
+      })
       .catch((e) => console.error('Failed to load subscription price:', e));
   }, [showRegisterShop]);
 
@@ -6549,15 +6572,18 @@ export default function App() {
   // Inline mobile OTP verification trigger for Step 1 - phone-only, no email
   // option. Actual send/verify/resend/countdown lives in the shared
   // OtpVerificationModal (see showRegOtpModal below).
+  // Always opens the popup - phone-format validation happens inside the
+  // modal itself (see OtpVerificationModal's sendCode), so a bad number
+  // shows an inline error in the dialog instead of a blocking alert() that
+  // prevents the popup from ever appearing.
   const handleOpenRegOtpModal = () => {
-    if (!regPhone) {
-      alert(t('pleaseEnterMobileNumberFirstMsg'));
+    const normalized = normalizePhone(regPhone);
+    if (!normalized) {
+      setRegPhoneError(PHONE_REGEX_MESSAGE);
       return;
     }
-    if (!PHONE_REGEX.test(regPhone)) {
-      alert(`Mobile number: ${PHONE_REGEX_MESSAGE}`);
-      return;
-    }
+    setRegPhoneError('');
+    if (normalized !== regPhone) setRegPhone(normalized);
     setShowRegOtpModal(true);
   };
 
@@ -6787,8 +6813,8 @@ export default function App() {
             <div className="login-form-side">
               <div className="login-box animate-fade-in">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                  <button type="button" className="back-to-home-link" onClick={() => { setPublicInitialTab('home'); setPublicPage('home'); }}>
-                    <ArrowLeft className="h-3.5 w-3.5" /> {t('backToHomeLink')}
+                  <button type="button" className="back-to-home-link" onClick={() => { setPublicInitialTab('home'); setPublicPage('home'); }} aria-label={t('backToHomeLink')}>
+                    <ArrowLeft className="h-3.5 w-3.5" />
                   </button>
                   <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--card-2)', border: '1.5px solid var(--border-2)', borderRadius: 999, padding: '4px 12px' }}>
                     <Globe className="h-3.5 w-3.5" style={{ color: 'var(--gold)' }} />
@@ -7284,10 +7310,13 @@ export default function App() {
                               <div className="input-wrap">
                                 <input
                                   type="tel" required value={regPhone} disabled={regOtpVerified}
-                                  onChange={(e) => { setRegPhone(e.target.value); setRegOtpVerified(false); }}
+                                  onChange={(e) => { setRegPhone(e.target.value); setRegOtpVerified(false); setRegPhoneError(''); }}
                                   placeholder={t('digitMobilePlaceholder')} style={{ opacity: regOtpVerified ? 0.6 : 1 }}
                                 />
                               </div>
+                              {regPhoneError && (
+                                <span style={{ display: 'block', marginTop: 6, fontSize: 11, fontWeight: 700, color: 'var(--red)' }}>{regPhoneError}</span>
+                              )}
                             </div>
 
                             {regOtpVerified ? (
@@ -7369,10 +7398,12 @@ export default function App() {
                                   alert(t('pleaseEnterValidEmailMsg'));
                                   return;
                                 }
-                                if (!PHONE_REGEX.test(regPhone)) {
+                                const normalizedRegPhone = normalizePhone(regPhone);
+                                if (!normalizedRegPhone) {
                                   alert(`${t('mobileNumberLabel')}: ${PHONE_REGEX_MESSAGE}`);
                                   return;
                                 }
+                                if (normalizedRegPhone !== regPhone) setRegPhone(normalizedRegPhone);
                                 if (regPinCode && !/^\d{6}$/.test(regPinCode)) {
                                   alert(t('pinCodeMustBe6DigitsMsg'));
                                   return;
@@ -7444,12 +7475,29 @@ export default function App() {
                             </div>
                           )}
 
-                          <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', padding: 14, borderRadius: 14, border: '1px solid var(--border-2)', marginBottom: 18, fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>
-                            <span>{t('payableAmountLabel')}</span>
-                            <span style={{ fontWeight: 800, color: 'var(--gold)', fontSize: 16, fontFamily: 'var(--display)' }}>
-                              Rs. {Number(regSubscriptionPrice).toFixed(2)}
-                            </span>
-                          </div>
+                          {(() => {
+                            const base = Number(regSubscriptionPrice) || 0;
+                            const gstAmount = Math.round(base * (regGstPercent / 100) * 100) / 100;
+                            const total = Math.round((base + gstAmount) * 100) / 100;
+                            return (
+                              <div style={{ background: 'var(--card-2)', padding: 14, borderRadius: 14, border: '1px solid var(--border-2)', marginBottom: 18 }}>
+                                <div className="flex justify-between items-center" style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)', marginBottom: 6 }}>
+                                  <span>{t('baseAmountLabel')}</span>
+                                  <span>Rs. {base.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between items-center" style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--text-2)', marginBottom: 10, paddingBottom: 10, borderBottom: '1px dashed var(--border-2)' }}>
+                                  <span>{t('gstAmountLabel')} ({regGstPercent}%)</span>
+                                  <span>Rs. {gstAmount.toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between items-center" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-1)' }}>
+                                  <span>{t('totalAmountLabel')}</span>
+                                  <span style={{ fontWeight: 800, color: 'var(--gold)', fontSize: 16, fontFamily: 'var(--display)' }}>
+                                    Rs. {total.toFixed(2)}
+                                  </span>
+                                </div>
+                              </div>
+                            );
+                          })()}
 
                           <div className="animate-fade-in" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 20, borderRadius: 16, textAlign: 'center' }}>
                             <ShieldCheck className="h-8 w-8" style={{ color: 'var(--gold)', margin: '0 auto 10px' }} />
@@ -7672,6 +7720,22 @@ export default function App() {
                   >
                     <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Settings /></span>
                     <span>{t('settings')}</span>
+                  </button>
+
+                  <div className="side-section-label">{t('navMoreSection')}</div>
+                  <button
+                    onClick={() => setActiveTab('terms')}
+                    className={`side-link ${activeTab === 'terms' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><FileText /></span>
+                    <span>{t('menuTermsConditions')}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('feedback')}
+                    className={`side-link ${activeTab === 'feedback' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--gold)' }}><MessageCircle /></span>
+                    <span>{t('menuFeedback')}</span>
                   </button>
                 </>
               )}
@@ -7951,6 +8015,8 @@ export default function App() {
             {activeTab === 'support-contact' && <SupportContactView t={t} api={api} />}
             {activeTab === 'support-config' && <SupportConfigView t={t} api={api} />}
             {activeTab === 'settings' && <ShopSettingsView t={t} api={api} />}
+            {activeTab === 'terms' && <StaticInfoView icon={FileText} eyebrow={t('menuTermsConditions')} title={TERMS_AND_CONDITIONS_TITLE} body={TERMS_AND_CONDITIONS_BODY} />}
+            {activeTab === 'feedback' && <FeedbackView t={t} api={api} />}
           </main>
 
           {/* Mobile Bottom Navigation Bar (mobile only) */}
@@ -8424,9 +8490,9 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           Support card spanning both columns. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
+        { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => goToProductType('Key Shops') },
         { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
-        { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
         { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
         { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
@@ -12943,6 +13009,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // Form fields
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [address, setAddress] = useState('N/A');
   const [idProofType, setIdProofType] = useState('Aadhaar Card');
   const [idProofNumber, setIdProofNumber] = useState('N/A');
@@ -13218,11 +13285,15 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
   // Page 1's Mobile Number OTP trigger - actual send/verify/resend/countdown
   // lives in the shared OtpVerificationModal (see showCustomerOtpModal below).
+  // Always opens the popup - see handleOpenRegOtpModal's comment above.
   const handleOpenCustomerOtpModal = () => {
-    if (!phone || !PHONE_REGEX.test(phone)) {
-      alert(PHONE_REGEX_MESSAGE);
+    const normalized = normalizePhone(phone);
+    if (!normalized) {
+      setPhoneError(PHONE_REGEX_MESSAGE);
       return;
     }
+    setPhoneError('');
+    if (normalized !== phone) setPhone(normalized);
     setShowCustomerOtpModal(true);
   };
 
@@ -13568,10 +13639,13 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <div className="input-wrap">
                     <input
                       type="tel" required value={phone}
-                      onChange={(e) => { setPhone(e.target.value); setOtpVerified(false); }}
+                      onChange={(e) => { setPhone(e.target.value); setOtpVerified(false); setPhoneError(''); }}
                       placeholder={t('phoneNumberPlaceholderEg')}
                     />
                   </div>
+                  {phoneError && (
+                    <span style={{ display: 'block', marginTop: 6, fontSize: 11, fontWeight: 700, color: 'var(--red)' }}>{phoneError}</span>
+                  )}
                   {!otpVerified && (
                     <button type="button" onClick={handleOpenCustomerOtpModal} className="btn btn-primary btn-sm" style={{ width: '100%', marginTop: 8 }}>
                       {t('sendOtpToVerifyBtn')}
@@ -15210,6 +15284,109 @@ export function SupportContactView({ t, api }) {
           </p>
         )}
       </div>
+
+      <CompanyDetailsCard t={t} />
+    </div>
+  );
+}
+
+// Static company information shown on the Customer Service / Contact
+// screens (both authenticated Shop Admin and pre-login public app) - no
+// backend config for this, it's fixed business identity text. Split into
+// two labeled lines (Company / Address) with the brand logo alongside,
+// matching the reference layout the user provided.
+export function CompanyDetailsCard({ t }) {
+  return (
+    <div className="card" style={{ maxWidth: 520, marginTop: 16 }}>
+      <div className="section-title" style={{ marginBottom: 14 }}>
+        <div className="flex items-center gap-3">
+          <div className="icon-badge blue" style={{ width: 34, height: 34, borderRadius: 10 }}>
+            <Building2 style={{ width: 16, height: 16 }} />
+          </div>
+          <div>
+            <h2 style={{ fontSize: 15 }}>{t('companyDetailsTitle')}</h2>
+          </div>
+        </div>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+          <div style={{ marginBottom: 10 }}>
+            <div style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 3 }}>{t('companyLabel')}</div>
+            <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>{t('companySentence')}</p>
+          </div>
+          <div>
+            <div style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 3 }}>{t('addressLabel')}</div>
+            <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>{t('addressSentence')}</p>
+          </div>
+        </div>
+        <img src={keyShopLogo} alt="Key Shops" style={{ width: 120, height: 120, objectFit: 'contain', flexShrink: 0 }} />
+      </div>
+    </div>
+  );
+}
+
+// Generic static-content screen (Terms & Conditions, About Us) - reused by
+// both the authenticated Shop Admin drawer and the pre-login public app's
+// hamburger drawer (see PublicMobileApp.jsx's PublicStaticInfoScreen, which
+// mirrors this same title/body content rather than importing this component
+// directly, since it renders inside a different page shell/back-button model).
+export function StaticInfoView({ icon: Icon, eyebrow, title, body }) {
+  return (
+    <div className="animate-fade-in">
+      <div className="page-head">
+        <div>
+          <div className="eyebrow"><Icon /> {eyebrow}</div>
+          <h1>{title}</h1>
+        </div>
+      </div>
+      <div className="card" style={{ maxWidth: 640 }}>
+        <p style={{ fontSize: 13, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+          {body}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Feedback & Suggestions - no dedicated backend endpoint for this, so it
+// routes into the same support email/WhatsApp already configured for
+// Customer Service rather than a form that would go nowhere.
+export function FeedbackView({ t, api }) {
+  const [config, setConfig] = useState(supportConfigCache);
+
+  useEffect(() => {
+    api.getSupportConfig().then((res) => { setConfig(res); supportConfigCache = res; }).catch(() => {});
+  }, []);
+
+  const subject = encodeURIComponent('Key Shops - Feedback & Suggestions');
+  const mailHref = config?.email ? `mailto:${config.email}?subject=${subject}` : null;
+  const waHref = config?.whatsapp ? `https://wa.me/${config.whatsapp.replace(/[^0-9]/g, '')}?text=${subject}` : null;
+
+  return (
+    <div className="animate-fade-in">
+      <div className="page-head">
+        <div>
+          <div className="eyebrow"><MessageCircle /> {t('feedbackTitle')}</div>
+          <h1>{t('feedbackTitle')}</h1>
+        </div>
+      </div>
+      <div className="card" style={{ maxWidth: 520 }}>
+        <p style={{ fontSize: 13, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.7, marginBottom: 18 }}>
+          {t('feedbackBody')}
+        </p>
+        <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
+          {mailHref && (
+            <a href={mailHref} className="btn btn-primary btn-sm">
+              <Mail className="h-4 w-4" /> {t('sendFeedbackBtn')}
+            </a>
+          )}
+          {waHref && (
+            <a href={waHref} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">
+              <MessageCircle className="h-4 w-4" /> WhatsApp
+            </a>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -15223,6 +15400,7 @@ export function SupportConfigView({ t, api }) {
   const [customerCareNumber, setCustomerCareNumber] = useState('');
   const [videos, setVideos] = useState([]);
   const [subscriptionPrice, setSubscriptionPrice] = useState(999);
+  const [gstPercent, setGstPercent] = useState(18);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -15270,6 +15448,7 @@ export function SupportConfigView({ t, api }) {
       setCustomerCareNumber(res.customerCareNumber || '');
       setVideos(res.videos || []);
       setSubscriptionPrice(res.subscriptionPrice ?? 999);
+      setGstPercent(res.gstPercent ?? 18);
     } catch (e) {
       console.error('Failed to load support config:', e);
     } finally {
@@ -15281,7 +15460,7 @@ export function SupportConfigView({ t, api }) {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.updateSupportConfig({ whatsapp, videos, email, customerCareNumber, subscriptionPrice: Number(subscriptionPrice) });
+      await api.updateSupportConfig({ whatsapp, videos, email, customerCareNumber, subscriptionPrice: Number(subscriptionPrice), gstPercent: Number(gstPercent) });
       alert(t('supportConfigUpdatedMsg'));
     } catch (e) {
       alert(t('saveFailedTemplate').split('{msg}')[0] + e.message);
@@ -15496,7 +15675,7 @@ export function SupportConfigView({ t, api }) {
           </div>
 
           <div className="reg-section">
-            <div className="reg-field" style={{ marginBottom: 0 }}>
+            <div className="reg-field">
               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--gold)' }}><IndianRupee /></div><b>{t('subscriptionPriceLabel')} <span className="req">*</span></b></div>
               <div className="input-wrap">
                 <input
@@ -15506,6 +15685,17 @@ export function SupportConfigView({ t, api }) {
                 />
               </div>
               <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('subscriptionPriceHint')}</span>
+            </div>
+            <div className="reg-field" style={{ marginBottom: 0 }}>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Percent /></div><b>{t('gstPercentLabel')} <span className="req">*</span></b></div>
+              <div className="input-wrap">
+                <input
+                  type="number" required min="0" max="100" step="0.01" value={gstPercent}
+                  onChange={(e) => setGstPercent(e.target.value)}
+                  placeholder="18"
+                />
+              </div>
+              <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('gstPercentHint')}</span>
             </div>
           </div>
 

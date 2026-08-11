@@ -6,12 +6,18 @@ import { isAutomobileCategory } from './vehicleCategory';
 // Theme constants matching the app design system
 const MAROON = '#7A1220';
 const MAROON_DARK = '#5A0D18';
-const GOLD = '#C89416';
 const GOLD_BRIGHT = '#F5B800';
 const CREAM = '#FFF8EC';
 const BORDER = '#E7D8B8';
 
 const NOT_AVAILABLE = 'N/A';
+
+// Shared layout constants so all three section headers (Customer Information,
+// Vehicle & Key Details, Bill & Payment Details) and every info-row are
+// pixel-identical instead of separately hand-tuned inline styles.
+const HEADER_PADDING = '12px 14px';
+const ROW_PADDING_V = 8; // px vertical padding per info-row cell
+const SECTION_GAP = 20; // px gap between major cards/sections
 
 // Every displayed value goes through this helper - missing or empty data returns "N/A"
 function naVal(value) {
@@ -40,15 +46,35 @@ function formatDateTime(value) {
   return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function infoRow(icon, label, value) {
+// Standardized section header - used identically by all three info cards so
+// header height and title alignment can never drift apart between sections.
+// No icon - the emoji glyphs used previously never rendered reliably
+// vertically-centered under html2canvas's rasterization (font metrics for
+// color/emoji glyphs don't line up with normal text line-box math the way
+// they do in a live browser), so the title is the only content in the bar.
+function sectionHeader(title) {
+  return `
+    <div style="display:flex; align-items:center; background:${MAROON}; color:#fff; padding:${HEADER_PADDING}; box-sizing:border-box;">
+      <span style="font-weight:800; font-size:12.5px; line-height:1.2; letter-spacing:.02em;">${esc(title)}</span>
+    </div>`;
+}
+
+// `isLast` drops the row's own bottom border so the final row doesn't sit
+// flush against the card's own border and read as a doubled line.
+function infoRow(label, value, isLast = false) {
+  const border = isLast ? 'none' : `1px solid ${BORDER}`;
   return `
     <tr>
-      <td style="width:30px; padding:11px 6px; border-bottom:1px solid ${BORDER}; vertical-align:top; text-align:center;">
-        <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; font-size:11px; line-height:1; margin-top:1px;">${icon}</span>
-      </td>
-      <td style="width:135px; padding:11px 8px; border-bottom:1px solid ${BORDER}; font-weight:700; color:${MAROON_DARK}; font-size:11px; vertical-align:top; line-height:1.5; word-break:break-word; overflow-wrap:break-word;">${esc(label)}</td>
-      <td style="padding:11px 10px; border-bottom:1px solid ${BORDER}; font-size:11px; color:#2a2a2a; vertical-align:top; line-height:1.5; word-break:break-word; overflow-wrap:anywhere; white-space:normal;">${esc(naVal(value))}</td>
+      <td style="width:150px; padding:${ROW_PADDING_V}px 8px ${ROW_PADDING_V}px 12px; border-bottom:${border}; font-weight:700; color:${MAROON_DARK}; font-size:11px; vertical-align:middle; line-height:1.4; word-break:break-word; overflow-wrap:break-word;">${esc(label)}</td>
+      <td style="padding:${ROW_PADDING_V}px 12px; border-bottom:${border}; font-size:11px; color:#2a2a2a; vertical-align:middle; line-height:1.4; word-break:break-word; overflow-wrap:anywhere; white-space:normal;">${esc(naVal(value))}</td>
     </tr>`;
+}
+
+// Renders a full <tr> list from [label, value] tuples, automatically
+// marking only the final row as `isLast` regardless of how many rows a
+// given section ends up with (e.g. a variable number of attached documents).
+function renderRows(rows) {
+  return rows.map(([label, value], idx) => infoRow(label, value, idx === rows.length - 1)).join('');
 }
 
 // Builds a single branded, comprehensive PDF report containing all customer registration details
@@ -74,33 +100,40 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
   const billAmountFormatted = hasBillAmount ? `₹ ${Number(customer.billAmount).toFixed(2)}` : NOT_AVAILABLE;
 
   let boxBTitle = 'Vehicle & Key Details';
-  let boxBRows = '';
+  let boxBRowsData = [];
 
   if (isHome) {
     boxBTitle = 'Home Key Details';
-    boxBRows += infoRow('&#127968;', 'Home / Property Description', customer.homeOfficeName || customer.vehicleName);
-    boxBRows += infoRow('&#127991;', 'Key Category', 'Home');
-    boxBRows += infoRow('&#128273;', 'Key / Blank Code', customer.keyNumber || customer.keyCode);
-    boxBRows += infoRow('&#9989;', 'Add Key Status', boolLabel(customer.addKey));
-    boxBRows += infoRow('&#10060;', 'Lost Key Status', boolLabel(customer.lostKey));
+    boxBRowsData = [
+      ['Home / Property Description', customer.homeOfficeName || customer.vehicleName],
+      ['Key Category', 'Home'],
+      ['Key / Blank Code', customer.keyNumber || customer.keyCode],
+      ['Add Key Status', boolLabel(customer.addKey)],
+      ['Lost Key Status', boolLabel(customer.lostKey)],
+    ];
   } else if (isOffice) {
     boxBTitle = 'Office Key Details';
-    boxBRows += infoRow('&#127970;', 'Office Description', customer.homeOfficeName || customer.vehicleName);
-    boxBRows += infoRow('&#127991;', 'Key Category', 'Office');
-    boxBRows += infoRow('&#128273;', 'Key / Blank Code', customer.keyNumber || customer.keyCode);
-    boxBRows += infoRow('&#9989;', 'Add Key Status', boolLabel(customer.addKey));
-    boxBRows += infoRow('&#10060;', 'Lost Key Status', boolLabel(customer.lostKey));
+    boxBRowsData = [
+      ['Office Description', customer.homeOfficeName || customer.vehicleName],
+      ['Key Category', 'Office'],
+      ['Key / Blank Code', customer.keyNumber || customer.keyCode],
+      ['Add Key Status', boolLabel(customer.addKey)],
+      ['Lost Key Status', boolLabel(customer.lostKey)],
+    ];
   } else {
     // Automobile Category (Two Wheeler, Four Wheeler, Truck / Lorry)
     boxBTitle = 'Vehicle & Key Details';
     const formattedCatName = catRaw === 'TWO_WHEELER' ? 'Two Wheeler' : catRaw === 'FOUR_WHEELER' ? 'Four Wheeler' : catRaw === 'TRUCK_LORRY' ? 'Truck / Lorry' : (customer.vehicleCategory || 'Vehicle');
-    boxBRows += infoRow('&#127991;', 'Vehicle Model / Key Name', customer.vehicleName);
-    boxBRows += infoRow('&#128663;', 'Vehicle Category', formattedCatName);
-    boxBRows += infoRow('&#128273;', 'Key / Blank Code', customer.keyNumber || customer.keyCode);
-    boxBRows += infoRow('&#128663;', 'Vehicle Number', customer.vehicleNumber);
-    boxBRows += infoRow('&#9989;', 'Add Key Status', boolLabel(customer.addKey));
-    boxBRows += infoRow('&#10060;', 'Lost Key Status', boolLabel(customer.lostKey));
+    boxBRowsData = [
+      ['Vehicle Model / Key Name', customer.vehicleName],
+      ['Vehicle Category', formattedCatName],
+      ['Key / Blank Code', customer.keyNumber || customer.keyCode],
+      ['Vehicle Number', customer.vehicleNumber],
+      ['Add Key Status', boolLabel(customer.addKey)],
+      ['Lost Key Status', boolLabel(customer.lostKey)],
+    ];
   }
+  const boxBRows = renderRows(boxBRowsData);
 
   // Filter out vehicle-specific documents (e.g. RC Book) for Home / Office key types
   const docsToDisplay = (customer.documents || []).filter(d => {
@@ -108,6 +141,20 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
     if ((isHome || isOffice) && dtName.includes('rc')) return false;
     return true;
   });
+
+  const boxARowsData = [
+    ['Customer Name', customer.name],
+    ['Mobile Number', customer.phone],
+    ['Address', customer.address || customer.capturedAddress],
+    ['ID Verification Type', idType],
+    ['ID Number', idNumber],
+    ['GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : NOT_AVAILABLE],
+    ...docsToDisplay.map((d) => {
+      const dtName = (d.documentType || d.type || 'Document').replace(/\s+Copy$/i, '');
+      return ['Attached Document', dtName];
+    }),
+  ];
+  const boxARows = renderRows(boxARowsData);
 
   const html = `
   <div style="width:794px; font-family:Arial, Helvetica, sans-serif; background:${CREAM}; color:#2a2a2a; box-sizing:border-box;">
@@ -122,7 +169,10 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
            Report ID corner is guaranteed to render fully on-canvas regardless of
            how much space the left-hand shop info takes up. -->
       <div style="position:relative; background:linear-gradient(90deg, ${MAROON_DARK}, ${MAROON}); padding:20px 24px;">
-        <div style="display:flex; align-items:flex-start; gap:14px; padding-right:110px;">
+        <!-- align-items:center (not flex-start) so the 52px logo centers
+             against the full height of the 4-line shop info text block
+             instead of pinning to its top edge. -->
+        <div style="display:flex; align-items:center; gap:14px; padding-right:110px;">
           <img src="${keyShopLogo}" style="width:52px; height:52px; object-fit:contain; background:#fff; border-radius:50%; padding:3px; flex-shrink:0;" />
           <div style="min-width:0;">
             <div style="color:${GOLD_BRIGHT}; font-weight:900; font-size:19px; letter-spacing:.02em; line-height:1.3; word-break:break-word;">${esc(shopName)}</div>
@@ -137,35 +187,20 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
         </div>
       </div>
 
-      <div style="padding:20px 24px 16px;">
+      <div style="padding:${SECTION_GAP}px 24px 16px;">
         <!-- Grid 2-column: Customer Information Box & Key / Vehicle Details Box -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:${SECTION_GAP}px;">
           <!-- BOX A: Customer Information -->
           <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff;">
-            <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
-              <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; line-height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128100;</span>
-              <span style="font-weight:800; font-size:12.5px; line-height:18px; letter-spacing:.02em;">Customer Information</span>
-            </div>
+            ${sectionHeader('Customer Information')}
             <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
-              ${infoRow('&#128100;', 'Customer Name', customer.name)}
-              ${infoRow('&#128241;', 'Mobile Number', customer.phone)}
-              ${infoRow('&#128205;', 'Address', customer.address || customer.capturedAddress)}
-              ${infoRow('&#127380;', 'ID Verification Type', idType)}
-              ${infoRow('&#128195;', 'ID Number', idNumber)}
-              ${infoRow('&#128225;', 'GPS Coordinates', gpsCaptured ? `${customer.latitude}, ${customer.longitude}` : NOT_AVAILABLE)}
-              ${(docsToDisplay.length > 0) ? docsToDisplay.map(d => {
-                const dtName = (d.documentType || d.type || 'Document').replace(/\s+Copy$/i, '');
-                return infoRow('&#128196;', 'Attached Document', dtName);
-              }).join('') : ''}
+              ${boxARows}
             </table>
           </div>
 
           <!-- BOX B: Dynamic Key Details (Home / Office / Vehicle) -->
           <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff;">
-            <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
-              <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; line-height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128273;</span>
-              <span style="font-weight:800; font-size:12.5px; line-height:18px; letter-spacing:.02em;">${esc(boxBTitle)}</span>
-            </div>
+            ${sectionHeader(boxBTitle)}
             <table style="width:100%; border-collapse:collapse; table-layout:fixed;">
               ${boxBRows}
             </table>
@@ -173,12 +208,9 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
         </div>
 
         <!-- BOX C: Billing & Financial Information Box -->
-        <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:18px;">
-          <div style="display:flex; align-items:center; gap:8px; background:${MAROON}; color:#fff; padding:10px 12px;">
-            <span style="display:inline-flex; align-items:center; justify-content:center; width:18px; height:18px; line-height:18px; background:${GOLD}; border-radius:4px; font-size:10px; flex-shrink:0;">&#128176;</span>
-            <span style="font-weight:800; font-size:12.5px; line-height:18px; letter-spacing:.02em;">Bill & Payment Details</span>
-          </div>
-          <div style="padding:16px 20px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px; background:#FAFAFA;">
+        <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:${SECTION_GAP}px;">
+          ${sectionHeader('Bill & Payment Details')}
+          <div style="padding:14px 20px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px; background:#FAFAFA;">
             <div style="min-width:140px;">
               <div style="font-size:10px; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Bill ID / Number</div>
               <div style="font-size:14px; font-weight:800; color:${MAROON_DARK}; margin-top:4px; line-height:1.4; word-break:break-word;">${esc(naVal(billId))}</div>

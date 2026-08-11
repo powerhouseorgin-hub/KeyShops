@@ -977,6 +977,16 @@ select.sel:focus { border-color: var(--gold); }
 .custom-select-trigger.placeholder .custom-select-value { color: var(--text-3); font-weight: 500; }
 .custom-select-trigger:disabled { opacity: 0.55; cursor: not-allowed; }
 .custom-select-value { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.custom-select-icon { width: 15px; height: 15px; flex-shrink: 0; color: var(--text-3); }
+.custom-select-trigger.open .custom-select-icon { color: var(--gold); }
+
+/* Location/district filter dropdowns (pre-login Shops page, Key Shops/
+   Dealers/ECM/Meter/Scanner directories) - red pin icon regardless of
+   open/closed state, overriding the default gold-on-open above. */
+.location-filter-select .custom-select-icon,
+.location-filter-select .custom-select-trigger.open .custom-select-icon {
+  color: var(--red);
+}
 .custom-select-arrow {
   width: 14px; height: 14px; flex-shrink: 0; color: var(--text-3);
   transition: transform .18s ease;
@@ -1886,10 +1896,10 @@ select.sel:focus { border-color: var(--gold); }
 .public-mobile-topbar {
   position: sticky; top: 0; z-index: 30;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 9px 16px; padding-top: calc(9px + env(safe-area-inset-top, 0px));
+  padding: 14px 16px; padding-top: calc(14px + env(safe-area-inset-top, 0px));
   background: var(--card); border-bottom: 1px solid var(--border);
 }
-.public-mobile-logo { height: 36px; width: auto; }
+.public-mobile-logo { height: 48px; width: auto; }
 .public-mobile-topbar-actions { display: flex; align-items: center; gap: 6px; }
 .public-mobile-topbar .icon-btn { width: 34px; height: 34px; }
 .public-mobile-topbar .btn-primary.btn-sm { padding: 7px 12px; font-size: 12px; }
@@ -1916,6 +1926,25 @@ select.sel:focus { border-color: var(--gold); }
   font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--text-0);
   margin: 0; letter-spacing: -0.2px;
 }
+.pub-page-header-actions { margin-left: auto; flex-shrink: 0; }
+.pub-page-header .pub-location-select { min-width: 0; }
+.pub-page-header .pub-location-select .custom-select-trigger {
+  padding: 8px 30px 8px 12px; font-size: 12.5px; max-width: 175px; gap: 6px;
+}
+
+/* Pre-login hamburger drawer - reuses the authenticated app's
+   .mobile-nav-drawer z-index scale (99999/99998) and .side-link item style
+   for full visual consistency, but needs its own slide-in transform since
+   the authenticated sidebar's is driven by Tailwind utility classes that
+   were applied inline in App.jsx rather than as a reusable CSS class. */
+.pub-nav-drawer {
+  position: fixed; inset-y: 0; left: 0; top: 0; bottom: 0;
+  width: 82%; max-width: 300px; background: var(--card);
+  display: flex; flex-direction: column; overflow-y: auto;
+  transform: translateX(-100%); transition: transform .28s ease;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.pub-nav-drawer.open { transform: translateX(0); }
 
 /* Full-view ad poster overlay - tapping an ad card in My Ads shows the
    poster at full size with its title (v1 ads have no other detail to
@@ -1949,14 +1978,16 @@ select.sel:focus { border-color: var(--gold); }
 .public-mobile-hcard { flex: 0 0 152px; width: 152px; }
 
 /* Category filter chips (.store-tabs/.store-tab are the shared authenticated
-   -app classes, reused as-is here) - scoped scrollbar-hiding + a slightly
-   more compact chip so the horizontal scroll strip never shows a visible
-   scrollbar line under it, matching .public-mobile-hscroll's treatment. */
-.public-mobile-app .store-tabs {
-  overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none;
+   -app classes, reused as-is here) - scoped to wrap onto multiple rows
+   instead of horizontal-scrolling, so every category the Super Admin has
+   added (ShopCategory is a fully dynamic, admin-curated list - see
+   api.getShopCategories()) is visible at a glance rather than hidden off
+   the right edge of the screen. Reshaped from the shared pill style into
+   a compact rectangular box to read as a filter grid rather than tabs. */
+.public-mobile-app .store-tabs { flex-wrap: wrap; }
+.public-mobile-app .store-tab {
+  padding: 7px 14px; font-size: 12.5px; border-radius: 9px;
 }
-.public-mobile-app .store-tabs::-webkit-scrollbar { display: none; height: 0; width: 0; }
-.public-mobile-app .store-tab { padding: 7px 14px; font-size: 12.5px; }
 
 /* Ad carousel - a large hero banner (~75-80% of viewport height) that fills
    its box completely (object-fit:cover, both width and height 100%) so the

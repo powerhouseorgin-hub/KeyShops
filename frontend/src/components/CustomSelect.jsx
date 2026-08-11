@@ -23,6 +23,7 @@ export default function CustomSelect({
   triggerStyle,
   emptyLabel = 'No options available',
   id,
+  icon: Icon,
 }) {
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState(null);
@@ -97,6 +98,7 @@ export default function CustomSelect({
         aria-haspopup="listbox"
         aria-expanded={open}
       >
+        {Icon && <Icon className="custom-select-icon" />}
         <span className="custom-select-value">{selected ? selected.label : placeholder}</span>
         <ChevronDown className="custom-select-arrow" />
       </button>

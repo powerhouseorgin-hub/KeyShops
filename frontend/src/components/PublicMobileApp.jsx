@@ -2,10 +2,26 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Home, Store, Wrench, Megaphone, Search, Bell, LogIn, X, ChevronLeft, ChevronRight,
   MapPin, Phone, Globe, Tag, RefreshCw, Package, IndianRupee,
-  MessageCircle,
+  MessageCircle, Menu, FileText, Building2, Mail, Headset,
 } from 'lucide-react';
 import { useBackHandler } from '../utils/backHandler';
+import CustomSelect from './CustomSelect';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
+
+// Mirrors App.jsx's TERMS_AND_CONDITIONS_TITLE/BODY - duplicated rather than
+// imported since App.jsx isn't a module other components import from
+// anywhere in this codebase (no cross-import precedent), and this is the
+// same fixed legal text a shop owner already agrees to at registration.
+const TERMS_AND_CONDITIONS_BODY = `By creating an account and using this application, you agree to the following:
+
+1. I understand that the server or mobile application may occasionally be slow or unavailable, and I will wait until the service is restored.
+2. If I encounter any server errors, application issues, or temporary service interruptions, I understand that they will be resolved as soon as possible and will wait patiently.
+3. I will keep all customer information, including photos, personal details, and documents, confidential and will not share them with any unauthorized person or third party.
+4. I will use this application only for its intended purpose of managing and storing customer and business information. I will not misuse the application for any illegal, fraudulent, or unauthorized activities.
+5. I understand that misuse of the application or violation of these terms may result in suspension or permanent termination of my account without prior notice.
+6. Subscription fees are non-refundable. Once a subscription has been purchased, I will not request a refund or transfer the subscription to another person or account.
+7. I agree to comply with all applicable laws, regulations, and these Terms and Conditions while using the application.
+8. By proceeding with registration, I confirm that I have read, understood, and agree to these Terms and Conditions.`;
 
 // The pre-login public browsing experience shown inside the packaged Android
 // app (see App.jsx's render branch: `IS_NATIVE_APP ? <PublicMobileApp .../>
@@ -201,9 +217,9 @@ function LoadingState() {
   );
 }
 
-function CategoryChips({ options, value, onChange }) {
+function CategoryChips({ options, value, onChange, renderLabel = (name) => name }) {
   return (
-    <div className="store-tabs" style={{ overflowX: 'auto', flexWrap: 'nowrap', paddingBottom: 2 }}>
+    <div className="store-tabs">
       <button type="button" className={`store-tab ${!value ? 'active' : ''}`} onClick={() => onChange('')}>All</button>
       {options.map((opt) => (
         <button
@@ -212,11 +228,20 @@ function CategoryChips({ options, value, onChange }) {
           className={`store-tab ${value === opt.name ? 'active' : ''}`}
           onClick={() => onChange(opt.name)}
         >
-          {opt.name}
+          {renderLabel(opt.name)}
         </button>
       ))}
     </div>
   );
+}
+
+// Display-only rename for the Shops page's category chips - the underlying
+// ShopCategory.name value ("ECM", "Meter", "Scanner") is unchanged and still
+// what's sent as the filter/onChange value, so this never touches the API
+// or any stored data, matching the same Dashboard card rename in App.jsx.
+const SHOP_CATEGORY_CHIP_SUFFIX = { ECM: 'ECM Service Center', Meter: 'Meter Service Center', Scanner: 'Scanner Service Center' };
+function shopCategoryChipLabel(name) {
+  return SHOP_CATEGORY_CHIP_SUFFIX[name] || name;
 }
 
 // Home's horizontal-scroll strips show at most HOME_STRIP_LIMIT cards, with
@@ -286,12 +311,33 @@ function PublicHomeTab({ api, onOpenShop, onOpenMachine, onGoTab }) {
   );
 }
 
+// Fixed Tamil Nadu district list for the Shops page's Location filter - the
+// public shop projection only exposes a free-text `address` (no separate
+// city/district field, see ShopService.mapPublicShop), so filtering matches
+// a district name as a substring of that address rather than an exact
+// field comparison. Purely client-side, no API/business-logic changes.
+const TAMIL_NADU_DISTRICTS = [
+  'Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri',
+  'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanyakumari', 'Karur',
+  'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris',
+  'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivaganga',
+  'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli',
+  'Tirupattur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore',
+  'Viluppuram', 'Virudhunagar',
+];
+
+function shopMatchesDistrict(address, district) {
+  if (!district) return true;
+  return (address || '').toLowerCase().includes(district.toLowerCase());
+}
+
 function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
   const [category, setCategory] = useState(initialCategory || '');
   const [items, setItems] = useState(null);
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
+  const [location, setLocation] = useState('');
 
   const fetchFirst = () => {
     setItems(null);
@@ -312,25 +358,37 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
       .finally(() => setLoadingMore(false));
   };
 
+  const visibleItems = items ? items.filter((s) => shopMatchesDistrict(s.address, location)) : items;
+
   return (
     <div className="public-mobile-tab">
       <div className="pub-page-header">
         <span className="pub-page-header-icon" style={{ background: 'var(--purple)' }}><Store className="h-5 w-5" /></span>
         <h2 className="pub-page-title">Shops</h2>
+        <div className="pub-page-header-actions">
+          <CustomSelect
+            className="pub-location-select location-filter-select"
+            icon={MapPin}
+            value={location}
+            onChange={setLocation}
+            placeholder="All Districts"
+            options={[{ value: '', label: 'All Districts' }, ...TAMIL_NADU_DISTRICTS.map((d) => ({ value: d, label: d }))]}
+          />
+        </div>
       </div>
-      <CategoryChips options={categories} value={category} onChange={setCategory} />
+      <CategoryChips options={categories} value={category} onChange={setCategory} renderLabel={shopCategoryChipLabel} />
       {items === null ? (
         <div className="pub-card-grid">{[1, 2, 3, 4].map((i) => <SkeletonShopCard key={i} />)}</div>
       ) : error ? (
         <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." />
-      ) : items.length === 0 ? (
+      ) : visibleItems.length === 0 ? (
         <EmptyState icon={Store} text="No shops found." />
       ) : (
         <>
           <div className="pub-card-grid">
-            {items.map((s) => <PublicShopCard key={s.id} shop={s} onOpen={onOpenShop} />)}
+            {visibleItems.map((s) => <PublicShopCard key={s.id} shop={s} onOpen={onOpenShop} />)}
           </div>
-          {nextCursor && (
+          {!location && nextCursor && (
             <button type="button" className="btn btn-outline btn-sm" style={{ width: '100%', marginTop: 14 }} onClick={loadMore} disabled={loadingMore}>
               {loadingMore ? 'Loading...' : 'Load More'}
             </button>
@@ -435,31 +493,195 @@ function PublicAdViewer({ ad, onClose }) {
   );
 }
 
-function PublicMyAdsTab({ api }) {
-  const [ads, setAds] = useState(null);
-  const [viewAd, setViewAd] = useState(null);
+// Same contact info + design as the authenticated Shop Admin's "Customer
+// Service" screen (SupportContactView + CompanyDetailsCard in App.jsx) -
+// backed by the same public /api/support-config endpoint, so no login or
+// new backend work is needed to show it here too.
+function PublicContactTab({ api }) {
+  const [config, setConfig] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
-    api.getPublicAds().then((res) => { if (!cancelled) setAds(res || []); }).catch(() => setAds([]));
+    api.getSupportConfig()
+      .then((res) => { if (!cancelled) setConfig(res); })
+      .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, []);
+
+  const rows = [
+    { icon: Phone, color: 'maroon', label: 'Customer Care Number', value: config?.customerCareNumber, href: config?.customerCareNumber ? `tel:${config.customerCareNumber}` : null },
+    { icon: MessageCircle, color: 'jgreen', label: 'WhatsApp Number', value: config?.whatsapp, href: config?.whatsapp ? `https://wa.me/${config.whatsapp.replace(/[^0-9]/g, '')}` : null, external: true },
+    { icon: Mail, color: 'purple', label: 'Email Address', value: config?.email, href: config?.email ? `mailto:${config.email}` : null },
+  ].filter((r) => r.value);
 
   return (
     <div className="public-mobile-tab">
       <div className="pub-page-header">
-        <span className="pub-page-header-icon" style={{ background: 'var(--rose)' }}><Megaphone className="h-5 w-5" /></span>
-        <h2 className="pub-page-title">My Ads</h2>
+        <span className="pub-page-header-icon" style={{ background: 'var(--rose)' }}><Headset className="h-5 w-5" /></span>
+        <h2 className="pub-page-title">Contact Us</h2>
       </div>
-      {ads === null ? (
-        <div className="pub-card-grid">{[1, 2, 3, 4].map((i) => <SkeletonMachineCard key={i} />)}</div>
-      ) : ads.length === 0 ? <EmptyState icon={Megaphone} text="No ads available." /> : (
-        <div className="pub-card-grid">
-          {ads.map((ad) => <PublicAdCard key={ad.id} ad={ad} onOpen={setViewAd} />)}
-        </div>
+      {loading ? (
+        <LoadingState />
+      ) : (
+        <>
+          <div className="card" style={{ marginBottom: 14 }}>
+            {rows.length > 0 ? (
+              <div className="space-y-3">
+                {rows.map((r, idx) => (
+                  <a
+                    key={idx}
+                    href={r.href}
+                    {...(r.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                    className="loc-box"
+                    style={{ textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+                  >
+                    <div className="loc-info">
+                      <div className={`icon-badge ${r.color}`}><r.icon /></div>
+                      <div className="loc-text">
+                        <span className="t1" style={{ display: 'block' }}>{r.value}</span>
+                        <span className="t2">{r.label}</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4" style={{ color: 'var(--text-3)', flexShrink: 0 }} />
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic', padding: '20px 0', textAlign: 'center' }}>
+                Contact details have not been configured yet.
+              </p>
+            )}
+          </div>
+
+          <div className="card">
+            <div className="section-title" style={{ marginBottom: 14 }}>
+              <div className="flex items-center gap-3">
+                <div className="icon-badge blue" style={{ width: 34, height: 34, borderRadius: 10 }}><Building2 style={{ width: 16, height: 16 }} /></div>
+                <div><h2 style={{ fontSize: 15 }}>Company Details</h2></div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+              <div style={{ flex: '1 1 220px', minWidth: 0 }}>
+                <div style={{ marginBottom: 10 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 3 }}>Company</div>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>keyshops.in company is a yourprinting.in group companies.</p>
+                </div>
+                <div>
+                  <div style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 3 }}>Address</div>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>Coimbatore, Tamil Nadu, South India.</p>
+                </div>
+              </div>
+              <img src={keyShopLogo} alt="Key Shops" style={{ width: 120, height: 120, objectFit: 'contain', flexShrink: 0 }} />
+            </div>
+          </div>
+        </>
       )}
-      {viewAd && <PublicAdViewer ad={viewAd} onClose={() => setViewAd(null)} />}
     </div>
+  );
+}
+
+// Terms & Conditions / About Us - reached from the hamburger drawer. Reuses
+// the same fixed content as the authenticated app (see the module-scope
+// constants above).
+function PublicStaticInfoScreen({ icon: Icon, color, title, body, onBack }) {
+  useBackHandler(true, onBack);
+  return (
+    <div className="public-mobile-tab">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}><ChevronLeft className="h-4 w-4" /> Back</button>
+      <div className="pub-page-header" style={{ marginTop: 14 }}>
+        <span className="pub-page-header-icon" style={{ background: color }}><Icon className="h-5 w-5" /></span>
+        <h2 className="pub-page-title">{title}</h2>
+      </div>
+      <div className="card">
+        <p style={{ fontSize: 13, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.7, whiteSpace: 'pre-line' }}>
+          {body}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+// Feedback & Suggestions - no backend endpoint for this, so it routes into
+// the same support email/WhatsApp already configured for Contact Us rather
+// than a form that would go nowhere.
+function PublicFeedbackScreen({ api, onBack }) {
+  useBackHandler(true, onBack);
+  const [config, setConfig] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    api.getSupportConfig().then((res) => { if (!cancelled) setConfig(res); }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  const subject = encodeURIComponent('Key Shops - Feedback & Suggestions');
+  const mailHref = config?.email ? `mailto:${config.email}?subject=${subject}` : null;
+  const waHref = config?.whatsapp ? `https://wa.me/${config.whatsapp.replace(/[^0-9]/g, '')}?text=${subject}` : null;
+
+  return (
+    <div className="public-mobile-tab">
+      <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}><ChevronLeft className="h-4 w-4" /> Back</button>
+      <div className="pub-page-header" style={{ marginTop: 14 }}>
+        <span className="pub-page-header-icon" style={{ background: 'var(--gold)' }}><MessageCircle className="h-5 w-5" /></span>
+        <h2 className="pub-page-title">Feedback &amp; Suggestions</h2>
+      </div>
+      <div className="card">
+        <p style={{ fontSize: 13, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.7, marginBottom: 18 }}>
+          We would love to hear from you. Share your feedback, report an issue, or suggest an improvement, and our team will get back to you.
+        </p>
+        <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
+          {mailHref && (
+            <a href={mailHref} className="btn btn-primary btn-sm">
+              <Mail className="h-4 w-4" /> Send Feedback
+            </a>
+          )}
+          {waHref && (
+            <a href={waHref} target="_blank" rel="noopener noreferrer" className="btn btn-outline btn-sm">
+              <MessageCircle className="h-4 w-4" /> WhatsApp
+            </a>
+          )}
+          {!mailHref && !waHref && (
+            <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
+              Contact details have not been configured yet.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Left-side slide-in navigation drawer, opened from the hamburger icon in
+// PublicTopBar. Mirrors the authenticated app's .mobile-nav-drawer pattern
+// (same z-index scale, same backdrop-click-to-close behavior) so it looks
+// and behaves consistently across both pre-login and logged-in shells.
+function PublicNavDrawer({ open, onClose, onNavigate }) {
+  useBackHandler(open, onClose);
+  const items = [
+    { key: 'terms', icon: FileText, color: 'var(--blue)', label: 'Terms & Conditions' },
+    { key: 'feedback', icon: MessageCircle, color: 'var(--gold)', label: 'Feedback & Suggestions' },
+  ];
+  return (
+    <>
+      {open && (
+        <div className="mobile-nav-drawer-backdrop fixed inset-0" style={{ background: 'rgba(5,4,3,0.6)' }} onClick={onClose} />
+      )}
+      <aside className={`pub-nav-drawer mobile-nav-drawer ${open ? 'open' : ''}`}>
+        <div className="brand" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <img src={keyShopLogo} alt="Key Shop" className="brand-logo-lg" />
+          <button type="button" className="icon-btn" onClick={onClose}><X /></button>
+        </div>
+        <nav style={{ padding: '8px 12px' }}>
+          {items.map((it) => (
+            <button key={it.key} type="button" className="side-link" onClick={() => onNavigate(it.key)}>
+              <span className="nav-ico" style={{ background: it.color }}><it.icon /></span>
+              <span>{it.label}</span>
+            </button>
+          ))}
+        </nav>
+      </aside>
+    </>
   );
 }
 
@@ -628,11 +850,14 @@ function PublicSearchOverlay({ api, onClose, onOpenShop, onOpenMachine }) {
   );
 }
 
-function PublicTopBar({ onSearch, onLogin }) {
+function PublicTopBar({ onSearch, onLogin, onMenu }) {
   const [showNotif, setShowNotif] = useState(false);
   return (
     <header className="public-mobile-topbar">
-      <img src={keyShopLogo} alt="Key Shop" className="public-mobile-logo" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+        <button type="button" className="icon-btn" onClick={onMenu} aria-label="Menu"><Menu /></button>
+        <img src={keyShopLogo} alt="Key Shop" className="public-mobile-logo" />
+      </div>
       <div className="public-mobile-topbar-actions">
         <button type="button" className="icon-btn" onClick={onSearch}><Search /></button>
         <div style={{ position: 'relative' }}>
@@ -669,9 +894,9 @@ export function PublicBottomNav({ activeTab, onGoTab }) {
         <span className="nav-ico-sm" style={{ background: 'var(--teal)' }}><Wrench /></span>
         <span>Machines</span>
       </button>
-      <button className={`mbn-item ${activeTab === 'myads' ? 'active' : ''}`} onClick={() => onGoTab('myads')}>
-        <span className="nav-ico-sm" style={{ background: 'var(--rose)' }}><Megaphone /></span>
-        <span>My Ads</span>
+      <button className={`mbn-item ${activeTab === 'contact' ? 'active' : ''}`} onClick={() => onGoTab('contact')}>
+        <span className="nav-ico-sm" style={{ background: 'var(--rose)' }}><Headset /></span>
+        <span>Contact</span>
       </button>
     </nav>
   );
@@ -681,6 +906,7 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
   const [publicTab, setPublicTab] = useState(initialTab || 'home');
   const [screen, setScreen] = useState({ type: 'tab' });
   const [searchOpen, setSearchOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
   const [tabCategoryHint, setTabCategoryHint] = useState('');
@@ -707,27 +933,38 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
     setPublicTab(tab);
   };
 
+  const openStatic = (key) => {
+    setMenuOpen(false);
+    if (key === 'contact') { goTab('contact'); return; }
+    setScreen({ type: key });
+  };
+
   let body;
   if (screen.type === 'shop') {
     body = <PublicShopDetailsScreen api={api} shopId={screen.id} onBack={backToTab} onOpenMachine={openMachine} />;
   } else if (screen.type === 'machine') {
     body = <PublicMachineDetailsScreen api={api} machineId={screen.id} onBack={backToTab} onOpenMachine={openMachine} />;
+  } else if (screen.type === 'terms') {
+    body = <PublicStaticInfoScreen icon={FileText} color="var(--blue)" title="Terms & Conditions" body={TERMS_AND_CONDITIONS_BODY} onBack={backToTab} />;
+  } else if (screen.type === 'feedback') {
+    body = <PublicFeedbackScreen api={api} onBack={backToTab} />;
   } else if (publicTab === 'shops') {
     body = <PublicShopsTab api={api} categories={categories} onOpenShop={openShop} initialCategory={tabCategoryHint} />;
   } else if (publicTab === 'machines') {
     body = <PublicMachinesTab api={api} productTypes={productTypes} onOpenMachine={openMachine} initialCategory={tabCategoryHint} />;
-  } else if (publicTab === 'myads') {
-    body = <PublicMyAdsTab api={api} />;
+  } else if (publicTab === 'contact') {
+    body = <PublicContactTab api={api} />;
   } else {
     body = <PublicHomeTab api={api} onOpenShop={openShop} onOpenMachine={openMachine} onGoTab={goTab} />;
   }
 
   return (
     <div className="public-mobile-app">
-      <PublicTopBar onSearch={() => setSearchOpen(true)} onLogin={onLogin} />
+      <PublicTopBar onSearch={() => setSearchOpen(true)} onLogin={onLogin} onMenu={() => setMenuOpen(true)} />
       <main className="public-mobile-main">{body}</main>
       <PublicBottomNav activeTab={publicTab} onGoTab={goTab} />
       {searchOpen && <PublicSearchOverlay api={api} onClose={() => setSearchOpen(false)} onOpenShop={openShop} onOpenMachine={openMachine} />}
+      <PublicNavDrawer open={menuOpen} onClose={() => setMenuOpen(false)} onNavigate={openStatic} />
     </div>
   );
 }
