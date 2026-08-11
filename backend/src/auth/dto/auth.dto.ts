@@ -1,5 +1,4 @@
 import { IsEmail, IsNotEmpty, IsString, IsOptional, MinLength, Matches, IsNumber, IsUrl } from 'class-validator';
-import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
 
 export class LoginDto {
   // Accepts either the account's email address OR its mobile number - both
@@ -126,9 +125,12 @@ export class RegisterShopDto {
   @IsEmail({}, { message: 'Please enter a valid email address' })
   email?: string;
 
+  // Format is intentionally NOT enforced by decorator here - AuthService.
+  // registerShop() normalizes any standard format (+91/91-prefixed, leading
+  // 0, spaced/dashed, bare 10-digit) down to the canonical form itself, so a
+  // caller isn't rejected here before that normalization gets a chance to run.
   @IsString()
   @IsNotEmpty()
-  @Matches(PHONE_REGEX, { message: PHONE_REGEX_MESSAGE })
   phone: string;
 
   // References a ShopCategory row (see shop-category module), picked from

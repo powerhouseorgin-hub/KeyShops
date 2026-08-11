@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, VerifyFirebasePhoneDto } from './dto/auth.dto';
 import { Role } from '@prisma/client';
-import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
+import { PHONE_REGEX_MESSAGE, normalizePhone } from '../common/validators/phone';
 import { CryptoService } from '../crypto/crypto.service';
 import { PaymentService } from '../payment/payment.service';
 import { getFirebaseAdminApp } from './firebase-admin';
@@ -77,8 +77,17 @@ export class AuthService implements OnModuleInit {
     if (dto.method === 'email' && !emailRegex.test(dto.identifier)) {
       throw new BadRequestException('Invalid email address format');
     }
-    if (dto.method === 'phone' && !PHONE_REGEX.test(dto.identifier)) {
-      throw new BadRequestException(PHONE_REGEX_MESSAGE);
+    if (dto.method === 'phone') {
+      // Accepts +91/91-prefixed, leading-0, spaced/dashed, or bare 10-digit
+      // input and normalizes to the canonical bare 10-digit form so every
+      // downstream lookup/store below (User.phone uniqueness check,
+      // OtpCode.identifier, MSG91 delivery) uses one consistent value
+      // regardless of how the caller typed it.
+      const normalized = normalizePhone(dto.identifier);
+      if (!normalized) {
+        throw new BadRequestException(PHONE_REGEX_MESSAGE);
+      }
+      dto.identifier = normalized;
     }
 
     if (dto.purpose === 'register') {
@@ -208,6 +217,17 @@ export class AuthService implements OnModuleInit {
   }
 
   async verifyOtp(dto: { identifier: string, method: string, purpose?: string, code: string }) {
+    if (dto.method === 'phone') {
+      // Must normalize the same way sendOtp() did so the identifier matches
+      // the OtpCode row it created, regardless of which format the caller
+      // typed this time around.
+      const normalized = normalizePhone(dto.identifier);
+      if (!normalized) {
+        throw new BadRequestException(PHONE_REGEX_MESSAGE);
+      }
+      dto.identifier = normalized;
+    }
+
     const purpose = dto.purpose || 'default';
 
     const record = await this.tenantService.prisma.otpCode.findFirst({
@@ -428,6 +448,17 @@ export class AuthService implements OnModuleInit {
   // both stored as login identifiers on the User record - either can be
   // used to sign in afterwards with the same password (see AuthService.login).
   async registerShop(dto: RegisterShopDto) {
+    // Normalize to the canonical bare 10-digit form up front - the OTP step
+    // already normalized/verified a phone in this same shape, so this just
+    // guards against the submitted phone field having been edited after OTP
+    // verification, and keeps every use of dto.phone below (uniqueness
+    // check, User row, referralCode) consistent regardless of format typed.
+    const normalizedPhone = normalizePhone(dto.phone);
+    if (!normalizedPhone) {
+      throw new BadRequestException(PHONE_REGEX_MESSAGE);
+    }
+    dto.phone = normalizedPhone;
+
     // Real payment gate: the order was created server-side (see
     // PaymentService.createSubscriptionOrder) for the exact platform-wide
     // subscription price, so a valid signature here cryptographically proves

@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { TenantService } from '../tenant/tenant.service';
 import { CryptoService } from '../crypto/crypto.service';
 import { FileService } from './file.service';
 import { CreateCustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { getTenantContext } from '../tenant/tenant.context';
+import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 
 @Injectable()
 export class CustomerService {
@@ -15,6 +16,15 @@ export class CustomerService {
 
   // SHOP ADMIN: Create Customer
   async createCustomer(shopId: string, dto: CreateCustomerDto) {
+    // Accepts +91/91-prefixed, leading-0, spaced/dashed, or bare 10-digit
+    // input and normalizes to the canonical bare 10-digit form stored on
+    // Customer.phone.
+    const normalizedPhone = normalizePhone(dto.phone);
+    if (!normalizedPhone) {
+      throw new BadRequestException(PHONE_REGEX_MESSAGE);
+    }
+    dto.phone = normalizedPhone;
+
     // Encrypt the sensitive ID Proof Number if provided
     const encryptedIdNumber = dto.idProofNumber ? this.cryptoService.encrypt(dto.idProofNumber) : null;
 
@@ -131,6 +141,14 @@ export class CustomerService {
     });
     if (!customer) {
       throw new NotFoundException('Customer record not found');
+    }
+
+    if (dto.phone !== undefined) {
+      const normalizedPhone = normalizePhone(dto.phone);
+      if (!normalizedPhone) {
+        throw new BadRequestException(PHONE_REGEX_MESSAGE);
+      }
+      dto.phone = normalizedPhone;
     }
 
     let encryptedIdNumber = undefined;
@@ -385,6 +403,14 @@ export class CustomerService {
     });
     if (!customer) {
       throw new NotFoundException('Customer record not found');
+    }
+
+    if (dto.phone !== undefined) {
+      const normalizedPhone = normalizePhone(dto.phone);
+      if (!normalizedPhone) {
+        throw new BadRequestException(PHONE_REGEX_MESSAGE);
+      }
+      dto.phone = normalizedPhone;
     }
 
     let encryptedIdNumber = undefined;

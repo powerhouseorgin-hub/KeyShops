@@ -33,8 +33,16 @@ export class PaymentService {
   // than the real subscription price.
   async createSubscriptionOrder() {
     const platformConfig = await this.tenantService.prisma.platformConfig.findUnique({ where: { id: 'default' } });
-    const subscriptionPrice = platformConfig?.subscriptionPrice ?? 999;
-    const amountPaise = Math.round(subscriptionPrice * 100);
+    const baseAmount = platformConfig?.subscriptionPrice ?? 999;
+    const gstPercent = platformConfig?.gstPercent ?? 18;
+    // GST is added on top of the base subscription price (standard for
+    // Indian SaaS/digital service pricing) - the customer is charged
+    // baseAmount + GST, not baseAmount alone. Rounded to the nearest paisa
+    // before conversion since Razorpay's `amount` must be an integer count
+    // of paise.
+    const gstAmount = Math.round(baseAmount * (gstPercent / 100) * 100) / 100;
+    const totalAmount = Math.round((baseAmount + gstAmount) * 100) / 100;
+    const amountPaise = Math.round(totalAmount * 100);
 
     // This Razorpay account is shared with other websites/apps (e.g.
     // staffregister.in) - `notes.source` tags every order from this backend
@@ -45,7 +53,7 @@ export class PaymentService {
       amount: amountPaise,
       currency: 'INR',
       receipt: `shop_reg_${Date.now()}`,
-      notes: { source: 'kee' },
+      notes: { source: 'kee', baseAmount: String(baseAmount), gstPercent: String(gstPercent), gstAmount: String(gstAmount) },
     });
 
     return {
@@ -53,6 +61,13 @@ export class PaymentService {
       amount: amountPaise,
       currency: order.currency,
       keyId: process.env.RAZORPAY_KEY_ID,
+      // Breakdown so the frontend can show Base/GST/Total without a second
+      // round trip - all derived from the same PlatformConfig row used to
+      // create the order above, never client-supplied.
+      baseAmount,
+      gstPercent,
+      gstAmount,
+      totalAmount,
     };
   }
 

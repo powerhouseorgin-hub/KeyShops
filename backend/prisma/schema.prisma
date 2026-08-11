@@ -574,6 +574,11 @@ model PlatformConfig {
   // configurable subscription rate now that all shops are on one plan tier.
   subscriptionPrice Float @default(999)
 
+  // GST percentage added on top of subscriptionPrice when charging via
+  // Razorpay - see PaymentService.createSubscriptionOrder. 18% is the
+  // standard GST rate for SaaS/digital services in India.
+  gstPercent Float @default(18)
+
   // Super Admin contact details shown on the shop-facing "Support Contact"
   // screen (reached from the bottom nav's Customer Service icon). Nullable so
   // existing deployments aren't required to backfill them immediately.

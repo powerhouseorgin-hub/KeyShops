@@ -70,6 +70,7 @@ export class ReportController {
       email?: string;
       customerCareNumber?: string;
       subscriptionPrice?: number;
+      gstPercent?: number;
     },
   ) {
     return this.reportService.updateSupportConfig(dto);

@@ -1,6 +1,5 @@
-import { IsNotEmpty, IsString, IsOptional, IsNumber, IsBoolean, Matches, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsNumber, IsBoolean, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
 
 // Inline "register this key blank while creating the customer" payload, used when
 // the shop admin typed a key number that doesn't match anything in the existing
@@ -17,9 +16,12 @@ export class CreateCustomerDto {
   @IsNotEmpty({ message: 'Customer name is required' })
   name: string;
 
+  // Format is intentionally NOT enforced by decorator here -
+  // CustomerService.createCustomer() normalizes any standard format
+  // (+91/91-prefixed, leading 0, spaced/dashed, bare 10-digit) down to the
+  // canonical form itself.
   @IsString()
   @IsNotEmpty({ message: 'Phone number is required' })
-  @Matches(PHONE_REGEX, { message: PHONE_REGEX_MESSAGE })
   phone: string;
 
   @IsString()
@@ -127,9 +129,9 @@ export class UpdateCustomerDto {
   @IsOptional()
   name?: string;
 
+  // See CreateCustomerDto.phone - normalized in the service, not here.
   @IsString()
   @IsOptional()
-  @Matches(PHONE_REGEX, { message: PHONE_REGEX_MESSAGE })
   phone?: string;
 
   @IsString()
