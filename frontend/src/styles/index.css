@@ -1069,6 +1069,10 @@ select.sel:focus { border-color: var(--gold); }
    instead of shrinking - min-width:0 lets them actually respect the row's
    available width. */
 .product-body .flex.gap-2 > .btn-block { min-width: 0; }
+/* Same fix as above, for the Machines page's .pub-card layout (see App.jsx -
+   its Edit/Remove row isn't inside .product-body, it's a separate div below
+   .pub-card-body, so the selector above never matched it). */
+.pub-card .flex.gap-2 > .btn-block { min-width: 0; }
 .product-body .pname { font-family: var(--display); font-weight: 700; color: var(--text-0); font-size: 14px; }
 .product-body .pcat { font-size: 11px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
 .product-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
