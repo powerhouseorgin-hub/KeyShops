@@ -65,7 +65,14 @@ async function bootstrap() {
       if (process.env.NODE_ENV !== 'production' && /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
         return callback(null, true);
       }
-      callback(new Error('Not allowed by CORS'), false);
+      // Deny by passing `false`, not an Error - an Error here propagates as
+      // an unhandled exception up through Express (this middleware runs
+      // ahead of Nest's own exception filter), spamming the server logs for
+      // every ordinary blocked request. Passing `false` alone just omits
+      // the CORS headers, which is all a browser needs to block the
+      // response client-side - no error, no noise.
+      console.warn(`CORS: blocked request from origin "${origin}"`);
+      callback(null, false);
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
