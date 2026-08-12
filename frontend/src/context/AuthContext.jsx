@@ -409,6 +409,19 @@ export const AuthProvider = ({ children }) => {
       if (limit) params.append('limit', String(limit));
       return request(`/api/shop/customers?${params.toString()}`);
     },
+    // Master Key Catalog Search (KeysSearchView) - customer registrations
+    // that have a key code, scoped to this shop admin's own shop like every
+    // other /api/shop/customers call. Same shape as getCustomersPage above,
+    // just with keysOnly=true so registrations with no key code (the
+    // registration wizard lets a shop admin skip that field) are excluded.
+    getShopKeysCatalogue: async ({ search = '', cursor, limit } = {}) => {
+      const params = new URLSearchParams();
+      params.append('keysOnly', 'true');
+      if (search) params.append('search', search);
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
+      return request(`/api/shop/customers?${params.toString()}`);
+    },
     getGlobalCustomersForSearch: async (search = '') => request(`/api/shop/customers/global-search?search=${search}`),
     createCustomer: async (dto) => request('/api/shop/customers', 'POST', dto),
     updateCustomer: async (id, dto) => request(`/api/shop/customers/${id}`, 'PUT', dto),
@@ -570,6 +583,17 @@ export const AuthProvider = ({ children }) => {
     // sites depend on its plain-flat-array, unpaginated shape).
     getSuperCustomersPage: async ({ search = '', cursor, limit } = {}) => {
       const params = new URLSearchParams();
+      if (search) params.append('search', search);
+      if (cursor) params.append('cursor', cursor);
+      if (limit) params.append('limit', String(limit));
+      return request(`/api/super/customers?${params.toString()}`);
+    },
+    // Master Key Catalogue (KeysCatalogView) - customer registrations across
+    // every shop that have a key code. Same shape as getSuperCustomersPage
+    // above, just with keysOnly=true - see getShopKeysCatalogue's comment.
+    getSuperKeysCatalogue: async ({ search = '', cursor, limit } = {}) => {
+      const params = new URLSearchParams();
+      params.append('keysOnly', 'true');
       if (search) params.append('search', search);
       if (cursor) params.append('cursor', cursor);
       if (limit) params.append('limit', String(limit));

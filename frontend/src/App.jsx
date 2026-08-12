@@ -682,6 +682,9 @@ const LANGUAGES = {
     platformCatalogueLabel: 'Platform Catalogue',
     masterKeyCatalogueTitle: 'Master Key Catalogue',
     provisionKeyBlankSpecsDesc: 'Provision key blank specifications available for lookup across every shop terminal.',
+    registeredKeysAcrossShopsDesc: 'Browse every registered key across all shop terminals.',
+    noRegisteredKeysMatch: 'No registered keys match this search',
+    registeredKeyLabel: 'Key',
     addKeyBlankBtn: 'Add Key Blank',
     searchCataloguePlaceholder: 'Search catalogue by code, category, specs reference…',
     loadingCatalogueMsg: 'Loading catalogue…',
@@ -854,7 +857,7 @@ const LANGUAGES = {
     amountCol: 'Amount',
     duplicateKeyLookupLabel: 'Duplicate Key Lookup',
     masterKeyCatalogSearchTitle: 'Master Key Catalog Search',
-    lookupBlankSpecDesc: 'Lookup blank specifications, key codes, and customer registry records in seconds.',
+    lookupBlankSpecDesc: 'Search your shop\'s registered keys by key code, customer name, or vehicle category in seconds.',
     keyCodeVehicleCategoryLabel: 'Key Code, Vehicle No, or Category',
     searchByKeyCodePlaceholder: 'Search by key code, vehicle number, customer location, category\u2026',
     searchingRegistryMsg: 'Searching registry\u2026',
@@ -1556,6 +1559,9 @@ const LANGUAGES = {
     platformCatalogueLabel: 'प्लेटफ़ॉर्म कैटलॉग',
     masterKeyCatalogueTitle: 'मास्टर की कैटलॉग',
     provisionKeyBlankSpecsDesc: 'हर दुकान टर्मिनल पर लुकअप के लिए उपलब्ध की ब्लैंक विनिर्देश प्रावधानित करें।',
+    registeredKeysAcrossShopsDesc: 'सभी दुकान टर्मिनल पर पंजीकृत हर चाबी ब्राउज़ करें।',
+    noRegisteredKeysMatch: 'इस खोज से कोई पंजीकृत चाबी मेल नहीं खाती',
+    registeredKeyLabel: 'चाबी',
     addKeyBlankBtn: 'की ब्लैंक जोड़ें',
     searchCataloguePlaceholder: 'कोड, श्रेणी, स्पेक्स संदर्भ द्वारा कैटलॉग खोजें…',
     loadingCatalogueMsg: 'कैटलॉग लोड हो रहा है…',
@@ -1728,7 +1734,7 @@ const LANGUAGES = {
     amountCol: 'राशि',
     duplicateKeyLookupLabel: 'डुप्लीकेट की लुकअप',
     masterKeyCatalogSearchTitle: 'मास्टर की कैटलॉग खोज',
-    lookupBlankSpecDesc: 'सेकंडों में ब्लैंक स्पेसिफिकेशन, की कोड और ग्राहक पंजीकरण रिकॉर्ड खोजें।',
+    lookupBlankSpecDesc: 'अपनी दुकान की पंजीकृत चाबियों को की कोड, ग्राहक नाम या वाहन श्रेणी से सेकंडों में खोजें।',
     keyCodeVehicleCategoryLabel: 'की कोड, वाहन नंबर, या श्रेणी',
     searchByKeyCodePlaceholder: 'की कोड, वाहन नंबर, ग्राहक स्थान, श्रेणी से खोजें\u2026',
     searchingRegistryMsg: 'रजिस्ट्री खोजी जा रही है\u2026',
@@ -2407,6 +2413,9 @@ const LANGUAGES = {
     platformCatalogueLabel: 'தளப் பட்டியல்',
     masterKeyCatalogueTitle: 'மாஸ்டர் கீ பட்டியல்',
     provisionKeyBlankSpecsDesc: 'ஒவ்வொரு கடை முனையத்திலும் தேடலுக்கு கிடைக்கும் கீ பிளாங்க் விவரக்குறிப்புகளை வழங்குக.',
+    registeredKeysAcrossShopsDesc: 'அனைத்து கடை முனையங்களிலும் பதிவுசெய்யப்பட்ட ஒவ்வொரு சாவியையும் உலாவுக.',
+    noRegisteredKeysMatch: 'இந்தத் தேடலுக்கு பதிவுசெய்யப்பட்ட சாவிகள் எதுவும் பொருந்தவில்லை',
+    registeredKeyLabel: 'சாவி',
     addKeyBlankBtn: 'கீ பிளாங்க் சேர்க்க',
     searchCataloguePlaceholder: 'குறியீடு, வகை, விவரக்குறிப்பு குறிப்பு மூலம் பட்டியலைத் தேடுக…',
     loadingCatalogueMsg: 'பட்டியல் ஏற்றப்படுகிறது…',
@@ -2579,7 +2588,7 @@ const LANGUAGES = {
     amountCol: 'தொகை',
     duplicateKeyLookupLabel: 'நகல் சாவி தேடல்',
     masterKeyCatalogSearchTitle: 'மாஸ்டர் சாவி பட்டியல் தேடல்',
-    lookupBlankSpecDesc: 'வெற்று விவரக்குறிப்புகள், சாவி குறியீடுகள் மற்றும் வாடிக்கையாளர் பதிவு ரெக்கார்டுகளை நொடிகளில் தேடுங்கள்.',
+    lookupBlankSpecDesc: 'உங்கள் கடையின் பதிவுசெய்யப்பட்ட சாவிகளை சாவி குறியீடு, வாடிக்கையாளர் பெயர் அல்லது வாகன வகை மூலம் நொடிகளில் தேடுங்கள்.',
     keyCodeVehicleCategoryLabel: 'சாவி குறியீடு, வாகன எண், அல்லது வகை',
     searchByKeyCodePlaceholder: 'சாவி குறியீடு, வாகன எண், வாடிக்கையாளர் இடம், வகை மூலம் தேடுங்கள்\u2026',
     searchingRegistryMsg: 'பதிவேட்டைத் தேடுகிறது\u2026',
@@ -3264,6 +3273,9 @@ const LANGUAGES = {
     platformCatalogueLabel: 'ప్లాట్‌ఫారమ్ కేటలాగ్',
     masterKeyCatalogueTitle: 'మాస్టర్ కీ కేటలాగ్',
     provisionKeyBlankSpecsDesc: 'ప్రతి షాప్ టెర్మినల్‌లో శోధనకు అందుబాటులో ఉన్న కీ బ్లాంక్ స్పెసిఫికేషన్‌లను ప్రొవిజన్ చేయండి.',
+    registeredKeysAcrossShopsDesc: 'అన్ని షాప్ టెర్మినల్‌లలో నమోదైన ప్రతి కీని బ్రౌజ్ చేయండి.',
+    noRegisteredKeysMatch: 'ఈ శోధనకు నమోదైన కీలు ఏవీ సరిపోలడం లేదు',
+    registeredKeyLabel: 'కీ',
     addKeyBlankBtn: 'కీ బ్లాంక్ జోడించండి',
     searchCataloguePlaceholder: 'కోడ్, వర్గం, స్పెక్స్ రిఫరెన్స్ ద్వారా కేటలాగ్‌ను శోధించండి…',
     loadingCatalogueMsg: 'కేటలాగ్ లోడ్ అవుతోంది…',
@@ -3436,7 +3448,7 @@ const LANGUAGES = {
     amountCol: 'మొత్తం',
     duplicateKeyLookupLabel: 'నకిలీ కీ శోధన',
     masterKeyCatalogSearchTitle: 'మాస్టర్ కీ కేటలాగ్ శోధన',
-    lookupBlankSpecDesc: 'బ్లాంక్ స్పెసిఫికేషన్‌లు, కీ కోడ్‌లు మరియు కస్టమర్ రిజిస్ట్రీ రికార్డులను సెకన్లలో వెతకండి.',
+    lookupBlankSpecDesc: 'మీ షాప్ యొక్క నమోదైన కీలను కీ కోడ్, కస్టమర్ పేరు లేదా వాహన వర్గం ద్వారా సెకన్లలో శోధించండి.',
     keyCodeVehicleCategoryLabel: 'కీ కోడ్, వాహన నంబర్, లేదా వర్గం',
     searchByKeyCodePlaceholder: 'కీ కోడ్, వాహన నంబర్, కస్టమర్ లొకేషన్, వర్గం ద్వారా శోధించండి\u2026',
     searchingRegistryMsg: 'రిజిస్ట్రీని శోధిస్తోంది\u2026',
@@ -4115,6 +4127,9 @@ const LANGUAGES = {
     platformCatalogueLabel: 'ಪ್ಲಾಟ್‌ಫಾರ್ಮ್ ಕ್ಯಾಟಲಾಗ್',
     masterKeyCatalogueTitle: 'ಮಾಸ್ಟರ್ ಕೀ ಕ್ಯಾಟಲಾಗ್',
     provisionKeyBlankSpecsDesc: 'ಪ್ರತಿ ಅಂಗಡಿ ಟರ್ಮಿನಲ್‌ನಲ್ಲಿ ಹುಡುಕಾಟಕ್ಕೆ ಲಭ್ಯವಿರುವ ಕೀ ಬ್ಲಾಂಕ್ ವಿವರಣೆಗಳನ್ನು ಒದಗಿಸಿ.',
+    registeredKeysAcrossShopsDesc: 'ಎಲ್ಲಾ ಅಂಗಡಿ ಟರ್ಮಿನಲ್‌ಗಳಲ್ಲಿ ನೋಂದಾಯಿತ ಪ್ರತಿ ಕೀಯನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ.',
+    noRegisteredKeysMatch: 'ಈ ಹುಡುಕಾಟಕ್ಕೆ ಯಾವುದೇ ನೋಂದಾಯಿತ ಕೀಗಳು ಹೊಂದಿಕೆಯಾಗುತ್ತಿಲ್ಲ',
+    registeredKeyLabel: 'ಕೀ',
     addKeyBlankBtn: 'ಕೀ ಬ್ಲಾಂಕ್ ಸೇರಿಸಿ',
     searchCataloguePlaceholder: 'ಕೋಡ್, ವರ್ಗ, ಸ್ಪೆಕ್ಸ್ ಉಲ್ಲೇಖದ ಮೂಲಕ ಕ್ಯಾಟಲಾಗ್ ಹುಡುಕಿ…',
     loadingCatalogueMsg: 'ಕ್ಯಾಟಲಾಗ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…',
@@ -4287,7 +4302,7 @@ const LANGUAGES = {
     amountCol: 'ಮೊತ್ತ',
     duplicateKeyLookupLabel: 'ನಕಲಿ ಕೀ ಹುಡುಕಾಟ',
     masterKeyCatalogSearchTitle: 'ಮಾಸ್ಟರ್ ಕೀ ಕ್ಯಾಟಲಾಗ್ ಹುಡುಕಾಟ',
-    lookupBlankSpecDesc: 'ಕ್ಷಣಗಳಲ್ಲಿ ಖಾಲಿ ವಿವರಣೆಗಳು, ಕೀ ಕೋಡ್‌ಗಳು ಮತ್ತು ಗ್ರಾಹಕ ನೋಂದಣಿ ದಾಖಲೆಗಳನ್ನು ಹುಡುಕಿ.',
+    lookupBlankSpecDesc: 'ನಿಮ್ಮ ಅಂಗಡಿಯ ನೋಂದಾಯಿತ ಕೀಗಳನ್ನು ಕೀ ಕೋಡ್, ಗ್ರಾಹಕರ ಹೆಸರು ಅಥವಾ ವಾಹನ ವರ್ಗದ ಮೂಲಕ ಕ್ಷಣಗಳಲ್ಲಿ ಹುಡುಕಿ.',
     keyCodeVehicleCategoryLabel: 'ಕೀ ಕೋಡ್, ವಾಹನ ಸಂಖ್ಯೆ, ಅಥವಾ ವರ್ಗ',
     searchByKeyCodePlaceholder: 'ಕೀ ಕೋಡ್, ವಾಹನ ಸಂಖ್ಯೆ, ಗ್ರಾಹಕ ಸ್ಥಳ, ವರ್ಗದ ಮೂಲಕ ಹುಡುಕಿ\u2026',
     searchingRegistryMsg: 'ನೋಂದಣಿಯನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ\u2026',
@@ -4972,6 +4987,9 @@ const LANGUAGES = {
     platformCatalogueLabel: 'പ്ലാറ്റ്‌ഫോം കാറ്റലോഗ്',
     masterKeyCatalogueTitle: 'മാസ്റ്റർ കീ കാറ്റലോഗ്',
     provisionKeyBlankSpecsDesc: 'എല്ലാ ഷോപ്പ് ടെർമിനലിലും തിരയാൻ ലഭ്യമായ കീ ബ്ലാങ്ക് സ്പെസിഫിക്കേഷനുകൾ പ്രൊവിഷൻ ചെയ്യുക.',
+    registeredKeysAcrossShopsDesc: 'എല്ലാ ഷോപ്പ് ടെർമിനലുകളിലും രജിസ്റ്റർ ചെയ്ത ഓരോ കീയും ബ്രൗസ് ചെയ്യുക.',
+    noRegisteredKeysMatch: 'ഈ തിരയലിന് രജിസ്റ്റർ ചെയ്ത കീകളൊന്നും പൊരുത്തപ്പെടുന്നില്ല',
+    registeredKeyLabel: 'കീ',
     addKeyBlankBtn: 'കീ ബ്ലാങ്ക് ചേർക്കുക',
     searchCataloguePlaceholder: 'കോഡ്, വിഭാഗം, സ്പെക്‌സ് റഫറൻസ് പ്രകാരം കാറ്റലോഗ് തിരയുക…',
     loadingCatalogueMsg: 'കാറ്റലോഗ് ലോഡ് ചെയ്യുന്നു…',
@@ -5144,7 +5162,7 @@ const LANGUAGES = {
     amountCol: 'തുക',
     duplicateKeyLookupLabel: 'ഡ്യൂപ്ലിക്കേറ്റ് കീ ലുക്കപ്പ്',
     masterKeyCatalogSearchTitle: 'മാസ്റ്റർ കീ കാറ്റലോഗ് തിരയൽ',
-    lookupBlankSpecDesc: 'സെക്കൻഡുകൾക്കുള്ളിൽ ബ്ലാങ്ക് സ്പെസിഫിക്കേഷനുകൾ, കീ കോഡുകൾ, ഉപഭോക്തൃ രജിസ്ട്രി രേഖകൾ എന്നിവ തിരയുക.',
+    lookupBlankSpecDesc: 'നിങ്ങളുടെ ഷോപ്പിന്റെ രജിസ്റ്റർ ചെയ്ത കീകൾ കീ കോഡ്, ഉപഭോക്താവിന്റെ പേര്, അല്ലെങ്കിൽ വാഹന വിഭാഗം എന്നിവയാൽ സെക്കൻഡുകൾക്കുള്ളിൽ തിരയുക.',
     keyCodeVehicleCategoryLabel: 'കീ കോഡ്, വാഹന നമ്പർ, അല്ലെങ്കിൽ വിഭാഗം',
     searchByKeyCodePlaceholder: 'കീ കോഡ്, വാഹന നമ്പർ, ഉപഭോക്തൃ സ്ഥലം, വിഭാഗം എന്നിവയാൽ തിരയുക\u2026',
     searchingRegistryMsg: 'രജിസ്ട്രി തിരയുന്നു\u2026',
@@ -9005,14 +9023,27 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           <h1>{t('shops')}</h1>
           <p>{t('provisionShopsDesc')}</p>
         </div>
+      </div>
+
+      {/* Portaled to document.body, not a plain sibling here - this .animate-
+          fade-in ancestor's fadeIn animation has fill-mode: forwards, which
+          leaves a non-none `transform` applied permanently after it
+          finishes. A `transform` on an ancestor creates a new containing
+          block for `position: fixed` descendants (they'd end up fixed
+          relative to this div's box, not the viewport) - the portal is what
+          keeps the FAB truly pinned to the screen corner regardless. */}
+      {createPortal(
         <button
+          type="button"
           onClick={() => { resetAddForm(); setShowAddModal(true); }}
-          className="btn btn-primary"
+          className="fab"
+          aria-label={t('provisionNewShop')}
+          title={t('provisionNewShop')}
         >
           <Plus />
-          <span>{t('provisionNewShop')}</span>
-        </button>
-      </div>
+        </button>,
+        document.body
+      )}
 
       {/* Search box stays mounted regardless of loading/results state so it
           never loses focus while typing. Filtering is instant/client-side
@@ -9993,11 +10024,22 @@ function SuperCustomersView({ t, api, searchDispatch }) {
           <h1>{t('customerRegistryTitle')}</h1>
           <p>{t('superviseComplianceRecordsDesc')}</p>
         </div>
-        <button onClick={openCreateWizard} className="btn btn-primary">
-          <Plus />
-          <span>{t('createCustomerBtn')}</span>
-        </button>
       </div>
+
+      {/* Portaled to escape .animate-fade-in's permanent transform (fill-mode
+          forwards) - see ShopsManagementView's identical FAB for why. */}
+      {createPortal(
+        <button
+          type="button"
+          onClick={openCreateWizard}
+          className="fab"
+          aria-label={t('createCustomerBtn')}
+          title={t('createCustomerBtn')}
+        >
+          <Plus />
+        </button>,
+        document.body
+      )}
 
       {/* The search box lives outside the loading/results swap below so it
           never unmounts while typing - every keystroke sets `search`, which
@@ -10415,6 +10457,19 @@ const KEY_CATALOGUE_PAGE_SIZE = 20;
 // scope, same rationale as shopsFirstPageCache above.
 let keysFirstPageCache = null;
 
+// Maps a Customer.vehicleCategory value to its existing display label -
+// shared shape with KeysSearchView's identical need below.
+function keyTypeDisplayLabel(t, vehicleCategory) {
+  switch (vehicleCategory) {
+    case VEHICLE_CATEGORIES.TWO_WHEELER: return t('twoWheelerLabel');
+    case VEHICLE_CATEGORIES.FOUR_WHEELER: return t('fourWheelerLabel');
+    case VEHICLE_CATEGORIES.TRUCK_LORRY: return t('truckLorryLabel');
+    case VEHICLE_CATEGORIES.HOME: return t('homeCategoryLabel');
+    case VEHICLE_CATEGORIES.OFFICE: return t('officeCategoryLabel');
+    default: return null;
+  }
+}
+
 function KeysCatalogView({ t, api, searchDispatch }) {
   const [keys, setKeys] = useState(keysFirstPageCache ? keysFirstPageCache.items : []);
   const [loading, setLoading] = useState(!keysFirstPageCache);
@@ -10424,9 +10479,6 @@ function KeysCatalogView({ t, api, searchDispatch }) {
   const [hasMore, setHasMore] = useState(keysFirstPageCache ? keysFirstPageCache.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  useBackHandler(showAddModal, () => setShowAddModal(false));
-  const [editKey, setEditKey] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   // Debounced before it reaches the server - see PromotionsFeed's identical
   // pattern for why (every change now triggers a network request instead of
@@ -10444,12 +10496,6 @@ function KeysCatalogView({ t, api, searchDispatch }) {
     }
   }, [searchDispatch?.nonce]);
 
-  // Form states
-  const [keyNumber, setKeyNumber] = useState('');
-  const [category, setCategory] = useState('');
-  const [backImageUrl, setBackImageUrl] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
-
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchKeys = async () => {
@@ -10458,7 +10504,7 @@ function KeysCatalogView({ t, api, searchDispatch }) {
     // refreshes silently in the background.
     if (debouncedSearchQuery || keys.length === 0) setLoading(true);
     try {
-      const res = await api.getMasterKeysPage({ search: debouncedSearchQuery, limit: KEY_CATALOGUE_PAGE_SIZE });
+      const res = await api.getSuperKeysCatalogue({ search: debouncedSearchQuery, limit: KEY_CATALOGUE_PAGE_SIZE });
       setKeys(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -10478,7 +10524,7 @@ function KeysCatalogView({ t, api, searchDispatch }) {
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
     try {
-      const res = await api.getMasterKeysPage({ search: debouncedSearchQuery, cursor: nextCursor, limit: KEY_CATALOGUE_PAGE_SIZE });
+      const res = await api.getSuperKeysCatalogue({ search: debouncedSearchQuery, cursor: nextCursor, limit: KEY_CATALOGUE_PAGE_SIZE });
       setKeys((prev) => [...prev, ...res.items]);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -10506,66 +10552,14 @@ function KeysCatalogView({ t, api, searchDispatch }) {
     return () => observer.disconnect();
   }, [hasMore, nextCursor, loadingMore, debouncedSearchQuery]);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setErrorMsg('');
-    try {
-      const dto = { keyNumber, category, backImageUrl };
-
-      if (editKey) {
-        await api.updateMasterKey(editKey.id, dto);
-      } else {
-        await api.createMasterKey(dto);
-      }
-      setShowAddModal(false);
-      resetForm();
-      fetchKeys();
-    } catch (err) {
-      setErrorMsg(err.message || t('operationFailedMsg'));
-    }
-  };
-
-  const handleEditClick = (k) => {
-    setEditKey(k);
-    setKeyNumber(k.keyNumber);
-    setCategory(k.category);
-    setBackImageUrl(k.backImageUrl || '');
-    setShowAddModal(true);
-  };
-
-  const handleDelete = async (id) => {
-    if (!confirm(t('confirmRemoveKeyBlank'))) return;
-    try {
-      await api.deleteMasterKey(id);
-      fetchKeys();
-    } catch (e) {
-      alert(e.message);
-    }
-  };
-
-  const resetForm = () => {
-    setEditKey(null);
-    setKeyNumber('');
-    setCategory('');
-    setBackImageUrl('');
-    setErrorMsg('');
-  };
-
   return (
     <div className="animate-fade-in">
       <div className="page-head">
         <div>
           <div className="eyebrow"><Key /> {t('platformCatalogueLabel')}</div>
           <h1>{t('masterKeyCatalogueTitle')}</h1>
-          <p>{t('provisionKeyBlankSpecsDesc')}</p>
+          <p>{t('registeredKeysAcrossShopsDesc')}</p>
         </div>
-        <button
-          onClick={() => { resetForm(); setShowAddModal(true); }}
-          className="btn btn-primary"
-        >
-          <Plus />
-          <span>{t('addKeyBlankBtn')}</span>
-        </button>
       </div>
 
       {/* Central catalog lookup search input */}
@@ -10593,40 +10587,30 @@ function KeysCatalogView({ t, api, searchDispatch }) {
       ) : keys.length === 0 ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, minHeight: 220 }}>
           <div className="icon-badge maroon"><KeyRound /></div>
-          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noKeyBlanksMatch')}</span>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-2)' }}>{t('noRegisteredKeysMatch')}</span>
         </div>
       ) : (
         <div className="product-grid stagger-in">
-          {keys.map((k, idx) => {
+          {keys.map((c, idx) => {
             const catalogAccents = ['var(--purple)', 'var(--pink)', 'var(--blue)', 'var(--orange)', 'var(--teal)', 'var(--skyblue)', 'var(--rose)', 'var(--jgreen)'];
+            const typeLabel = keyTypeDisplayLabel(t, c.vehicleCategory);
             return (
-              <div key={k.id} className="product-card">
+              <div key={c.id} className="product-card">
                 <div className="product-img" style={{ background: catalogAccents[idx % catalogAccents.length] }}>
                   <KeyRound style={{ color: '#ffffff' }} />
-                  <span className="product-tag">{k.category}</span>
+                  <span className="product-tag">{c.addKey ? t('addKeyLabel') : c.lostKey ? t('lostKeyLabel') : t('registeredKeyLabel')}</span>
                 </div>
                 <div className="product-body">
-                  <div className="flex items-center justify-between">
-                    <span className="pname">{k.keyNumber}</span>
-                  </div>
-                  <p className="pcat">{k.category}</p>
-                  <div className="product-foot" style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 6, width: '100%' }}>
-                    <button
-                      onClick={() => handleEditClick(k)}
-                      className="btn btn-ghost"
-                      style={{ flex: 1, minWidth: 0, padding: '6px 8px', fontSize: 11.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, height: 32 }}
-                    >
-                      <Edit style={{ width: 13, height: 13, flexShrink: 0 }} />
-                      <span className="truncate">{t('modifyBtn')}</span>
-                    </button>
-                    <button
-                      onClick={() => handleDelete(k.id)}
-                      className="btn btn-danger-outline"
-                      style={{ flex: 1, minWidth: 0, padding: '6px 8px', fontSize: 11.5, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4, height: 32 }}
-                    >
-                      <Trash style={{ width: 13, height: 13, flexShrink: 0 }} />
-                      <span className="truncate">{t('deleteBtn')}</span>
-                    </button>
+                  <span className="pname">{c.keyNumber}</span>
+                  <p className="pcat">{c.name}</p>
+                  {typeLabel && (
+                    <span className="badge" style={{ alignSelf: 'flex-start', background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+                      {typeLabel}
+                    </span>
+                  )}
+                  <div className="cell-sub" style={{ fontSize: 11 }}>
+                    <Store className="h-3 w-3" style={{ display: 'inline', marginRight: 4, verticalAlign: '-1px' }} />
+                    {c.shop?.name || '—'}
                   </div>
                 </div>
               </div>
@@ -10647,114 +10631,6 @@ function KeysCatalogView({ t, api, searchDispatch }) {
             </button>
           )}
         </div>
-      )}
-
-      {/* Add / Edit Key Modal */}
-      {showAddModal && createPortal(
-        <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.85)' }}>
-          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 640, margin: 'auto', padding: 28 }}>
-            <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
-              <div>
-                <span className="eyebrow" style={{ marginBottom: 4 }}><Key /> {t('catalogueEntryLabel')}</span>
-                <h2 style={{ fontSize: 19 }}>{editKey ? t('modifyKeyBlankTitle') : t('addNewKeyBlankTitle')}</h2>
-              </div>
-              <button onClick={() => setShowAddModal(false)} className="icon-btn">
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-
-            {errorMsg && (
-              <div style={{ display: 'flex', gap: 8, background: 'var(--red-dim)', border: '1px solid rgba(220,38,38,0.35)', padding: 10, borderRadius: 12, fontSize: 12, color: '#b91c1c', fontWeight: 600, marginBottom: 16 }}>
-                <AlertTriangle className="h-4 w-4 shrink-0" />
-                <span>{errorMsg}</span>
-              </div>
-            )}
-
-            {editKey && (
-              <div className="reg-section">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Hash /></div><b>{t('keyNumberCodeLabel')}</b></div>
-                    <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-0)', wordBreak: 'break-word' }}>{editKey.keyNumber}</span>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Store /></div><b>{t('connectedShopLabel')}</b></div>
-                    <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-0)', wordBreak: 'break-word' }}>{editKey.shop ? editKey.shop.name : t('globalCatalogueLabel')}</span>
-                  </div>
-                </div>
-
-                <div className="reg-field" style={{ marginTop: 13 }}>
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><User /></div><b>{t('connectedCustomersLabel')}</b></div>
-                  {editKey.customers && editKey.customers.length > 0 ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {editKey.customers.map(c => (
-                        <div key={c.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, flexWrap: 'wrap' }}>
-                          <span style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text-0)' }}>{c.name}</span>
-                          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-3)' }}>{c.phone}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-3)', fontStyle: 'italic' }}>{t('noCustomerLinkedYet')}</span>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit}>
-              <div className="reg-section">
-                <div className="form-grid">
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Hash /></div><b>{t('keyCodeLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" required value={keyNumber} onChange={(e) => setKeyNumber(e.target.value)}
-                        placeholder={t('keyCodePlaceholderEg')}
-                      />
-                    </div>
-                  </div>
-                  <div className="reg-field">
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Layers /></div><b>{t('categoryTypeLabel')} <span className="req">*</span></b></div>
-                    <div className="input-wrap">
-                      <input
-                        type="text" required value={category} onChange={(e) => setCategory(e.target.value)}
-                        placeholder={t('categoryPlaceholderEg')}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="reg-section">
-                <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Camera /></div><b>{t('backImageUrlLabel')}</b></div>
-                  <div className="input-wrap">
-                    <input
-                      type="text" value={backImageUrl} onChange={(e) => setBackImageUrl(e.target.value)}
-                      placeholder="https://images..."
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-end gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 4 }}>
-                <button
-                  type="button" onClick={() => setShowAddModal(false)}
-                  className="btn btn-ghost"
-                >
-                  {t('btnCancel')}
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                >
-                  {editKey ? t('saveChangesBtn') : t('publishKeyBtn')}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>,
-        document.body
       )}
     </div>
   );
@@ -10940,14 +10816,22 @@ function AdsManagementView({ t, api }) {
           <h1>{t('adCampaignsTitle')}</h1>
           <p>{t('publishBannersPopupsDesc')}</p>
         </div>
+      </div>
+
+      {/* Portaled to escape .animate-fade-in's permanent transform (fill-mode
+          forwards) - see ShopsManagementView's identical FAB for why. */}
+      {createPortal(
         <button
+          type="button"
           onClick={() => { resetForm(); setShowAddModal(true); }}
-          className="btn btn-primary"
+          className="fab"
+          aria-label={t('newAdCampaignBtn')}
+          title={t('newAdCampaignBtn')}
         >
           <Plus />
-          <span>{t('newAdCampaignBtn')}</span>
-        </button>
-      </div>
+        </button>,
+        document.body
+      )}
 
       {loading ? (
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
@@ -12760,16 +12644,13 @@ function RevenueManagementView({ t, api }) {
 // COMPONENT 8: BLANK KEY SEARCH (SHOP ADMIN ONLY)
 // ============================================================================
 function KeysSearchView({ t, api, searchDispatch }) {
-  const { user } = useAuth();
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedResult, setSelectedResult] = useState(null);
 
   // Debounced (350ms, matching the dashboard's global search) so typing a
-  // query doesn't fire a fresh pair of shop-wide key/customer fetches on
-  // every keystroke - this screen has no character-count floor like the
-  // dashboard search does, so without debounce it was the worst offender.
+  // query doesn't fire a fresh fetch on every keystroke.
   useEffect(() => {
     const timer = setTimeout(() => {
       performSearch();
@@ -12788,60 +12669,16 @@ function KeysSearchView({ t, api, searchDispatch }) {
   const performSearch = async () => {
     setLoading(true);
     try {
-      // getMasterKeys is intentionally called unfiltered (not passed `query`)
-      // even though the endpoint supports server-side filtering - the full
-      // catalog is needed here so a matched customer's exact keyNumber can
-      // be looked up below regardless of whether that key's own
-      // keyNumber/category text happens to contain the typed query (e.g.
-      // searching by customer name). Both this shop-scoped catalog and the
-      // customer search are already bounded to this shop admin's own shop -
-      // debouncing above was the fix for the real cost here, which was
-      // re-running both on every keystroke, not their per-call payload size.
-      const [allMasterKeys, matchingCustomers] = await Promise.all([
-        api.getMasterKeys(),
-        api.getGlobalCustomersForSearch(query),
-      ]);
-
-      let matchedKeys = allMasterKeys;
-      if (query) {
-        const q = query.toLowerCase();
-        matchedKeys = allMasterKeys.filter(k =>
-          (k.keyNumber && k.keyNumber.toLowerCase().includes(q)) ||
-          (k.category && k.category.toLowerCase().includes(q))
-        );
-      }
-
-      const items = [];
-
-      // 1. Add matching customer registrations linked to key specs
-      matchingCustomers.forEach(c => {
-        const spec = allMasterKeys.find(k => k.keyNumber.toLowerCase() === c.keyNumber.toLowerCase());
-        items.push({
-          id: `cust-${c.id}`,
-          keySpec: spec || {
-            id: `spec-${c.id}`,
-            keyNumber: c.keyNumber,
-            category: 'Vehicle Keys',
-            backImageUrl: null
-          },
-          customer: c
-        });
-      });
-
-      // 2. Add matching general keys that aren't already included
-      matchedKeys.forEach(k => {
-        if (!items.some(item => item.keySpec.keyNumber.toLowerCase() === k.keyNumber.toLowerCase())) {
-          items.push({
-            id: `key-${k.id}`,
-            keySpec: k,
-            customer: null
-          });
-        }
-      });
-
-      setResults(items);
+      // Every result is a customer registration with a key code, scoped to
+      // this shop admin's own shop server-side (see
+      // AuthContext.getShopKeysCatalogue / CustomerController's keysOnly
+      // param) - there's no separate "key blank with no customer" concept
+      // to cross-reference anymore, so this is a single direct fetch.
+      const res = await api.getShopKeysCatalogue({ search: query });
+      setResults(res);
     } catch (e) {
       console.error(e);
+      setResults([]);
     } finally {
       setLoading(false);
     }
@@ -12890,204 +12727,120 @@ function KeysSearchView({ t, api, searchDispatch }) {
         <div className="product-grid stagger-in">
           {(() => {
             const resultAccents = ['var(--purple)', 'var(--pink)', 'var(--blue)', 'var(--orange)', 'var(--teal)', 'var(--skyblue)', 'var(--rose)', 'var(--jgreen)'];
-            return results.map((r, idx) => (
-              <div
-                key={r.id} onClick={() => setSelectedResult(r)}
-                className="product-card"
-                style={{ cursor: 'pointer' }}
-              >
-                <div className="product-img" style={{ background: r.customer ? 'linear-gradient(135deg, var(--maroon), var(--maroon-dark))' : resultAccents[idx % resultAccents.length] }}>
-                  <KeyRound style={{ color: '#ffffff' }} />
-                  <span className="product-tag">{r.keySpec.category}</span>
-                </div>
-                <div className="product-body">
-                  <div className="flex items-center justify-between" style={{ gap: 8 }}>
-                    <span className="pname" style={{ minWidth: 0, flex: 1, wordBreak: 'break-word' }}>{r.keySpec.keyNumber}</span>
-                    <span className="pcat" style={{ marginBottom: 0, flexShrink: 0 }}>{r.keySpec.category}</span>
+            return results.map((c, idx) => {
+              const typeLabel = keyTypeDisplayLabel(t, c.vehicleCategory);
+              return (
+                <div
+                  key={c.id} onClick={() => setSelectedResult(c)}
+                  className="product-card"
+                  style={{ cursor: 'pointer' }}
+                >
+                  <div className="product-img" style={{ background: resultAccents[idx % resultAccents.length] }}>
+                    <KeyRound style={{ color: '#ffffff' }} />
+                    <span className="product-tag">{c.addKey ? t('addKeyLabel') : c.lostKey ? t('lostKeyLabel') : t('registeredKeyLabel')}</span>
                   </div>
-                  {r.customer && (
-                    <div className="space-y-1">
-                      <span className="badge badge-active"><span className="dot" />{t('registeredCustomerKeyLabel')}</span>
-                      <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 12, padding: 8, marginTop: 4 }}>
-                        <div className="flex items-center gap-2">
-                          <div className="icon-badge jgreen" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><Users style={{ width: 10, height: 10 }} /></div>
-                          <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>{t('customerPrefix')} <strong style={{ color: 'var(--text-0)' }}>{r.customer.name}</strong></p>
-                        </div>
-                        <div className="flex items-center gap-2" style={{ marginTop: 4 }}>
-                          <div className="icon-badge skyblue" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><Car style={{ width: 10, height: 10 }} /></div>
-                          <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>{t('vehicleNoPrefix')} <strong style={{ color: 'var(--green)' }}>{r.customer.vehicleNumber || 'N/A'}</strong></p>
-                        </div>
-                        {r.customer.keyType && (
-                          <div className="flex items-center gap-2" style={{ marginTop: 4 }}>
-                            <div className="icon-badge purple" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><KeyRound style={{ width: 10, height: 10 }} /></div>
-                            <p style={{ fontSize: 11, color: 'var(--text-2)', fontWeight: 600 }}>{t('keyTypeLabel')}: <strong style={{ color: 'var(--text-0)' }}>{r.customer.keyType}</strong></p>
-                          </div>
-                        )}
-                      </div>
+                  <div className="product-body">
+                    <span className="pname">{c.keyNumber}</span>
+                    <p className="pcat">{c.name}</p>
+                    {typeLabel && (
+                      <span className="badge" style={{ alignSelf: 'flex-start', background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+                        {typeLabel}
+                      </span>
+                    )}
+                    <div className="product-foot" style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+                      <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--gold)' }}>{t('viewFullDetailsLabel')}</span>
+                      <ExternalLink style={{ width: 13, height: 13, color: 'var(--gold)' }} />
                     </div>
-                  )}
-                  <div className="product-foot" style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
-                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--gold)' }}>{t('viewFullDetailsLabel')}</span>
-                    <ExternalLink style={{ width: 13, height: 13, color: 'var(--gold)' }} />
                   </div>
                 </div>
-              </div>
-            ));
+              );
+            });
           })()}
         </div>
       )}
 
-      {/* Details View Modal */}
+      {/* Details View Modal - read-only, no edit action */}
       {selectedResult && createPortal(
         <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.85)' }}>
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 620, margin: 'auto', padding: 28 }}>
             <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16, marginBottom: 18 }}>
               <div>
                 <span className="eyebrow" style={{ marginBottom: 4 }}><KeyRound /> {t('keyDetailsLabel')}</span>
-                <h2 style={{ fontSize: 19 }}>{selectedResult.keySpec.keyNumber}</h2>
+                <h2 style={{ fontSize: 19 }}>{selectedResult.keyNumber}</h2>
               </div>
               <button onClick={() => setSelectedResult(null)} className="icon-btn">
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="reg-section">
-              <div className="reg-field" style={{ marginBottom: selectedResult.keySpec.backImageUrl ? 13 : 0 }}>
-                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Tag /></div><b>{t('lockCategoryLabel')}</b></div>
-                <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--text-0)' }}>{selectedResult.keySpec.category}</span>
-              </div>
-
-              {selectedResult.keySpec.backImageUrl && (
-                <div className="reg-field" style={{ marginBottom: 0 }}>
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><ImageIcon /></div><b>{t('backProfileLabel')}</b></div>
-                  <img src={selectedResult.keySpec.backImageUrl} alt="Back profile" style={{ width: '100%', height: 128, borderRadius: 12, border: '1px solid var(--border-2)' }} className="object-cover" />
+            <div className="reg-section" style={{ marginBottom: 0 }}>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('customerNameLabel')}</b></div>
+                  <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.name}</span>
                 </div>
-              )}
-            </div>
-
-            {/* ASSOCIATED CUSTOMER REGISTRY SECTION */}
-            {selectedResult.customer && (
-              <div className="reg-section" style={{ marginBottom: 0 }}>
-
-                {(user?.role === 'SUPER_ADMIN' || selectedResult.customer.shopId === user?.shopId) ? (
-                  <>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('customerNameLabel')}</b></div>
-                        <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.name}</span>
-                      </div>
-                      <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
-                        <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.phone}</span>
-                      </div>
-                      <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Car /></div><b>{t('vehicleNumberLabel')}</b></div>
-                        <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.vehicleNumber || 'N/A'}</span>
-                      </div>
-                      <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Calendar /></div><b>{t('registryDateLabel')}</b></div>
-                        <span style={{ color: 'var(--text-1)', fontWeight: 600, fontSize: 12.5 }}>{new Date(selectedResult.customer.createdAt).toLocaleDateString()}</span>
-                      </div>
-                      {selectedResult.customer.keyType && (
-                        <div className="reg-field">
-                          <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>{t('keyTypeLabel')}</b></div>
-                          <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.keyType}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 14, borderRadius: 14, marginTop: 4 }}>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className={`icon-badge ${selectedResult.customer.latitude ? 'jgreen' : 'rose'}`} style={{ width: 32, height: 32, borderRadius: 10 }}>
-                            <MapPin style={{ width: 16, height: 16 }} />
-                          </div>
-                          <div>
-                            <p style={{ fontWeight: 700, color: 'var(--text-0)', fontSize: 13 }}>{t('gpsCoordinatesLabel')}</p>
-                            {selectedResult.customer.latitude && selectedResult.customer.longitude ? (
-                              <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600 }}>{t('latLongTemplate').split('{lat}')[0]}{selectedResult.customer.latitude}{t('latLongTemplate').split('{lat}')[1].split('{long}')[0]}{selectedResult.customer.longitude}</p>
-                            ) : (
-                              <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600, fontStyle: 'italic' }}>{t('notCapturedLabel')}</p>
-                            )}
-                          </div>
-                        </div>
-                        {selectedResult.customer.mapsLink && (
-                          <a href={selectedResult.customer.mapsLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800 }} className="flex items-center gap-1 hover:underline">
-                            <span>{t('googleMapsLabel')}</span><ExternalLink className="h-3 w-3" />
-                          </a>
-                        )}
-                      </div>
-                      {selectedResult.customer.capturedAddress && (
-                        <div style={{ fontSize: 10.5, color: 'var(--text-2)', borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 8, paddingLeft: 42, fontWeight: 600 }}>
-                          <span style={{ display: 'block', fontWeight: 800, fontSize: 9, color: 'var(--text-3)', textTransform: 'uppercase' }}>{t('capturedAddressLabel')}</span>
-                          <span>{selectedResult.customer.capturedAddress}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="reg-field" style={{ marginTop: 13, marginBottom: 0 }}>
-                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Camera /></div><b>{t('webcamSnapshotLabel')}</b></div>
-                      {selectedResult.customer.photoUrl ? (
-                        <div style={{ width: '100%', height: 96, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-2)' }}>
-                          <img src={getAssetUrl(selectedResult.customer.photoUrl)} alt="Customer" className="w-full h-full object-cover" />
-                        </div>
-                      ) : (
-                        <div style={{ width: '100%', height: 96, borderRadius: 12, border: '1.5px dashed var(--border-2)' }} className="flex items-center justify-center">
-                          <Camera style={{ width: 16, height: 16, color: 'var(--text-3)' }} />
-                        </div>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 16, borderRadius: 16 }} className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="icon-badge maroon" style={{ width: 24, height: 24, borderRadius: 7 }}><ShieldCheck style={{ width: 12, height: 12 }} /></div>
-                      <p style={{ fontSize: 10.5, color: 'var(--gold)', textTransform: 'uppercase', letterSpacing: '.06em', fontWeight: 800 }}>{t('registryLocationOverviewLabel')}</p>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><User /></div><b>{t('customerNameLabel')}</b></div>
-                        <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.name}</span>
-                      </div>
-                      <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Phone /></div><b>{t('customerMobileLabel')}</b></div>
-                        <span style={{ color: 'var(--green)', fontWeight: 700, fontSize: 12.5, fontFamily: 'monospace' }}>{selectedResult.customer.phone}</span>
-                      </div>
-                      <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Store /></div><b>{t('registeredShopLabel')}</b></div>
-                        <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.customer.shop?.name || t('keyShopWorkspaceLabel')}</span>
-                      </div>
-                      <div className="reg-field" style={{ marginBottom: 0 }}>
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('shopMobileLabel')}</b></div>
-                        <span style={{ color: 'var(--green)', fontWeight: 700, fontSize: 12.5, fontFamily: 'monospace' }}>
-                          {(() => {
-                            let shopMobile = 'N/A';
-                            if (selectedResult.customer.shop) {
-                              try {
-                                const details = typeof selectedResult.customer.shop.companyDetails === 'string'
-                                  ? JSON.parse(selectedResult.customer.shop.companyDetails)
-                                  : selectedResult.customer.shop.companyDetails;
-                                shopMobile = details?.phone || selectedResult.customer.shop.phone || 'N/A';
-                              } catch (e) {
-                                shopMobile = selectedResult.customer.shop.phone || 'N/A';
-                              }
-                            }
-                            return shopMobile;
-                          })()}
-                        </span>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', gap: 8, background: 'rgba(0,0,0,0.25)', border: '1px solid var(--border)', padding: 10, borderRadius: 12, marginTop: 4 }}>
-                      <AlertTriangle style={{ width: 14, height: 14, color: 'var(--text-3)', flexShrink: 0, marginTop: 1 }} />
-                      <span style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, fontStyle: 'italic' }}>
-                        {t('sensitiveCoordsHiddenMsg')}
-                      </span>
-                    </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
+                  <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.phone}</span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Car /></div><b>{t('vehicleNumberLabel')}</b></div>
+                  <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{selectedResult.vehicleNumber || 'N/A'}</span>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Calendar /></div><b>{t('registryDateLabel')}</b></div>
+                  <span style={{ color: 'var(--text-1)', fontWeight: 600, fontSize: 12.5 }}>{new Date(selectedResult.createdAt).toLocaleDateString()}</span>
+                </div>
+                {keyTypeDisplayLabel(t, selectedResult.vehicleCategory) && (
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><KeyRound /></div><b>{t('keyTypeLabel')}</b></div>
+                    <span style={{ color: 'var(--text-0)', fontWeight: 700, fontSize: 12.5 }}>{keyTypeDisplayLabel(t, selectedResult.vehicleCategory)}</span>
                   </div>
                 )}
               </div>
-            )}
+
+              <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 14, borderRadius: 14, marginTop: 4 }}>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className={`icon-badge ${selectedResult.latitude ? 'jgreen' : 'rose'}`} style={{ width: 32, height: 32, borderRadius: 10 }}>
+                      <MapPin style={{ width: 16, height: 16 }} />
+                    </div>
+                    <div>
+                      <p style={{ fontWeight: 700, color: 'var(--text-0)', fontSize: 13 }}>{t('gpsCoordinatesLabel')}</p>
+                      {selectedResult.latitude && selectedResult.longitude ? (
+                        <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600 }}>{t('latLongTemplate').split('{lat}')[0]}{selectedResult.latitude}{t('latLongTemplate').split('{lat}')[1].split('{long}')[0]}{selectedResult.longitude}</p>
+                      ) : (
+                        <p style={{ fontSize: 10.5, color: 'var(--text-3)', marginTop: 2, fontWeight: 600, fontStyle: 'italic' }}>{t('notCapturedLabel')}</p>
+                      )}
+                    </div>
+                  </div>
+                  {selectedResult.mapsLink && (
+                    <a href={selectedResult.mapsLink} target="_blank" rel="noopener noreferrer" style={{ fontSize: 10.5, color: 'var(--gold)', fontWeight: 800 }} className="flex items-center gap-1 hover:underline">
+                      <span>{t('googleMapsLabel')}</span><ExternalLink className="h-3 w-3" />
+                    </a>
+                  )}
+                </div>
+                {selectedResult.capturedAddress && (
+                  <div style={{ fontSize: 10.5, color: 'var(--text-2)', borderTop: '1px solid var(--border)', paddingTop: 8, marginTop: 8, paddingLeft: 42, fontWeight: 600 }}>
+                    <span style={{ display: 'block', fontWeight: 800, fontSize: 9, color: 'var(--text-3)', textTransform: 'uppercase' }}>{t('capturedAddressLabel')}</span>
+                    <span>{selectedResult.capturedAddress}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="reg-field" style={{ marginTop: 13, marginBottom: 0 }}>
+                <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Camera /></div><b>{t('webcamSnapshotLabel')}</b></div>
+                {selectedResult.photoUrl ? (
+                  <div style={{ width: '100%', height: 96, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-2)' }}>
+                    <img src={getAssetUrl(selectedResult.photoUrl)} alt="Customer" className="w-full h-full object-cover" />
+                  </div>
+                ) : (
+                  <div style={{ width: '100%', height: 96, borderRadius: 12, border: '1.5px dashed var(--border-2)' }} className="flex items-center justify-center">
+                    <Camera style={{ width: 16, height: 16, color: 'var(--text-3)' }} />
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div className="flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
               <button onClick={() => setSelectedResult(null)} className="btn btn-ghost">

@@ -29,8 +29,13 @@ export class CustomerController {
     @Query('search') search?: string,
     @Query('cursor') cursor?: string,
     @Query('limit') limit?: string,
+    @Query('keysOnly') keysOnly?: string,
   ) {
-    return this.customerService.getCustomers(req.user.shopId, search, { cursor, limit: limit ? Number(limit) : undefined });
+    return this.customerService.getCustomers(req.user.shopId, search, {
+      cursor,
+      limit: limit ? Number(limit) : undefined,
+      keysOnly: keysOnly === 'true',
+    });
   }
 
   // Despite the route name, this powers the Shop Admin's own dashboard

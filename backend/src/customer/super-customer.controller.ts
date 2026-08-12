@@ -22,8 +22,13 @@ export class SuperCustomerController {
     @Query('search') search?: string,
     @Query('cursor') cursor?: string,
     @Query('limit') limit?: string,
+    @Query('keysOnly') keysOnly?: string,
   ) {
-    return this.customerService.getSuperCustomers(search, { cursor, limit: limit ? Number(limit) : undefined });
+    return this.customerService.getSuperCustomers(search, {
+      cursor,
+      limit: limit ? Number(limit) : undefined,
+      keysOnly: keysOnly === 'true',
+    });
   }
 
   @Post()

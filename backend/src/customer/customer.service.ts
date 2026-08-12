@@ -216,9 +216,15 @@ export class CustomerService {
   // global-search route, the duplicate-key scan, and the revenue-by-date
   // report generator) rely on that shape and aren't part of the Customer
   // History screen this pagination was added for.
-  async getCustomers(shopId: string, query?: string, pageOpts: { cursor?: string; limit?: number } = {}) {
-    const { cursor, limit } = pageOpts;
+  async getCustomers(shopId: string, query?: string, pageOpts: { cursor?: string; limit?: number; keysOnly?: boolean } = {}) {
+    const { cursor, limit, keysOnly } = pageOpts;
     const whereClause: any = { shopId };
+    // Master Key Catalog Search (KeysSearchView) - only registrations that
+    // actually have a key code count as a "key" (the wizard lets a shop
+    // admin skip key-code entry entirely for a visit).
+    if (keysOnly) {
+      whereClause.keyNumber = { not: null };
+    }
 
     if (query) {
       whereClause.OR = [
@@ -407,9 +413,14 @@ export class CustomerService {
   // and a couple of single-record "refetch by id" lookups) rely on that
   // shape and aren't part of the Customer Registry screen this pagination
   // was added for. Passing `limit` returns `{ items, nextCursor }` instead.
-  async getSuperCustomers(query?: string, pageOpts: { cursor?: string; limit?: number } = {}) {
-    const { cursor, limit } = pageOpts;
+  async getSuperCustomers(query?: string, pageOpts: { cursor?: string; limit?: number; keysOnly?: boolean } = {}) {
+    const { cursor, limit, keysOnly } = pageOpts;
     const whereClause: any = {};
+    // Master Key Catalogue (KeysCatalogView) - see getCustomers()'s identical
+    // filter for why a null keyNumber is excluded.
+    if (keysOnly) {
+      whereClause.keyNumber = { not: null };
+    }
     if (query) {
       whereClause.OR = [
         { name: { contains: query, mode: 'insensitive' } },
