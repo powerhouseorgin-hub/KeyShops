@@ -123,9 +123,12 @@ export class KeyService {
     });
   }
 
-  // SHARED: Get Key by ID
-  async getKeyById(id: string) {
-    const key = await this.tenantService.prisma.masterKey.findUnique({ where: { id } });
+  // SHARED: Get Key by ID, scoped to the caller's own shop - same shopId
+  // convention as getShopKeys() above. Not currently wired to any route, but
+  // kept shop-scoped from the start so a future Shop Admin route can't
+  // accidentally leak another shop's key blank by id.
+  async getKeyById(id: string, shopId: string) {
+    const key = await this.tenantService.prisma.masterKey.findFirst({ where: { id, shopId } });
     if (!key) throw new NotFoundException('Key blank not found');
     return key;
   }

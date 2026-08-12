@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { GeoController } from './geo/geo.controller';
 import { TenantModule } from './tenant/tenant.module';
@@ -20,6 +21,10 @@ import { TenantInterceptor } from './tenant/tenant.interceptor';
 
 @Module({
   imports: [
+    // Global baseline: 120 requests/minute per IP across the whole API.
+    // Sensitive routes (OTP send/verify) apply a much tighter @Throttle
+    // override directly on their controller methods - see auth.controller.ts.
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60000, limit: 120 }]),
     TenantModule,
     CryptoModule,
     AuthModule,
@@ -40,6 +45,10 @@ import { TenantInterceptor } from './tenant/tenant.interceptor';
     {
       provide: APP_INTERCEPTOR,
       useClass: TenantInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })

@@ -207,14 +207,14 @@ export default function OtpVerificationModal({
         {otpError && <p style={{ color: 'var(--red)', fontSize: 11.5, fontWeight: 700, marginBottom: 12 }}>{otpError}</p>}
 
         <button
-          type="button" onClick={handleVerify} disabled={verifying || !enteredOtp}
+          type="button" onClick={handleVerify} disabled={verifying || sending || !enteredOtp}
           className="btn btn-primary" style={{ width: '100%', marginBottom: 10 }}
         >
           {verifying ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('verifyOtpBtn')}
         </button>
         <div className="flex items-center justify-between" style={{ gap: 10 }}>
           <button
-            type="button" onClick={sendCode} disabled={sending || secondsLeft > 0}
+            type="button" onClick={sendCode} disabled={sending || verifying || secondsLeft > 0}
             className="btn btn-ghost btn-sm"
           >
             {secondsLeft > 0 ? t('resendInTemplate').replace('{time}', `${mm}:${ss}`) : t('resendOtpBtn')}

@@ -42,11 +42,32 @@ async function bootstrap() {
   app.use(express.json({ limit: '15mb' }));
   app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
-  // Enable CORS
+  // Enable CORS. Auth here is Bearer-token-only (the JWT is attached
+  // manually via the Authorization header, never a cookie - see
+  // AuthContext.jsx), so `credentials: true` was never actually needed and
+  // combining it with a wildcard origin isn't even valid per the CORS spec
+  // (browsers reject that pairing). An explicit allowlist instead of '*'
+  // also means a browser can no longer be tricked into sending an
+  // authenticated request to this API from an arbitrary third-party page.
+  const PROD_ALLOWED_ORIGINS = [
+    'https://keyshops.in',
+    'https://www.keyshops.in',
+    'https://keee-7d6cb.web.app',
+    'https://localhost', // Capacitor's default Android WebView origin
+    'capacitor://localhost',
+  ];
   app.enableCors({
-    origin: '*',
+    origin: (origin, callback) => {
+      // No Origin header at all (native app requests, curl, server-to-server
+      // calls) - there's no browser here enforcing same-origin, so allow.
+      if (!origin) return callback(null, true);
+      if (PROD_ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+      if (process.env.NODE_ENV !== 'production' && /^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+        return callback(null, true);
+      }
+      callback(new Error('Not allowed by CORS'), false);
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true,
   });
 
   // Global prefix for API

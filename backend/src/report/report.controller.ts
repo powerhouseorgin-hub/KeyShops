@@ -4,6 +4,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '@prisma/client';
+import { UpdateSupportConfigDto } from './dto/update-support-config.dto';
 
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -63,16 +64,7 @@ export class ReportController {
 
   @Post('super/support-config')
   @Roles(Role.SUPER_ADMIN)
-  async updateSupportConfig(
-    @Body() dto: {
-      whatsapp: string;
-      videos: { name: string; url: string }[];
-      email?: string;
-      customerCareNumber?: string;
-      subscriptionPrice?: number;
-      gstPercent?: number;
-    },
-  ) {
+  async updateSupportConfig(@Body() dto: UpdateSupportConfigDto) {
     return this.reportService.updateSupportConfig(dto);
   }
 }

@@ -8,6 +8,22 @@ export const useAuth = () => useContext(AuthContext);
 
 const PHONE_REGEX = /^[1-9]\d{9}$/;
 
+// Safely parses a fetch Response body as JSON, tolerating a non-JSON or
+// empty body (a bare 500/502, a cold-started Render instance timing out
+// mid-response, a proxy error page) instead of letting a raw
+// "Unexpected end of JSON input" SyntaxError mask whatever the real
+// problem was - every api.* method routes its response through this
+// rather than calling response.json() directly.
+async function parseJsonSafe(response) {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
+}
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
@@ -55,11 +71,11 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Login failed');
       }
 
-      const res = await response.json();
+      const res = await parseJsonSafe(response);
       setUser(res.user);
       setToken(res.accessToken);
       localStorage.setItem('kee_auth_user', JSON.stringify(res.user));
@@ -104,11 +120,11 @@ export const AuthProvider = ({ children }) => {
     }
 
     if (!response.ok) {
-      const err = await response.json();
+      const err = await parseJsonSafe(response);
       throw new Error(err.message || 'Operation failed');
     }
 
-    return response.json();
+    return parseJsonSafe(response);
   };
 
   // Unified API Methods, backed entirely by the live NestJS backend
@@ -124,10 +140,10 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ identifier, method, newPassword })
       });
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Password reset failed');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     sendOtp: async (identifier, method, purpose) => {
@@ -146,10 +162,10 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ identifier, method, purpose })
       });
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Failed to send OTP code');
       }
-      const result = await response.json();
+      const result = await parseJsonSafe(response);
       // Testing convenience: backend only includes devCode when no real email/SMS
       // provider is configured for this environment (delivery failed/not attempted),
       // so this stops appearing automatically once SMTP/Twilio are set up.
@@ -166,10 +182,10 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ identifier, method, purpose, code })
       });
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'OTP verification failed');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Native app's phone verification - the OTP itself was already sent and
@@ -184,10 +200,10 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ identifier, purpose, idToken })
       });
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Phone verification failed');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     registerShop: async (dto) => {
@@ -197,10 +213,10 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify(dto)
       });
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Self-registration failed');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Creates a Razorpay order for the current platform-wide subscription
@@ -214,10 +230,10 @@ export const AuthProvider = ({ children }) => {
         headers: { 'Content-Type': 'application/json' },
       });
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Failed to initialize payment');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Public landing-page shop search (no auth) - used by the "Find a Shop"
@@ -237,10 +253,10 @@ export const AuthProvider = ({ children }) => {
       const url = `${API_BASE}/api/public/shops${qs ? `?${qs}` : ''}`;
       const response = await fetch(url);
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Shop search failed');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Single shop's public details (business/public fields + its product
@@ -248,20 +264,20 @@ export const AuthProvider = ({ children }) => {
     getPublicShopById: async (id) => {
       const response = await fetch(`${API_BASE}/api/public/shops/${id}`);
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Shop not found');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Pre-login mobile app's ad carousel - active, platform-wide ads only.
     getPublicAds: async () => {
       const response = await fetch(`${API_BASE}/api/public/ads`);
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Failed to load ads');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Full-screen poster shown every time the native app opens/resumes -
@@ -270,10 +286,10 @@ export const AuthProvider = ({ children }) => {
     getPublicAppPoster: async () => {
       const response = await fetch(`${API_BASE}/api/public/ads/poster`);
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Failed to load app poster');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Pre-login mobile app's Machines/Products directory (backed by
@@ -290,19 +306,19 @@ export const AuthProvider = ({ children }) => {
       const qs = params.toString();
       const response = await fetch(`${API_BASE}/api/public/machines${qs ? `?${qs}` : ''}`);
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Failed to load machines');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     getPublicMachineById: async (id) => {
       const response = await fetch(`${API_BASE}/api/public/machines/${id}`);
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Listing not found');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Combined Shops+Machines search for the pre-login mobile app's search
@@ -310,10 +326,10 @@ export const AuthProvider = ({ children }) => {
     getPublicSearch: async (q) => {
       const response = await fetch(`${API_BASE}/api/public/search?q=${encodeURIComponent(q)}`);
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Search failed');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // Product type filter chips for the Machines tab - now a public route
@@ -321,10 +337,10 @@ export const AuthProvider = ({ children }) => {
     getPublicProductTypes: async () => {
       const response = await fetch(`${API_BASE}/api/product-types`);
       if (!response.ok) {
-        const err = await response.json();
+        const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Failed to load product types');
       }
-      return response.json();
+      return parseJsonSafe(response);
     },
 
     // --- SUPER ADMIN: SHOPS ---

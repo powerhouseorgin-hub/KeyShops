@@ -1,4 +1,5 @@
 import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, SendOtpDto, VerifyOtpDto, VerifyFirebasePhoneDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -7,16 +8,22 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Throttle({ default: { limit: 10, ttl: 600000 } })
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
 
+  // Tighter than the app-wide default (120/min) - a 4-digit OTP has only
+  // 9000 possible values, so without a strict per-route limit an attacker
+  // could brute-force a code well within its 5-minute expiry window.
+  @Throttle({ default: { limit: 6, ttl: 600000 } })
   @Post('send-otp')
   async sendOtp(@Body() dto: SendOtpDto) {
     return this.authService.sendOtp(dto);
   }
 
+  @Throttle({ default: { limit: 10, ttl: 600000 } })
   @Post('verify-otp')
   async verifyOtp(@Body() dto: VerifyOtpDto) {
     return this.authService.verifyOtp(dto);
@@ -32,6 +39,7 @@ export class AuthController {
     return this.authService.registerShop(dto);
   }
 
+  @Throttle({ default: { limit: 6, ttl: 600000 } })
   @Post('reset-password-public')
   async resetPasswordPublic(@Body() dto: ResetPasswordPublicDto) {
     return this.authService.resetPasswordPublic(dto);

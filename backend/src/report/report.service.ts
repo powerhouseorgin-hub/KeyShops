@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { TenantService } from '../tenant/tenant.service';
+import { UpdateSupportConfigDto } from './dto/update-support-config.dto';
 
 @Injectable()
 export class ReportService {
@@ -241,14 +242,7 @@ export class ReportService {
     };
   }
 
-  async updateSupportConfig(dto: {
-    whatsapp: string;
-    videos: { name: string; url: string }[];
-    email?: string;
-    customerCareNumber?: string;
-    subscriptionPrice?: number;
-    gstPercent?: number;
-  }) {
+  async updateSupportConfig(dto: UpdateSupportConfigDto) {
     const data = {
       whatsapp: dto.whatsapp,
       videos: dto.videos ?? [],

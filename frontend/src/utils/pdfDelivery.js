@@ -16,8 +16,13 @@ export async function downloadPdf(pdf, filename) {
   if (Capacitor.isNativePlatform()) {
     const { Filesystem, Directory } = await import('@capacitor/filesystem');
     const base64 = pdf.output('datauristring').split(',')[1];
-    await Filesystem.writeFile({ path: filename, data: base64, directory: Directory.Cache });
-    const { uri } = await Filesystem.getUri({ path: filename, directory: Directory.Cache });
+    let uri;
+    try {
+      await Filesystem.writeFile({ path: filename, data: base64, directory: Directory.Cache });
+      ({ uri } = await Filesystem.getUri({ path: filename, directory: Directory.Cache }));
+    } catch (err) {
+      throw new Error(`Could not save the PDF to this device: ${err.message || err}`);
+    }
     try {
       await SaveToDownloads.saveFile({ sourcePath: uri, fileName: filename, mimeType: 'application/pdf' });
     } catch (err) {
@@ -41,8 +46,13 @@ export async function sharePdf(pdf, filename, { title, fallbackText } = {}) {
   if (Capacitor.isNativePlatform()) {
     const { Filesystem, Directory } = await import('@capacitor/filesystem');
     const base64 = pdf.output('datauristring').split(',')[1];
-    await Filesystem.writeFile({ path: filename, data: base64, directory: Directory.Cache });
-    const { uri } = await Filesystem.getUri({ path: filename, directory: Directory.Cache });
+    let uri;
+    try {
+      await Filesystem.writeFile({ path: filename, data: base64, directory: Directory.Cache });
+      ({ uri } = await Filesystem.getUri({ path: filename, directory: Directory.Cache }));
+    } catch (err) {
+      throw new Error(`Could not prepare the PDF for sharing: ${err.message || err}`);
+    }
     const { Share } = await import('@capacitor/share');
     await Share.share({ files: [uri], title, dialogTitle: title });
     return;

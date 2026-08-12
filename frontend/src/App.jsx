@@ -30,15 +30,15 @@ import {
   Key, Users, Shield, Radio, BarChart3, Database, LogOut, Check, X,
   Plus, Settings, FileText, Search, Filter, UserCheck, MapPin, Camera, AlertTriangle,
   Trash, RefreshCw, Layers, Edit, ExternalLink, Sliders, DollarSign,
-  Bell, Eye, EyeOff, CheckCircle2, ChevronRight, Info,
-  CreditCard, QrCode, Wallet, Lock, ShieldCheck, Upload, Mail, Phone,
+  Bell, Eye, EyeOff, CheckCircle2, ChevronRight,
+  CreditCard, QrCode, Lock, ShieldCheck, Upload, Mail, Phone,
   ArrowRight, ArrowLeft, Building2, Calendar,
-  Store, TrendingUp, TrendingDown, UserPlus, Clock, IndianRupee, BadgeCheck,
-  ArrowUpRight, ArrowDownRight, Sparkles,
+  Store, TrendingUp, UserPlus, Clock, IndianRupee,
+  Sparkles,
   User, Hash, UploadCloud, Crosshair, FileCheck, Navigation, KeyRound, Car,
   Tag, Package, Boxes, Percent, Image as ImageIcon, Megaphone, BadgePercent,
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
-  Download, Fingerprint, Palette, Menu, Home, Languages, Globe,
+  Download, Fingerprint, Menu, Home, Languages, Globe,
   Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2,
   GripVertical, Smartphone
 } from 'lucide-react';
@@ -435,9 +435,7 @@ const LANGUAGES = {
     usedMachines: 'Used Machines',
     usedMachinesDesc: 'View and manage used machines',
     directory: 'Directory',
-    searchDealersPlaceholder: 'Search shops by name, location, category...',
     noShopsFound: 'No shops found matching your search.',
-    callPrefix: 'Call',
     navOverview: 'Overview',
     navOperations: 'Operations',
     navBusiness: 'Business',
@@ -510,6 +508,7 @@ const LANGUAGES = {
     fieldName: 'Name',
     fieldEmail: 'Email',
     fieldPhone: 'Phone Number',
+    fieldGstNumber: 'GST Number',
     fieldAddress: 'Address',
     fieldDate: 'Date',
     fieldAmount: 'Amount',
@@ -664,7 +663,6 @@ const LANGUAGES = {
     complianceFileEyebrow: 'Compliance File',
     phoneContactLabel: 'Phone Contact',
     registryDateLabel: 'Registry Date',
-    addressLabel: 'Address',
     keyBlankCodeLabel: 'Key Blank Code',
     idVerificationLabel: 'ID Verification',
     idNumberDecryptedLabel: 'ID Number (Decrypted)',
@@ -1298,12 +1296,9 @@ const LANGUAGES = {
     scanningDesc: 'अनुपालन प्रविष्टियों को स्कैन और प्रोसेस करें',
     meter: 'मीटर',
     meterDesc: 'मीटर रिकॉर्ड को ट्रैक और प्रबंधित करें',
-    usedMachines: 'पुराने मशीन',
-    usedMachinesDesc: 'पुराने मशीन देखें और प्रबंधित करें',
     directory: 'निर्देशिका',
     searchDealersPlaceholder: 'नाम, स्थान या श्रेणी द्वारा दुकान खोजें...',
     noShopsFound: 'आपकी खोज से मेल खाने वाली कोई दुकान नहीं मिली।',
-    callPrefix: 'कॉल करें',
     navOverview: 'अवलोकन',
     navOperations: 'संचालन',
     navBusiness: 'व्यवसाय',
@@ -1376,6 +1371,7 @@ const LANGUAGES = {
     fieldName: 'नाम',
     fieldEmail: 'ईमेल',
     fieldPhone: 'फ़ोन नंबर',
+    fieldGstNumber: 'जीएसटी नंबर',
     fieldAddress: 'पता',
     fieldDate: 'तारीख',
     fieldAmount: 'राशि',
@@ -2158,7 +2154,6 @@ const LANGUAGES = {
     directory: 'கோப்பகம்',
     searchDealersPlaceholder: 'பெயர், இருப்பிடம் அல்லது வகை மூலம் தேடவும்...',
     noShopsFound: 'கடைகள் எதுவும் கிடைக்கவில்லை.',
-    callPrefix: 'அழைக்கவும்',
     navOverview: 'கண்ணோட்டம்',
     navOperations: 'செயல்பாடுகள்',
     navBusiness: 'வணிகம்',
@@ -2231,6 +2226,7 @@ const LANGUAGES = {
     fieldName: 'பெயர்',
     fieldEmail: 'மின்னஞ்சல்',
     fieldPhone: 'தொலைபேசி எண்',
+    fieldGstNumber: 'ஜிஎஸ்டி எண்',
     fieldAddress: 'முகவரி',
     fieldDate: 'தேதி',
     fieldAmount: 'தொகை',
@@ -3000,12 +2996,9 @@ const LANGUAGES = {
     scanningDesc: 'అనుకూలత ఎంట్రీలను స్కాన్ & ప్రాసెస్ చేయండి',
     meter: 'మీటర్',
     meterDesc: 'మీటర్ రికార్డులను ట్రాక్ చేయండి & నిర్వహించండి',
-    usedMachines: 'వాడిన మిషన్లు',
-    usedMachinesDesc: 'వాడిన మిషన్లను చూడండి మరియు నిర్వహించండి',
     directory: 'డైరెక్టరీ',
     searchDealersPlaceholder: 'పేరు, లొకేషన్ లేదా కేటగిరీ ద్వారా వెతకండి...',
     noShopsFound: 'షాపులు ఏవీ లభించలేదు.',
-    callPrefix: 'కాల్ చేయండి',
     navOverview: 'అవలోకనం',
     navOperations: 'కార్యకలాపాలు',
     navBusiness: 'వ్యాపారం',
@@ -3078,6 +3071,7 @@ const LANGUAGES = {
     fieldName: 'పేరు',
     fieldEmail: 'ఇమెయిల్',
     fieldPhone: 'ఫోన్ నంబర్',
+    fieldGstNumber: 'జీఎస్టీ నంబర్',
     fieldAddress: 'చిరునామా',
     fieldDate: 'తేదీ',
     fieldAmount: 'మొత్తం',
@@ -3860,7 +3854,6 @@ const LANGUAGES = {
     directory: 'ಡೈರೆಕ್ಟರಿ',
     searchDealersPlaceholder: 'ಹೆಸರು, ಸ್ಥಳ ಅಥವಾ ವರ್ಗದ ಮೂಲಕ ಹುಡುಕಿ...',
     noShopsFound: 'ಯಾವುದೇ ಅಂಗಡಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ.',
-    callPrefix: 'ಕರೆ ಮಾಡಿ',
     navOverview: 'ಅವಲೋಕನ',
     navOperations: 'ಕಾರ್ಯಾಚರಣೆಗಳು',
     navBusiness: 'ವ್ಯಾಪಾರ',
@@ -3933,6 +3926,7 @@ const LANGUAGES = {
     fieldName: 'ಹೆಸರು',
     fieldEmail: 'ಇಮೇಲ್',
     fieldPhone: 'ಫೋನ್ ಸಂಖ್ಯೆ',
+    fieldGstNumber: 'ಜಿಎಸ್ಟಿ ಸಂಖ್ಯೆ',
     fieldAddress: 'ವಿಳಾಸ',
     fieldDate: 'ದಿನಾಂಕ',
     fieldAmount: 'ಮೊತ್ತ',
@@ -4702,12 +4696,9 @@ const LANGUAGES = {
     scanningDesc: 'അനുസരണ എൻട്രികൾ സ്കാൻ ചെയ്യുകയും പ്രോസസ്സ് ചെയ്യുകയും ചെയ്യുക',
     meter: 'മീറ്റർ',
     meterDesc: 'മീറ്റർ റെക്കോർഡുകൾ ട്രാക്ക് ചെയ്യുകയും മാനേജ് ചെയ്യുകയും ചെയ്യുക',
-    usedMachines: 'ഉപയോഗിച്ച മെഷീനുകൾ',
-    usedMachinesDesc: 'ഉപയോഗിച്ച മെഷീനുകൾ കാണുകയും മാനേജ് ചെയ്യുകയും ചെയ്യുക',
     directory: 'ഡയറക്ടറി',
     searchDealersPlaceholder: 'പേര്, സ്ഥലം അല്ലെങ്കിൽ കാറ്റഗറി വഴി തിരയുക...',
     noShopsFound: 'കടകൾ ഒന്നും കണ്ടെത്തിയില്ല.',
-    callPrefix: 'കോൾ ചെയ്യുക',
     navOverview: 'അവലോകനം',
     navOperations: 'പ്രവർത്തനങ്ങൾ',
     navBusiness: 'ബിസിനസ്',
@@ -4780,6 +4771,7 @@ const LANGUAGES = {
     fieldName: 'പേര്',
     fieldEmail: 'ഇമെയിൽ',
     fieldPhone: 'ഫോൺ നമ്പർ',
+    fieldGstNumber: 'ജിഎസ്ടി നമ്പർ',
     fieldAddress: 'വിലാസം',
     fieldDate: 'തീയതി',
     fieldAmount: 'തുക',
@@ -5850,7 +5842,6 @@ export default function App() {
   // `setActiveTab={setActiveTab}`) without needing to touch any of them.
   const [activeTab, setActiveTabRaw] = useState('dashboard');
   const [navStack, setNavStack] = useState([]);
-  const [dealersCategoryFilter, setDealersCategoryFilter] = useState(null);
 
   const setActiveTab = (nextTab) => {
     setActiveTabRaw((current) => {
@@ -6466,7 +6457,6 @@ export default function App() {
   // Checkout widget (which offers card/UPI/netbanking/wallet on its own),
   // so there's no in-app payment-method form to hold state for anymore.
   const [regPayProcessing, setRegPayProcessing] = useState(false);
-  const [regPaySuccess, setRegPaySuccess] = useState(false);
 
   // Password visibility states
   const [showAuthPassword, setShowAuthPassword] = useState(false);
@@ -6685,7 +6675,6 @@ export default function App() {
           });
 
           setRegPayProcessing(false);
-          setRegPaySuccess(true);
           setRegLoginEmail(res.loginEmail || '');
           setRegSuccessMessage(res.message || t('registrationSuccessfulShopActiveMsg'));
         } catch (err) {
@@ -6733,7 +6722,6 @@ export default function App() {
     setRegOtpVerified(false);
     setShowRegOtpModal(false);
     setRegPayProcessing(false);
-    setRegPaySuccess(false);
     setRegStep(1);
   };
 
@@ -8007,7 +7995,7 @@ export default function App() {
               </div>
             </header>
 
-            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} setDealersCategoryFilter={setDealersCategoryFilter} />}
+            {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} />}
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
             {activeTab === 'dealers' && <DealersView t={t} api={api} />}
             {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" icon={KeyRound} t={t} api={api} />}
@@ -8306,7 +8294,7 @@ function DashCardGrid({ items }) {
 // login, same page session) can't leak stale data across users.
 let dashboardCache = null;
 
-function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal, setDealersCategoryFilter }) {
+function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal }) {
   const { user, api } = useAuth();
   const cachedData = dashboardCache && dashboardCache.userId === user.id ? dashboardCache.data : null;
   const [data, setData] = useState(cachedData);
@@ -8969,6 +8957,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       // address/phone metadata is persisted here.
       const companyDetails = JSON.stringify({
         address: editAddress,
+        gst: editGst,
         phone: editPhone,
       });
 
@@ -8992,7 +8981,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           <p>{t('provisionShopsDesc')}</p>
         </div>
         <button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => { resetAddForm(); setShowAddModal(true); }}
           className="btn btn-primary"
         >
           <Plus />
@@ -9330,7 +9319,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               {/* Fixed Footer with CTA buttons */}
               <div className="flex justify-end gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                 <button
-                  type="button" onClick={() => setShowAddModal(false)}
+                  type="button" onClick={() => { resetAddForm(); setShowAddModal(false); }}
                   className="btn btn-ghost"
                 >
                   {t('btnCancel')}
@@ -9388,6 +9377,15 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     <input
                       type="text" readOnly value={editAddress}
                       style={{ opacity: 0.6, cursor: 'not-allowed' }}
+                    />
+                  </div>
+                </div>
+                <div className="reg-field">
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Percent /></div><b>{t('fieldGstNumber')}</b></div>
+                  <div className="input-wrap">
+                    <input
+                      type="text" value={editGst} onChange={(e) => setEditGst(e.target.value)}
+                      placeholder="Pending"
                     />
                   </div>
                 </div>
@@ -13030,10 +13028,9 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [keyNumber, setKeyNumber] = useState('');
   const [vehicleNumber, setVehicleNumber] = useState('');
   const [addressLine, setAddressLine] = useState('');
-  // Internal-only (not shown as their own fields) - resolved from the reverse
+  // Internal-only (not shown as its own field) - resolved from the reverse
   // geocode on "Current Location" purely to build the single Address field's
   // full text; India is the only country this app operates in.
-  const [stateVal, setStateVal] = useState('Tamil Nadu');
   const [district, setDistrict] = useState('Chennai');
   const [country] = useState('India');
   const [masterKeyId, setMasterKeyId] = useState('');
@@ -13077,7 +13074,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // GPS Location Status
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const [gpsTimestamp, setGpsTimestamp] = useState(null);
   const [gpsError, setGpsError] = useState('');
   const [gpsErrorKind, setGpsErrorKind] = useState('');
   const [isCapturingGps, setIsCapturingGps] = useState(false);
@@ -13197,18 +13193,16 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
     setLatitude(lat);
     setLongitude(lng);
-    setGpsTimestamp(new Date().toISOString());
     const data = await reverseGeocode(lat, lng);
     if (data) {
-      // District/state are resolved here purely as internal state (not
-      // rendered as their own fields anymore) - matching against
-      // INDIAN_STATES_DISTRICTS is kept only to normalize the state name the
-      // same way it always has, in case it's needed elsewhere later.
+      // District is resolved here purely as internal state (not rendered as
+      // its own field anymore) - matching against INDIAN_STATES_DISTRICTS is
+      // kept only to normalize the state name the same way it always has,
+      // in case it's needed elsewhere later.
       const matchedState = Object.keys(INDIAN_STATES_DISTRICTS).find(
         st => st.toLowerCase() === (data.state || '').toLowerCase()
       );
       if (matchedState) {
-        setStateVal(matchedState);
         const list = INDIAN_STATES_DISTRICTS[matchedState] || [];
         // Nominatim's district name often carries a "District"/"Taluk"/
         // "Tehsil" suffix (e.g. "Chennai District") that our district list
@@ -13444,14 +13438,12 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setHomeOfficeNameEnabled(false);
     setAddressLine('');
     setDistrict('');
-    setStateVal('');
     setOtpVerified(false);
     setShowCustomerOtpModal(false);
     setDuplicateKeyWarning(false);
     setUploadedDocs([]);
     setLatitude(null);
     setLongitude(null);
-    setGpsTimestamp(null);
     setGpsError('');
     setCapturedAddress('');
     setShowReviewModal(false);
@@ -16013,7 +16005,6 @@ function ShopSettingsView({ t, api, shopId }) {
   const [referralPoints, setReferralPoints] = useState(cachedReferral ? cachedReferral.referralPoints : 0);
   const [totalReferrals, setTotalReferrals] = useState(cachedReferral ? cachedReferral.totalReferrals : 0);
   const [referralHistory, setReferralHistory] = useState(cachedReferral ? cachedReferral.history : []);
-  const [referralOverviewLoading, setReferralOverviewLoading] = useState(!cachedReferral);
 
   // Verification states
   const [revealPassword, setRevealPassword] = useState(false);
@@ -16037,7 +16028,6 @@ function ShopSettingsView({ t, api, shopId }) {
   const [otpResetConfirmPassword, setOtpResetConfirmPassword] = useState('');
   const [otpResetLoading, setOtpResetLoading] = useState(false);
   const [otpResetError, setOtpResetError] = useState('');
-  const [otpResetSuccess, setOtpResetSuccess] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -16166,10 +16156,6 @@ function ShopSettingsView({ t, api, shopId }) {
   };
 
   const fetchReferralOverview = async () => {
-    // Only blank to a spinner when there's nothing cached yet for this shop
-    // - a revisit renders the last-fetched overview instantly and refreshes
-    // silently in the background.
-    if (!referralOverviewCache[referralCacheKey]) setReferralOverviewLoading(true);
     try {
       const res = await api.getReferralOverview(shopId);
       const overview = {
@@ -16185,8 +16171,6 @@ function ShopSettingsView({ t, api, shopId }) {
       referralOverviewCache[referralCacheKey] = overview;
     } catch (e) {
       console.error(e);
-    } finally {
-      setReferralOverviewLoading(false);
     }
   };
 
@@ -16270,7 +16254,6 @@ function ShopSettingsView({ t, api, shopId }) {
     try {
       await api.resetPasswordPublic(otpResetIdentifier, otpResetMethod || 'email', otpResetNewPassword);
       setRevealedPasswordVal(otpResetNewPassword);
-      setOtpResetSuccess(true);
       alert(t('passwordUpdatedSuccessfullyMsg'));
       setOtpResetOpen(false);
       // Reset flow variables
