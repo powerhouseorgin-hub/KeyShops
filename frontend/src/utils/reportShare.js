@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { API_BASE } from '../apiConfig';
-import { shareToWhatsApp, downloadPdf } from './pdfDelivery';
+import { shareFileToWhatsApp, downloadPdf } from './pdfDelivery';
 
 // Shared upload-then-share flow for the Customer Key Registration Report,
 // used by every WhatsApp-share entry point that operates on an
@@ -10,10 +10,22 @@ import { shareToWhatsApp, downloadPdf } from './pdfDelivery';
 // its own simpler local-only share behavior instead.
 //
 // Uploads the PDF via api.uploadCustomerReport so it gets a stable, secure
-// public download link (see backend PublicReportController), then shares
-// both the file and a message containing that link via WhatsApp (or the OS
-// share sheet on native, which forwards both the file and text to
-// WhatsApp when picked).
+// public download link (see backend PublicReportController), then delivers
+// both the message (with that link) and the PDF file to WhatsApp.
+//
+// This happens in two separate steps, not one combined share. WhatsApp's
+// Android/iOS apps silently drop any caption text (EXTRA_TEXT) whenever the
+// shared attachment is a document (non-image/video) mimetype - this is a
+// confirmed platform limitation of WhatsApp itself, not something fixable
+// via Intent flags or which share-sheet entry point is used (verified after
+// a first attempt at combining file+text into one native share still
+// arrived with no message, exactly like the plain OS share sheet had).
+// Image/video attachments DO support a caption; PDFs don't. So instead:
+//   1. Open WhatsApp with the message (incl. the download link) pre-filled
+//      via the wa.me deep link - this is guaranteed to arrive, since it's
+//      a real WhatsApp API for pre-filling a text message.
+//   2. Hand off the PDF file on its own right after, so the user's next
+//      tap attaches it to the same chat.
 export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
   const customerName = (customer?.name || 'Customer').trim();
   const safeNamePart = customerName.replace(/[^a-zA-Z0-9]+/g, '_') || 'Customer';
@@ -47,32 +59,20 @@ export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
   ].filter((line) => line !== null).join('\n');
 
   const cleanPhone = (customer?.phone || '').replace(/[^0-9]/g, '');
-
-  if (Capacitor.isNativePlatform()) {
-    await shareToWhatsApp(pdf, fileName, msg);
-    return;
-  }
-
-  // Web: try a combined file+text share first (supported on most mobile
-  // browsers and routes straight into WhatsApp when picked from the share
-  // sheet). Desktop browsers generally don't support sharing files this way,
-  // so fall back to the previous behavior - open WhatsApp with the message
-  // (including the download link) and separately save the file locally.
-  const blob = pdf.output('blob');
-  const file = new File([blob], fileName, { type: 'application/pdf' });
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    try {
-      await navigator.share({ files: [file], text: msg, title: 'Customer Key Registration Report' });
-      return;
-    } catch (err) {
-      if (err && err.name === 'AbortError') return;
-      // fall through to the WhatsApp deep-link fallback below
-    }
-  }
-
   const waUrl = cleanPhone
     ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`
     : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+
+  // Step 1: message with the link, pre-filled and ready to send.
   window.open(waUrl, '_blank');
-  await downloadPdf(pdf, fileName);
+
+  // Step 2: hand off the file. A short delay avoids firing a second
+  // app-switching intent on top of WhatsApp still opening from step 1.
+  await new Promise((resolve) => setTimeout(resolve, 700));
+
+  if (Capacitor.isNativePlatform()) {
+    await shareFileToWhatsApp(pdf, fileName);
+  } else {
+    await downloadPdf(pdf, fileName);
+  }
 }
