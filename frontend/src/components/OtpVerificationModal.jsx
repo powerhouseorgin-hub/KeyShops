@@ -31,7 +31,7 @@ export default function OtpVerificationModal({
   purpose,
   title,
   description,
-  resendCooldownSeconds = 30,
+  resendCooldownSeconds = 60,
   t = (k) => k,
 }) {
   const [enteredOtp, setEnteredOtp] = useState('');

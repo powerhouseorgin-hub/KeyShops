@@ -425,7 +425,7 @@ const LANGUAGES = {
     keyShops: 'Key Shops',
     keyShopsDesc: 'Explore verified key shop partners',
     dealers: 'Dealers',
-    dealersDesc: 'Verified dealers & locksmith partners',
+    dealersDesc: 'Verified dealers & key shop partners',
     ecm: 'ECM Service Center',
     ecmDesc: 'Manage ECM records',
     scanning: 'Scanning Center',
@@ -533,10 +533,10 @@ const LANGUAGES = {
     shopsCardTitle: 'Shops',
     viewManageShopsDesc: 'View and manage every registered shop',
     dealersCardTitle: 'Dealers',
-    dealersCardDesc: 'Verified dealers & locksmith partners',
+    dealersCardDesc: 'Verified dealers & key shop partners',
     dealersPageTitle: 'Dealers',
     dealersEyebrow: 'Dealers Directory',
-    dealersPageDesc: 'Explore verified Key Shop dealers and locksmith partners across India.',
+    dealersPageDesc: 'Explore verified Key Shop dealers and service partners across India.',
     allCategoriesCard: 'All',
     searchDealersPlaceholder: 'Search dealers by name, location, category...',
     noDealersFoundMsg: 'No dealers found matching your search.',
@@ -971,13 +971,13 @@ const LANGUAGES = {
     failedSaveCustomerEditsMsg: 'Failed to save customer edits.',
     loadingSupportResourcesMsg: 'Loading support resources…',
     supportTrainingCenterTitle: 'Support & Training Center',
-    reachSupportTrainingDesc: 'Reach Key Shop technical support and level up with locksmith training resources.',
+    reachSupportTrainingDesc: 'Reach Key Shop technical support and level up with key shop training resources.',
     contactLiveAgentTitle: 'Contact Live Agent',
     supportHoursLabel: 'Mon–Sat, 9 AM–7 PM IST',
     liveCustomerSupportDesc: 'Live customer support is on hand to help with your key-making machines or duplicate key portal dashboard.',
     directWhatsappSupportLabel: 'Direct WhatsApp Support',
     chatOnWhatsappBtn: 'Chat on WhatsApp',
-    locksmithSkillUpgradesTitle: 'Locksmith Skill Upgrades',
+    keyShopSkillUpgradesTitle: 'Key Shop Skill Upgrades',
     videoTutorialsFromExpertsDesc: 'Video tutorials from duplicate key experts',
     trainingMaterialLabel: 'Training Material',
     watchLinkLabel: 'Watch Link',
@@ -1025,10 +1025,10 @@ const LANGUAGES = {
     videoSingularLabel: 'video',
     videoPluralLabel: 'videos',
     addVideoBtn: 'Add Video',
-    noVideosConfiguredMsg: 'No videos configured. Click “Add Video” to add locksmith training links.',
+    noVideosConfiguredMsg: 'No videos configured. Click “Add Video” to add key shop training links.',
     removeVideoTitle: 'Remove video',
     videoTitleNameLabel: 'Video Title / Name',
-    videoTitlePlaceholderEg: 'e.g. Locksmith Career Income',
+    videoTitlePlaceholderEg: 'e.g. Key Cutting Business Growth',
     youtubeUrlLabel: 'YouTube URL',
     saveConfigurationBtn: 'Save Configuration',
     shopCategoriesTitle: 'Shop Categories',
@@ -1073,6 +1073,7 @@ const LANGUAGES = {
     shareBtn: 'Share',
     downloadReportBtn: 'Download Report',
     saveRecordBtn: 'Save Record',
+    savingRecordBtn: 'Saving…',
     shareViaWhatsAppBtn: 'Share via WhatsApp',
     okBtn: 'OK',
     tryAgainBtn: 'Try Again',
@@ -1231,7 +1232,7 @@ const LANGUAGES = {
     signInWithNewCredentialsMsg: 'You can now sign in with your new credentials.',
     smartGoldStandardWaySpan: 'the smart, gold-standard way.',
     streetLandmarkPlaceholder: 'Street / landmark',
-    trackDuplicateKeysDesc: 'Track duplicate keys, customers and store orders across every branch — one bold dashboard built for Indian locksmiths.',
+    trackDuplicateKeysDesc: 'Track duplicate keys, customers and store orders across every branch — one bold dashboard built for Indian key shops.',
     trustedByShopsBadge: 'Trusted by 500+ key shops across India',
     upiQrScanLabel: 'UPI / QR scan',
     verifyBtnLabel: 'Verify',
@@ -1847,7 +1848,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'लाइव ग्राहक सहायता आपकी की-मेकिंग मशीनों या डुप्लिकेट की पोर्टल डैशबोर्ड में मदद के लिए उपलब्ध है।',
     directWhatsappSupportLabel: 'सीधा व्हाट्सएप सहायता',
     chatOnWhatsappBtn: 'व्हाट्सएप पर चैट करें',
-    locksmithSkillUpgradesTitle: 'लॉकस्मिथ कौशल उन्नयन',
+    keyShopSkillUpgradesTitle: 'की शॉप कौशल उन्नयन',
     videoTutorialsFromExpertsDesc: 'डुप्लिकेट की विशेषज्ञों के वीडियो ट्यूटोरियल',
     trainingMaterialLabel: 'प्रशिक्षण सामग्री',
     watchLinkLabel: 'लिंक देखें',
@@ -1881,7 +1882,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'कोई वीडियो कॉन्फ़िगर नहीं किया गया। लॉकस्मिथ प्रशिक्षण लिंक जोड़ने के लिए “वीडियो जोड़ें” पर क्लिक करें।',
     removeVideoTitle: 'वीडियो हटाएं',
     videoTitleNameLabel: 'वीडियो शीर्षक / नाम',
-    videoTitlePlaceholderEg: 'जैसे Locksmith Career Income',
+    videoTitlePlaceholderEg: 'जैसे Key Cutting Business Growth',
     youtubeUrlLabel: 'यूट्यूब URL',
     saveConfigurationBtn: 'कॉन्फ़िगरेशन सहेजें',
     shopCategoriesTitle: 'दुकान श्रेणियाँ',
@@ -1926,6 +1927,7 @@ const LANGUAGES = {
     shareBtn: 'साझा करें',
     downloadReportBtn: 'रिपोर्ट डाउनलोड करें',
     saveRecordBtn: 'रिकॉर्ड सहेजें',
+    savingRecordBtn: 'सहेजा जा रहा है…',
     shareViaWhatsAppBtn: 'व्हाट्सएप पर साझा करें',
     okBtn: 'ठीक है',
     tryAgainBtn: 'पुनः प्रयास करें',
@@ -2694,7 +2696,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'உங்கள் சாவி தயாரிக்கும் இயந்திரங்கள் அல்லது நகல் சாவி போர்ட்டல் டாஷ்போர்டுக்கு உதவ நேரடி வாடிக்கையாளர் ஆதரவு தயாராக உள்ளது.',
     directWhatsappSupportLabel: 'நேரடி வாட்ஸ்அப் ஆதரவு',
     chatOnWhatsappBtn: 'வாட்ஸ்அப்பில் அரட்டையடிக்கவும்',
-    locksmithSkillUpgradesTitle: 'லாக்ஸ்மித் திறன் மேம்பாடுகள்',
+    keyShopSkillUpgradesTitle: 'சாவி கடை திறன் மேம்பாடுகள்',
     videoTutorialsFromExpertsDesc: 'நகல் சாவி நிபுணர்களின் வீடியோ பயிற்சிகள்',
     trainingMaterialLabel: 'பயிற்சி பொருள்',
     watchLinkLabel: 'இணைப்பைப் பார்க்கவும்',
@@ -2728,7 +2730,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'வீடியோக்கள் எதுவும் கட்டமைக்கப்படவில்லை. பூட்டாளர் பயிற்சி இணைப்புகளைச் சேர்க்க “வீடியோ சேர்க்கவும்” என்பதைக் கிளிக் செய்யவும்.',
     removeVideoTitle: 'வீடியோவை அகற்று',
     videoTitleNameLabel: 'வீடியோ தலைப்பு / பெயர்',
-    videoTitlePlaceholderEg: 'உதா. Locksmith Career Income',
+    videoTitlePlaceholderEg: 'உதா. Key Cutting Business Growth',
     youtubeUrlLabel: 'யூடியூப் URL',
     saveConfigurationBtn: 'கட்டமைப்பைச் சேமி',
     shopCategoriesTitle: 'கடை வகைகள்',
@@ -2773,6 +2775,7 @@ const LANGUAGES = {
     shareBtn: 'பகிரவும்',
     downloadReportBtn: 'அறிக்கையைப் பதிவிறக்கவும்',
     saveRecordBtn: 'பதிவைச் சேமிக்கவும்',
+    savingRecordBtn: 'சேமிக்கிறது…',
     shareViaWhatsAppBtn: 'வாட்ஸ்அப் வழியாகப் பகிரவும்',
     okBtn: 'சரி',
     tryAgainBtn: 'மீண்டும் முயற்சிக்கவும்',
@@ -3547,7 +3550,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'మీ కీ-మేకింగ్ మెషీన్‌లు లేదా నకిలీ కీ పోర్టల్ డాష్‌బోర్డ్‌కు సహాయం చేయడానికి లైవ్ కస్టమర్ మద్దతు అందుబాటులో ఉంది.',
     directWhatsappSupportLabel: 'ప్రత్యక్ష వాట్సాప్ మద్దతు',
     chatOnWhatsappBtn: 'వాట్సాప్‌లో చాట్ చేయండి',
-    locksmithSkillUpgradesTitle: 'లాక్‌స్మిత్ నైపుణ్య అప్‌గ్రేడ్‌లు',
+    keyShopSkillUpgradesTitle: 'కీ షాప్ నైపుణ్య అప్‌గ్రేడ్‌లు',
     videoTutorialsFromExpertsDesc: 'నకిలీ కీ నిపుణుల వీడియో ట్యుటోరియల్స్',
     trainingMaterialLabel: 'శిక్షణా సామగ్రి',
     watchLinkLabel: 'లింక్‌ను చూడండి',
@@ -3581,7 +3584,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'వీడియోలు ఏవీ కాన్ఫిగర్ చేయలేదు. లాక్‌స్మిత్ శిక్షణ లింక్‌లను జోడించడానికి “వీడియో జోడించండి” క్లిక్ చేయండి.',
     removeVideoTitle: 'వీడియోను తీసివేయండి',
     videoTitleNameLabel: 'వీడియో శీర్షిక / పేరు',
-    videoTitlePlaceholderEg: 'ఉదా. Locksmith Career Income',
+    videoTitlePlaceholderEg: 'ఉదా. Key Cutting Business Growth',
     youtubeUrlLabel: 'యూట్యూబ్ URL',
     saveConfigurationBtn: 'కాన్ఫిగరేషన్ సేవ్ చేయండి',
     shopCategoriesTitle: 'షాప్ వర్గాలు',
@@ -3626,6 +3629,7 @@ const LANGUAGES = {
     shareBtn: 'షేర్ చేయండి',
     downloadReportBtn: 'నివేదికను డౌన్‌లోడ్ చేయండి',
     saveRecordBtn: 'రికార్డ్‌ను సేవ్ చేయండి',
+    savingRecordBtn: 'సేవ్ చేస్తోంది…',
     shareViaWhatsAppBtn: 'వాట్సాప్ ద్వారా షేర్ చేయండి',
     okBtn: 'సరే',
     tryAgainBtn: 'మళ్ళీ ప్రయత్నించండి',
@@ -4394,7 +4398,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'ನಿಮ್ಮ ಕೀ-ಮೇಕಿಂಗ್ ಯಂತ್ರಗಳು ಅಥವಾ ನಕಲಿ ಕೀ ಪೋರ್ಟಲ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಸಹಾಯ ಮಾಡಲು ಲೈವ್ ಗ್ರಾಹಕ ಬೆಂಬಲ ಸಿದ್ಧವಾಗಿದೆ.',
     directWhatsappSupportLabel: 'ನೇರ ವಾಟ್ಸಾಪ್ ಬೆಂಬಲ',
     chatOnWhatsappBtn: 'ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಚಾಟ್ ಮಾಡಿ',
-    locksmithSkillUpgradesTitle: 'ಲಾಕ್‌ಸ್ಮಿತ್ ಕೌಶಲ್ಯ ಅಪ್‌ಗ್ರೇಡ್‌ಗಳು',
+    keyShopSkillUpgradesTitle: 'ಕೀ ಶಾಪ್ ಕೌಶಲ್ಯ ಅಪ್‌ಗ್ರೇಡ್‌ಗಳು',
     videoTutorialsFromExpertsDesc: 'ನಕಲಿ ಕೀ ತಜ್ಞರ ವೀಡಿಯೊ ಟ್ಯುಟೋರಿಯಲ್‌ಗಳು',
     trainingMaterialLabel: 'ತರಬೇತಿ ಸಾಮಗ್ರಿ',
     watchLinkLabel: 'ಲಿಂಕ್ ವೀಕ್ಷಿಸಿ',
@@ -4428,7 +4432,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'ಯಾವುದೇ ವೀಡಿಯೊಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿಲ್ಲ. ಲಾಕ್‌ಸ್ಮಿತ್ ತರಬೇತಿ ಲಿಂಕ್‌ಗಳನ್ನು ಸೇರಿಸಲು “ವೀಡಿಯೊ ಸೇರಿಸಿ” ಕ್ಲಿಕ್ ಮಾಡಿ.',
     removeVideoTitle: 'ವೀಡಿಯೊ ತೆಗೆದುಹಾಕಿ',
     videoTitleNameLabel: 'ವೀಡಿಯೊ ಶೀರ್ಷಿಕೆ / ಹೆಸರು',
-    videoTitlePlaceholderEg: 'ಉದಾ. Locksmith Career Income',
+    videoTitlePlaceholderEg: 'ಉದಾ. Key Cutting Business Growth',
     youtubeUrlLabel: 'ಯೂಟ್ಯೂಬ್ URL',
     saveConfigurationBtn: 'ಕಾನ್ಫಿಗರೇಶನ್ ಉಳಿಸಿ',
     shopCategoriesTitle: 'ಅಂಗಡಿ ವರ್ಗಗಳು',
@@ -4473,6 +4477,7 @@ const LANGUAGES = {
     shareBtn: 'ಹಂಚಿಕೊಳ್ಳಿ',
     downloadReportBtn: 'ವರದಿಯನ್ನು ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ',
     saveRecordBtn: 'ದಾಖಲೆಯನ್ನು ಉಳಿಸಿ',
+    savingRecordBtn: 'ಉಳಿಸಲಾಗುತ್ತಿದೆ…',
     shareViaWhatsAppBtn: 'ವಾಟ್ಸ್ಆ್ಯಪ್ ಮೂಲಕ ಹಂಚಿಕೊಳ್ಳಿ',
     okBtn: 'ಸರಿ',
     tryAgainBtn: 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ',
@@ -5247,7 +5252,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'നിങ്ങളുടെ കീ നിർമ്മാണ യന്ത്രങ്ങൾക്കോ ഡ്യൂപ്ലിക്കേറ്റ് കീ പോർട്ടൽ ഡാഷ്‌ബോർഡിനോ സഹായിക്കാൻ തത്സമയ ഉപഭോക്തൃ പിന്തുണ ലഭ്യമാണ്.',
     directWhatsappSupportLabel: 'നേരിട്ടുള്ള വാട്ട്‌സ്ആപ്പ് പിന്തുണ',
     chatOnWhatsappBtn: 'വാട്ട്‌സ്ആപ്പിൽ ചാറ്റ് ചെയ്യുക',
-    locksmithSkillUpgradesTitle: 'ലോക്ക്സ്മിത്ത് നൈപുണ്യ അപ്‌ഗ്രേഡുകൾ',
+    keyShopSkillUpgradesTitle: 'കീ ഷോപ്പ് നൈപുണ്യ അപ്‌ഗ്രേഡുകൾ',
     videoTutorialsFromExpertsDesc: 'ഡ്യൂപ്ലിക്കേറ്റ് കീ വിദഗ്ധരുടെ വീഡിയോ ട്യൂട്ടോറിയലുകൾ',
     trainingMaterialLabel: 'പരിശീലന സാമഗ്രി',
     watchLinkLabel: 'ലിങ്ക് കാണുക',
@@ -5281,7 +5286,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'വീഡിയോകളൊന്നും ക്രമീകരിച്ചിട്ടില്ല. ലോക്ക്സ്മിത്ത് പരിശീലന ലിങ്കുകൾ ചേർക്കാൻ “വീഡിയോ ചേർക്കുക” ക്ലിക്ക് ചെയ്യുക.',
     removeVideoTitle: 'വീഡിയോ നീക്കം ചെയ്യുക',
     videoTitleNameLabel: 'വീഡിയോ തലക്കെട്ട് / പേര്',
-    videoTitlePlaceholderEg: 'ഉദാ. Locksmith Career Income',
+    videoTitlePlaceholderEg: 'ഉദാ. Key Cutting Business Growth',
     youtubeUrlLabel: 'യൂട്യൂബ് URL',
     saveConfigurationBtn: 'ക്രമീകരണം സേവ് ചെയ്യുക',
     shopCategoriesTitle: 'ഷോപ്പ് വിഭാഗങ്ങൾ',
@@ -5326,6 +5331,7 @@ const LANGUAGES = {
     shareBtn: 'പങ്കിടുക',
     downloadReportBtn: 'റിപ്പോർട്ട് ഡൗൺലോഡ് ചെയ്യുക',
     saveRecordBtn: 'റെക്കോർഡ് സേവ് ചെയ്യുക',
+    savingRecordBtn: 'സേവ് ചെയ്യുന്നു…',
     shareViaWhatsAppBtn: 'വാട്ട്‌സ്ആപ്പ് വഴി പങ്കിടുക',
     okBtn: 'ശരി',
     tryAgainBtn: 'വീണ്ടും ശ്രമിക്കുക',
@@ -11612,6 +11618,76 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
             const Icon = meta.icon;
             const expired = isExpiredOffer(promo);
             return (
+              promo.type === 'PRODUCT' ? (
+              // Machines/Products - same visual language as the pre-login
+              // Machines tab's card (.pub-card / .pub-card-media / .pub-card-title
+              // / .pub-card-meta, shared global classes, not duplicated CSS) so
+              // the two surfaces read as one consistent design. Unlike the
+              // pre-login card this one isn't a fixed-height grid tile (it needs
+              // room for the Call button, date and Edit/Remove), so the body's
+              // normally-fixed height/overflow/truncation are overridden inline
+              // to grow with content instead of clipping it.
+              <div key={promo.id} className="pub-card" style={{ cursor: 'default' }}>
+                <div className="pub-card-media">
+                  {promo.imageUrl ? (
+                    <img src={cleanGoogleImageUrl(promo.imageUrl)} alt={promo.title} loading="lazy" />
+                  ) : (
+                    <div className={`icon-badge ${meta.color}`}><Icon /></div>
+                  )}
+                  {expired && (
+                    <span className="badge badge-suspended" style={{ position: 'absolute', top: 10, right: 10 }}>{t('expiredLabel')}</span>
+                  )}
+                </div>
+                <div className="pub-card-body" style={{ height: 'auto', overflow: 'visible' }}>
+                  <div className="pub-card-title" style={{ whiteSpace: 'normal', overflow: 'visible', textOverflow: 'clip' }}>{promo.title}</div>
+                  {promo.productType && (
+                    <div className="pub-card-meta"><Tag className="h-3 w-3" /><span>{promo.productType}</span></div>
+                  )}
+                  <div className="pub-card-meta"><Store className="h-3 w-3" /><span>{promo.shop?.name || t('superAdminIndependentLabel')}</span></div>
+                  {promo.price != null && (
+                    <div className="pub-card-price"><IndianRupee className="h-3 w-3" />{Number(promo.price).toLocaleString('en-IN')}</div>
+                  )}
+                </div>
+                <div style={{ padding: '0 11px 11px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {promo.phone && (
+                    // Plain tel: link - opens the system dialer automatically inside
+                    // the native Android app (Capacitor's default WebViewClient
+                    // launches an external ACTION_VIEW intent for non-http schemes),
+                    // and falls back to the browser's normal tel: handling on web.
+                    <a href={`tel:${promo.phone}`} className="btn btn-primary btn-sm btn-block">
+                      <Phone className="h-3.5 w-3.5" />
+                      <span>{t('callPrefix')} {promo.phone}</span>
+                    </a>
+                  )}
+
+                  <div className="cell-sub" style={{ fontSize: 11.5 }}>
+                    <Calendar className="h-3 w-3" style={{ display: 'inline', marginRight: 4, verticalAlign: '-2px' }} />
+                    {new Date(promo.createdAt).toLocaleDateString()}
+                  </div>
+
+                  {canManage(promo) && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEditClick(promo)}
+                        className="btn btn-ghost btn-sm btn-block"
+                        style={{ whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.2 }}
+                      >
+                        <Edit className="h-3.5 w-3.5" style={{ flexShrink: 0 }} />
+                        <span>{t('editBtn')}</span>
+                      </button>
+                      <button
+                        onClick={() => handleDelete(promo.id)}
+                        className="btn btn-danger-outline btn-sm btn-block"
+                        style={{ whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.2 }}
+                      >
+                        <Trash className="h-3.5 w-3.5" style={{ flexShrink: 0 }} />
+                        <span>{t('removeBtn')}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+              ) : (
               <div key={promo.id} className="product-card">
                 <div className="product-img" style={{ height: 150, aspectRatio: '1 / 1', maxHeight: 190 }}>
                   {promo.imageUrl ? (
@@ -11620,11 +11696,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                     <div className={`icon-badge ${meta.color}`}><Icon /></div>
                   )}
                   <span className="product-tag">
-                    {promo.type === 'PRODUCT' && promo.productType ? (
-                      <><Tag className="h-3 w-3" style={{ display: 'inline', marginRight: 4, verticalAlign: '-1px' }} />{promo.productType}</>
-                    ) : (
-                      <><Icon className="h-3 w-3" style={{ display: 'inline', marginRight: 4, verticalAlign: '-1px' }} />{meta.label}</>
-                    )}
+                    <Icon className="h-3 w-3" style={{ display: 'inline', marginRight: 4, verticalAlign: '-1px' }} />{meta.label}
                   </span>
                   {expired && (
                     <span className="badge badge-suspended" style={{ position: 'absolute', top: 10, right: 10 }}>{t('expiredLabel')}</span>
@@ -11645,27 +11717,25 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                     <p className="cell-sub" style={{ fontSize: 11.5, minHeight: 32, wordBreak: 'break-word' }}>{promo.description}</p>
                   )}
 
-                  {promo.type === 'OFFER' && (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                      {promo.discountPercentage != null && (
-                        <span className="badge badge-active">
-                          <Percent className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
-                          {promo.discountPercentage}{t('percentOffSuffix')}
-                        </span>
-                      )}
-                      {promo.validUntil && (
-                        <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
-                          <Clock className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
-                          {t('validTillPrefix')} {new Date(promo.validUntil).toLocaleDateString()}
-                        </span>
-                      )}
-                      {promo.linkedPromotion && (
-                        <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
-                          {t('linkedPrefix')} {promo.linkedPromotion.title}
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                    {promo.discountPercentage != null && (
+                      <span className="badge badge-active">
+                        <Percent className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
+                        {promo.discountPercentage}{t('percentOffSuffix')}
+                      </span>
+                    )}
+                    {promo.validUntil && (
+                      <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+                        <Clock className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
+                        {t('validTillPrefix')} {new Date(promo.validUntil).toLocaleDateString()}
+                      </span>
+                    )}
+                    {promo.linkedPromotion && (
+                      <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+                        {t('linkedPrefix')} {promo.linkedPromotion.title}
+                      </span>
+                    )}
+                  </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, fontSize: 11, color: 'var(--text-2)', background: 'var(--card-2)', border: '1px solid var(--border)', padding: 10, borderRadius: 12, fontWeight: 600 }}>
                     <div style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={promo.shop?.name || t('superAdminIndependentLabel')}>
@@ -11679,10 +11749,6 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                   </div>
 
                   {promo.phone && (
-                    // Plain tel: link - opens the system dialer automatically inside
-                    // the native Android app (Capacitor's default WebViewClient
-                    // launches an external ACTION_VIEW intent for non-http schemes),
-                    // and falls back to the browser's normal tel: handling on web.
                     <a href={`tel:${promo.phone}`} className="btn btn-primary btn-sm btn-block">
                       <Phone className="h-3.5 w-3.5" />
                       <span>{t('callPrefix')} {promo.phone}</span>
@@ -11716,6 +11782,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                   )}
                 </div>
               </div>
+              )
             );
           })}
         </div>
@@ -13125,6 +13192,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // Post-submit confirmation - shown instead of a plain alert() so the
   // success state reads as part of the app's UI rather than a native dialog.
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  // Guards Save Record against double-clicks/duplicate submissions - stays
+  // true for the whole create/update + document-upload sequence and only
+  // clears on error (so the shop admin can retry) or once the success modal
+  // is up (see handleFinalSubmit).
+  const [savingRecord, setSavingRecord] = useState(false);
 
   // Populate wizard when editCustomer prop is supplied
   useEffect(() => {
@@ -13362,6 +13434,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   };
 
   const handleFinalSubmit = async () => {
+    if (savingRecord) return;
+    setSavingRecord(true);
     try {
       // Only send real, device-captured coordinates. This used to fall back
       // to a hardcoded New Delhi city-center point (28.6139, 77.2090) and a
@@ -13434,7 +13508,9 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
       window.dispatchEvent(new CustomEvent('customer_updated'));
       setShowSuccessModal(true);
+      setSavingRecord(false);
     } catch (e) {
+      setSavingRecord(false);
       alert(t('submissionFailedTemplate').replace('{message}', e.message));
     }
   };
@@ -13937,13 +14013,17 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   </button>
                   <button
                     type="button" className="btn btn-primary"
-                    disabled={duplicateKeyWarning || (superAdminMode && !selectedShopId && !isEditMode)}
+                    disabled={savingRecord || duplicateKeyWarning || (superAdminMode && !selectedShopId && !isEditMode)}
                     onClick={handleFinalSubmit}
-                    title={isEditMode ? 'Update Customer' : t('saveRecordBtn')}
+                    title={savingRecord ? t('savingRecordBtn') : (isEditMode ? 'Update Customer' : t('saveRecordBtn'))}
                     style={{ minWidth: 150 }}
                   >
-                    {isEditMode ? <Check style={{ width: 20, height: 20 }} /> : <Save style={{ width: 20, height: 20 }} />}
-                    {isEditMode ? 'Update Customer' : t('saveRecordBtn')}
+                    {savingRecord ? (
+                      <RefreshCw style={{ width: 20, height: 20 }} className="animate-spin" />
+                    ) : (
+                      isEditMode ? <Check style={{ width: 20, height: 20 }} /> : <Save style={{ width: 20, height: 20 }} />
+                    )}
+                    {savingRecord ? t('savingRecordBtn') : (isEditMode ? 'Update Customer' : t('saveRecordBtn'))}
                   </button>
                 </div>
               </div>
@@ -15194,7 +15274,7 @@ export function CustomerCareView({ t, api }) {
               <Radio style={{ width: 16, height: 16 }} />
             </div>
             <div>
-              <h2 style={{ fontSize: 16 }}>{t('locksmithSkillUpgradesTitle')}</h2>
+              <h2 style={{ fontSize: 16 }}>{t('keyShopSkillUpgradesTitle')}</h2>
               <span className="sub">{t('videoTutorialsFromExpertsDesc')}</span>
             </div>
           </div>
