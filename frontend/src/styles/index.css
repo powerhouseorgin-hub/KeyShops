@@ -940,6 +940,11 @@ input[type="date"], input[type="month"], input[type="time"], input[type="datetim
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 @media (max-width: 640px) { .form-grid { grid-template-columns: 1fr; } }
 .form-grid .full { grid-column: 1 / -1; }
+/* Grid items default to min-width:auto, so a field with long intrinsic
+   content (e.g. the "App Open Poster (shown every app launch)" option text)
+   can stretch its whole track past the modal's edge instead of letting the
+   CustomSelect's own text-overflow:ellipsis truncate it. */
+.form-grid .field { min-width: 0; }
 
 select.sel {
   width: 100%; background: var(--card-2); border: 1.5px solid var(--border-2);
@@ -1059,6 +1064,11 @@ select.sel:focus { border-color: var(--gold); }
   padding: 4px 9px; border-radius: 999px; border: 1px solid rgba(200, 148, 22, 0.3);
 }
 .product-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+/* Flex children default to min-width:auto, so a btn-block Edit/Remove pair
+   in a narrow 2-column card could be pushed wider than its share of the row
+   instead of shrinking - min-width:0 lets them actually respect the row's
+   available width. */
+.product-body .flex.gap-2 > .btn-block { min-width: 0; }
 .product-body .pname { font-family: var(--display); font-weight: 700; color: var(--text-0); font-size: 14px; }
 .product-body .pcat { font-size: 11px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: .04em; }
 .product-foot { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }

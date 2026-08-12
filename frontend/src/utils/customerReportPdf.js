@@ -16,7 +16,7 @@ const NOT_AVAILABLE = 'N/A';
 // Vehicle & Key Details, Bill & Payment Details) and every info-row are
 // pixel-identical instead of separately hand-tuned inline styles.
 const HEADER_PADDING = '12px 14px';
-const ROW_PADDING_V = 8; // px vertical padding per info-row cell
+const ROW_PADDING_V = 11; // px vertical padding per info-row cell
 const SECTION_GAP = 20; // px gap between major cards/sections
 
 // Every displayed value goes through this helper - missing or empty data returns "N/A"
@@ -210,14 +210,14 @@ export async function buildCustomerReportPdf({ customer, shop, registeredByName 
         <!-- BOX C: Billing & Financial Information Box -->
         <div style="border:1.5px solid ${BORDER}; border-radius:8px; overflow:hidden; background:#fff; margin-bottom:${SECTION_GAP}px;">
           ${sectionHeader('Bill & Payment Details')}
-          <div style="padding:14px 20px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px; background:#FAFAFA;">
+          <div style="padding:16px 20px 20px; display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:16px; background:#FAFAFA;">
             <div style="min-width:140px;">
               <div style="font-size:10px; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Bill ID / Number</div>
-              <div style="font-size:14px; font-weight:800; color:${MAROON_DARK}; margin-top:4px; line-height:1.4; word-break:break-word;">${esc(naVal(billId))}</div>
+              <div style="font-size:14px; font-weight:800; color:${MAROON_DARK}; margin-top:6px; line-height:1.4; word-break:break-word;">${esc(naVal(billId))}</div>
             </div>
             <div style="text-align:right; min-width:140px;">
               <div style="font-size:10px; color:#666; font-weight:700; text-transform:uppercase; letter-spacing:.05em;">Total Bill Amount</div>
-              <div style="font-size:20px; font-weight:900; color:${MAROON}; margin-top:4px; line-height:1.3; word-break:break-word;">${esc(billAmountFormatted)}</div>
+              <div style="font-size:20px; font-weight:900; color:${MAROON}; margin-top:6px; line-height:1.3; word-break:break-word;">${esc(billAmountFormatted)}</div>
             </div>
           </div>
         </div>

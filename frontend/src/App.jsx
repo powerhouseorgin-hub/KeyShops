@@ -1290,11 +1290,11 @@ const LANGUAGES = {
     keyShopsDesc: 'सत्यापित की शॉप पार्टनर्स खोजें',
     dealers: 'डीलर्स',
     dealersDesc: 'सत्यापित डीलर्स और ताला-चाबी पार्टनर्स',
-    ecm: 'ईसीएम (ECM)',
+    ecm: 'ईसीएम सेवा केंद्र',
     ecmDesc: 'ईसीएम रिकॉर्ड का प्रबंधन करें',
-    scanning: 'स्कैनिंग',
+    scanning: 'स्कैनिंग केंद्र',
     scanningDesc: 'अनुपालन प्रविष्टियों को स्कैन और प्रोसेस करें',
-    meter: 'मीटर',
+    meter: 'मीटर सेवा केंद्र',
     meterDesc: 'मीटर रिकॉर्ड को ट्रैक और प्रबंधित करें',
     directory: 'निर्देशिका',
     searchDealersPlaceholder: 'नाम, स्थान या श्रेणी द्वारा दुकान खोजें...',
@@ -2143,11 +2143,11 @@ const LANGUAGES = {
     keyShopsDesc: 'சரிபார்க்கப்பட்ட சாவி கடை கூட்டாளர்களை ஆராயுங்கள்',
     dealers: 'டீலர்கள்',
     dealersDesc: 'சரிபார்க்கப்பட்ட டீலர்கள் & பூட்டாளர் கூட்டாளர்கள்',
-    ecm: 'ECM',
+    ecm: 'ECM சேவை மையம்',
     ecmDesc: 'ECM பதிவுகளை நிர்வகிக்கவும்',
-    scanning: 'ஸ்கேனிங்',
+    scanning: 'ஸ்கேனிங் மையம்',
     scanningDesc: 'இணக்க உள்ளீடுகளை ஸ்கேன் செய்து செயலாக்கவும்',
-    meter: 'மீட்டர்',
+    meter: 'மீட்டர் சேவை மையம்',
     meterDesc: 'மீட்டர் பதிவுகளைக் கண்காணித்து நிர்வகிக்கவும்',
     usedMachines: 'பயன்படுத்திய இயந்திரங்கள்',
     usedMachinesDesc: 'பயன்படுத்திய இயந்திரங்களைக் காணவும் நிர்வகிக்கவும்',
@@ -2990,11 +2990,11 @@ const LANGUAGES = {
     keyShopsDesc: 'ధృవీకరించబడిన కీ షాప్ భాగస్వాములను అన్వేషించండి',
     dealers: 'డీలర్లు',
     dealersDesc: 'ధృవీకరించబడిన డీలర్లు & లాక్‌స్మిత్ భాగస్వాములు',
-    ecm: 'ECM',
+    ecm: 'ECM సేవా కేంద్రం',
     ecmDesc: 'ECM రికార్డులను నిర్వహించండి',
-    scanning: 'స్క్యానింగ్',
+    scanning: 'స్క్యానింగ్ కేంద్రం',
     scanningDesc: 'అనుకూలత ఎంట్రీలను స్కాన్ & ప్రాసెస్ చేయండి',
-    meter: 'మీటర్',
+    meter: 'మీటర్ సేవా కేంద్రం',
     meterDesc: 'మీటర్ రికార్డులను ట్రాక్ చేయండి & నిర్వహించండి',
     directory: 'డైరెక్టరీ',
     searchDealersPlaceholder: 'పేరు, లొకేషన్ లేదా కేటగిరీ ద్వారా వెతకండి...',
@@ -3843,11 +3843,11 @@ const LANGUAGES = {
     keyShopsDesc: 'ಪರಿಶೀಲಿಸಿದ ಕೀ ಶಾಪ್ ಭಾಗಿದಾರರನ್ನು ಅನ್ವೇಷಿಸಿ',
     dealers: 'ಡೀಲರ್‌ಗಳು',
     dealersDesc: 'ಪರಿಶೀಲಿಸಿದ ಡೀಲರ್‌ಗಳು & ಲಾಕ್‌ಸ್ಮಿತ್ ಭಾಗಿದಾರರು',
-    ecm: 'ECM',
+    ecm: 'ECM ಸೇವಾ ಕೇಂದ್ರ',
     ecmDesc: 'ECM ದಾಖಲೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ',
-    scanning: 'ಸ್ಕ್ಯಾನಿಂಗ್',
+    scanning: 'ಸ್ಕ್ಯಾನಿಂಗ್ ಕೇಂದ್ರ',
     scanningDesc: 'ಅನುಸರಣೆ ನಮೂದುಗಳನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ & ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಿ',
-    meter: 'ಮೀಟರ್',
+    meter: 'ಮೀಟರ್ ಸೇವಾ ಕೇಂದ್ರ',
     meterDesc: 'ಮೀಟರ್ ದಾಖಲೆಗಳನ್ನು ಟ್ರ್ಯಾಕ್ ಮಾಡಿ & ನಿರ್ವಹಿಸಿ',
     usedMachines: 'ಬಳಸಿದ ಯಂತ್ರಗಳು',
     usedMachinesDesc: 'ಬಳಸಿದ ಯಂತ್ರಗಳನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ',
@@ -4690,11 +4690,11 @@ const LANGUAGES = {
     keyShopsDesc: 'പരിശോധിച്ച കീ ഷോപ്പ് പങ്കാളികളെ കണ്ടെത്തുക',
     dealers: 'ഡീലർമാർ',
     dealersDesc: 'പരിശോധിച്ച ഡീലർമാരും ലോക്ക്സ്മിത്ത് പങ്കാളികളും',
-    ecm: 'ECM',
+    ecm: 'ECM സേവന കേന്ദ്രം',
     ecmDesc: 'ECM റെക്കോർഡുകൾ മാനേജ് ചെയ്യുക',
-    scanning: 'സ്കാനിംഗ്',
+    scanning: 'സ്കാനിംഗ് കേന്ദ്രം',
     scanningDesc: 'അനുസരണ എൻട്രികൾ സ്കാൻ ചെയ്യുകയും പ്രോസസ്സ് ചെയ്യുകയും ചെയ്യുക',
-    meter: 'മീറ്റർ',
+    meter: 'മീറ്റർ സേവന കേന്ദ്രം',
     meterDesc: 'മീറ്റർ റെക്കോർഡുകൾ ട്രാക്ക് ചെയ്യുകയും മാനേജ് ചെയ്യുകയും ചെയ്യുക',
     directory: 'ഡയറക്ടറി',
     searchDealersPlaceholder: 'പേര്, സ്ഥലം അല്ലെങ്കിൽ കാറ്റഗറി വഴി തിരയുക...',
@@ -7647,7 +7647,7 @@ export default function App() {
                     className={`side-link ${activeTab === 'banner-offer-management' ? 'active' : ''}`}
                   >
                     <span className="nav-ico" style={{ background: 'var(--gold)' }}><Sparkles /></span>
-                    <span>Banner &amp; Offer Management</span>
+                    <span>Banner &amp; Offers</span>
                   </button>
 
                   <div className="side-section-label">{t('navSupport')}</div>
@@ -11699,15 +11699,17 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                       <button
                         onClick={() => handleEditClick(promo)}
                         className="btn btn-ghost btn-sm btn-block"
+                        style={{ whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.2 }}
                       >
-                        <Edit className="h-3.5 w-3.5" />
+                        <Edit className="h-3.5 w-3.5" style={{ flexShrink: 0 }} />
                         <span>{t('editBtn')}</span>
                       </button>
                       <button
                         onClick={() => handleDelete(promo.id)}
                         className="btn btn-danger-outline btn-sm btn-block"
+                        style={{ whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.2 }}
                       >
-                        <Trash className="h-3.5 w-3.5" />
+                        <Trash className="h-3.5 w-3.5" style={{ flexShrink: 0 }} />
                         <span>{t('removeBtn')}</span>
                       </button>
                     </div>
@@ -11922,6 +11924,10 @@ function OffersAdsBannersView({ t, api }) {
   const [ads, setAds] = useState([]);
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Ads have no other detail to navigate to (no CTA/link/description field on
+  // Advertisement) - tapping a card just shows its image at full size, same
+  // pattern as the public pre-login app's PublicAdViewer.
+  const [viewingAd, setViewingAd] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -11973,7 +11979,11 @@ function OffersAdsBannersView({ t, api }) {
               <h3 style={{ fontSize: 14, margin: '4px 0 12px' }}>{t('advertisementsAndBannersLabel')}</h3>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 16, marginBottom: 26 }}>
                 {ads.map((ad, i) => (
-                  <div key={ad.id} style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${accents[i % accents.length]}`, background: 'var(--card-2)' }}>
+                  <div
+                    key={ad.id}
+                    onClick={() => setViewingAd(ad)}
+                    style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${accents[i % accents.length]}`, background: 'var(--card-2)', cursor: 'pointer' }}
+                  >
                     <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} style={{ width: '100%', height: 150, objectFit: 'cover' }} />
                     <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
                       <span className="badge" style={{ alignSelf: 'flex-start', background: accents[i % accents.length], color: 'var(--bg-0, #0a0908)', fontSize: 10 }}>
@@ -12030,6 +12040,32 @@ function OffersAdsBannersView({ t, api }) {
             </>
           )}
         </>
+      )}
+
+      {viewingAd && (
+        <div
+          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+          onClick={() => setViewingAd(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setViewingAd(null)}
+            className="icon-btn"
+            style={{ position: 'absolute', top: 18, right: 18, background: 'rgba(255,255,255,0.12)', color: '#fff' }}
+            aria-label={t('btnClose')}
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <img
+            src={cleanGoogleImageUrl(viewingAd.imageUrl)}
+            alt={viewingAd.title}
+            onClick={(e) => e.stopPropagation()}
+            style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain', borderRadius: 12 }}
+          />
+          {viewingAd.title && (
+            <span style={{ color: '#fff', fontWeight: 700, fontSize: 14, marginTop: 14, textAlign: 'center' }}>{viewingAd.title}</span>
+          )}
+        </div>
       )}
     </div>
   );
