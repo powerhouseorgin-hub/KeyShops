@@ -1,6 +1,4 @@
-import { Capacitor } from '@capacitor/core';
 import { API_BASE } from '../apiConfig';
-import { shareFileToWhatsApp, downloadPdf } from './pdfDelivery';
 
 // Shared upload-then-share flow for the Customer Key Registration Report,
 // used by every WhatsApp-share entry point that operates on an
@@ -10,22 +8,21 @@ import { shareFileToWhatsApp, downloadPdf } from './pdfDelivery';
 // its own simpler local-only share behavior instead.
 //
 // Uploads the PDF via api.uploadCustomerReport so it gets a stable, secure
-// public download link (see backend PublicReportController), then delivers
-// both the message (with that link) and the PDF file to WhatsApp.
+// public download link (see backend PublicReportController), then opens
+// WhatsApp with a single message containing that link, pre-filled and ready
+// to send in one tap.
 //
-// This happens in two separate steps, not one combined share. WhatsApp's
-// Android/iOS apps silently drop any caption text (EXTRA_TEXT) whenever the
-// shared attachment is a document (non-image/video) mimetype - this is a
-// confirmed platform limitation of WhatsApp itself, not something fixable
-// via Intent flags or which share-sheet entry point is used (verified after
-// a first attempt at combining file+text into one native share still
-// arrived with no message, exactly like the plain OS share sheet had).
-// Image/video attachments DO support a caption; PDFs don't. So instead:
-//   1. Open WhatsApp with the message (incl. the download link) pre-filled
-//      via the wa.me deep link - this is guaranteed to arrive, since it's
-//      a real WhatsApp API for pre-filling a text message.
-//   2. Hand off the PDF file on its own right after, so the user's next
-//      tap attaches it to the same chat.
+// This intentionally does NOT also attach the raw PDF as a second share
+// step. WhatsApp's Android/iOS apps silently drop any caption text
+// (EXTRA_TEXT) whenever the shared attachment is a document (non-image/
+// video) mimetype - a confirmed platform limitation, not something fixable
+// via Intent flags or which share-sheet screen is used - so combining both
+// into one WhatsApp send isn't possible, and a separate "attach the file"
+// step after the message requires picking the contact a second time (not a
+// single tap, and a worse experience than just tapping the link). Since the
+// download link itself serves the exact same PDF (see
+// PublicReportController - it auto-downloads with the correct filename),
+// the link alone fully delivers the document without a second step.
 export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
   const customerName = (customer?.name || 'Customer').trim();
   const safeNamePart = customerName.replace(/[^a-zA-Z0-9]+/g, '_') || 'Customer';
@@ -41,10 +38,9 @@ export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
     const { id } = await api.uploadCustomerReport(customer.id, file, fileName);
     downloadUrl = `${API_BASE}/api/public/reports/${id}/download`;
   } catch (err) {
-    // The share still proceeds without the link below rather than blocking
-    // entirely - the PDF attachment/local download matters more than the
-    // extra convenience link, and upload failures (offline, etc.) shouldn't
-    // stop the user from sharing the document at all.
+    // The message still gets sent without a working link rather than
+    // blocking entirely - an upload failure (offline, etc.) shouldn't stop
+    // the user from reaching out to the customer at all.
     console.error('Failed to upload customer report for a shareable link:', err);
   }
 
@@ -63,16 +59,5 @@ export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
     ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`
     : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
 
-  // Step 1: message with the link, pre-filled and ready to send.
   window.open(waUrl, '_blank');
-
-  // Step 2: hand off the file. A short delay avoids firing a second
-  // app-switching intent on top of WhatsApp still opening from step 1.
-  await new Promise((resolve) => setTimeout(resolve, 700));
-
-  if (Capacitor.isNativePlatform()) {
-    await shareFileToWhatsApp(pdf, fileName);
-  } else {
-    await downloadPdf(pdf, fileName);
-  }
 }

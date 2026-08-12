@@ -14,7 +14,6 @@ public class MainActivity extends BridgeActivity {
         // initialization - calling it again here would be redundant and
         // risks conflicting with the plugin's own keep-on-screen condition.
         registerPlugin(SaveToDownloadsPlugin.class);
-        registerPlugin(ShareToWhatsAppPlugin.class);
         // capacitor-razorpay: opens Razorpay's real native Android Checkout
         // Activity instead of the web checkout.js popup - needed because
         // checkout.js inside this app's WebView can't reliably launch UPI
