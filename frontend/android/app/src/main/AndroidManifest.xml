@@ -36,6 +36,15 @@
         </provider>
     </application>
 
+    <!-- Android 11+ (API 30+) package visibility: without declaring these,
+         PackageManager.getPackageInfo() and an explicit-package
+         startActivity() targeting WhatsApp (ShareToWhatsAppPlugin) would
+         silently fail to find it even when installed. -->
+    <queries>
+        <package android:name="com.whatsapp" />
+        <package android:name="com.whatsapp.w4b" />
+    </queries>
+
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />

@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 import { API_BASE } from '../apiConfig';
-import { sharePdf, downloadPdf } from './pdfDelivery';
+import { shareToWhatsApp, downloadPdf } from './pdfDelivery';
 
 // Shared upload-then-share flow for the Customer Key Registration Report,
 // used by every WhatsApp-share entry point that operates on an
@@ -49,7 +49,7 @@ export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
   const cleanPhone = (customer?.phone || '').replace(/[^0-9]/g, '');
 
   if (Capacitor.isNativePlatform()) {
-    await sharePdf(pdf, fileName, { title: 'Customer Key Registration Report', text: msg, fallbackText: msg });
+    await shareToWhatsApp(pdf, fileName, msg);
     return;
   }
 

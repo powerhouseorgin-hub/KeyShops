@@ -1,5 +1,9 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { SaveToDownloads } from '../apiConfig';
+
+// Native bridge to ShareToWhatsAppPlugin.java - see shareToWhatsApp() below
+// for why this exists instead of the generic Capacitor Share plugin.
+const ShareToWhatsApp = registerPlugin('ShareToWhatsApp');
 
 // Shared save/share plumbing for every generated (jsPDF) report in the app -
 // used by both the Registration wizard's Review step and the Customer
@@ -69,5 +73,38 @@ export async function sharePdf(pdf, filename, { title, text, fallbackText } = {}
     await navigator.share({ title, text: text || fallbackText });
   } else {
     pdf.save(filename);
+  }
+}
+
+// Shares a PDF + caption straight to WhatsApp on native, guaranteeing both
+// arrive in the same message (see ShareToWhatsAppPlugin.java for why the
+// generic sharePdf()/Share.share() above can silently drop the caption -
+// its universal OS chooser has a "direct share" contact-avatar row that
+// bypasses WhatsApp's own caption screen entirely). Falls back to the
+// generic native share sheet if WhatsApp isn't installed or the plugin
+// isn't available (e.g. an older installed build before this was added),
+// so the user can still pick a share target manually instead of hitting a
+// dead end.
+export async function shareToWhatsApp(pdf, filename, text) {
+  if (!Capacitor.isNativePlatform()) {
+    return sharePdf(pdf, filename, { title: 'Customer Key Registration Report', text, fallbackText: text });
+  }
+
+  const { Filesystem, Directory } = await import('@capacitor/filesystem');
+  const base64 = pdf.output('datauristring').split(',')[1];
+  let uri;
+  try {
+    await Filesystem.writeFile({ path: filename, data: base64, directory: Directory.Cache });
+    ({ uri } = await Filesystem.getUri({ path: filename, directory: Directory.Cache }));
+  } catch (err) {
+    throw new Error(`Could not prepare the PDF for sharing: ${err.message || err}`);
+  }
+
+  try {
+    await ShareToWhatsApp.share({ filePath: uri, text, mimeType: 'application/pdf' });
+  } catch (err) {
+    console.warn('Direct WhatsApp share failed, falling back to the OS share sheet:', err);
+    const { Share } = await import('@capacitor/share');
+    await Share.share({ files: [uri], text, title: 'Customer Key Registration Report' });
   }
 }
