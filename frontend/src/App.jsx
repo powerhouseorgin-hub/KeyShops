@@ -6703,8 +6703,12 @@ export default function App() {
     });
   };
 
-  const resetRegisterShopFlow = () => {
-    setShowRegisterShop(false);
+  // Shared by both close and (re)open - the dialog's own useState lives in
+  // this persistently-mounted parent (it's an overlay toggled by a boolean,
+  // not a separate tab that unmounts), so leaving via any path that isn't
+  // the X button (e.g. Android hardware back) previously left regOtpVerified
+  // stuck true - relocking the disabled phone field - on the next open.
+  const clearRegisterShopFields = () => {
     setRegShopName('');
     setRegOwnerName('');
     setRegEmail('');
@@ -6723,7 +6727,6 @@ export default function App() {
     setRegWebsiteUrl('');
     setRegCategoryId('');
     setRegPassword('');
-    setRegPlan('MONTHLY');
     setRegError('');
     setRegSuccessMessage('');
     setRegLoginEmail('');
@@ -6732,6 +6735,16 @@ export default function App() {
     setRegPayProcessing(false);
     setRegPaySuccess(false);
     setRegStep(1);
+  };
+
+  const resetRegisterShopFlow = () => {
+    setShowRegisterShop(false);
+    clearRegisterShopFields();
+  };
+
+  const openRegisterShopFlow = () => {
+    clearRegisterShopFields();
+    setShowRegisterShop(true);
   };
 
   if (loading) {
@@ -6918,7 +6931,7 @@ export default function App() {
                   {t('wantToRegisterShopMsg')}{' '}
                   <button
                     type="button"
-                    onClick={() => setShowRegisterShop(true)}
+                    onClick={openRegisterShopFlow}
                   >
                     {t('createShopAccountBtn')}
                   </button>

@@ -202,18 +202,19 @@ export class AuthService implements OnModuleInit {
     }
 
     if (!delivered) {
+      // No SMTP/MSG91 provider is configured (or delivery failed) - the code
+      // is only ever visible in this server log, never in the API response.
+      // It used to be echoed back to the client as `devCode` so the frontend
+      // could show it during local development without a provider set up,
+      // but that meant anyone could read a real user's OTP straight out of
+      // the send-otp response on any environment where delivery isn't
+      // configured - defeating verification everywhere it's required
+      // (registration, password reset, phone/email confirmation). Check this
+      // log if you need the code while testing without a provider set up.
       console.log(`[OTP dev fallback] No ${dto.method} provider configured — code for ${dto.identifier}: ${otpCode}`);
     }
 
-    // No SMTP/MSG91 provider is configured yet, so there is currently no other way
-    // for a real (or testing) user to receive the code - surface it in the API
-    // response so the frontend can log it to the browser console. This is only ever
-    // included when delivery via a real provider failed/wasn't attempted, so as soon
-    // as SMTP_HOST/MSG91_* env vars are set on this environment, delivered becomes
-    // true and the code stops being exposed here automatically.
-    const devCode = !delivered ? otpCode : undefined;
-
-    return { success: true, delivered, ...(devCode ? { devCode } : {}) };
+    return { success: true, delivered };
   }
 
   async verifyOtp(dto: { identifier: string, method: string, purpose?: string, code: string }) {
@@ -405,6 +406,32 @@ export class AuthService implements OnModuleInit {
   }
 
   async resetPasswordPublic(dto: ResetPasswordPublicDto) {
+    if (dto.method === 'phone') {
+      // Must normalize the same way sendOtp()/verifyOtp() did so this
+      // matches the OtpCode row's identifier below, regardless of which
+      // format the caller typed this time around.
+      const normalized = normalizePhone(dto.identifier);
+      if (!normalized) {
+        throw new BadRequestException(PHONE_REGEX_MESSAGE);
+      }
+      dto.identifier = normalized;
+    }
+
+    // This endpoint is unauthenticated by design (the user forgot their
+    // password) - a verified OTP for this exact identifier/purpose IS the
+    // authentication. Without this check anyone who knows a user's email or
+    // phone could reset their password outright. Require the OTP to have
+    // been consumed recently (not just ever, at any point in the past) so a
+    // stale, long-ago-verified row can't be replayed indefinitely.
+    const RESET_OTP_WINDOW_MS = 15 * 60 * 1000;
+    const verifiedOtp = await this.tenantService.prisma.otpCode.findFirst({
+      where: { identifier: dto.identifier, purpose: 'reset', consumed: true },
+      orderBy: { updatedAt: 'desc' },
+    });
+    if (!verifiedOtp || Date.now() - verifiedOtp.updatedAt.getTime() > RESET_OTP_WINDOW_MS) {
+      throw new BadRequestException('Please verify your OTP again before resetting your password.');
+    }
+
     let user;
     if (dto.method === 'email') {
       user = await this.tenantService.prisma.user.findUnique({

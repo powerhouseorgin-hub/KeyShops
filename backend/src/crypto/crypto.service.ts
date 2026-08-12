@@ -7,7 +7,13 @@ export class CryptoService {
   private readonly key: Buffer;
 
   constructor() {
-    // Falls back to a default key for development convenience if ENCRYPTION_KEY isn't set
+    // Falls back to a default key for development convenience if ENCRYPTION_KEY isn't
+    // set. This key protects Customer.idProofNumber and Shop.aadhaarNumber - if this
+    // fallback is ever actually in use in a real environment, that PII is only as safe
+    // as this publicly-visible source file. Warn loudly rather than silently using it.
+    if (!process.env.ENCRYPTION_KEY) {
+      console.error('[SECURITY WARNING] ENCRYPTION_KEY is not set - falling back to a hardcoded, publicly-visible key. Set ENCRYPTION_KEY in this environment immediately.');
+    }
     const hexKey = process.env.ENCRYPTION_KEY || '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef'.substring(0, 64);
     this.key = Buffer.from(hexKey, 'hex');
     if (this.key.length !== 32) {
