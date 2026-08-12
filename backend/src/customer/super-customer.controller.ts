@@ -64,4 +64,28 @@ export class SuperCustomerController {
 
     return this.customerService.addCustomerDocumentSuper(id, documentType, file);
   }
+
+  // Mirrors CustomerController#uploadReport (shop/customers/:id/report).
+  @Post(':id/report')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadReport(
+    @Param('id') id: string,
+    @Body('fileName') fileName: string,
+    @UploadedFile() file: any,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Report file is required');
+    }
+    if (!fileName) {
+      throw new BadRequestException('fileName is required');
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      throw new BadRequestException('File size exceeds the 10MB limit');
+    }
+    if (file.mimetype !== 'application/pdf') {
+      throw new BadRequestException('Only PDF files are accepted');
+    }
+
+    return this.customerService.createCustomerReportSuper(id, fileName, file);
+  }
 }

@@ -39,10 +39,13 @@ export async function downloadPdf(pdf, filename) {
   }
 }
 
-// `fallbackText` is shown when the platform can't attach a file to a share
+// `text` (when given) is passed straight to the OS share sheet alongside the
+// file, so apps that support it (WhatsApp included) receive both the PDF and
+// the message in one share action instead of just the file. `fallbackText`
+// is shown when the platform can't attach a file to a share at all
 // (older/desktop browsers) - mirrors this app's other navigator.share
 // fallbacks rather than failing silently.
-export async function sharePdf(pdf, filename, { title, fallbackText } = {}) {
+export async function sharePdf(pdf, filename, { title, text, fallbackText } = {}) {
   if (Capacitor.isNativePlatform()) {
     const { Filesystem, Directory } = await import('@capacitor/filesystem');
     const base64 = pdf.output('datauristring').split(',')[1];
@@ -54,16 +57,16 @@ export async function sharePdf(pdf, filename, { title, fallbackText } = {}) {
       throw new Error(`Could not prepare the PDF for sharing: ${err.message || err}`);
     }
     const { Share } = await import('@capacitor/share');
-    await Share.share({ files: [uri], title, dialogTitle: title });
+    await Share.share({ files: [uri], text, title, dialogTitle: title });
     return;
   }
 
   const blob = pdf.output('blob');
   const pdfFile = new File([blob], filename, { type: 'application/pdf' });
   if (navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-    await navigator.share({ files: [pdfFile], title });
+    await navigator.share({ files: [pdfFile], text, title });
   } else if (navigator.share) {
-    await navigator.share({ title, text: fallbackText });
+    await navigator.share({ title, text: text || fallbackText });
   } else {
     pdf.save(filename);
   }

@@ -430,6 +430,20 @@ export const AuthProvider = ({ children }) => {
       return request(`/api/shop/customers/${customerId}/docs/${documentId}`, 'DELETE');
     },
 
+    // Uploads a client-generated Customer Key Registration Report PDF so it
+    // gets a stable, secure public download link (see PublicReportController
+    // on the backend). Returns { id, downloadUrl } - id is a CustomerReport
+    // row's own random token, never the customer's own id.
+    uploadCustomerReport: async (customerId, file, fileName) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('fileName', fileName);
+      const url = user.role === 'SUPER_ADMIN'
+        ? `/api/super/customers/${customerId}/report`
+        : `/api/shop/customers/${customerId}/report`;
+      return request(url, 'POST', formData, true);
+    },
+
     // --- SHOP SETTINGS: VERIFICATION DOCUMENTS ---
     // Backed by the ShopDocument table (see ShopService.addOrReplaceShopDocument /
     // deleteShopDocument). documentType is one of SHOP_PHOTO / SHOP_LICENSE / OWNER_AADHAAR.

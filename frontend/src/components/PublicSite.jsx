@@ -200,7 +200,7 @@ function HomePage({ onNavigate }) {
             <Reveal delay={160}>
               <p className="public-hero-lead">
                 Track duplicate keys, customers and store orders across every branch &mdash;
-                one bold dashboard built for Indian key shops.
+                one bold dashboard built for Indian key specialists.
               </p>
             </Reveal>
             <Reveal delay={240}>
@@ -424,7 +424,7 @@ function SearchPage({ api }) {
 function AboutPage() {
   const values = [
     { icon: ShieldCheck, title: 'Trust & Security', desc: 'Sensitive customer data is encrypted and every shop\'s records stay strictly isolated.' },
-    { icon: Sparkles, title: 'Built for key shops', desc: 'Every workflow mirrors how Indian key shops actually work at the counter.' },
+    { icon: Sparkles, title: 'Built for key specialists', desc: 'Every workflow mirrors how Indian key shops actually work at the counter.' },
     { icon: Users, title: 'Customer first', desc: 'Faster registration, faster lookups, faster service for the people who walk in.' },
   ];
 
@@ -432,7 +432,7 @@ function AboutPage() {
     <section className="public-section">
       <Reveal className="public-section-head">
         <span className="eyebrow"><Building2 className="h-3.5 w-3.5" /> About Kee</span>
-        <h2>Software built with key shops, for key shops</h2>
+        <h2>Software built with key specialists, for key specialists</h2>
         <p style={{ maxWidth: 640 }}>
           Kee started with one simple observation: duplicate-key shops were running on paper
           registers and loose memory, even while handling sensitive customer ID proofs and

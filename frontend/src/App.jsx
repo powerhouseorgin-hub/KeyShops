@@ -425,7 +425,7 @@ const LANGUAGES = {
     keyShops: 'Key Shops',
     keyShopsDesc: 'Explore verified key shop partners',
     dealers: 'Dealers',
-    dealersDesc: 'Verified dealers & key shop partners',
+    dealersDesc: 'Verified dealers & key specialist partners',
     ecm: 'ECM Service Center',
     ecmDesc: 'Manage ECM records',
     scanning: 'Scanning Center',
@@ -533,10 +533,10 @@ const LANGUAGES = {
     shopsCardTitle: 'Shops',
     viewManageShopsDesc: 'View and manage every registered shop',
     dealersCardTitle: 'Dealers',
-    dealersCardDesc: 'Verified dealers & key shop partners',
+    dealersCardDesc: 'Verified dealers & key specialist partners',
     dealersPageTitle: 'Dealers',
     dealersEyebrow: 'Dealers Directory',
-    dealersPageDesc: 'Explore verified Key Shop dealers and service partners across India.',
+    dealersPageDesc: 'Explore verified Key Shop dealers and key specialist partners across India.',
     allCategoriesCard: 'All',
     searchDealersPlaceholder: 'Search dealers by name, location, category...',
     noDealersFoundMsg: 'No dealers found matching your search.',
@@ -971,13 +971,13 @@ const LANGUAGES = {
     failedSaveCustomerEditsMsg: 'Failed to save customer edits.',
     loadingSupportResourcesMsg: 'Loading support resources…',
     supportTrainingCenterTitle: 'Support & Training Center',
-    reachSupportTrainingDesc: 'Reach Key Shop technical support and level up with key shop training resources.',
+    reachSupportTrainingDesc: 'Reach Key Shop technical support and level up with key specialist training resources.',
     contactLiveAgentTitle: 'Contact Live Agent',
     supportHoursLabel: 'Mon–Sat, 9 AM–7 PM IST',
     liveCustomerSupportDesc: 'Live customer support is on hand to help with your key-making machines or duplicate key portal dashboard.',
     directWhatsappSupportLabel: 'Direct WhatsApp Support',
     chatOnWhatsappBtn: 'Chat on WhatsApp',
-    keyShopSkillUpgradesTitle: 'Key Shop Skill Upgrades',
+    locksmithSkillUpgradesTitle: 'Key Specialist Skill Upgrades',
     videoTutorialsFromExpertsDesc: 'Video tutorials from duplicate key experts',
     trainingMaterialLabel: 'Training Material',
     watchLinkLabel: 'Watch Link',
@@ -1025,10 +1025,10 @@ const LANGUAGES = {
     videoSingularLabel: 'video',
     videoPluralLabel: 'videos',
     addVideoBtn: 'Add Video',
-    noVideosConfiguredMsg: 'No videos configured. Click “Add Video” to add key shop training links.',
+    noVideosConfiguredMsg: 'No videos configured. Click “Add Video” to add key specialist training links.',
     removeVideoTitle: 'Remove video',
     videoTitleNameLabel: 'Video Title / Name',
-    videoTitlePlaceholderEg: 'e.g. Key Cutting Business Growth',
+    videoTitlePlaceholderEg: 'e.g. Key Specialist Career Income',
     youtubeUrlLabel: 'YouTube URL',
     saveConfigurationBtn: 'Save Configuration',
     shopCategoriesTitle: 'Shop Categories',
@@ -1232,7 +1232,7 @@ const LANGUAGES = {
     signInWithNewCredentialsMsg: 'You can now sign in with your new credentials.',
     smartGoldStandardWaySpan: 'the smart, gold-standard way.',
     streetLandmarkPlaceholder: 'Street / landmark',
-    trackDuplicateKeysDesc: 'Track duplicate keys, customers and store orders across every branch — one bold dashboard built for Indian key shops.',
+    trackDuplicateKeysDesc: 'Track duplicate keys, customers and store orders across every branch — one bold dashboard built for Indian key specialists.',
     trustedByShopsBadge: 'Trusted by 500+ key shops across India',
     upiQrScanLabel: 'UPI / QR scan',
     verifyBtnLabel: 'Verify',
@@ -1848,7 +1848,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'लाइव ग्राहक सहायता आपकी की-मेकिंग मशीनों या डुप्लिकेट की पोर्टल डैशबोर्ड में मदद के लिए उपलब्ध है।',
     directWhatsappSupportLabel: 'सीधा व्हाट्सएप सहायता',
     chatOnWhatsappBtn: 'व्हाट्सएप पर चैट करें',
-    keyShopSkillUpgradesTitle: 'की शॉप कौशल उन्नयन',
+    locksmithSkillUpgradesTitle: 'की विशेषज्ञ कौशल उन्नयन',
     videoTutorialsFromExpertsDesc: 'डुप्लिकेट की विशेषज्ञों के वीडियो ट्यूटोरियल',
     trainingMaterialLabel: 'प्रशिक्षण सामग्री',
     watchLinkLabel: 'लिंक देखें',
@@ -1882,7 +1882,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'कोई वीडियो कॉन्फ़िगर नहीं किया गया। लॉकस्मिथ प्रशिक्षण लिंक जोड़ने के लिए “वीडियो जोड़ें” पर क्लिक करें।',
     removeVideoTitle: 'वीडियो हटाएं',
     videoTitleNameLabel: 'वीडियो शीर्षक / नाम',
-    videoTitlePlaceholderEg: 'जैसे Key Cutting Business Growth',
+    videoTitlePlaceholderEg: 'जैसे Key Specialist Career Income',
     youtubeUrlLabel: 'यूट्यूब URL',
     saveConfigurationBtn: 'कॉन्फ़िगरेशन सहेजें',
     shopCategoriesTitle: 'दुकान श्रेणियाँ',
@@ -2696,7 +2696,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'உங்கள் சாவி தயாரிக்கும் இயந்திரங்கள் அல்லது நகல் சாவி போர்ட்டல் டாஷ்போர்டுக்கு உதவ நேரடி வாடிக்கையாளர் ஆதரவு தயாராக உள்ளது.',
     directWhatsappSupportLabel: 'நேரடி வாட்ஸ்அப் ஆதரவு',
     chatOnWhatsappBtn: 'வாட்ஸ்அப்பில் அரட்டையடிக்கவும்',
-    keyShopSkillUpgradesTitle: 'சாவி கடை திறன் மேம்பாடுகள்',
+    locksmithSkillUpgradesTitle: 'சாவி நிபுணர் திறன் மேம்பாடுகள்',
     videoTutorialsFromExpertsDesc: 'நகல் சாவி நிபுணர்களின் வீடியோ பயிற்சிகள்',
     trainingMaterialLabel: 'பயிற்சி பொருள்',
     watchLinkLabel: 'இணைப்பைப் பார்க்கவும்',
@@ -2730,7 +2730,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'வீடியோக்கள் எதுவும் கட்டமைக்கப்படவில்லை. பூட்டாளர் பயிற்சி இணைப்புகளைச் சேர்க்க “வீடியோ சேர்க்கவும்” என்பதைக் கிளிக் செய்யவும்.',
     removeVideoTitle: 'வீடியோவை அகற்று',
     videoTitleNameLabel: 'வீடியோ தலைப்பு / பெயர்',
-    videoTitlePlaceholderEg: 'உதா. Key Cutting Business Growth',
+    videoTitlePlaceholderEg: 'உதா. Key Specialist Career Income',
     youtubeUrlLabel: 'யூடியூப் URL',
     saveConfigurationBtn: 'கட்டமைப்பைச் சேமி',
     shopCategoriesTitle: 'கடை வகைகள்',
@@ -3550,7 +3550,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'మీ కీ-మేకింగ్ మెషీన్‌లు లేదా నకిలీ కీ పోర్టల్ డాష్‌బోర్డ్‌కు సహాయం చేయడానికి లైవ్ కస్టమర్ మద్దతు అందుబాటులో ఉంది.',
     directWhatsappSupportLabel: 'ప్రత్యక్ష వాట్సాప్ మద్దతు',
     chatOnWhatsappBtn: 'వాట్సాప్‌లో చాట్ చేయండి',
-    keyShopSkillUpgradesTitle: 'కీ షాప్ నైపుణ్య అప్‌గ్రేడ్‌లు',
+    locksmithSkillUpgradesTitle: 'కీ నిపుణుడు నైపుణ్య అప్‌గ్రేడ్‌లు',
     videoTutorialsFromExpertsDesc: 'నకిలీ కీ నిపుణుల వీడియో ట్యుటోరియల్స్',
     trainingMaterialLabel: 'శిక్షణా సామగ్రి',
     watchLinkLabel: 'లింక్‌ను చూడండి',
@@ -3584,7 +3584,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'వీడియోలు ఏవీ కాన్ఫిగర్ చేయలేదు. లాక్‌స్మిత్ శిక్షణ లింక్‌లను జోడించడానికి “వీడియో జోడించండి” క్లిక్ చేయండి.',
     removeVideoTitle: 'వీడియోను తీసివేయండి',
     videoTitleNameLabel: 'వీడియో శీర్షిక / పేరు',
-    videoTitlePlaceholderEg: 'ఉదా. Key Cutting Business Growth',
+    videoTitlePlaceholderEg: 'ఉదా. Key Specialist Career Income',
     youtubeUrlLabel: 'యూట్యూబ్ URL',
     saveConfigurationBtn: 'కాన్ఫిగరేషన్ సేవ్ చేయండి',
     shopCategoriesTitle: 'షాప్ వర్గాలు',
@@ -4398,7 +4398,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'ನಿಮ್ಮ ಕೀ-ಮೇಕಿಂಗ್ ಯಂತ್ರಗಳು ಅಥವಾ ನಕಲಿ ಕೀ ಪೋರ್ಟಲ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್‌ಗೆ ಸಹಾಯ ಮಾಡಲು ಲೈವ್ ಗ್ರಾಹಕ ಬೆಂಬಲ ಸಿದ್ಧವಾಗಿದೆ.',
     directWhatsappSupportLabel: 'ನೇರ ವಾಟ್ಸಾಪ್ ಬೆಂಬಲ',
     chatOnWhatsappBtn: 'ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಚಾಟ್ ಮಾಡಿ',
-    keyShopSkillUpgradesTitle: 'ಕೀ ಶಾಪ್ ಕೌಶಲ್ಯ ಅಪ್‌ಗ್ರೇಡ್‌ಗಳು',
+    locksmithSkillUpgradesTitle: 'ಕೀ ತಜ್ಞ ಕೌಶಲ್ಯ ಅಪ್‌ಗ್ರೇಡ್‌ಗಳು',
     videoTutorialsFromExpertsDesc: 'ನಕಲಿ ಕೀ ತಜ್ಞರ ವೀಡಿಯೊ ಟ್ಯುಟೋರಿಯಲ್‌ಗಳು',
     trainingMaterialLabel: 'ತರಬೇತಿ ಸಾಮಗ್ರಿ',
     watchLinkLabel: 'ಲಿಂಕ್ ವೀಕ್ಷಿಸಿ',
@@ -4432,7 +4432,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'ಯಾವುದೇ ವೀಡಿಯೊಗಳನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಿಲ್ಲ. ಲಾಕ್‌ಸ್ಮಿತ್ ತರಬೇತಿ ಲಿಂಕ್‌ಗಳನ್ನು ಸೇರಿಸಲು “ವೀಡಿಯೊ ಸೇರಿಸಿ” ಕ್ಲಿಕ್ ಮಾಡಿ.',
     removeVideoTitle: 'ವೀಡಿಯೊ ತೆಗೆದುಹಾಕಿ',
     videoTitleNameLabel: 'ವೀಡಿಯೊ ಶೀರ್ಷಿಕೆ / ಹೆಸರು',
-    videoTitlePlaceholderEg: 'ಉದಾ. Key Cutting Business Growth',
+    videoTitlePlaceholderEg: 'ಉದಾ. Key Specialist Career Income',
     youtubeUrlLabel: 'ಯೂಟ್ಯೂಬ್ URL',
     saveConfigurationBtn: 'ಕಾನ್ಫಿಗರೇಶನ್ ಉಳಿಸಿ',
     shopCategoriesTitle: 'ಅಂಗಡಿ ವರ್ಗಗಳು',
@@ -5252,7 +5252,7 @@ const LANGUAGES = {
     liveCustomerSupportDesc: 'നിങ്ങളുടെ കീ നിർമ്മാണ യന്ത്രങ്ങൾക്കോ ഡ്യൂപ്ലിക്കേറ്റ് കീ പോർട്ടൽ ഡാഷ്‌ബോർഡിനോ സഹായിക്കാൻ തത്സമയ ഉപഭോക്തൃ പിന്തുണ ലഭ്യമാണ്.',
     directWhatsappSupportLabel: 'നേരിട്ടുള്ള വാട്ട്‌സ്ആപ്പ് പിന്തുണ',
     chatOnWhatsappBtn: 'വാട്ട്‌സ്ആപ്പിൽ ചാറ്റ് ചെയ്യുക',
-    keyShopSkillUpgradesTitle: 'കീ ഷോപ്പ് നൈപുണ്യ അപ്‌ഗ്രേഡുകൾ',
+    locksmithSkillUpgradesTitle: 'കീ വിദഗ്ധൻ നൈപുണ്യ അപ്‌ഗ്രേഡുകൾ',
     videoTutorialsFromExpertsDesc: 'ഡ്യൂപ്ലിക്കേറ്റ് കീ വിദഗ്ധരുടെ വീഡിയോ ട്യൂട്ടോറിയലുകൾ',
     trainingMaterialLabel: 'പരിശീലന സാമഗ്രി',
     watchLinkLabel: 'ലിങ്ക് കാണുക',
@@ -5286,7 +5286,7 @@ const LANGUAGES = {
     noVideosConfiguredMsg: 'വീഡിയോകളൊന്നും ക്രമീകരിച്ചിട്ടില്ല. ലോക്ക്സ്മിത്ത് പരിശീലന ലിങ്കുകൾ ചേർക്കാൻ “വീഡിയോ ചേർക്കുക” ക്ലിക്ക് ചെയ്യുക.',
     removeVideoTitle: 'വീഡിയോ നീക്കം ചെയ്യുക',
     videoTitleNameLabel: 'വീഡിയോ തലക്കെട്ട് / പേര്',
-    videoTitlePlaceholderEg: 'ഉദാ. Key Cutting Business Growth',
+    videoTitlePlaceholderEg: 'ഉദാ. Key Specialist Career Income',
     youtubeUrlLabel: 'യൂട്യൂബ് URL',
     saveConfigurationBtn: 'ക്രമീകരണം സേവ് ചെയ്യുക',
     shopCategoriesTitle: 'ഷോപ്പ് വിഭാഗങ്ങൾ',
@@ -9954,26 +9954,8 @@ function SuperCustomersView({ t, api, searchDispatch }) {
       const shopRes = await getFullShopDetails(c);
       const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
       const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
-      const safeName = `${(c.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
-      const queryParams = new URLSearchParams({
-        action: 'download_doc',
-        id: c.id,
-        name: c.name || 'Customer',
-        phone: c.phone || '',
-        keyNumber: c.keyNumber || '',
-        vehicleNumber: c.vehicleNumber || c.vehicleName || '',
-        billAmount: c.billAmount ?? '',
-        address: c.capturedAddress || c.address || '',
-        shopName: shopRes?.name || 'Key Shops',
-      }).toString();
-      const downloadUrl = `https://keee-7d6cb.web.app/?${queryParams}`;
-      const msg = `Hi ${c.name},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
-      if (Capacitor.isNativePlatform()) {
-        await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: msg });
-      } else {
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`, '_blank');
-        await downloadPdf(pdf, safeName);
-      }
+      const { shareCustomerReportViaWhatsApp } = await import('./utils/reportShare');
+      await shareCustomerReportViaWhatsApp({ api, pdf, customer: c });
     } catch (err) {
       if (err && err.name !== 'AbortError') {
         console.error('Failed to share customer report PDF:', err);
@@ -10346,31 +10328,13 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                       const shopRes = await getFullShopDetails(viewCust);
                       const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
                       const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
-                      const safeName = `${(viewCust.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
-                      const queryParams = new URLSearchParams({
-                        action: 'download_doc',
-                        id: viewCust.id,
-                        name: viewCust.name || 'Customer',
-                        phone: viewCust.phone || '',
-                        keyNumber: viewCust.keyNumber || '',
-                        vehicleNumber: viewCust.vehicleNumber || viewCust.vehicleName || '',
-                        billAmount: viewCust.billAmount ?? '',
-                        address: viewCust.capturedAddress || viewCust.address || '',
-                        shopName: shopRes?.name || 'Key Shops',
-                      }).toString();
-                      const downloadUrl = `https://keee-7d6cb.web.app/?downloadDoc=${viewCust.id}`;
-                      const msg = `Hi ${viewCust.name || 'Customer'},\n\nThank you for choosing Key Shops.\n\nPlease find your Key Registration document attached.\n\nYou can also download it anytime using the link below:\n\n${downloadUrl}`;
-                      const cleanPhone = (viewCust.phone || '').replace(/[^0-9]/g, '');
-                      if (Capacitor.isNativePlatform()) {
-                        await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: msg });
-                      } else {
-                        const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
-                        window.open(waUrl, '_blank');
-                        await downloadPdf(pdf, safeName);
-                      }
+                      const { shareCustomerReportViaWhatsApp } = await import('./utils/reportShare');
+                      await shareCustomerReportViaWhatsApp({ api, pdf, customer: viewCust });
                     } catch (e) {
-                      console.error(e);
-                      alert('Could not share document via WhatsApp.');
+                      if (e && e.name !== 'AbortError') {
+                        console.error(e);
+                        alert('Could not share document via WhatsApp.');
+                      }
                     }
                   }}
                   className="btn btn-primary btn-sm"
@@ -14601,17 +14565,8 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
       const shop = await ensureShopInfo();
       const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
       const pdf = await buildCustomerReportPdf({ customer: c, shop, registeredByName: user?.name });
-      const safeName = `${(c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Key_Registration_Report.pdf`;
-      const downloadUrl = `https://keee-7d6cb.web.app/?downloadDoc=${c.id}`;
-      const msg = `Hi ${c.name || 'Customer'},\n\nThank you for choosing Key Shops.\n\nPlease find your Key Registration document attached.\n\nYou can also download it anytime using the link below:\n\n${downloadUrl}`;
-      const cleanPhone = (c.phone || '').replace(/[^0-9]/g, '');
-      if (Capacitor.isNativePlatform()) {
-        await sharePdf(pdf, safeName, { title: 'Customer Key Registration Report', fallbackText: msg });
-      } else {
-        const waUrl = cleanPhone ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}` : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
-        window.open(waUrl, '_blank');
-        await downloadPdf(pdf, safeName);
-      }
+      const { shareCustomerReportViaWhatsApp } = await import('./utils/reportShare');
+      await shareCustomerReportViaWhatsApp({ api, pdf, customer: c });
     } catch (err) {
       if (err && err.name !== 'AbortError') {
         console.error('Failed to share customer report PDF:', err);
@@ -15274,7 +15229,7 @@ export function CustomerCareView({ t, api }) {
               <Radio style={{ width: 16, height: 16 }} />
             </div>
             <div>
-              <h2 style={{ fontSize: 16 }}>{t('keyShopSkillUpgradesTitle')}</h2>
+              <h2 style={{ fontSize: 16 }}>{t('locksmithSkillUpgradesTitle')}</h2>
               <span className="sub">{t('videoTutorialsFromExpertsDesc')}</span>
             </div>
           </div>

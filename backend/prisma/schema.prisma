@@ -315,6 +315,7 @@ model Customer {
   capturedAddress String?
   photoUrl        String?
   documents       CustomerDocument[]
+  reports         CustomerReport[]
 
   // Added for the 2-page registration wizard's Page 2 (optional, individually
   // toggled fields) and the compact single-page report.
@@ -369,6 +370,28 @@ model CustomerDocument {
 
   @@index([customerId])
   @@index([deletedAt])
+}
+
+// A generated Customer Key Registration Report PDF, uploaded once (from the
+// client, which is what actually builds the PDF via html2canvas/jsPDF) so it
+// can be handed out as a stable, shareable download link - see
+// PublicReportController. `id` IS the public link token: a random UUID
+// unconnected to Customer.id or any other identifier, so the link can be
+// safely shared (WhatsApp, SMS) without leaking which customer/shop it
+// belongs to or exposing the underlying Supabase Storage path. The bucket
+// itself stays private; every download re-signs a short-lived URL against
+// `fileKey` on the fly (see FileService.getSignedDownloadUrl) rather than
+// this row ever storing/exposing a long-lived signed URL.
+model CustomerReport {
+  id         String   @id @default(uuid())
+  customerId String
+  customer   Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  fileKey    String // Supabase Storage object key (or local fallback filename)
+  fileName   String // Meaningful download filename, e.g. Customer_Key_Registration_John_a1b2c3d4.pdf
+
+  createdAt DateTime @default(now())
+
+  @@index([customerId])
 }
 
 // Relational replacement for the legacy Shop.companyDetails.{shopPhoto,shopLicense,ownerAadhaar}

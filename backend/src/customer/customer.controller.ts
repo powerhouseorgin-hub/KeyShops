@@ -82,6 +82,33 @@ export class CustomerController {
     return this.customerService.deleteCustomerDocument(req.user.shopId, id, docId);
   }
 
+  // Uploads a client-generated Customer Key Registration Report PDF and
+  // returns { id } - the public download-link token (see
+  // PublicReportController). Same size/type validation as document uploads.
+  @Post(':id/report')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadReport(
+    @Request() req,
+    @Param('id') id: string,
+    @Body('fileName') fileName: string,
+    @UploadedFile() file: any,
+  ) {
+    if (!file) {
+      throw new BadRequestException('Report file is required');
+    }
+    if (!fileName) {
+      throw new BadRequestException('fileName is required');
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      throw new BadRequestException('File size exceeds the 10MB limit');
+    }
+    if (file.mimetype !== 'application/pdf') {
+      throw new BadRequestException('Only PDF files are accepted');
+    }
+
+    return this.customerService.createCustomerReport(req.user.shopId, id, fileName, file);
+  }
+
   @Put(':id')
   async updateCustomer(
     @Request() req,

@@ -309,6 +309,58 @@ export class CustomerService {
     return this.addCustomerDocument(customer.shopId, customerId, documentType, file);
   }
 
+  // SHOP ADMIN: Upload a generated Customer Key Registration Report PDF and
+  // get back a stable, shareable download link (CustomerReport.id is the
+  // public token - see PublicReportController). The PDF itself is built
+  // client-side (html2canvas/jsPDF can't run server-side) and handed here
+  // purely for storage once it exists.
+  async createCustomerReport(shopId: string, customerId: string, fileName: string, file: any) {
+    const customer = await this.tenantService.prisma.customer.findFirst({
+      where: { id: customerId, shopId },
+    });
+    if (!customer) {
+      throw new NotFoundException('Customer record not found');
+    }
+
+    const upload = await this.fileService.uploadFile(file.originalname, file.buffer, shopId);
+
+    const report = await this.tenantService.prisma.customerReport.create({
+      data: {
+        customerId,
+        fileKey: upload.fileKey,
+        fileName,
+      },
+    });
+
+    return { id: report.id };
+  }
+
+  async createCustomerReportSuper(customerId: string, fileName: string, file: any) {
+    const customer = await this.tenantService.prisma.customer.findFirst({
+      where: { id: customerId },
+    });
+    if (!customer) {
+      throw new NotFoundException('Customer record not found');
+    }
+    return this.createCustomerReport(customer.shopId, customerId, fileName, file);
+  }
+
+  // PUBLIC: Resolve a report token to a freshly-signed download URL. No auth
+  // - the whole point of the link is that the customer (who never logs in)
+  // can open it. Not tenant-scoped for the same reason; the token itself
+  // (a random UUID, never the customer/shop id) is what limits access, same
+  // trust model as an "anyone with the link" share.
+  async getReportDownloadUrl(reportId: string) {
+    const report = await this.tenantService.prisma.customerReport.findUnique({
+      where: { id: reportId },
+    });
+    if (!report) {
+      throw new NotFoundException('Report not found');
+    }
+    const url = await this.fileService.getSignedDownloadUrl(report.fileKey, report.fileName);
+    return { url };
+  }
+
   // SHOP ADMIN: Remove Document from Customer
   async deleteCustomerDocument(shopId: string, customerId: string, documentId: string) {
     const customer = await this.tenantService.prisma.customer.findFirst({

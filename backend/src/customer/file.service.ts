@@ -102,6 +102,30 @@ export class FileService implements OnModuleInit {
     return this.uploadFile(originalname, buffer, namespace, 60 * 60 * 24 * 365 * 10);
   }
 
+  // Re-signs a fresh, short-lived download URL for an already-uploaded file -
+  // used by the customer report download link, which needs to stay valid
+  // indefinitely (shared once via WhatsApp, possibly opened weeks later)
+  // without ever handing out a long-lived signed URL up front. `downloadName`
+  // becomes the browser's actual saved filename via Supabase's `download`
+  // option, which is what makes the link auto-download instead of just
+  // opening the PDF inline.
+  async getSignedDownloadUrl(fileKey: string, downloadName: string, expirySeconds = 120): Promise<string> {
+    const safeName = (downloadName || fileKey).replace(/[^a-zA-Z0-9._-]/g, '_');
+    if (this.supabase) {
+      const { data, error } = await this.supabase.storage
+        .from(this.bucket)
+        .createSignedUrl(fileKey, expirySeconds, { download: safeName });
+      if (error || !data) {
+        throw new Error(`Supabase Storage signing failed: ${error?.message}`);
+      }
+      return data.signedUrl;
+    }
+    // Local-disk fallback - already served with Content-Disposition:
+    // attachment by the static /api/uploads handler in main.ts, though the
+    // saved filename there is the stored fileKey rather than `downloadName`.
+    return `/api/uploads/${fileKey}`;
+  }
+
   async deleteFile(fileKey: string): Promise<void> {
     if (this.supabase) {
       const { error } = await this.supabase.storage.from(this.bucket).remove([fileKey]);
