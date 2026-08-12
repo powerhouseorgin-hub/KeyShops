@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Home, Store, Wrench, Megaphone, Search, Bell, LogIn, X, ChevronLeft, ChevronRight,
-  MapPin, Phone, Globe, Tag, RefreshCw, Package, IndianRupee,
+  MapPin, Phone, Globe, Tag, RefreshCw, Package,
   MessageCircle, Menu, FileText, Building2, Mail, Headset,
 } from 'lucide-react';
 import { useBackHandler } from '../utils/backHandler';
 import CustomSelect from './CustomSelect';
+import PriceTag from './PriceTag';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 
 // Mirrors App.jsx's TERMS_AND_CONDITIONS_TITLE/BODY - duplicated rather than
@@ -194,7 +195,7 @@ function PublicMachineCard({ item, onOpen }) {
         <div className="pub-card-title">{item.title}</div>
         {item.productType && <div className="pub-card-meta"><Tag className="h-3 w-3" /><span>{item.productType}</span></div>}
         {item.shop?.name && <div className="pub-card-meta"><Store className="h-3 w-3" /><span>{item.shop.name}</span></div>}
-        {item.price != null && <div className="pub-card-price"><IndianRupee className="h-3 w-3" />{Number(item.price).toLocaleString('en-IN')}</div>}
+        <PriceTag price={item.price} discountPercentage={item.discountPercentage} />
       </div>
     </button>
   );
@@ -768,7 +769,7 @@ function PublicMachineDetailsScreen({ api, machineId, onBack, onOpenMachine }) {
             <h3 style={{ marginBottom: 4 }}>{item.title}</h3>
             {item.productType && <div className="public-shop-meta" style={{ marginTop: 2 }}><Tag className="h-3.5 w-3.5" /> {item.productType}</div>}
             {item.shop?.name && <div className="public-shop-meta" style={{ marginTop: 4 }}><Store className="h-3.5 w-3.5" /> {item.shop.name}</div>}
-            {item.price != null && <div className="pub-card-price" style={{ fontSize: 15, marginTop: 8 }}><IndianRupee className="h-3.5 w-3.5" /> {Number(item.price).toLocaleString('en-IN')}</div>}
+            <div style={{ marginTop: 8 }}><PriceTag price={item.price} discountPercentage={item.discountPercentage} size="lg" /></div>
             {item.description && <p style={{ marginTop: 10, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.5 }}>{item.description}</p>}
           </div>
 

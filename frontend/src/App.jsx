@@ -25,6 +25,7 @@ import { openRazorpayCheckout } from './utils/razorpay';
 import PublicSite from './components/PublicSite';
 import PublicMobileApp, { PublicBottomNav } from './components/PublicMobileApp';
 import CustomSelect from './components/CustomSelect';
+import PriceTag from './components/PriceTag';
 import OtpVerificationModal from './components/OtpVerificationModal';
 import {
   Key, Users, Shield, Radio, BarChart3, Database, LogOut, Check, X,
@@ -794,6 +795,9 @@ const LANGUAGES = {
     tapToCallHint: 'Shown on the listing card as a tap-to-call button for buyers.',
     discountPercentageOptionalLabel: 'Discount Percentage (optional)',
     discountPercentagePlaceholderEg: 'e.g. 20',
+    offerPercentOptionalLabel: 'Offer Percent (optional)',
+    offerPercentPlaceholderEg: 'e.g. 20',
+    offerPriceLabel: 'Offer Price',
     validUntilOptionalLabel: 'Valid Until (optional)',
     validUntilHint: 'Leave blank for an offer with no expiry. Expired offers are hidden from the shared feed.',
     linkExistingListingLabel: 'Link to one of your existing listings (optional)',
@@ -1665,6 +1669,9 @@ const LANGUAGES = {
     tapToCallHint: 'खरीदारों के लिए लिस्टिंग कार्ड पर टैप-टू-कॉल बटन के रूप में दिखाया जाता है।',
     discountPercentageOptionalLabel: 'छूट प्रतिशत (वैकल्पिक)',
     discountPercentagePlaceholderEg: 'जैसे 20',
+    offerPercentOptionalLabel: 'ऑफर प्रतिशत (वैकल्पिक)',
+    offerPercentPlaceholderEg: 'जैसे 20',
+    offerPriceLabel: 'ऑफर मूल्य',
     validUntilOptionalLabel: 'मान्य तिथि तक (वैकल्पिक)',
     validUntilHint: 'बिना समाप्ति तिथि वाले ऑफर के लिए खाली छोड़ें। समाप्त ऑफर साझा फ़ीड से छिपाए जाते हैं।',
     linkExistingListingLabel: 'अपनी किसी मौजूदा लिस्टिंग से लिंक करें (वैकल्पिक)',
@@ -2513,6 +2520,9 @@ const LANGUAGES = {
     tapToCallHint: 'வாங்குபவர்களுக்கு பட்டியல் அட்டையில் தட்டி-அழைக்கும் பொத்தானாக காட்டப்படும்.',
     discountPercentageOptionalLabel: 'தள்ளுபடி சதவீதம் (விருப்பத்தேர்வு)',
     discountPercentagePlaceholderEg: 'எ.கா. 20',
+    offerPercentOptionalLabel: 'சலுகை சதவீதம் (விருப்பத்தேர்வு)',
+    offerPercentPlaceholderEg: 'எ.கா. 20',
+    offerPriceLabel: 'சலுகை விலை',
     validUntilOptionalLabel: 'செல்லுபடியாகும் தேதி வரை (விருப்பத்தேர்வு)',
     validUntilHint: 'காலாவதி இல்லாத சலுகைக்கு காலியாக விடவும். காலாவதியான சலுகைகள் பகிரப்பட்ட ஊட்டத்தில் மறைக்கப்படும்.',
     linkExistingListingLabel: 'உங்கள் தற்போதைய பட்டியல்களில் ஒன்றுடன் இணைக்கவும் (விருப்பத்தேர்வு)',
@@ -3367,6 +3377,9 @@ const LANGUAGES = {
     tapToCallHint: 'కొనుగోలుదారుల కోసం లిస్టింగ్ కార్డ్‌పై టాప్-టు-కాల్ బటన్‌గా చూపబడుతుంది.',
     discountPercentageOptionalLabel: 'తగ్గింపు శాతం (ఐచ్ఛికం)',
     discountPercentagePlaceholderEg: 'ఉదా. 20',
+    offerPercentOptionalLabel: 'ఆఫర్ శాతం (ఐచ్ఛికం)',
+    offerPercentPlaceholderEg: 'ఉదా. 20',
+    offerPriceLabel: 'ఆఫర్ ధర',
     validUntilOptionalLabel: 'చెల్లుబాటు తేదీ వరకు (ఐచ్ఛికం)',
     validUntilHint: 'గడువు లేని ఆఫర్ కోసం ఖాళీగా ఉంచండి. గడువు ముగిసిన ఆఫర్‌లు షేర్డ్ ఫీడ్ నుండి దాచబడతాయి.',
     linkExistingListingLabel: 'మీ ఇప్పటికే ఉన్న లిస్టింగ్‌లలో ఒకదానికి లింక్ చేయండి (ఐచ్ఛికం)',
@@ -4215,6 +4228,9 @@ const LANGUAGES = {
     tapToCallHint: 'ಖರೀದಿದಾರರಿಗಾಗಿ ಪಟ್ಟಿ ಕಾರ್ಡ್‌ನಲ್ಲಿ ಟ್ಯಾಪ್-ಟು-ಕಾಲ್ ಬಟನ್ ಆಗಿ ತೋರಿಸಲಾಗುತ್ತದೆ.',
     discountPercentageOptionalLabel: 'ರಿಯಾಯಿತಿ ಶೇಕಡಾವಾರು (ಐಚ್ಛಿಕ)',
     discountPercentagePlaceholderEg: 'ಉದಾ. 20',
+    offerPercentOptionalLabel: 'ಆಫರ್ ಶೇಕಡಾವಾರು (ಐಚ್ಛಿಕ)',
+    offerPercentPlaceholderEg: 'ಉದಾ. 20',
+    offerPriceLabel: 'ಆಫರ್ ಬೆಲೆ',
     validUntilOptionalLabel: 'ಮಾನ್ಯತೆ ದಿನಾಂಕದವರೆಗೆ (ಐಚ್ಛಿಕ)',
     validUntilHint: 'ಅವಧಿ ಇಲ್ಲದ ಕೊಡುಗೆಗಾಗಿ ಖಾಲಿ ಬಿಡಿ. ಅವಧಿ ಮುಗಿದ ಕೊಡುಗೆಗಳನ್ನು ಹಂಚಿದ ಫೀಡ್‌ನಿಂದ ಮರೆಮಾಡಲಾಗುತ್ತದೆ.',
     linkExistingListingLabel: 'ನಿಮ್ಮ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಪಟ್ಟಿಗಳಲ್ಲಿ ಒಂದಕ್ಕೆ ಲಿಂಕ್ ಮಾಡಿ (ಐಚ್ಛಿಕ)',
@@ -5069,6 +5085,9 @@ const LANGUAGES = {
     tapToCallHint: 'വാങ്ങുന്നവർക്കായി ലിസ്റ്റിംഗ് കാർഡിൽ ടാപ്പ്-ടു-കോൾ ബട്ടണായി കാണിക്കും.',
     discountPercentageOptionalLabel: 'കിഴിവ് ശതമാനം (ഓപ്ഷണൽ)',
     discountPercentagePlaceholderEg: 'ഉദാ. 20',
+    offerPercentOptionalLabel: 'ഓഫർ ശതമാനം (ഓപ്ഷണൽ)',
+    offerPercentPlaceholderEg: 'ഉദാ. 20',
+    offerPriceLabel: 'ഓഫർ വില',
     validUntilOptionalLabel: 'സാധുതയുള്ള തീയതി വരെ (ഓപ്ഷണൽ)',
     validUntilHint: 'കാലാവധി ഇല്ലാത്ത ഓഫറിന് ശൂന്യമായി വിടുക. കാലഹരണപ്പെട്ട ഓഫറുകൾ പങ്കിട്ട ഫീഡിൽ നിന്ന് മറയ്ക്കും.',
     linkExistingListingLabel: 'നിങ്ങളുടെ നിലവിലുള്ള ലിസ്റ്റിംഗുകളിലൊന്നിലേക്ക് ലിങ്ക് ചെയ്യുക (ഓപ്ഷണൽ)',
@@ -11470,7 +11489,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         price: price === '' ? undefined : Number(price),
         productType: productType || undefined,
         phone: phone || undefined,
-        discountPercentage: type === 'OFFER' && discountPercentage !== '' ? Number(discountPercentage) : undefined,
+        discountPercentage: discountPercentage !== '' ? Number(discountPercentage) : undefined,
         validUntil: type === 'OFFER' && validUntil ? new Date(validUntil).toISOString() : undefined,
         linkedPromotionId: type === 'OFFER' && linkedPromotionId ? linkedPromotionId : undefined,
       };
@@ -11608,9 +11627,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                     <div className="pub-card-meta"><Tag className="h-3 w-3" /><span>{promo.productType}</span></div>
                   )}
                   <div className="pub-card-meta"><Store className="h-3 w-3" /><span>{promo.shop?.name || t('superAdminIndependentLabel')}</span></div>
-                  {promo.price != null && (
-                    <div className="pub-card-price"><IndianRupee className="h-3 w-3" />{Number(promo.price).toLocaleString('en-IN')}</div>
-                  )}
+                  <PriceTag price={promo.price} discountPercentage={promo.discountPercentage} offSuffix={t('percentOffSuffix')} />
                 </div>
                 <div style={{ padding: '0 11px 11px', display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {promo.phone && (
@@ -11871,6 +11888,24 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                     />
                   </div>
                 </div>
+
+                {type === 'PRODUCT' && (
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--rose)' }}><Percent /></div><b>{t('offerPercentOptionalLabel')}</b></div>
+                    <div className="input-wrap">
+                      <input
+                        type="number" min="0" max="100" step="1" value={discountPercentage}
+                        onChange={(e) => setDiscountPercentage(e.target.value)}
+                        placeholder={t('offerPercentPlaceholderEg')}
+                      />
+                    </div>
+                    {price !== '' && discountPercentage !== '' && Number(discountPercentage) > 0 && (
+                      <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>
+                        {t('offerPriceLabel')}: ₹{Math.round(Number(price) - (Number(price) * Number(discountPercentage)) / 100).toLocaleString('en-IN')}
+                      </span>
+                    )}
+                  </div>
+                )}
 
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>

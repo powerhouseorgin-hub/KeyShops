@@ -2055,6 +2055,19 @@ select.sel:focus { border-color: var(--gold); }
 }
 .pub-card-price { display: flex; align-items: center; gap: 3px; color: var(--blue); font-weight: 800; font-size: 13.5px; margin-top: 2px; }
 
+/* Offer pricing: original price struck through + the computed discounted
+   price (via .pub-card-price above) + a percent-off badge, wrapping onto a
+   second line on narrow cards rather than overflowing. */
+.pub-card-price-offer { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.pub-card-price-strike {
+  display: flex; align-items: center; gap: 2px; color: var(--text-3); font-weight: 600; font-size: 11.5px;
+  text-decoration: line-through;
+}
+.pub-card-offer-badge {
+  background: var(--rose-dim, rgba(244,63,94,0.12)); color: var(--rose); font-weight: 800; font-size: 10px;
+  padding: 2px 7px; border-radius: 999px; letter-spacing: .02em;
+}
+
 /* Shop card - compact list-style (small icon avatar + name + address/phone/
    website stacked below), deliberately NOT an image-block card like the
    machine card above: shops don't have photos, so treating them as

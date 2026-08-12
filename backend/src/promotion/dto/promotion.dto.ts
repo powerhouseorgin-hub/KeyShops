@@ -23,13 +23,15 @@ export class CreatePromotionDto {
   @IsOptional()
   price?: number;
 
-  // Only meaningful for type === OFFER.
+  // Optional on any listing type - for PRODUCT this is an optional offer
+  // percent, used to compute and display a discounted price.
   @IsNumber()
   @Min(0)
   @Max(100)
   @IsOptional()
   discountPercentage?: number;
 
+  // OFFER-only.
   @IsDateString()
   @IsOptional()
   validUntil?: string;

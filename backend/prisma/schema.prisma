@@ -479,9 +479,13 @@ model Promotion {
   // valid; the create form requires it for every new listing going forward.
   phone String?
 
-  // Only meaningful for type === OFFER: a percentage discount and/or an expiry
-  // (validUntil null = no expiry). The cross-shop feed excludes expired offers
-  // by default - see PromotionService.getAllPromotions.
+  // discountPercentage: optional on any listing type. For OFFER it's the
+  // headline discount; for PRODUCT it's an optional "offer price" - the
+  // frontend computes and displays price * (1 - discountPercentage/100)
+  // alongside the original price wherever a product's price is shown (see
+  // PriceTag.jsx). validUntil (expiry, null = no expiry) is still
+  // OFFER-only - the cross-shop feed excludes expired offers by default,
+  // see PromotionService.getAllPromotions.
   discountPercentage Float?
   validUntil         DateTime?
 

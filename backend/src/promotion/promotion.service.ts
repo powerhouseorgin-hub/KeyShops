@@ -19,7 +19,7 @@ const CREATOR_INCLUDE = {
 // because a new scalar column gets added to Promotion later.
 const PUBLIC_PROMOTION_SELECT = {
   id: true, type: true, title: true, description: true, imageUrl: true,
-  price: true, productType: true, phone: true, createdAt: true,
+  price: true, discountPercentage: true, productType: true, phone: true, createdAt: true,
   shop: { select: { id: true, name: true } },
 };
 
