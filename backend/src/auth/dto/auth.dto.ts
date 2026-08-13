@@ -158,6 +158,17 @@ export class RegisterShopDto {
   @IsString()
   city?: string;
 
+  // Town/city-level locality (e.g. "Gopichettipalayam"), auto-filled from
+  // Nominatim's `city` field (see geo.controller.ts - addr.city||addr.town||
+  // addr.county) alongside `city` above. Distinct from `city`, which despite
+  // its name is actually district-level (state_district) - this is real
+  // town-level data, persisted to its own Shop.town column so the public
+  // Shops/Machines directories can filter by it directly. Same
+  // optional/auto-fill-only rationale as city/state/pinCode above.
+  @IsOptional()
+  @IsString()
+  town?: string;
+
   @IsOptional()
   @IsString()
   state?: string;

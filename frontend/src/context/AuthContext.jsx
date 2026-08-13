@@ -243,10 +243,11 @@ export const AuthProvider = ({ children }) => {
     // `{ items, nextCursor }` pages instead (used by the Dealers directory's
     // infinite scroll).
     searchPublicShops: async (opts = {}) => {
-      const { query = '', category = '', cursor, limit } = opts;
+      const { query = '', category = '', town = '', cursor, limit } = opts;
       const params = new URLSearchParams();
       if (query) params.append('query', query);
       if (category) params.append('category', category);
+      if (town) params.append('town', town);
       if (cursor) params.append('cursor', cursor);
       if (limit) params.append('limit', String(limit));
       const qs = params.toString();
@@ -266,6 +267,18 @@ export const AuthProvider = ({ children }) => {
       if (!response.ok) {
         const err = await parseJsonSafe(response);
         throw new Error(err.message || 'Shop not found');
+      }
+      return parseJsonSafe(response);
+    },
+
+    // Distinct town/city list (real Shop.town data, e.g. "Gopichettipalayam")
+    // for the pre-login Shops and Machines tabs' location dropdown - shared
+    // by both since it's built from active shops' towns either way.
+    getPublicShopTowns: async () => {
+      const response = await fetch(`${API_BASE}/api/public/shops/towns`);
+      if (!response.ok) {
+        const err = await parseJsonSafe(response);
+        throw new Error(err.message || 'Failed to load towns');
       }
       return parseJsonSafe(response);
     },
@@ -296,10 +309,11 @@ export const AuthProvider = ({ children }) => {
     // Promotion rows of type PRODUCT). Same opt-in-`limit` pagination
     // convention as searchPublicShops.
     getPublicMachines: async (opts = {}) => {
-      const { category = '', search = '', cursor, limit, shopId } = opts;
+      const { category = '', search = '', town = '', cursor, limit, shopId } = opts;
       const params = new URLSearchParams();
       if (category) params.append('category', category);
       if (search) params.append('search', search);
+      if (town) params.append('town', town);
       if (cursor) params.append('cursor', cursor);
       if (limit) params.append('limit', String(limit));
       if (shopId) params.append('shopId', shopId);

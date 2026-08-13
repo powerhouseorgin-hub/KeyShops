@@ -101,6 +101,17 @@ model Shop {
   latitude  Float?
   longitude Float?
 
+  // Town/city-level locality (e.g. "Gopichettipalayam"), resolved from
+  // reverse-geocoding latitude/longitude via GeoController's Nominatim proxy
+  // at registration time (or backfilled from stored coordinates for shops
+  // that predate this field - see scripts/backfill-shop-town.ts). Distinct
+  // from companyDetails' JSON `city` key, which historically actually holds
+  // a district-level value (see RegisterShopDto) - this is real town-level
+  // data, kept as its own column specifically so the public directory and
+  // Machines/Products filters can query/group by it directly instead of
+  // parsing JSON or substring-matching free-text addresses.
+  town String?
+
   // Type of shop being registered (e.g. "Dealers"), picked from the list of
   // categories a Super Admin curates via the Shop Categories screen (see
   // ShopCategoryService) and selected on the public self-registration
@@ -160,6 +171,10 @@ model Shop {
   // Admin manages suspended shops too), just the soft-delete filter - see
   // ShopService.getShops.
   @@index([deletedAt, createdAt])
+  // Backs the public town filter on the Shops and Machines/Products tabs -
+  // WHERE isActive = true AND town = ? - see ShopService.searchPublicShops
+  // and PromotionService.getPublicPromotions.
+  @@index([isActive, town])
 }
 
 // Append-only ledger recording each successful referral: one row per

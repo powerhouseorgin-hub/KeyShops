@@ -20,7 +20,9 @@ const CREATOR_INCLUDE = {
 const PUBLIC_PROMOTION_SELECT = {
   id: true, type: true, title: true, description: true, imageUrl: true,
   price: true, discountPercentage: true, productType: true, phone: true, createdAt: true,
-  shop: { select: { id: true, name: true } },
+  // town powers the Machines/Products tab's location filter/badge - see
+  // ShopService.getPublicShopTowns and buildPromotionWhere's `town` filter.
+  shop: { select: { id: true, name: true, town: true } },
 };
 
 @Injectable()
@@ -73,8 +75,9 @@ export class PromotionService {
     ownerShopId?: string | null;
     ownerUserId?: string;
     shopId?: string;
+    town?: string;
   }) {
-    const { includeExpiredOffers = false, category, search, type, excludeOffers, ownerShopId, ownerUserId, shopId } = opts;
+    const { includeExpiredOffers = false, category, search, type, excludeOffers, ownerShopId, ownerUserId, shopId, town } = opts;
 
     const andConditions: any[] = [];
     if (!includeExpiredOffers) {
@@ -94,6 +97,13 @@ export class PromotionService {
     }
     if (shopId !== undefined) {
       andConditions.push({ shopId });
+    }
+    // Filters Machines/Products listings by their linked shop's real town
+    // column (see Shop.town) - exact match against getPublicShopTowns()'s
+    // distinct values. A listing with no shop (Super-Admin-created,
+    // shopId null) simply never matches, same as it has no other location.
+    if (town) {
+      andConditions.push({ shop: { town } });
     }
     if (search) {
       andConditions.push({
@@ -161,7 +171,7 @@ export class PromotionService {
   // dropping `createdBy` entirely, since CREATOR_INCLUDE's `createdBy.email`
   // is a Shop Admin's personal email address that must never reach an
   // anonymous caller.
-  async getPublicPromotions(opts: { category?: string; search?: string; cursor?: string; limit?: number; shopId?: string } = {}) {
+  async getPublicPromotions(opts: { category?: string; search?: string; town?: string; cursor?: string; limit?: number; shopId?: string } = {}) {
     const { cursor, limit, ...rest } = opts;
     const where = this.buildPromotionWhere({ ...rest, type: 'PRODUCT' });
 

@@ -17,6 +17,8 @@
     "prisma:studio": "prisma studio",
     "migrate:shop-documents": "ts-node -r tsconfig-paths/register scripts/migrate-shop-documents.ts",
     "migrate:shop-documents:dry-run": "ts-node -r tsconfig-paths/register scripts/migrate-shop-documents.ts --dry-run",
+    "backfill:shop-town": "ts-node -r tsconfig-paths/register scripts/backfill-shop-town.ts",
+    "backfill:shop-town:dry-run": "ts-node -r tsconfig-paths/register scripts/backfill-shop-town.ts --dry-run",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

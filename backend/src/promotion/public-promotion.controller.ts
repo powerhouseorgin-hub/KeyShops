@@ -13,12 +13,13 @@ export class PublicPromotionController {
   async list(
     @Query('category') category?: string,
     @Query('search') search?: string,
+    @Query('town') town?: string,
     @Query('cursor') cursor?: string,
     @Query('limit') limit?: string,
     @Query('shopId') shopId?: string,
   ) {
     return this.promotionService.getPublicPromotions({
-      category, search, cursor, shopId,
+      category, search, town, cursor, shopId,
       limit: limit ? Number(limit) : undefined,
     });
   }

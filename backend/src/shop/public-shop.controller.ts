@@ -24,10 +24,19 @@ export class PublicShopController {
   async search(
     @Query('query') query?: string,
     @Query('category') category?: string,
+    @Query('town') town?: string,
     @Query('cursor') cursor?: string,
     @Query('limit') limit?: string,
   ) {
-    return this.shopService.searchPublicShops({ query, category, cursor, limit: limit ? Number(limit) : undefined });
+    return this.shopService.searchPublicShops({ query, category, town, cursor, limit: limit ? Number(limit) : undefined });
+  }
+
+  // Distinct town list for the Shops/Machines tabs' location dropdown - must
+  // be declared before the `:id` route below, or NestJS would match "towns"
+  // as an :id param instead of this static segment.
+  @Get('towns')
+  async getTowns() {
+    return this.shopService.getPublicShopTowns();
   }
 
   // Declared after the bare GET above - a static path segment would

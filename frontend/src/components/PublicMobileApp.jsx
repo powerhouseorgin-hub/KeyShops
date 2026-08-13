@@ -195,6 +195,7 @@ function PublicMachineCard({ item, onOpen }) {
         <div className="pub-card-title">{item.title}</div>
         {item.productType && <div className="pub-card-meta"><Tag className="h-3 w-3" /><span>{item.productType}</span></div>}
         {item.shop?.name && <div className="pub-card-meta"><Store className="h-3 w-3" /><span>{item.shop.name}</span></div>}
+        {item.shop?.town && <div className="pub-card-meta"><MapPin className="h-3 w-3" /><span>{item.shop.town}</span></div>}
         <PriceTag price={item.price} discountPercentage={item.discountPercentage} />
       </div>
     </button>
@@ -312,24 +313,22 @@ function PublicHomeTab({ api, onOpenShop, onOpenMachine, onGoTab }) {
   );
 }
 
-// Fixed Tamil Nadu district list for the Shops page's Location filter - the
-// public shop projection only exposes a free-text `address` (no separate
-// city/district field, see ShopService.mapPublicShop), so filtering matches
-// a district name as a substring of that address rather than an exact
-// field comparison. Purely client-side, no API/business-logic changes.
-const TAMIL_NADU_DISTRICTS = [
-  'Ariyalur', 'Chengalpattu', 'Chennai', 'Coimbatore', 'Cuddalore', 'Dharmapuri',
-  'Dindigul', 'Erode', 'Kallakurichi', 'Kanchipuram', 'Kanyakumari', 'Karur',
-  'Krishnagiri', 'Madurai', 'Mayiladuthurai', 'Nagapattinam', 'Namakkal', 'Nilgiris',
-  'Perambalur', 'Pudukkottai', 'Ramanathapuram', 'Ranipet', 'Salem', 'Sivaganga',
-  'Tenkasi', 'Thanjavur', 'Theni', 'Thoothukudi', 'Tiruchirappalli', 'Tirunelveli',
-  'Tirupattur', 'Tiruppur', 'Tiruvallur', 'Tiruvannamalai', 'Tiruvarur', 'Vellore',
-  'Viluppuram', 'Virudhunagar',
-];
-
-function shopMatchesDistrict(address, district) {
-  if (!district) return true;
-  return (address || '').toLowerCase().includes(district.toLowerCase());
+// Town/city dropdown shared by the Shops and Machines tabs - built from real
+// Shop.town data (see ShopService.getPublicShopTowns) rather than a
+// hardcoded district list, so it self-populates as shops register in new
+// towns and never lists a location with zero results. Fetched once per tab
+// mount; failure is silent (dropdown just shows "All Towns" only) since a
+// missing filter option shouldn't block browsing.
+function useTownOptions(api) {
+  const [towns, setTowns] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    api.getPublicShopTowns()
+      .then((list) => { if (!cancelled) setTowns(list || []); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [api]);
+  return towns;
 }
 
 function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
@@ -338,28 +337,27 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
-  const [location, setLocation] = useState('');
+  const [town, setTown] = useState('');
+  const towns = useTownOptions(api);
 
   const fetchFirst = () => {
     setItems(null);
     setError(false);
-    api.searchPublicShops({ category, limit: 20 })
+    api.searchPublicShops({ category, town, limit: 20 })
       .then((res) => { setItems(res.items); setNextCursor(res.nextCursor); })
       .catch(() => setError(true));
   };
 
-  useEffect(fetchFirst, [category]);
+  useEffect(fetchFirst, [category, town]);
 
   const loadMore = () => {
     if (!nextCursor || loadingMore) return;
     setLoadingMore(true);
-    api.searchPublicShops({ category, cursor: nextCursor, limit: 20 })
+    api.searchPublicShops({ category, town, cursor: nextCursor, limit: 20 })
       .then((res) => { setItems((prev) => [...prev, ...res.items]); setNextCursor(res.nextCursor); })
       .catch(() => {})
       .finally(() => setLoadingMore(false));
   };
-
-  const visibleItems = items ? items.filter((s) => shopMatchesDistrict(s.address, location)) : items;
 
   return (
     <div className="public-mobile-tab">
@@ -370,10 +368,10 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
           <CustomSelect
             className="pub-location-select location-filter-select"
             icon={MapPin}
-            value={location}
-            onChange={setLocation}
-            placeholder="All Districts"
-            options={[{ value: '', label: 'All Districts' }, ...TAMIL_NADU_DISTRICTS.map((d) => ({ value: d, label: d }))]}
+            value={town}
+            onChange={setTown}
+            placeholder="All Towns"
+            options={[{ value: '', label: 'All Towns' }, ...towns.map((t) => ({ value: t, label: t }))]}
           />
         </div>
       </div>
@@ -382,14 +380,14 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
         <div className="pub-card-grid">{[1, 2, 3, 4].map((i) => <SkeletonShopCard key={i} />)}</div>
       ) : error ? (
         <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." />
-      ) : visibleItems.length === 0 ? (
+      ) : items.length === 0 ? (
         <EmptyState icon={Store} text="No shops found." />
       ) : (
         <>
           <div className="pub-card-grid">
-            {visibleItems.map((s) => <PublicShopCard key={s.id} shop={s} onOpen={onOpenShop} />)}
+            {items.map((s) => <PublicShopCard key={s.id} shop={s} onOpen={onOpenShop} />)}
           </div>
-          {!location && nextCursor && (
+          {nextCursor && (
             <button type="button" className="btn btn-outline btn-sm" style={{ width: '100%', marginTop: 14 }} onClick={loadMore} disabled={loadingMore}>
               {loadingMore ? 'Loading...' : 'Load More'}
             </button>
@@ -406,21 +404,23 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory }
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
+  const [town, setTown] = useState('');
+  const towns = useTownOptions(api);
 
   const fetchFirst = () => {
     setItems(null);
     setError(false);
-    api.getPublicMachines({ category, limit: 20 })
+    api.getPublicMachines({ category, town, limit: 20 })
       .then((res) => { setItems(res.items); setNextCursor(res.nextCursor); })
       .catch(() => setError(true));
   };
 
-  useEffect(fetchFirst, [category]);
+  useEffect(fetchFirst, [category, town]);
 
   const loadMore = () => {
     if (!nextCursor || loadingMore) return;
     setLoadingMore(true);
-    api.getPublicMachines({ category, cursor: nextCursor, limit: 20 })
+    api.getPublicMachines({ category, town, cursor: nextCursor, limit: 20 })
       .then((res) => { setItems((prev) => [...prev, ...res.items]); setNextCursor(res.nextCursor); })
       .catch(() => {})
       .finally(() => setLoadingMore(false));
@@ -431,6 +431,16 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory }
       <div className="pub-page-header">
         <span className="pub-page-header-icon" style={{ background: 'var(--teal)' }}><Wrench className="h-5 w-5" /></span>
         <h2 className="pub-page-title">Machines &amp; Products</h2>
+        <div className="pub-page-header-actions">
+          <CustomSelect
+            className="pub-location-select location-filter-select"
+            icon={MapPin}
+            value={town}
+            onChange={setTown}
+            placeholder="All Towns"
+            options={[{ value: '', label: 'All Towns' }, ...towns.map((t) => ({ value: t, label: t }))]}
+          />
+        </div>
       </div>
       <CategoryChips options={productTypes} value={category} onChange={setCategory} />
       {items === null ? (

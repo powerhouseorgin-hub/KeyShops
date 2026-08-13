@@ -6451,6 +6451,12 @@ export default function App() {
   // captureShopLocation and geo.controller.ts) but stay editable in case
   // the auto-detected value needs correcting.
   const [regCity, setRegCity] = useState('');
+  // Town/city-level locality (e.g. "Gopichettipalayam"), auto-filled from
+  // Nominatim's `city` field (see geo.controller.ts) alongside regCity above
+  // - despite its name, regCity actually holds the district (state_district),
+  // so this is a separate, real town-level value sent to the backend as
+  // RegisterShopDto.town, powering the public Shops/Machines town filter.
+  const [regTown, setRegTown] = useState('');
   const [regState, setRegState] = useState('');
   const [regPinCode, setRegPinCode] = useState('');
   const [regAadhaarNumber, setRegAadhaarNumber] = useState('');
@@ -6653,6 +6659,7 @@ export default function App() {
       const fullAddress = data.displayName || [data.street, data.locality].filter(Boolean).join(', ');
       setRegLocation(fullAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
       if (data.district) setRegCity(data.district);
+      if (data.city) setRegTown(data.city);
       if (data.state) setRegState(data.state);
       if (data.postcode) setRegPinCode(data.postcode.replace(/\D/g, ''));
       setRegLocLoading(false);
@@ -6702,6 +6709,7 @@ export default function App() {
             phone: regPhone,
             location: regLocation,
             city: regCity,
+            town: regTown,
             state: regState,
             pinCode: regPinCode,
             aadhaarNumber: regAadhaarNumber || undefined,

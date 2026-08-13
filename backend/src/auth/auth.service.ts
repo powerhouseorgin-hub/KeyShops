@@ -599,6 +599,10 @@ export class AuthService implements OnModuleInit {
           // the shop owner granted location permission (see RegisterShopDto).
           latitude: dto.latitude ?? null,
           longitude: dto.longitude ?? null,
+          // Town/city-level locality auto-filled from reverse-geocoding (see
+          // RegisterShopDto.town) - powers the public Shops/Machines town
+          // filter. Null when GPS wasn't used/available, same as lat/lng.
+          town: dto.town ?? null,
           // Type of shop being registered, picked from the Super-Admin-curated
           // dropdown (see ShopCategoryService).
           categoryId: dto.categoryId,
