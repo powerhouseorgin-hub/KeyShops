@@ -271,18 +271,6 @@ export const AuthProvider = ({ children }) => {
       return parseJsonSafe(response);
     },
 
-    // Distinct town/city list (real Shop.town data, e.g. "Gopichettipalayam")
-    // for the pre-login Shops and Machines tabs' location dropdown - shared
-    // by both since it's built from active shops' towns either way.
-    getPublicShopTowns: async () => {
-      const response = await fetch(`${API_BASE}/api/public/shops/towns`);
-      if (!response.ok) {
-        const err = await parseJsonSafe(response);
-        throw new Error(err.message || 'Failed to load towns');
-      }
-      return parseJsonSafe(response);
-    },
-
     // Pre-login mobile app's ad carousel - active, platform-wide ads only.
     getPublicAds: async () => {
       const response = await fetch(`${API_BASE}/api/public/ads`);

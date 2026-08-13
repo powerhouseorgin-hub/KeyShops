@@ -20,9 +20,9 @@ const CREATOR_INCLUDE = {
 const PUBLIC_PROMOTION_SELECT = {
   id: true, type: true, title: true, description: true, imageUrl: true,
   price: true, discountPercentage: true, productType: true, phone: true, createdAt: true,
-  // town powers the Machines/Products tab's location filter/badge - see
-  // ShopService.getPublicShopTowns and buildPromotionWhere's `town` filter.
-  shop: { select: { id: true, name: true, town: true } },
+  // town/district power the Machines/Products tab's location filter/badge -
+  // see buildPromotionWhere's `town` filter (matched against either column).
+  shop: { select: { id: true, name: true, town: true, district: true } },
 };
 
 @Injectable()
@@ -98,12 +98,14 @@ export class PromotionService {
     if (shopId !== undefined) {
       andConditions.push({ shopId });
     }
-    // Filters Machines/Products listings by their linked shop's real town
-    // column (see Shop.town) - exact match against getPublicShopTowns()'s
-    // distinct values. A listing with no shop (Super-Admin-created,
-    // shopId null) simply never matches, same as it has no other location.
+    // Filters Machines/Products listings by their linked shop's town OR
+    // district (see Shop.town/Shop.district and ShopService.searchPublicShops
+    // for the matching rationale - the location dropdown lists every Tamil
+    // Nadu district and town, so `town` here may hold either granularity). A
+    // listing with no shop (Super-Admin-created, shopId null) simply never
+    // matches, same as it has no other location.
     if (town) {
-      andConditions.push({ shop: { town } });
+      andConditions.push({ shop: { OR: [{ town }, { district: town }] } });
     }
     if (search) {
       andConditions.push({

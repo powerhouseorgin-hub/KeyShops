@@ -112,6 +112,15 @@ model Shop {
   // parsing JSON or substring-matching free-text addresses.
   town String?
 
+  // District-level locality (e.g. "Erode"), resolved the same way as `town`
+  // above (Nominatim's state_district field - see GeoController). The
+  // location filter dropdown now lists every Tamil Nadu district AND town
+  // (see frontend/src/utils/tamilNaduLocations.js), not just towns with a
+  // registered shop, so a shop must be matchable by EITHER its town OR its
+  // district depending on which granularity the visitor picks - see
+  // ShopService.searchPublicShops's `OR: [{ town }, { district }]` filter.
+  district String?
+
   // Type of shop being registered (e.g. "Dealers"), picked from the list of
   // categories a Super Admin curates via the Shop Categories screen (see
   // ShopCategoryService) and selected on the public self-registration
@@ -175,6 +184,9 @@ model Shop {
   // WHERE isActive = true AND town = ? - see ShopService.searchPublicShops
   // and PromotionService.getPublicPromotions.
   @@index([isActive, town])
+  // Same rationale as the town index above, for the district-level half of
+  // the OR-matched location filter.
+  @@index([isActive, district])
 }
 
 // Append-only ledger recording each successful referral: one row per

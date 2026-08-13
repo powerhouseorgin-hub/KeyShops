@@ -22,6 +22,8 @@ import addKeyIcon from './assets/addlostkeys/bluekey.png';
 import lostKeyIcon from './assets/addlostkeys/redkey.png';
 import { downloadPdf, sharePdf } from './utils/pdfDelivery';
 import { openRazorpayCheckout } from './utils/razorpay';
+import { ALL_TN_LOCATIONS } from './utils/tamilNaduLocations';
+import { categoryImage } from './utils/categoryIcon';
 import PublicSite from './components/PublicSite';
 import PublicMobileApp, { PublicBottomNav } from './components/PublicMobileApp';
 import CustomSelect from './components/CustomSelect';
@@ -7576,6 +7578,10 @@ export default function App() {
             <PublicBottomNav
               activeTab={publicInitialTab}
               onGoTab={(tab) => { setPublicInitialTab(tab); setPublicPage('home'); }}
+              // Already on the login screen here, so there's nothing useful
+              // to prompt - tapping "Add Ads" just dismisses back to Home
+              // instead of showing a redundant "please log in" popup.
+              onAddAds={() => { setPublicInitialTab('home'); setPublicPage('home'); }}
             />
           )}
           </>
@@ -12048,22 +12054,25 @@ function OffersAdsBannersView({ t, api }) {
 // the DashboardView fix.
 const categoryShopsCache = {};
 
-function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) {
+function CategoryShopsView({ categoryKey, icon: IconComponent, t, api }) {
   const cachedDealers = categoryShopsCache[categoryKey] || null;
   const [dealers, setDealers] = useState(cachedDealers || []);
   const [loading, setLoading] = useState(!cachedDealers);
   const [query, setQuery] = useState('');
+  const [town, setTown] = useState('');
 
   // Debounced (350ms, matching Blank Key Search) - this previously fired a
   // fresh request (and blanked the list to a spinner) on every keystroke,
-  // with no debounce at all.
+  // with no debounce at all. `town` is a discrete dropdown pick rather than
+  // free typing, so it doesn't strictly need debouncing, but riding the same
+  // effect keeps this simple and the added latency is imperceptible.
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchDealers();
     }, 350);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, categoryKey]);
+  }, [query, town, categoryKey]);
 
   const fetchDealers = async () => {
     // Only blank to a spinner when there's nothing on screen yet - a bare
@@ -12071,10 +12080,13 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
     // refreshes silently in the background.
     if (dealers.length === 0) setLoading(true);
     try {
-      const res = await api.searchPublicShops({ query, category: categoryKey });
+      const res = await api.searchPublicShops({ query, category: categoryKey, town });
       const list = Array.isArray(res) ? res : [];
       setDealers(list);
-      if (!query) categoryShopsCache[categoryKey] = list;
+      // Only cache the true "everything in this category" result - a
+      // search/location-filtered result must never be mistaken for it on a
+      // later unfiltered revisit.
+      if (!query && !town) categoryShopsCache[categoryKey] = list;
     } catch (e) {
       console.error('Failed to fetch category dealers', e);
     } finally {
@@ -12121,9 +12133,11 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
         </div>
       </div>
 
-      {/* Search Bar - Filter buttons completely removed per user request */}
-      <div style={{ marginBottom: 16 }}>
-        <div className="search-box" style={{ width: '100%' }}>
+      {/* Search Bar + location filter - category filter buttons completely
+          removed per earlier user request (this view is already scoped to
+          one category via categoryKey). */}
+      <div style={{ marginBottom: 16, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+        <div className="search-box" style={{ flex: '2 1 260px' }}>
           <Search />
           <input
             type="text"
@@ -12137,6 +12151,17 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
             </button>
           )}
         </div>
+        <CustomSelect
+          className="location-filter-select"
+          icon={MapPin}
+          value={town}
+          onChange={setTown}
+          placeholder="All Locations"
+          searchable
+          searchPlaceholder="Search district or town…"
+          options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
+          triggerStyle={{ minWidth: 180 }}
+        />
       </div>
 
       {loading ? (
@@ -12157,11 +12182,7 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, image, t, api }) 
             <div key={dealer.id} className="dealer-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                 <div className="dealer-logo" style={{ background: 'var(--card-2)', padding: 4 }}>
-                  {image ? (
-                    <img src={image} alt={dealer.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                  ) : (
-                    <img src={keyShopLogo} alt={dealer.name} />
-                  )}
+                  <img src={categoryImage(dealer.category)} alt={dealer.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div className="dealer-info">
                   <div className="dealer-name">{dealer.name}</div>
@@ -12232,6 +12253,7 @@ function DealersView({ t, api }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [query, setQuery] = useState('');
+  const [town, setTown] = useState('');
   // Debounced before it reaches the server - see PromotionsFeed's identical
   // pattern for why (every change now triggers a network request).
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -12245,13 +12267,13 @@ function DealersView({ t, api }) {
   // browses every category now (see ShopService.searchPublicShops's
   // `category` param, simply omitted here).
   const fetchDealers = async () => {
-    const isDefaultView = !debouncedQuery;
+    const isDefaultView = !debouncedQuery && !town;
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
     if (!isDefaultView || dealers.length === 0) setLoading(true);
     try {
-      const res = await api.searchPublicShops({ query: debouncedQuery, limit: DEALERS_PAGE_SIZE });
+      const res = await api.searchPublicShops({ query: debouncedQuery, town, limit: DEALERS_PAGE_SIZE });
       setDealers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -12271,7 +12293,7 @@ function DealersView({ t, api }) {
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
     try {
-      const res = await api.searchPublicShops({ query: debouncedQuery, cursor: nextCursor, limit: DEALERS_PAGE_SIZE });
+      const res = await api.searchPublicShops({ query: debouncedQuery, town, cursor: nextCursor, limit: DEALERS_PAGE_SIZE });
       setDealers((prev) => [...prev, ...res.items]);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -12284,7 +12306,7 @@ function DealersView({ t, api }) {
 
   useEffect(() => {
     fetchDealers();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, town]);
 
   useEffect(() => {
     const node = loadMoreSentinelRef.current;
@@ -12297,7 +12319,7 @@ function DealersView({ t, api }) {
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasMore, nextCursor, loadingMore, debouncedQuery]);
+  }, [hasMore, nextCursor, loadingMore, debouncedQuery, town]);
 
   return (
     <div className="animate-fade-in">
@@ -12309,20 +12331,33 @@ function DealersView({ t, api }) {
         </div>
       </div>
 
-      {/* Search Panel */}
-      <div className="search-box" style={{ width: '100%', marginBottom: 14 }}>
-        <Search />
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t('searchDealersPlaceholder') || 'Search dealers by name, location, category...'}
+      {/* Search Panel + location filter */}
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 14 }}>
+        <div className="search-box" style={{ flex: '2 1 260px' }}>
+          <Search />
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t('searchDealersPlaceholder') || 'Search dealers by name, location, category...'}
+          />
+          {query && (
+            <button onClick={() => setQuery('')} className="icon-btn" style={{ width: 26, height: 26 }}>
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
+        <CustomSelect
+          className="location-filter-select"
+          icon={MapPin}
+          value={town}
+          onChange={setTown}
+          placeholder="All Locations"
+          searchable
+          searchPlaceholder="Search district or town…"
+          options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
+          triggerStyle={{ minWidth: 180 }}
         />
-        {query && (
-          <button onClick={() => setQuery('')} className="icon-btn" style={{ width: 26, height: 26 }}>
-            <X className="h-3.5 w-3.5" />
-          </button>
-        )}
       </div>
 
       {loading ? (
@@ -12341,7 +12376,7 @@ function DealersView({ t, api }) {
             <div key={dealer.id} className="dealer-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                 <div className="dealer-logo">
-                  <img src={keyShopLogo} alt={dealer.name} />
+                  <img src={categoryImage(dealer.category)} alt={dealer.name} />
                 </div>
                 <div className="dealer-info">
                   <div className="dealer-name">{dealer.name}</div>

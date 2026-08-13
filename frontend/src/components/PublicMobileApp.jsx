@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Home, Store, Wrench, Megaphone, Search, Bell, LogIn, X, ChevronLeft, ChevronRight,
   MapPin, Phone, Globe, Tag, RefreshCw, Package,
@@ -7,6 +8,8 @@ import {
 import { useBackHandler } from '../utils/backHandler';
 import CustomSelect from './CustomSelect';
 import PriceTag from './PriceTag';
+import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
+import { categoryImage } from '../utils/categoryIcon';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 
 // Mirrors App.jsx's TERMS_AND_CONDITIONS_TITLE/BODY - duplicated rather than
@@ -149,7 +152,9 @@ function AdCarousel({ api }) {
 function PublicShopCard({ shop, onOpen }) {
   return (
     <button type="button" className="pub-shop-card" onClick={() => onOpen(shop.id)}>
-      <div className="pub-shop-card-icon"><Store className="h-5 w-5" /></div>
+      <div className="pub-shop-card-icon pub-shop-card-icon-img">
+        <img src={categoryImage(shop.category)} alt="" />
+      </div>
       <div className="pub-shop-card-name">{shop.name}</div>
       {shop.address && <div className="pub-card-meta pub-card-meta-wrap"><MapPin className="h-3 w-3" /><span>{shop.address}</span></div>}
       {shop.phone && <div className="pub-card-meta"><Phone className="h-3 w-3" /><span>{shop.phone}</span></div>}
@@ -313,24 +318,6 @@ function PublicHomeTab({ api, onOpenShop, onOpenMachine, onGoTab }) {
   );
 }
 
-// Town/city dropdown shared by the Shops and Machines tabs - built from real
-// Shop.town data (see ShopService.getPublicShopTowns) rather than a
-// hardcoded district list, so it self-populates as shops register in new
-// towns and never lists a location with zero results. Fetched once per tab
-// mount; failure is silent (dropdown just shows "All Towns" only) since a
-// missing filter option shouldn't block browsing.
-function useTownOptions(api) {
-  const [towns, setTowns] = useState([]);
-  useEffect(() => {
-    let cancelled = false;
-    api.getPublicShopTowns()
-      .then((list) => { if (!cancelled) setTowns(list || []); })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, [api]);
-  return towns;
-}
-
 function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
   const [category, setCategory] = useState(initialCategory || '');
   const [items, setItems] = useState(null);
@@ -338,7 +325,6 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
   const [town, setTown] = useState('');
-  const towns = useTownOptions(api);
 
   const fetchFirst = () => {
     setItems(null);
@@ -370,8 +356,10 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
             icon={MapPin}
             value={town}
             onChange={setTown}
-            placeholder="All Towns"
-            options={[{ value: '', label: 'All Towns' }, ...towns.map((t) => ({ value: t, label: t }))]}
+            placeholder="All Locations"
+            searchable
+            searchPlaceholder="Search district or town…"
+            options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((t) => ({ value: t, label: t }))]}
           />
         </div>
       </div>
@@ -405,7 +393,6 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory }
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
   const [town, setTown] = useState('');
-  const towns = useTownOptions(api);
 
   const fetchFirst = () => {
     setItems(null);
@@ -437,8 +424,10 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory }
             icon={MapPin}
             value={town}
             onChange={setTown}
-            placeholder="All Towns"
-            options={[{ value: '', label: 'All Towns' }, ...towns.map((t) => ({ value: t, label: t }))]}
+            placeholder="All Locations"
+            searchable
+            searchPlaceholder="Search district or town…"
+            options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((t) => ({ value: t, label: t }))]}
           />
         </div>
       </div>
@@ -670,6 +659,7 @@ function PublicFeedbackScreen({ api, onBack }) {
 function PublicNavDrawer({ open, onClose, onNavigate }) {
   useBackHandler(open, onClose);
   const items = [
+    { key: 'contact', icon: Headset, color: 'var(--rose)', label: 'Contact Us' },
     { key: 'terms', icon: FileText, color: 'var(--blue)', label: 'Terms & Conditions' },
     { key: 'feedback', icon: MessageCircle, color: 'var(--gold)', label: 'Feedback & Suggestions' },
   ];
@@ -861,6 +851,32 @@ function PublicSearchOverlay({ api, onClose, onOpenShop, onOpenMachine }) {
   );
 }
 
+// Shown when a logged-out visitor taps "Add Ads" (or any other action that
+// actually requires an account) - explains why, and offers a direct path to
+// the login screen instead of a dead end. Portaled to <body> so it sits
+// above the bottom nav/topbar regardless of where it's triggered from.
+function LoginRequiredModal({ onClose, onLogin }) {
+  useBackHandler(true, onClose);
+  return createPortal(
+    <div className="pub-modal-backdrop" onClick={onClose}>
+      <div className="card pub-login-required-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="icon-badge rose" style={{ margin: '0 auto 14px' }}><Megaphone /></div>
+        <h3 style={{ textAlign: 'center', marginBottom: 6 }}>Login Required</h3>
+        <p style={{ textAlign: 'center', fontSize: 13.5, color: 'var(--text-2)', lineHeight: 1.5, marginBottom: 18 }}>
+          You need to log in to add ads, register customers, or perform other shop operations.
+        </p>
+        <button type="button" className="btn btn-primary" style={{ width: '100%', marginBottom: 8 }} onClick={onLogin}>
+          <LogIn className="h-4 w-4" /> Login
+        </button>
+        <button type="button" className="btn btn-ghost" style={{ width: '100%' }} onClick={onClose}>
+          Cancel
+        </button>
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function PublicTopBar({ onSearch, onLogin, onMenu }) {
   const [showNotif, setShowNotif] = useState(false);
   return (
@@ -889,8 +905,11 @@ function PublicTopBar({ onSearch, onLogin, onMenu }) {
 // Exported so App.jsx can render the exact same bottom nav on the native
 // login screen (which sits outside PublicMobileApp itself, but the user
 // should be able to jump straight to Shops/Machines/My Ads from there
-// without logging in - see App.jsx's login-shell rendering).
-export function PublicBottomNav({ activeTab, onGoTab }) {
+// without logging in - see App.jsx's login-shell rendering). Contact moved
+// into the hamburger drawer (see PublicNavDrawer) to free this slot for
+// "Add Ads" - a logged-out visitor tapping it sees a login-required prompt
+// rather than a broken/empty create-ad screen (see onAddAds).
+export function PublicBottomNav({ activeTab, onGoTab, onAddAds }) {
   return (
     <nav className="mobile-bottom-nav">
       <button className={`mbn-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => onGoTab('home')}>
@@ -905,9 +924,9 @@ export function PublicBottomNav({ activeTab, onGoTab }) {
         <span className="nav-ico-sm" style={{ background: 'var(--teal)' }}><Wrench /></span>
         <span>Machines</span>
       </button>
-      <button className={`mbn-item ${activeTab === 'contact' ? 'active' : ''}`} onClick={() => onGoTab('contact')}>
-        <span className="nav-ico-sm" style={{ background: 'var(--rose)' }}><Headset /></span>
-        <span>Contact</span>
+      <button className="mbn-item" onClick={onAddAds}>
+        <span className="nav-ico-sm" style={{ background: 'var(--rose)' }}><Megaphone /></span>
+        <span>Add Ads</span>
       </button>
     </nav>
   );
@@ -918,6 +937,7 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
   const [screen, setScreen] = useState({ type: 'tab' });
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showAddAdsPrompt, setShowAddAdsPrompt] = useState(false);
   const [categories, setCategories] = useState([]);
   const [productTypes, setProductTypes] = useState([]);
   const [tabCategoryHint, setTabCategoryHint] = useState('');
@@ -973,9 +993,12 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
     <div className="public-mobile-app">
       <PublicTopBar onSearch={() => setSearchOpen(true)} onLogin={onLogin} onMenu={() => setMenuOpen(true)} />
       <main className="public-mobile-main">{body}</main>
-      <PublicBottomNav activeTab={publicTab} onGoTab={goTab} />
+      <PublicBottomNav activeTab={publicTab} onGoTab={goTab} onAddAds={() => setShowAddAdsPrompt(true)} />
       {searchOpen && <PublicSearchOverlay api={api} onClose={() => setSearchOpen(false)} onOpenShop={openShop} onOpenMachine={openMachine} />}
       <PublicNavDrawer open={menuOpen} onClose={() => setMenuOpen(false)} onNavigate={openStatic} />
+      {showAddAdsPrompt && (
+        <LoginRequiredModal onClose={() => setShowAddAdsPrompt(false)} onLogin={() => { setShowAddAdsPrompt(false); onLogin(); }} />
+      )}
     </div>
   );
 }

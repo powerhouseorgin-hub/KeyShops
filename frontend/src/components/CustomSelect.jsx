@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Search } from 'lucide-react';
 
 // App-wide replacement for the native <select> popup. Visually it matches
 // the old `select.sel` field (see index.css) exactly, but the open menu is
@@ -24,15 +24,29 @@ export default function CustomSelect({
   emptyLabel = 'No options available',
   id,
   icon: Icon,
+  // When true, a text input appears at the top of the open menu to filter
+  // a long options list client-side (case-insensitive substring match on
+  // label) - meant for lists too long to scan by scrolling alone, e.g. the
+  // ~300-entry Tamil Nadu district+town location list.
+  searchable = false,
+  searchPlaceholder = 'Search…',
 }) {
   const [open, setOpen] = useState(false);
   const [menuStyle, setMenuStyle] = useState(null);
+  const [filterText, setFilterText] = useState('');
   const triggerRef = useRef(null);
   const menuRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   const normalized = options.map((o) =>
     typeof o === 'string' || typeof o === 'number' ? { value: o, label: String(o) } : o
   );
+
+  const visible = useMemo(() => {
+    if (!searchable || !filterText.trim()) return normalized;
+    const needle = filterText.trim().toLowerCase();
+    return normalized.filter((o) => o.label.toLowerCase().includes(needle));
+  }, [normalized, searchable, filterText]);
 
   const selected = normalized.find((o) => String(o.value) === String(value));
 
@@ -52,8 +66,18 @@ export default function CustomSelect({
         ? { bottom: window.innerHeight - rect.top + 6 }
         : { top: rect.bottom + 6 }),
     });
+    setFilterText('');
     setOpen(true);
   };
+
+  // Autofocus the filter input the moment the menu opens, so a keyboard/
+  // Bluetooth-keyboard user (or desktop browser) can start typing straight
+  // away instead of needing an extra tap first.
+  useEffect(() => {
+    if (open && searchable && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [open, searchable]);
 
   useEffect(() => {
     if (!open) return;
@@ -107,9 +131,23 @@ export default function CustomSelect({
         <>
           <div className="custom-select-backdrop" onClick={close} />
           <div ref={menuRef} className="custom-select-menu animate-fade-in" style={menuStyle} role="listbox">
-            {normalized.length === 0 ? (
-              <div className="custom-select-empty">{emptyLabel}</div>
-            ) : normalized.map((opt) => (
+            {searchable && (
+              <div className="custom-select-search">
+                <Search className="custom-select-search-icon" />
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  placeholder={searchPlaceholder}
+                  className="custom-select-search-input"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              </div>
+            )}
+            {visible.length === 0 ? (
+              <div className="custom-select-empty">{filterText.trim() ? 'No matches' : emptyLabel}</div>
+            ) : visible.map((opt) => (
               <button
                 type="button"
                 key={String(opt.value)}

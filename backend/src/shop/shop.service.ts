@@ -224,7 +224,7 @@ export class ShopService {
   // documents), used by both the unpaginated and cursor-paginated return paths.
   private mapPublicShop(shop: {
     id: string; name: string; themeColor: string; companyDetails: string | null;
-    town: string | null;
+    town: string | null; district: string | null;
     category: { name: string } | null;
   }) {
     let address: string | null = null;
@@ -247,10 +247,13 @@ export class ShopService {
       address,
       phone,
       website,
-      // Town/city-level locality (e.g. "Gopichettipalayam") - real Shop.town
-      // column, not parsed from companyDetails. Powers the public Shops and
-      // Machines/Products tabs' location filter - see getPublicShopTowns.
+      // Town/city and district-level locality - real Shop.town/Shop.district
+      // columns, not parsed from companyDetails. Powers the public Shops and
+      // Machines/Products tabs' location filter (see searchPublicShops's
+      // `town` param, matched against either column) and the shop card's
+      // location badge.
       town: shop.town || null,
+      district: shop.district || null,
       category: shop.category?.name || null,
     };
   }
@@ -270,11 +273,19 @@ export class ShopService {
     const { query, category, town, cursor, limit } = opts;
     const whereClause: any = { isActive: true };
 
-    // Exact match against the real Shop.town column - the dropdown is built
-    // from getPublicShopTowns()'s distinct values, so this is always an
-    // exact match against real data rather than a substring guess.
+    // Exact match against EITHER Shop.town or Shop.district - the dropdown
+    // (frontend/src/utils/tamilNaduLocations.js) lists every Tamil Nadu
+    // district and town regardless of whether a shop is registered there,
+    // so `town` here may hold either granularity depending on what the
+    // visitor picked; matching both columns means a district pick surfaces
+    // every shop in that district while a town pick stays exact.
     if (town) {
-      whereClause.town = town;
+      const locationFilter = { OR: [{ town }, { district: town }] };
+      if (whereClause.AND) {
+        whereClause.AND.push(locationFilter);
+      } else {
+        whereClause.AND = [locationFilter];
+      }
     }
 
     if (category) {
@@ -326,6 +337,7 @@ export class ShopService {
       themeColor: true,
       companyDetails: true,
       town: true,
+      district: true,
       createdAt: true,
       category: { select: { name: true } },
     };
@@ -364,27 +376,11 @@ export class ShopService {
     const shop = await this.tenantService.prisma.shop.findFirst({
       where: { id, isActive: true },
       select: {
-        id: true, name: true, themeColor: true, companyDetails: true, town: true,
+        id: true, name: true, themeColor: true, companyDetails: true, town: true, district: true,
         createdAt: true, category: { select: { name: true } },
       },
     });
     return shop ? this.mapPublicShop(shop) : null;
-  }
-
-  // PUBLIC: Distinct list of towns with at least one active shop, for the
-  // public Shops/Machines tabs' location dropdown - built from real data
-  // instead of a hardcoded district list, so it stays accurate as shops
-  // register in new towns and never lists a town with zero results.
-  async getPublicShopTowns(): Promise<string[]> {
-    const rows = await this.tenantService.prisma.shop.findMany({
-      where: { isActive: true, town: { not: null } },
-      select: { town: true },
-      distinct: ['town'],
-    });
-    return rows
-      .map((r) => r.town)
-      .filter((t): t is string => !!t)
-      .sort((a, b) => a.localeCompare(b));
   }
 
   // SHOP ADMIN: Get Settings

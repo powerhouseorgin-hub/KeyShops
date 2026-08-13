@@ -1,22 +1,25 @@
 /**
  * One-time backfill: resolves a town/city-level locality (e.g.
- * "Gopichettipalayam") for every existing Shop that already has stored GPS
- * coordinates (latitude/longitude) but no `town` value yet - i.e. every shop
- * that registered before the Shop.town column existed (see migration
- * 20260813053902_add_shop_town).
+ * "Gopichettipalayam") AND a district-level locality (e.g. "Erode") for
+ * every existing Shop that already has stored GPS coordinates
+ * (latitude/longitude) but is missing either value - i.e. every shop that
+ * registered before the Shop.town/Shop.district columns existed (see
+ * migrations 20260813053902_add_shop_town and 20260813062942_add_shop_district).
  *
  * Reuses the exact same Nominatim reverse-geocoding call and field mapping
- * as GeoController.reverseGeocode (addr.city || addr.town || addr.county),
- * called directly here rather than through the HTTP endpoint since this
- * runs as an offline script, not a request handler.
+ * as GeoController.reverseGeocode (city: addr.city||addr.town||addr.county,
+ * district: addr.state_district||addr.city_district||addr.county), called
+ * directly here rather than through the HTTP endpoint since this runs as an
+ * offline script, not a request handler. Both fields come back from the same
+ * single geocode call, so backfilling both here costs no extra API requests.
  *
  * Nominatim's usage policy caps free-tier usage at ~1 request/second and
  * requires an identifying User-Agent - both are honored below (a fixed
  * delay between requests, same User-Agent header as geo.controller.ts).
  *
- * SAFE TO RE-RUN: only processes shops where `town` is still null, so a
- * partial failure (network blip, rate-limit) can simply be re-run to pick
- * up where it left off.
+ * SAFE TO RE-RUN: only processes shops where `town` or `district` is still
+ * null, so a partial failure (network blip, rate-limit) can simply be
+ * re-run to pick up where it left off.
  *
  * Usage:
  *   cd backend
@@ -33,7 +36,7 @@ const REQUEST_DELAY_MS = 1100;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-async function reverseGeocodeTown(lat: number, lng: number): Promise<string> {
+async function reverseGeocodeLocation(lat: number, lng: number): Promise<{ town: string; district: string }> {
   const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
   const res = await fetch(url, {
     headers: {
@@ -46,11 +49,12 @@ async function reverseGeocodeTown(lat: number, lng: number): Promise<string> {
   }
   const data: any = await res.json();
   const addr = data.address || {};
-  // Same fallback chain as GeoController.reverseGeocode's `city` field -
-  // prefers a formal city name, falls back to town, then county, which in
-  // practice resolves correctly to town-level places (e.g. Gopichettipalayam
-  // has no "city" designation in OSM, so addr.town supplies it).
-  return addr.city || addr.town || addr.county || '';
+  // Same fallback chains as GeoController.reverseGeocode's `city`/`district`
+  // fields.
+  return {
+    town: addr.city || addr.town || addr.county || '',
+    district: addr.state_district || addr.city_district || addr.county || '',
+  };
 }
 
 async function main() {
@@ -58,15 +62,15 @@ async function main() {
 
   const shops = await prisma.shop.findMany({
     where: {
-      town: null,
+      OR: [{ town: null }, { district: null }],
       latitude: { not: null },
       longitude: { not: null },
       deletedAt: null,
     },
-    select: { id: true, name: true, latitude: true, longitude: true },
+    select: { id: true, name: true, latitude: true, longitude: true, town: true, district: true },
   });
 
-  console.log(`Found ${shops.length} shop(s) with coordinates but no town.${DRY_RUN ? ' (dry run)' : ''}`);
+  console.log(`Found ${shops.length} shop(s) with coordinates but missing town/district.${DRY_RUN ? ' (dry run)' : ''}`);
 
   let resolved = 0;
   let empty = 0;
@@ -74,15 +78,19 @@ async function main() {
 
   for (const [i, shop] of shops.entries()) {
     try {
-      const town = await reverseGeocodeTown(shop.latitude!, shop.longitude!);
-      if (town) {
-        console.log(`[${i + 1}/${shops.length}] ${shop.name} -> "${town}"`);
+      const { town, district } = await reverseGeocodeLocation(shop.latitude!, shop.longitude!);
+      const data: { town?: string; district?: string } = {};
+      if (!shop.town && town) data.town = town;
+      if (!shop.district && district) data.district = district;
+
+      if (Object.keys(data).length > 0) {
+        console.log(`[${i + 1}/${shops.length}] ${shop.name} -> town="${data.town ?? shop.town}" district="${data.district ?? shop.district}"`);
         if (!DRY_RUN) {
-          await prisma.shop.update({ where: { id: shop.id }, data: { town } });
+          await prisma.shop.update({ where: { id: shop.id }, data });
         }
         resolved++;
       } else {
-        console.log(`[${i + 1}/${shops.length}] ${shop.name} -> no town-level match, skipped`);
+        console.log(`[${i + 1}/${shops.length}] ${shop.name} -> no new match, skipped`);
         empty++;
       }
     } catch (err: any) {

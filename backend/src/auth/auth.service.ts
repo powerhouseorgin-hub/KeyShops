@@ -603,6 +603,13 @@ export class AuthService implements OnModuleInit {
           // RegisterShopDto.town) - powers the public Shops/Machines town
           // filter. Null when GPS wasn't used/available, same as lat/lng.
           town: dto.town ?? null,
+          // District-level locality - dto.city is, despite its name,
+          // already the geocoded district value (Nominatim's state_district,
+          // see captureShopLocation in App.jsx), previously only stored
+          // inside companyDetails' JSON blob. Persisted here too now that
+          // the location filter needs a real district column to match
+          // against (see ShopService.searchPublicShops).
+          district: dto.city ?? null,
           // Type of shop being registered, picked from the Super-Admin-curated
           // dropdown (see ShopCategoryService).
           categoryId: dto.categoryId,

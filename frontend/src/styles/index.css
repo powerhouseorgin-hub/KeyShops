@@ -1028,6 +1028,22 @@ select.sel:focus { border-color: var(--gold); }
 .custom-select-empty { padding: 14px 10px; text-align: center; font-size: 12.5px; font-weight: 600; color: var(--text-3); }
 @media (max-width: 640px) { .custom-select-menu { max-width: calc(100vw - 32px); } }
 
+/* Optional search box at the top of a searchable CustomSelect's menu (e.g.
+   the ~300-entry Tamil Nadu location list) - sticky so it stays visible
+   while scrolling a long filtered result set. */
+.custom-select-search {
+  position: sticky; top: 0; z-index: 1;
+  display: flex; align-items: center; gap: 8px;
+  background: var(--card); border: 1.5px solid var(--border-2); border-radius: 9px;
+  padding: 8px 10px; margin-bottom: 4px;
+}
+.custom-select-search-icon { width: 14px; height: 14px; color: var(--text-3); flex-shrink: 0; }
+.custom-select-search-input {
+  border: none; outline: none; background: transparent; width: 100%;
+  font-size: 13.5px; font-weight: 600; color: var(--text-0);
+}
+.custom-select-search-input::placeholder { color: var(--text-3); font-weight: 500; }
+
 .dropzone {
   border: 2px dashed var(--border-2); border-radius: 16px; padding: 36px 20px;
   display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center;
@@ -2109,6 +2125,11 @@ select.sel:focus { border-color: var(--gold); }
   width: 38px; height: 38px; border-radius: 11px; background: var(--blue); color: #fff;
   display: flex; align-items: center; justify-content: center; margin-bottom: 5px; flex-shrink: 0;
 }
+/* Category-specific image variant (see categoryImage in utils/categoryIcon.js)
+   - full-color icons designed for a light ground, so this swaps the solid
+   accent-color background for a neutral card background instead. */
+.pub-shop-card-icon.pub-shop-card-icon-img { background: var(--card-2); padding: 5px; }
+.pub-shop-card-icon-img img { width: 100%; height: 100%; object-fit: contain; }
 .pub-shop-card-name {
   font-family: var(--display); font-weight: 800; font-size: 14px; color: var(--text-0);
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 1px;
@@ -2161,6 +2182,16 @@ select.sel:focus { border-color: var(--gold); }
   border-bottom: 1px solid var(--border); background: var(--card);
 }
 .public-search-overlay-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+/* Login-required prompt (e.g. tapping "Add Ads" while logged out) - see
+   LoginRequiredModal in PublicMobileApp.jsx. High z-index so it sits above
+   the bottom nav/topbar/drawer regardless of where it's triggered from. */
+.pub-modal-backdrop {
+  position: fixed; inset: 0; z-index: 100010;
+  background: rgba(5,4,3,0.6); backdrop-filter: blur(2px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.pub-login-required-modal { width: 100%; max-width: 340px; padding: 24px 22px; }
 
 @media (max-width: 480px) {
   .public-mobile-hcard { flex-basis: 220px; }
