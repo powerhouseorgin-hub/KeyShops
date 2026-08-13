@@ -1723,9 +1723,9 @@ select.sel:focus { border-color: var(--gold); }
 }
 .dealer-row:hover { border-color: rgba(200, 148, 22, 0.4); transform: translateY(-2px); }
 .dealer-logo {
-  width: 62px; height: 62px; border-radius: 14px; background: var(--card-2);
+  width: 80px; height: 80px; border-radius: 16px; background: var(--card-2);
   border: 1px solid var(--border-2); display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; overflow: hidden; padding: 4px;
+  flex-shrink: 0; overflow: hidden; padding: 5px;
 }
 .dealer-logo img { width: 100%; height: 100%; object-fit: contain; }
 .dealer-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
@@ -2127,8 +2127,11 @@ select.sel:focus { border-color: var(--gold); }
 }
 /* Category-specific image variant (see categoryImage in utils/categoryIcon.js)
    - full-color icons designed for a light ground, so this swaps the solid
-   accent-color background for a neutral card background instead. */
-.pub-shop-card-icon.pub-shop-card-icon-img { background: var(--card-2); padding: 5px; }
+   accent-color background for a neutral card background instead. Sized
+   noticeably larger than the plain-icon variant above since it's carrying
+   real category artwork (ECM/Meter/Scanning/Key Shops/Dealers), not just a
+   small glyph - it needs to actually read as an image, not a badge. */
+.pub-shop-card-icon.pub-shop-card-icon-img { width: 60px; height: 60px; border-radius: 14px; background: var(--card-2); padding: 6px; }
 .pub-shop-card-icon-img img { width: 100%; height: 100%; object-fit: contain; }
 .pub-shop-card-name {
   font-family: var(--display); font-weight: 800; font-size: 14px; color: var(--text-0);

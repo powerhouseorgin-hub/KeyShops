@@ -89,7 +89,19 @@ export default function CustomSelect({
     // overflow-y scroll for long lists like Shop Management's shop
     // picker) - without excluding those, the menu closed itself the
     // instant a user tried to scroll through options to find one.
+    // A `searchable` menu autofocuses its input (see effect above), which
+    // pops the on-screen keyboard on mobile/native - and the keyboard's
+    // slide-in animation can itself fire a 'scroll' (auto-scrolling the
+    // focused input into view) and/or 'resize' (shrinking the visual
+    // viewport height) event, either of which used to close the menu the
+    // instant it opened, before the user could type or tap anything. A
+    // short grace period after opening absorbs that transient animation
+    // without meaningfully weakening the "scrolling the real page behind
+    // the menu closes it" behavior the two listeners exist for.
+    const openedAt = Date.now();
+    const GRACE_MS = 400;
     const handleScroll = (e) => {
+      if (Date.now() - openedAt < GRACE_MS) return;
       // e.target is the window object (not a Node) when the scroll event
       // fires on the document/viewport itself rather than a scrollable
       // element - contains() throws a TypeError given a non-Node argument,
@@ -98,13 +110,22 @@ export default function CustomSelect({
       if (e.target instanceof Node && menuRef.current && menuRef.current.contains(e.target)) return;
       close();
     };
+    // Real layout changes that should still close the menu (rotation,
+    // split-screen, resizing the window) always change the WIDTH too, so
+    // that's checked in addition to the grace period - a height-only change
+    // right after opening is assumed to be the keyboard and is ignored.
+    const openWidth = window.innerWidth;
+    const handleResize = () => {
+      if (Date.now() - openedAt < GRACE_MS) return;
+      if (window.innerWidth !== openWidth) close();
+    };
     window.addEventListener('scroll', handleScroll, true);
-    window.addEventListener('resize', close);
+    window.addEventListener('resize', handleResize);
     const onKey = (e) => { if (e.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
     return () => {
       window.removeEventListener('scroll', handleScroll, true);
-      window.removeEventListener('resize', close);
+      window.removeEventListener('resize', handleResize);
       window.removeEventListener('keydown', onKey);
     };
   }, [open, close]);
