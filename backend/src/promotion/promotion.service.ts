@@ -1,7 +1,7 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { TenantService } from '../tenant/tenant.service';
-import { CreatePromotionDto, UpdatePromotionDto } from './dto/promotion.dto';
+import { CreatePromotionDto, UpdatePromotionDto, PROMOTION_MAX_PHOTOS } from './dto/promotion.dto';
 import { FileService } from '../customer/file.service';
 
 // A Machine/Product listing may never outlive this many days from the
@@ -26,7 +26,7 @@ const CREATOR_INCLUDE = {
 // noise (createdById, deletedAt) or PII (createdBy.email) can leak just
 // because a new scalar column gets added to Promotion later.
 const PUBLIC_PROMOTION_SELECT = {
-  id: true, type: true, title: true, description: true, imageUrl: true,
+  id: true, type: true, title: true, description: true, imageUrl: true, imageUrls: true,
   price: true, discountPercentage: true, productType: true, phone: true, createdAt: true,
   // town/district power the Machines/Products tab's location filter/badge -
   // see buildPromotionWhere's `town` filter (matched against either column).
@@ -243,17 +243,30 @@ export class PromotionService {
     return requested > maxDate ? maxDate : requested;
   }
 
+  // Caps a listing's photo list at PROMOTION_MAX_PHOTOS (defense in depth -
+  // the DTO's @ArrayMaxSize already rejects an oversized payload, this just
+  // makes the invariant impossible to violate from within the service too)
+  // and derives the single-image `imageUrl` every other display site
+  // (card thumbnails, PDF reports, public search results) still reads, kept
+  // as the first photo so none of those sites needed to change.
+  private clampImageUrls(requested: string[] | undefined): { imageUrl: string | null; imageUrls: string[] } {
+    const imageUrls = (requested ?? []).slice(0, PROMOTION_MAX_PHOTOS);
+    return { imageUrl: imageUrls[0] ?? null, imageUrls };
+  }
+
   // Create a listing. shopId is null for a Super-Admin-created product, which
   // makes it independent of every shop's inventory (see schema comment on
   // Promotion.shopId); otherwise it's the creating Shop Admin's own shop.
   async createPromotion(shopId: string | null, userId: string, dto: CreatePromotionDto) {
     const now = new Date();
+    const { imageUrl, imageUrls } = this.clampImageUrls(dto.imageUrls);
     return this.tenantService.prisma.promotion.create({
       data: {
         type: dto.type,
         title: dto.title,
         description: dto.description,
-        imageUrl: dto.imageUrl,
+        imageUrl,
+        imageUrls,
         price: dto.price,
         discountPercentage: dto.discountPercentage,
         validUntil: this.clampProductExpiry(dto.type, dto.validUntil, now),
@@ -321,6 +334,11 @@ export class PromotionService {
     const data: any = { ...dto };
     if (dto.validUntil !== undefined) {
       data.validUntil = dto.validUntil ? this.clampProductExpiry(existingType, dto.validUntil, existingCreatedAt) : null;
+    }
+    if (dto.imageUrls !== undefined) {
+      const { imageUrl, imageUrls } = this.clampImageUrls(dto.imageUrls);
+      data.imageUrl = imageUrl;
+      data.imageUrls = imageUrls;
     }
     return data;
   }

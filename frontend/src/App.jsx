@@ -793,6 +793,9 @@ const LANGUAGES = {
     shortDescriptionPlaceholder: 'Short description shown on the listing card',
     productPhotoOptionalLabel: 'Product Photo (optional)',
     imageMediaOptionalLabel: 'Image / Media (optional)',
+    photosUploadedCountLabel: '{count} of {max} photos uploaded',
+    removePhotoLabel: 'Remove photo',
+    replacePhotoLabel: 'Replace photo',
     priceOptionalLabel: 'Price (optional)',
     priceLeaveBlankPlaceholder: 'Leave blank if not applicable',
     phoneNumberLabel: 'Phone Number',
@@ -1672,6 +1675,9 @@ const LANGUAGES = {
     shortDescriptionPlaceholder: 'लिस्टिंग कार्ड पर दिखाया गया संक्षिप्त विवरण',
     productPhotoOptionalLabel: 'उत्पाद फोटो (वैकल्पिक)',
     imageMediaOptionalLabel: 'छवि / मीडिया (वैकल्पिक)',
+    photosUploadedCountLabel: '{max} में से {count} फ़ोटो अपलोड की गईं',
+    removePhotoLabel: 'फ़ोटो हटाएं',
+    replacePhotoLabel: 'फ़ोटो बदलें',
     priceOptionalLabel: 'मूल्य (वैकल्पिक)',
     priceLeaveBlankPlaceholder: 'लागू न होने पर खाली छोड़ें',
     phoneNumberLabel: 'फ़ोन नंबर',
@@ -2528,6 +2534,9 @@ const LANGUAGES = {
     shortDescriptionPlaceholder: 'பட்டியல் அட்டையில் காட்டப்படும் சுருக்கமான விளக்கம்',
     productPhotoOptionalLabel: 'பொருள் புகைப்படம் (விருப்பத்தேர்வு)',
     imageMediaOptionalLabel: 'படம் / மீடியா (விருப்பத்தேர்வு)',
+    photosUploadedCountLabel: '{max} இல் {count} புகைப்படங்கள் பதிவேற்றப்பட்டன',
+    removePhotoLabel: 'புகைப்படத்தை அகற்று',
+    replacePhotoLabel: 'புகைப்படத்தை மாற்று',
     priceOptionalLabel: 'விலை (விருப்பத்தேர்வு)',
     priceLeaveBlankPlaceholder: 'பொருந்தவில்லை எனில் காலியாக விடவும்',
     phoneNumberLabel: 'தொலைபேசி எண்',
@@ -3390,6 +3399,9 @@ const LANGUAGES = {
     shortDescriptionPlaceholder: 'లిస్టింగ్ కార్డ్‌పై చూపబడే సంక్షిప్త వివరణ',
     productPhotoOptionalLabel: 'ఉత్పత్తి ఫోటో (ఐచ్ఛికం)',
     imageMediaOptionalLabel: 'చిత్రం / మీడియా (ఐచ్ఛికం)',
+    photosUploadedCountLabel: '{max} లో {count} ఫోటోలు అప్‌లోడ్ చేయబడ్డాయి',
+    removePhotoLabel: 'ఫోటోను తీసివేయండి',
+    replacePhotoLabel: 'ఫోటోను మార్చండి',
     priceOptionalLabel: 'ధర (ఐచ్ఛికం)',
     priceLeaveBlankPlaceholder: 'వర్తించకపోతే ఖాళీగా ఉంచండి',
     phoneNumberLabel: 'ఫోన్ నంబర్',
@@ -4246,6 +4258,9 @@ const LANGUAGES = {
     shortDescriptionPlaceholder: 'ಪಟ್ಟಿ ಕಾರ್ಡ್‌ನಲ್ಲಿ ತೋರಿಸಲಾದ ಸಂಕ್ಷಿಪ್ತ ವಿವರಣೆ',
     productPhotoOptionalLabel: 'ಉತ್ಪನ್ನ ಫೋಟೋ (ಐಚ್ಛಿಕ)',
     imageMediaOptionalLabel: 'ಚಿತ್ರ / ಮಾಧ್ಯಮ (ಐಚ್ಛಿಕ)',
+    photosUploadedCountLabel: '{max} ರಲ್ಲಿ {count} ಫೋಟೋಗಳನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಲಾಗಿದೆ',
+    removePhotoLabel: 'ಫೋಟೋ ತೆಗೆದುಹಾಕಿ',
+    replacePhotoLabel: 'ಫೋಟೋ ಬದಲಾಯಿಸಿ',
     priceOptionalLabel: 'ಬೆಲೆ (ಐಚ್ಛಿಕ)',
     priceLeaveBlankPlaceholder: 'ಅನ್ವಯಿಸದಿದ್ದರೆ ಖಾಲಿ ಬಿಡಿ',
     phoneNumberLabel: 'ಫೋನ್ ಸಂಖ್ಯೆ',
@@ -5108,6 +5123,9 @@ const LANGUAGES = {
     shortDescriptionPlaceholder: 'ലിസ്റ്റിംഗ് കാർഡിൽ കാണിക്കുന്ന ഹ്രസ്വ വിവരണം',
     productPhotoOptionalLabel: 'ഉൽപ്പന്ന ഫോട്ടോ (ഓപ്ഷണൽ)',
     imageMediaOptionalLabel: 'ചിത്രം / മീഡിയ (ഓപ്ഷണൽ)',
+    photosUploadedCountLabel: '{max} ൽ {count} ഫോട്ടോകൾ അപ്‌ലോഡ് ചെയ്തു',
+    removePhotoLabel: 'ഫോട്ടോ നീക്കം ചെയ്യുക',
+    replacePhotoLabel: 'ഫോട്ടോ മാറ്റുക',
     priceOptionalLabel: 'വില (ഓപ്ഷണൽ)',
     priceLeaveBlankPlaceholder: 'ബാധകമല്ലെങ്കിൽ ശൂന്യമായി വിടുക',
     phoneNumberLabel: 'ഫോൺ നമ്പർ',
@@ -5845,24 +5863,22 @@ export default function App() {
     if (IS_NATIVE_APP) SplashScreen.hide();
   }, []);
 
-  // App Poster (AdType.APP_POSTER) - a full-screen promo shown every time the
-  // native app is opened OR resumes from the background, regardless of
-  // login state (unlike the shop-admin-only "Interactive Login Popup" type).
-  // Re-fetches on every foreground transition rather than caching, so a
-  // freshly-scheduled/updated poster (or one whose date window just ended)
-  // is always current - Super Admin ad campaigns are low-volume/manually
-  // curated, so this is a cheap call.
+  // App Poster (AdType.APP_POSTER) - a full-screen promo shown exactly once
+  // per app session, on the initial launch only, regardless of login state
+  // (unlike the shop-admin-only "Interactive Login Popup" type). Fetched
+  // once in this mount-only effect ([] deps, and App() itself never
+  // remounts during the session) - deliberately NOT re-fetched on
+  // `appStateChange`/foreground-resume anymore: that used to re-show the
+  // poster after any OS-level focus loss (backgrounding to use the camera
+  // for document capture, the phone dialer/WhatsApp from a tap-to-call
+  // button, SMS-autofill for OTP, etc.), which looked like the poster
+  // randomly reappearing mid-registration or mid-OTP-verification. A
+  // "session" here means one continuous app process from launch to being
+  // fully killed - relaunching starts a fresh session and shows it again.
   const [appPoster, setAppPoster] = useState(null);
   useEffect(() => {
     if (!IS_NATIVE_APP) return;
-    const fetchAppPoster = () => {
-      api.getPublicAppPoster().then((ad) => setAppPoster(ad || null)).catch(() => {});
-    };
-    fetchAppPoster();
-    const handle = CapacitorApp.addListener('appStateChange', ({ isActive }) => {
-      if (isActive) fetchAppPoster();
-    });
-    return () => { handle.remove(); };
+    api.getPublicAppPoster().then((ad) => setAppPoster(ad || null)).catch(() => {});
   }, []);
 
   // Navigation stack for proper Android Back button / back-swipe-gesture
@@ -10893,6 +10909,10 @@ const PROMOTIONS_PAGE_SIZE = 20;
 // backend enforcement of this same cap on create/update.
 const PRODUCT_MAX_VALIDITY_DAYS = 30;
 
+// Listing photo upload cap - see PromotionService's clampImageUrls for the
+// matching backend-side enforcement.
+const PRODUCT_MAX_PHOTOS = 4;
+
 function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -10922,7 +10942,11 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   const [type, setType] = useState('PRODUCT');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  // Up to PRODUCT_MAX_PHOTOS URLs, in display order. index 0 doubles as the
+  // card-grid/PDF/legacy "cover photo" everywhere else in the app still
+  // reads a single promo.imageUrl (see PromotionService syncing imageUrl to
+  // imageUrls[0] on save) - no other display site needed to change.
+  const [imageUrls, setImageUrls] = useState([]);
   // True only while a picked file is being resized+uploaded (see
   // handleImageFileSelect) - the Upload button is disabled meanwhile so a
   // second pick can't race the first.
@@ -10936,23 +10960,37 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   const [linkedPromotionId, setLinkedPromotionId] = useState('');
 
   // Resizes the picked file client-side, uploads it to real file storage,
-  // and sets imageUrl to the returned URL - replaces the old FileReader
-  // base64-inline approach that was embedding multi-MB photos directly in
-  // the database (see the "why is Used Machines slow" investigation).
-  const handleImageFileSelect = async (file) => {
+  // and appends the returned URL to imageUrls (or overwrites `replaceIndex`
+  // if given) - replaces the old FileReader base64-inline approach that was
+  // embedding multi-MB photos directly in the database (see the "why is Used
+  // Machines slow" investigation).
+  const handleImageFileSelect = async (file, replaceIndex = null) => {
     if (!file) return;
     setImageUploadError('');
     setImageUploading(true);
     try {
       const blob = await resizeImageFileToBlob(file);
       const { url } = await api.uploadPromotionImage(blob);
-      setImageUrl(url);
+      setImageUrls((prev) => {
+        if (replaceIndex !== null) {
+          const next = [...prev];
+          next[replaceIndex] = url;
+          return next;
+        }
+        // The Add-Photo tile is only rendered while prev.length < MAX, but
+        // guard anyway in case of a fast double-fire.
+        return prev.length >= PRODUCT_MAX_PHOTOS ? prev : [...prev, url];
+      });
     } catch (e) {
       console.error('Failed to upload listing photo:', e);
       setImageUploadError(e.message || 'Failed to upload image');
     } finally {
       setImageUploading(false);
     }
+  };
+
+  const handleRemoveImage = (index) => {
+    setImageUrls((prev) => prev.filter((_, i) => i !== index));
   };
 
   // Super-Admin-managed list of product types (see ProductType model /
@@ -11102,7 +11140,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
     setType('PRODUCT');
     setTitle('');
     setDescription('');
-    setImageUrl('');
+    setImageUrls([]);
     setImageUploadError('');
     setPrice('');
     setProductType(productTypes[0]?.name || '');
@@ -11123,7 +11161,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
     setType(promo.type);
     setTitle(promo.title);
     setDescription(promo.description || '');
-    setImageUrl(promo.imageUrl || '');
+    setImageUrls(promo.imageUrls && promo.imageUrls.length ? promo.imageUrls : (promo.imageUrl ? [promo.imageUrl] : []));
     setPrice(promo.price ?? '');
     setProductType(promo.productType || productTypes[0]?.name || '');
     setPhone(promo.phone || '');
@@ -11149,7 +11187,10 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         type,
         title,
         description: description || undefined,
-        imageUrl: imageUrl || undefined,
+        // Always sent as a real array (even []) rather than undefined-when-
+        // empty, so removing every photo on an edit actually clears them
+        // server-side instead of being read as "leave unchanged".
+        imageUrls,
         price: price === '' ? undefined : Number(price),
         productType: productType || undefined,
         phone: phone || undefined,
@@ -11522,35 +11563,56 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
 
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><ImageIcon /></div><b>{type === 'PRODUCT' ? t('productPhotoOptionalLabel') : t('imageMediaOptionalLabel')}</b></div>
-                  <div className="flex gap-2">
-                    <div className="input-wrap" style={{ flex: 1 }}>
-                      <input
-                        type="text" value={imageUrl}
-                        onChange={(e) => setImageUrl(cleanGoogleImageUrl(e.target.value))}
-                        placeholder={t('pasteImageUrlPlaceholder')}
-                      />
-                    </div>
-                    <label className="btn btn-ghost btn-sm" style={{ cursor: imageUploading ? 'default' : 'pointer', flexShrink: 0, opacity: imageUploading ? 0.6 : 1 }}>
-                      {imageUploading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Upload className="h-3.5 w-3.5" />}
-                      <span>{imageUploading ? t('uploadingLabel') : t('uploadBtn')}</span>
-                      <input
-                        type="file" accept="image/*" className="hidden" disabled={imageUploading}
-                        onClick={primeStoragePermission}
-                        onChange={(e) => {
-                          const file = e.target.files[0];
-                          e.target.value = '';
-                          handleImageFileSelect(file);
-                        }}
-                      />
-                    </label>
+                  <span className="cell-sub" style={{ display: 'block', marginBottom: 8 }}>
+                    {t('photosUploadedCountLabel').replace('{count}', imageUrls.length).replace('{max}', PRODUCT_MAX_PHOTOS)}
+                  </span>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                    {imageUrls.map((url, idx) => (
+                      <div key={idx} style={{ position: 'relative', width: 84, height: 84, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--card-2)', flexShrink: 0 }}>
+                        <img src={cleanGoogleImageUrl(url)} alt={`Photo ${idx + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <button
+                          type="button" onClick={() => handleRemoveImage(idx)} title={t('removePhotoLabel')}
+                          style={{ position: 'absolute', top: 3, right: 3, width: 20, height: 20, borderRadius: 999, background: 'rgba(0,0,0,.65)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', border: 'none', cursor: 'pointer' }}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                        <label
+                          title={t('replacePhotoLabel')}
+                          style={{ position: 'absolute', bottom: 3, right: 3, width: 20, height: 20, borderRadius: 999, background: 'rgba(0,0,0,.65)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: imageUploading ? 'default' : 'pointer' }}
+                        >
+                          <Edit className="h-3 w-3" />
+                          <input
+                            type="file" accept="image/*" className="hidden" disabled={imageUploading}
+                            onClick={primeStoragePermission}
+                            onChange={(e) => {
+                              const file = e.target.files[0];
+                              e.target.value = '';
+                              handleImageFileSelect(file, idx);
+                            }}
+                          />
+                        </label>
+                      </div>
+                    ))}
+                    {imageUrls.length < PRODUCT_MAX_PHOTOS && (
+                      <label
+                        style={{ width: 84, height: 84, borderRadius: 12, border: '1.5px dashed var(--border-2)', background: 'var(--card-2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, cursor: imageUploading ? 'default' : 'pointer', flexShrink: 0, opacity: imageUploading ? 0.6 : 1 }}
+                      >
+                        {imageUploading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" style={{ color: 'var(--text-3)' }} />}
+                        <span style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-3)' }}>{imageUploading ? t('uploadingLabel') : t('uploadBtn')}</span>
+                        <input
+                          type="file" accept="image/*" className="hidden" disabled={imageUploading}
+                          onClick={primeStoragePermission}
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            e.target.value = '';
+                            handleImageFileSelect(file);
+                          }}
+                        />
+                      </label>
+                    )}
                   </div>
                   {imageUploadError && (
                     <p style={{ marginTop: 6, fontSize: 11, color: 'var(--rose)', fontWeight: 700 }}>{imageUploadError}</p>
-                  )}
-                  {imageUrl && (
-                    <div style={{ marginTop: 10, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border)', height: 110, background: 'var(--card-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <img src={cleanGoogleImageUrl(imageUrl)} alt="Preview" style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain' }} />
-                    </div>
                   )}
                 </div>
 
@@ -11927,9 +11989,13 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, t, api }) {
 
       {/* Search Bar + location filter - category filter buttons completely
           removed per earlier user request (this view is already scoped to
-          one category via categoryKey). */}
-      <div style={{ marginBottom: 16, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-        <div className="search-box" style={{ flex: '2 1 260px' }}>
+          one category via categoryKey). Equal 50/50 split, always on one
+          row (no wrap) at every viewport width - `minWidth: 0` on both
+          overrides .search-box's own 220px min-width and the location
+          select's default sizing so a true 50/50 flex split governs both,
+          even on narrow phones. */}
+      <div style={{ marginBottom: 16, display: 'flex', gap: 10 }}>
+        <div className="search-box" style={{ flex: '1 1 0', minWidth: 0 }}>
           <Search />
           <input
             type="text"
@@ -11943,17 +12009,18 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, t, api }) {
             </button>
           )}
         </div>
-        <CustomSelect
-          className="location-filter-select"
-          icon={MapPin}
-          value={town}
-          onChange={setTown}
-          placeholder="All Locations"
-          searchable
-          searchPlaceholder="Search district or town…"
-          options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
-          triggerStyle={{ minWidth: 180 }}
-        />
+        <div style={{ flex: '1 1 0', minWidth: 0 }}>
+          <CustomSelect
+            className="location-filter-select"
+            icon={MapPin}
+            value={town}
+            onChange={setTown}
+            placeholder="All Locations"
+            searchable
+            searchPlaceholder="Search district or town…"
+            options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
+          />
+        </div>
       </div>
 
       {loading ? (

@@ -1,5 +1,9 @@
-import { IsNotEmpty, IsString, IsOptional, IsEnum, IsNumber, Min, Max, IsDateString } from 'class-validator';
+import { IsNotEmpty, IsString, IsOptional, IsEnum, IsNumber, Min, Max, IsDateString, IsArray, ArrayMaxSize } from 'class-validator';
 import { PromotionType } from '@prisma/client';
+
+// Listing photo cap - see PromotionService.clampImageUrls, which enforces
+// this same limit server-side regardless of what the client sends.
+export const PROMOTION_MAX_PHOTOS = 4;
 
 export class CreatePromotionDto {
   @IsEnum(PromotionType)
@@ -17,6 +21,15 @@ export class CreatePromotionDto {
   @IsString()
   @IsOptional()
   imageUrl?: string;
+
+  // Up to PROMOTION_MAX_PHOTOS URLs, in display order - the service clamps
+  // to the cap and syncs `imageUrl` to imageUrls[0] regardless of what's
+  // sent here, so this validator only rejects grossly oversized payloads.
+  @IsArray()
+  @IsString({ each: true })
+  @ArrayMaxSize(PROMOTION_MAX_PHOTOS)
+  @IsOptional()
+  imageUrls?: string[];
 
   @IsNumber()
   @Min(0)
@@ -71,6 +84,12 @@ export class UpdatePromotionDto {
   @IsString()
   @IsOptional()
   imageUrl?: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @ArrayMaxSize(PROMOTION_MAX_PHOTOS)
+  @IsOptional()
+  imageUrls?: string[];
 
   @IsNumber()
   @Min(0)

@@ -489,7 +489,15 @@ model Promotion {
   type        PromotionType
   title       String
   description String?
+  // Cover photo shown wherever this listing renders as a single-image
+  // thumbnail (card grids, PDF reports, public search results) - kept in
+  // sync with imageUrls[0] on every create/update (see
+  // PromotionService.clampImageUrls) so none of those existing single-image
+  // display sites needed to change when multi-photo upload was added.
   imageUrl    String?
+  // Up to 4 listing photos, in display order - see clampImageUrls for the
+  // enforced cap. Empty array (not null) when a listing has no photos.
+  imageUrls   String[]      @default([])
   price       Float?
 
   // Inventory rework: freeform product category shown on the OLX-style
