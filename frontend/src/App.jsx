@@ -11248,24 +11248,30 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   return (
     <div>
       <div className="flex justify-between items-center" style={{ marginTop: 4, marginBottom: 18, gap: 10, flexWrap: 'wrap' }}>
-        <div className="input-wrap" style={{ flex: 1, minWidth: 220, margin: 0 }}>
+        {/* Search + location split an equal 50/50 (same pattern as
+            CategoryShopsView) - `minWidth: 0` on both overrides their
+            default sizing so the flex split actually governs, instead of
+            the search box's own min-width or the select's intrinsic width
+            dominating the row. */}
+        <div className="input-wrap" style={{ flex: '1 1 0', minWidth: 0, margin: 0 }}>
           <Search />
           <input
             type="text" value={textQuery} onChange={(e) => setTextQuery(e.target.value)}
             placeholder={t('searchInventoryPlaceholder')}
           />
         </div>
-        <CustomSelect
-          className="location-filter-select"
-          icon={MapPin}
-          value={town}
-          onChange={setTown}
-          placeholder="All Locations"
-          searchable
-          searchPlaceholder="Search district or town…"
-          options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
-          triggerStyle={{ minWidth: 180 }}
-        />
+        <div style={{ flex: '1 1 0', minWidth: 0 }}>
+          <CustomSelect
+            className="location-filter-select"
+            icon={MapPin}
+            value={town}
+            onChange={setTown}
+            placeholder="All Locations"
+            searchable
+            searchPlaceholder="Search district or town…"
+            options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
+          />
+        </div>
         <button
           onClick={() => { resetForm(); setShowAddModal(true); }}
           className="btn btn-primary"
