@@ -565,7 +565,7 @@ function PublicContactTab({ api }) {
               <div style={{ flex: '1 1 220px', minWidth: 0 }}>
                 <div style={{ marginBottom: 10 }}>
                   <div style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 3 }}>Company</div>
-                  <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>keyshops.in company is a yourprinting.in group companies.</p>
+                  <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>keyshops.in company is a yourprinting.in group of companies.</p>
                 </div>
                 <div>
                   <div style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 3 }}>Address</div>

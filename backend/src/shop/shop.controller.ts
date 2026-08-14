@@ -25,10 +25,11 @@ export class ShopController {
   @Roles(Role.SUPER_ADMIN)
   async getShops(
     @Query('search') search?: string,
+    @Query('town') town?: string,
     @Query('cursor') cursor?: string,
     @Query('limit') limit?: string,
   ) {
-    return this.shopService.getShops({ search, cursor, limit: limit ? Number(limit) : undefined });
+    return this.shopService.getShops({ search, town, cursor, limit: limit ? Number(limit) : undefined });
   }
 
   @Post('super/shops')

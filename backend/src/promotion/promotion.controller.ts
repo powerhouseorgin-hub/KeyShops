@@ -57,6 +57,7 @@ export class PromotionController {
     @Query('type') type?: 'PRODUCT' | 'AD' | 'OFFER',
     @Query('excludeOffers') excludeOffers?: string,
     @Query('mine') mine?: string,
+    @Query('town') town?: string,
   ) {
     return this.promotionService.getAllPromotions({
       includeExpiredOffers: includeExpiredOffers === 'true',
@@ -66,6 +67,7 @@ export class PromotionController {
       search: search || undefined,
       type: type || undefined,
       excludeOffers: excludeOffers === 'true',
+      town: town || undefined,
       ...(mine === 'true' ? { ownerShopId: req.user.shopId ?? null, ownerUserId: req.user.id } : {}),
     });
   }

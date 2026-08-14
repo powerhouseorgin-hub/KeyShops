@@ -805,6 +805,8 @@ const LANGUAGES = {
     offerPriceLabel: 'Offer Price',
     validUntilOptionalLabel: 'Valid Until (optional)',
     validUntilHint: 'Leave blank for an offer with no expiry. Expired offers are hidden from the shared feed.',
+    machineExpiryLabel: 'Machine Expiry Date',
+    machineExpiryHint: 'Choose when this listing expires (maximum 30 days from today). It is automatically removed once the date passes.',
     linkExistingListingLabel: 'Link to one of your existing listings (optional)',
     noLinkedListingOption: 'No linked listing',
     productLabel: 'Product',
@@ -1019,7 +1021,7 @@ const LANGUAGES = {
     noContactInfoConfiguredMsg: 'Contact details have not been configured yet.',
     companyDetailsTitle: 'Company Details',
     companyLabel: 'Company',
-    companySentence: 'keyshops.in company is a yourprinting.in group companies.',
+    companySentence: 'keyshops.in company is a yourprinting.in group of companies.',
     addressLabel: 'Address',
     addressSentence: 'Coimbatore, Tamil Nadu, South India.',
     feedbackTitle: 'Feedback & Suggestions',
@@ -1682,6 +1684,8 @@ const LANGUAGES = {
     offerPriceLabel: 'ऑफर मूल्य',
     validUntilOptionalLabel: 'मान्य तिथि तक (वैकल्पिक)',
     validUntilHint: 'बिना समाप्ति तिथि वाले ऑफर के लिए खाली छोड़ें। समाप्त ऑफर साझा फ़ीड से छिपाए जाते हैं।',
+    machineExpiryLabel: 'मशीन समाप्ति तिथि',
+    machineExpiryHint: 'चुनें कि यह लिस्टिंग कब समाप्त होगी (आज से अधिकतम 30 दिन)। तिथि बीतने पर इसे स्वतः हटा दिया जाता है।',
     linkExistingListingLabel: 'अपनी किसी मौजूदा लिस्टिंग से लिंक करें (वैकल्पिक)',
     noLinkedListingOption: 'कोई लिंक्ड लिस्टिंग नहीं',
     productLabel: 'उत्पाद',
@@ -2536,6 +2540,8 @@ const LANGUAGES = {
     offerPriceLabel: 'சலுகை விலை',
     validUntilOptionalLabel: 'செல்லுபடியாகும் தேதி வரை (விருப்பத்தேர்வு)',
     validUntilHint: 'காலாவதி இல்லாத சலுகைக்கு காலியாக விடவும். காலாவதியான சலுகைகள் பகிரப்பட்ட ஊட்டத்தில் மறைக்கப்படும்.',
+    machineExpiryLabel: 'மெஷின் காலாவதி தேதி',
+    machineExpiryHint: 'இந்த பட்டியல் எப்போது காலாவதியாகும் என்பதைத் தேர்ந்தெடுக்கவும் (இன்று முதல் அதிகபட்சம் 30 நாட்கள்). தேதி கடந்தவுடன் தானாக நீக்கப்படும்.',
     linkExistingListingLabel: 'உங்கள் தற்போதைய பட்டியல்களில் ஒன்றுடன் இணைக்கவும் (விருப்பத்தேர்வு)',
     noLinkedListingOption: 'இணைக்கப்பட்ட பட்டியல் இல்லை',
     productLabel: 'பொருள்',
@@ -3396,6 +3402,8 @@ const LANGUAGES = {
     offerPriceLabel: 'ఆఫర్ ధర',
     validUntilOptionalLabel: 'చెల్లుబాటు తేదీ వరకు (ఐచ్ఛికం)',
     validUntilHint: 'గడువు లేని ఆఫర్ కోసం ఖాళీగా ఉంచండి. గడువు ముగిసిన ఆఫర్‌లు షేర్డ్ ఫీడ్ నుండి దాచబడతాయి.',
+    machineExpiryLabel: 'మెషిన్ గడువు తేదీ',
+    machineExpiryHint: 'ఈ లిస్టింగ్ ఎప్పుడు గడువు ముగుస్తుందో ఎంచుకోండి (నేటి నుండి గరిష్టంగా 30 రోజులు). తేదీ దాటిన తర్వాత ఇది స్వయంచాలకంగా తీసివేయబడుతుంది.',
     linkExistingListingLabel: 'మీ ఇప్పటికే ఉన్న లిస్టింగ్‌లలో ఒకదానికి లింక్ చేయండి (ఐచ్ఛికం)',
     noLinkedListingOption: 'లింక్ చేయబడిన లిస్టింగ్ లేదు',
     productLabel: 'ఉత్పత్తి',
@@ -4250,6 +4258,8 @@ const LANGUAGES = {
     offerPriceLabel: 'ಆಫರ್ ಬೆಲೆ',
     validUntilOptionalLabel: 'ಮಾನ್ಯತೆ ದಿನಾಂಕದವರೆಗೆ (ಐಚ್ಛಿಕ)',
     validUntilHint: 'ಅವಧಿ ಇಲ್ಲದ ಕೊಡುಗೆಗಾಗಿ ಖಾಲಿ ಬಿಡಿ. ಅವಧಿ ಮುಗಿದ ಕೊಡುಗೆಗಳನ್ನು ಹಂಚಿದ ಫೀಡ್‌ನಿಂದ ಮರೆಮಾಡಲಾಗುತ್ತದೆ.',
+    machineExpiryLabel: 'ಯಂತ್ರದ ಅವಧಿ ಮುಗಿಯುವ ದಿನಾಂಕ',
+    machineExpiryHint: 'ಈ ಪಟ್ಟಿ ಯಾವಾಗ ಅವಧಿ ಮುಗಿಯುತ್ತದೆ ಎಂದು ಆಯ್ಕೆಮಾಡಿ (ಇಂದಿನಿಂದ ಗರಿಷ್ಠ 30 ದಿನಗಳು). ದಿನಾಂಕ ಕಳೆದ ನಂತರ ಇದನ್ನು ಸ್ವಯಂಚಾಲಿತವಾಗಿ ತೆಗೆದುಹಾಕಲಾಗುತ್ತದೆ.',
     linkExistingListingLabel: 'ನಿಮ್ಮ ಅಸ್ತಿತ್ವದಲ್ಲಿರುವ ಪಟ್ಟಿಗಳಲ್ಲಿ ಒಂದಕ್ಕೆ ಲಿಂಕ್ ಮಾಡಿ (ಐಚ್ಛಿಕ)',
     noLinkedListingOption: 'ಲಿಂಕ್ ಮಾಡಿದ ಪಟ್ಟಿ ಇಲ್ಲ',
     productLabel: 'ಉತ್ಪನ್ನ',
@@ -5110,6 +5120,8 @@ const LANGUAGES = {
     offerPriceLabel: 'ഓഫർ വില',
     validUntilOptionalLabel: 'സാധുതയുള്ള തീയതി വരെ (ഓപ്ഷണൽ)',
     validUntilHint: 'കാലാവധി ഇല്ലാത്ത ഓഫറിന് ശൂന്യമായി വിടുക. കാലഹരണപ്പെട്ട ഓഫറുകൾ പങ്കിട്ട ഫീഡിൽ നിന്ന് മറയ്ക്കും.',
+    machineExpiryLabel: 'മെഷീൻ കാലഹരണ തീയതി',
+    machineExpiryHint: 'ഈ ലിസ്റ്റിംഗ് എപ്പോൾ കാലഹരണപ്പെടും എന്ന് തിരഞ്ഞെടുക്കുക (ഇന്ന് മുതൽ പരമാവധി 30 ദിവസം). തീയതി കഴിഞ്ഞാൽ ഇത് സ്വയമേവ നീക്കം ചെയ്യപ്പെടും.',
     linkExistingListingLabel: 'നിങ്ങളുടെ നിലവിലുള്ള ലിസ്റ്റിംഗുകളിലൊന്നിലേക്ക് ലിങ്ക് ചെയ്യുക (ഓപ്ഷണൽ)',
     noLinkedListingOption: 'ലിങ്ക് ചെയ്ത ലിസ്റ്റിംഗ് ഇല്ല',
     productLabel: 'ഉൽപ്പന്നം',
@@ -5558,29 +5570,6 @@ const LANGUAGES = {
   }
 };
 
-// Global header search "search by" categories. Rendered via a custom
-// icon-based dropdown (not a native <select>) so the closed/trigger state
-// can collapse to an icon-only button on mobile while still showing a full
-// icon+label list in the open dropdown on every screen size.
-const SEARCH_TYPE_OPTIONS = [
-  { value: 'all', labelKey: 'searchTypeAnything', icon: Search },
-  { value: 'customer', labelKey: 'searchTypeCustomer', icon: Users },
-  { value: 'productType', labelKey: 'searchTypeProductType', icon: Tag },
-  { value: 'location', labelKey: 'searchTypeLocation', icon: MapPin },
-  { value: 'key', labelKey: 'searchTypeKey', icon: KeyRound },
-];
-
-// Icon + label shown on each row of the global search "results overview"
-// list, keyed by the entity type of that result (see the multi-entity
-// search effect below). Every entity type the global search can return
-// must have an entry here.
-const GLOBAL_SEARCH_RESULT_META = {
-  customer: { labelKey: 'resultTypeCustomer', icon: Users },
-  key: { labelKey: 'resultTypeKey', icon: KeyRound },
-  shop: { labelKey: 'resultTypeShop', icon: Store },
-  product: { labelKey: 'resultTypeProduct', icon: Tag },
-};
-
 // True only when running inside the native Android/iOS shell (Capacitor),
 // never in a regular desktop/mobile browser. Used to skip the marketing
 // landing page (PublicSite) for the packaged app and drop straight into the
@@ -6027,149 +6016,12 @@ export default function App() {
     })();
   }, [isAuthenticated]);
 
-  // Global header search: replaces the plain page-title label with a
-  // functional search box + category filter. Typing never navigates away by
-  // itself - regardless of which "search by" filter is selected, every
-  // keystroke (debounced) queries every searchable entity type in parallel
-  // (customers, keys, shops, inventory products) and renders a "results
-  // overview" dropdown right under the search box. The selected filter no
-  // longer restricts *what* is searched (per product requirement: "regardless
-  // of the selected filter... return all relevant results") - it's kept only
-  // as a UX hint (placeholder text / icon). Navigation to the owning screen
-  // happens only when the user taps one specific result, via the same
-  // `searchDispatch` ({query, type, nonce}) hand-off screens already listen
-  // for, seeded with that result's own identifying text so the destination
-  // screen lands pre-filtered to just that record.
-  const [globalSearchQuery, setGlobalSearchQuery] = useState('');
-  const [globalSearchType, setGlobalSearchType] = useState('all');
-  const [globalSearchResults, setGlobalSearchResults] = useState([]);
-  const [globalSearchLoading, setGlobalSearchLoading] = useState(false);
+  // `searchDispatch` ({query, type, nonce}) is a hand-off used by the
+  // Dashboard's category cards to jump into another tab pre-filtered to a
+  // specific query (see goToProductType/goToAddMachines in DashboardView) -
+  // still needed even though the header's own global search box (which used
+  // to set this from typed input) has been removed.
   const [searchDispatch, setSearchDispatch] = useState(null);
-  const [searchTypeMenuOpen, setSearchTypeMenuOpen] = useState(false);
-
-  useEffect(() => {
-    // The global search box only exists on the Dashboard (see the header
-    // JSX below).
-    if (activeTab !== 'dashboard') return;
-    const query = globalSearchQuery.trim();
-    if (query.length < 2) {
-      setGlobalSearchResults([]);
-      setGlobalSearchLoading(false);
-      return;
-    }
-
-    const isSuper = user?.role === 'SUPER_ADMIN';
-    const q = query.toLowerCase();
-    let cancelled = false;
-    setGlobalSearchLoading(true);
-
-    const timer = setTimeout(() => {
-      const tasks = [];
-
-      // Customers - server-side filtered by name/phone/etc.
-      tasks.push(
-        (isSuper ? api.getSuperCustomers(query) : api.getCustomers(query))
-          .then(list => (list || []).map(c => ({
-            type: 'customer',
-            key: `customer-${c.id}`,
-            title: c.name,
-            line2: c.phone,
-            line3: isSuper ? (c.shop?.name || '') : '',
-            searchTerm: c.phone || c.name,
-          })))
-          .catch(() => [])
-      );
-
-      // Master keys - server-side filtered by keyNumber/category.
-      tasks.push(
-        api.getMasterKeys(query)
-          .then(list => (list || []).map(k => ({
-            type: 'key',
-            key: `key-${k.id}`,
-            title: k.keyNumber,
-            line2: k.category || '',
-            line3: k.shop?.name || (!isSuper ? (shopDisplayName || '') : ''),
-            searchTerm: k.keyNumber,
-          })))
-          .catch(() => [])
-      );
-
-      // Shops - Super Admin only, filtered server-side (name/admin name/admin email).
-      if (isSuper) {
-        tasks.push(
-          api.getShops(query)
-            .then(list => (list || [])
-              .map(s => {
-                let phone = '';
-                try { phone = s.companyDetails ? (JSON.parse(s.companyDetails).phone || '') : ''; } catch (e) { }
-                return {
-                  type: 'shop',
-                  key: `shop-${s.id}`,
-                  title: s.name,
-                  // The Shop model has no shopCode/slug field - fall back to a
-                  // short, stable ID fragment as the secondary identifier.
-                  line2: `ID: ${s.id.slice(0, 8).toUpperCase()}`,
-                  line3: phone,
-                  searchTerm: s.name,
-                };
-              }))
-            .catch(() => [])
-        );
-      }
-
-      // Inventory products (cross-shop promotions feed), filtered server-side
-      // (title/description/productType) and scoped to PRODUCT-type listings
-      // only, instead of pulling every promotion/ad/offer on the platform.
-      tasks.push(
-        api.getPromotions({ search: query, type: 'PRODUCT' })
-          .then(list => (list || [])
-            .map(p => ({
-              type: 'product',
-              key: `product-${p.id}`,
-              title: p.title,
-              line2: p.productType || '',
-              line3: p.shop?.name || '',
-              searchTerm: p.title,
-            })))
-          .catch(() => [])
-      );
-
-      Promise.all(tasks).then(settled => {
-        if (cancelled) return;
-        setGlobalSearchResults(settled.flat());
-        setGlobalSearchLoading(false);
-      });
-    }, 350);
-
-    return () => { cancelled = true; clearTimeout(timer); };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalSearchQuery, activeTab, user?.role]);
-
-  // Fired only when the user taps a specific row in the results overview -
-  // this is the sole point where global search causes navigation.
-  const handleGlobalSearchResultClick = (result) => {
-    const isSuper = user?.role === 'SUPER_ADMIN';
-    let targetTab;
-    let dispatchType;
-    if (result.type === 'customer') {
-      targetTab = isSuper ? 'super-customers' : 'history';
-      dispatchType = 'customer';
-    } else if (result.type === 'key') {
-      targetTab = isSuper ? 'keys' : 'search-keys';
-      dispatchType = 'key';
-    } else if (result.type === 'shop') {
-      targetTab = 'shops';
-      dispatchType = 'shop';
-    } else {
-      targetTab = 'promotions';
-      dispatchType = 'all';
-    }
-    setSearchDispatch({ query: result.searchTerm || result.title, type: dispatchType, nonce: Date.now() });
-    setActiveTab(targetTab);
-    setGlobalSearchQuery('');
-    setGlobalSearchResults([]);
-    setSearchTypeMenuOpen(false);
-  };
 
   const PAGE_TITLES = {
     dashboard: t('dashboard'),
@@ -7831,121 +7683,12 @@ export default function App() {
                 <button className="icon-btn md:hidden" onClick={() => setMobileNavOpen(v => !v)} style={{ flexShrink: 0 }}>
                   <Menu />
                 </button>
-                {/* The global "jump to" search only makes sense on the
-                    Dashboard: it exists to launch you into the right screen
-                    (Customers / Keys / Inventory) for a query typed from the
-                    landing page. Every other screen already has its own,
-                    fully independent search box, so showing this one there
-                    too was causing the same characters to visibly appear in
-                    two search fields at once. Hiding it everywhere except
-                    Dashboard keeps every page's search 100% self-contained. */}
-                {activeTab === 'dashboard' ? (
-                  <div className="global-search-form" style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 }}>
-                    <div style={{ position: 'relative', flexShrink: 0 }}>
-                      <button
-                        type="button"
-                        onClick={() => setSearchTypeMenuOpen(v => !v)}
-                        className="search-type-trigger"
-                        title={t('searchByPrefix')}
-                      >
-                        {(() => {
-                          const active = SEARCH_TYPE_OPTIONS.find(o => o.value === globalSearchType) || SEARCH_TYPE_OPTIONS[0];
-                          return (
-                            <>
-                              <Filter className="h-3.5 w-3.5" style={{ color: 'var(--gold)' }} />
-                              <span className="search-type-label">{t(active.labelKey)}</span>
-                            </>
-                          );
-                        })()}
-                      </button>
-                      {searchTypeMenuOpen && (
-                        <>
-                          <div className="search-type-backdrop" onClick={() => setSearchTypeMenuOpen(false)} />
-                          <div className="search-type-menu card animate-fade-in">
-                            {SEARCH_TYPE_OPTIONS.map(opt => {
-                              const OptIcon = opt.icon;
-                              return (
-                                <button
-                                  type="button"
-                                  key={opt.value}
-                                  className={`search-type-item ${globalSearchType === opt.value ? 'active' : ''}`}
-                                  onClick={() => { setGlobalSearchType(opt.value); setSearchTypeMenuOpen(false); }}
-                                >
-                                  <OptIcon className="h-3.5 w-3.5" />
-                                  <span>{t(opt.labelKey)}</span>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    <div className="input-wrap global-search-input" style={{ flex: 1, minWidth: 0, margin: 0 }}>
-                      <Search />
-                      <input
-                        type="text"
-                        value={globalSearchQuery}
-                        onChange={(e) => setGlobalSearchQuery(e.target.value)}
-                        onFocus={() => setSearchTypeMenuOpen(false)}
-                        placeholder={`${t('searchByPrefix')} ${t((SEARCH_TYPE_OPTIONS.find(o => o.value === globalSearchType) || SEARCH_TYPE_OPTIONS[0]).labelKey)}\u2026`}
-                      />
-                    </div>
-
-                    {/* Results overview - appears under the search box for any
-                        query of 2+ characters, listing matches across every
-                        entity type. Nothing here navigates until a specific
-                        row is tapped. */}
-                    {globalSearchQuery.trim().length >= 2 && (
-                      <>
-                        <div className="search-type-backdrop" onClick={() => setGlobalSearchQuery('')} />
-                        <div className="global-search-results card animate-fade-in">
-                          {globalSearchLoading ? (
-                            <div className="global-search-results-status">
-                              <RefreshCw className="animate-spin h-3.5 w-3.5" />
-                              <span>{t('searchingLabel')}</span>
-                            </div>
-                          ) : globalSearchResults.length === 0 ? (
-                            <div className="global-search-results-status">
-                              <span>{t('noMatchingRecordsFound')}</span>
-                            </div>
-                          ) : (
-                            <div className="global-search-results-list">
-                              {globalSearchResults.map(r => {
-                                const meta = GLOBAL_SEARCH_RESULT_META[r.type];
-                                const ResultIcon = meta.icon;
-                                return (
-                                  <button
-                                    type="button"
-                                    key={r.key}
-                                    className="global-search-result-item"
-                                    onClick={() => handleGlobalSearchResultClick(r)}
-                                  >
-                                    <div className="icon-badge" style={{ width: 32, height: 32, flexShrink: 0 }}>
-                                      <ResultIcon className="h-3.5 w-3.5" />
-                                    </div>
-                                    <div style={{ minWidth: 0, flex: 1 }}>
-                                      <div className="global-search-result-title truncate">{r.title || '—'}</div>
-                                      <div className="global-search-result-sub truncate">
-                                        {[r.line2, r.line3].filter(Boolean).join(' \u00b7 ')}
-                                      </div>
-                                    </div>
-                                    <span className="global-search-result-type-tag">{t(meta.labelKey)}</span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          )}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ) : (
-                  // No search panel on this screen - fill the otherwise-empty
-                  // header center with workspace context instead of blank space.
-                  <div className="header-page-title truncate">
-                    {user.role === 'SUPER_ADMIN' ? 'Key Shop' : (shopDisplayName || user.name)}
-                  </div>
-                )}
+                {/* The header no longer carries a search/filter box on any
+                    screen, including the Dashboard - every page still has
+                    its own fully independent search box where relevant. */}
+                <div className="header-page-title truncate">
+                  {user.role === 'SUPER_ADMIN' ? 'Key Shop' : (shopDisplayName || user.name)}
+                </div>
               </div>
 
               <div className="flex items-center gap-3 relative app-topbar-actions">
@@ -8652,6 +8395,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // already-fully-loaded list.
   const [shopSearchQuery, setShopSearchQuery] = useState('');
   const [debouncedShopSearchQuery, setDebouncedShopSearchQuery] = useState('');
+  const [town, setTown] = useState('');
   useEffect(() => {
     const handle = setTimeout(() => setDebouncedShopSearchQuery(shopSearchQuery.trim()), 300);
     return () => clearTimeout(handle);
@@ -8760,13 +8504,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
-    if (debouncedShopSearchQuery || shops.length === 0) setLoading(true);
+    if (debouncedShopSearchQuery || town || shops.length === 0) setLoading(true);
     try {
-      const res = await api.getShopsPage({ search: debouncedShopSearchQuery, limit: SHOP_MANAGEMENT_PAGE_SIZE });
+      const res = await api.getShopsPage({ search: debouncedShopSearchQuery, town, limit: SHOP_MANAGEMENT_PAGE_SIZE });
       setShops(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
-      if (!debouncedShopSearchQuery) {
+      if (!debouncedShopSearchQuery && !town) {
         shopsFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
       }
     } catch (e) {
@@ -8782,7 +8526,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
     try {
-      const res = await api.getShopsPage({ search: debouncedShopSearchQuery, cursor: nextCursor, limit: SHOP_MANAGEMENT_PAGE_SIZE });
+      const res = await api.getShopsPage({ search: debouncedShopSearchQuery, town, cursor: nextCursor, limit: SHOP_MANAGEMENT_PAGE_SIZE });
       setShops((prev) => [...prev, ...res.items]);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -8795,7 +8539,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
   useEffect(() => {
     fetchShops();
-  }, [debouncedShopSearchQuery]);
+  }, [debouncedShopSearchQuery, town]);
 
   useEffect(() => {
     const node = loadMoreSentinelRef.current;
@@ -8808,7 +8552,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasMore, nextCursor, loadingMore, debouncedShopSearchQuery]);
+  }, [hasMore, nextCursor, loadingMore, debouncedShopSearchQuery, town]);
 
   const executeShopCreation = async (dto) => {
     try {
@@ -9075,6 +8819,17 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               placeholder={t('searchShopsPlaceholder')}
             />
           </div>
+          <CustomSelect
+            className="location-filter-select"
+            icon={MapPin}
+            value={town}
+            onChange={setTown}
+            placeholder="All Locations"
+            searchable
+            searchPlaceholder="Search district or town…"
+            options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
+            triggerStyle={{ minWidth: 180 }}
+          />
         </div>
 
         {(() => {
@@ -11133,6 +10888,11 @@ function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, o
 // PromotionService.getAllPromotions.
 const PROMOTIONS_PAGE_SIZE = 20;
 
+// Machine/Product listings must expire and get auto-deleted within a month
+// of creation (or a shorter admin-chosen date) - see PromotionService's
+// backend enforcement of this same cap on create/update.
+const PRODUCT_MAX_VALIDITY_DAYS = 30;
+
 function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11213,6 +10973,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   // keystroke.
   const [textQuery, setTextQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
+  const [town, setTown] = useState('');
   useEffect(() => {
     const handle = setTimeout(() => setDebouncedQuery(textQuery.trim()), 300);
     return () => clearTimeout(handle);
@@ -11259,6 +11020,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         limit: PROMOTIONS_PAGE_SIZE,
         category: !onlyOffers && categoryFilter !== 'ALL' ? categoryFilter : undefined,
         search: debouncedQuery || undefined,
+        town: town || undefined,
       });
       setPromotions(res.items);
       setNextCursor(res.nextCursor);
@@ -11284,6 +11046,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         cursor: nextCursor,
         category: !onlyOffers && categoryFilter !== 'ALL' ? categoryFilter : undefined,
         search: debouncedQuery || undefined,
+        town: town || undefined,
       });
       setPromotions((prev) => [...prev, ...res.items]);
       setNextCursor(res.nextCursor);
@@ -11299,7 +11062,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   // mount-time load).
   useEffect(() => {
     fetchPromotions();
-  }, [categoryFilter, debouncedQuery, onlyOffers]);
+  }, [categoryFilter, debouncedQuery, onlyOffers, town]);
 
   // Infinite scroll: fetch the next page as soon as the sentinel div at the
   // bottom of the grid scrolls into view. Re-observing on every relevant
@@ -11317,7 +11080,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasMore, nextCursor, loadingMore, categoryFilter, debouncedQuery, onlyOffers]);
+  }, [hasMore, nextCursor, loadingMore, categoryFilter, debouncedQuery, onlyOffers, town]);
 
   // The Offer create/edit form's "link to one of your own listings" dropdown
   // needs the caller's own full PRODUCT/AD listing set (not paginated - it's
@@ -11345,7 +11108,10 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
     setProductType(productTypes[0]?.name || '');
     setPhone('');
     setDiscountPercentage('');
-    setValidUntil('');
+    // New listings default to type PRODUCT (see the comment on the `type`
+    // field below), so this must default to the max allowed expiry rather
+    // than blank - blank would fail the now-`required` date input.
+    setValidUntil((() => { const d = new Date(); d.setDate(d.getDate() + PRODUCT_MAX_VALIDITY_DAYS); return d.toISOString().slice(0, 10); })());
     setLinkedPromotionId('');
     setErrorMsg('');
   };
@@ -11388,7 +11154,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         productType: productType || undefined,
         phone: phone || undefined,
         discountPercentage: discountPercentage !== '' ? Number(discountPercentage) : undefined,
-        validUntil: type === 'OFFER' && validUntil ? new Date(validUntil).toISOString() : undefined,
+        validUntil: (type === 'OFFER' || type === 'PRODUCT') && validUntil ? new Date(validUntil).toISOString() : undefined,
         linkedPromotionId: type === 'OFFER' && linkedPromotionId ? linkedPromotionId : undefined,
       };
       if (editingId) {
@@ -11448,6 +11214,17 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
             placeholder={t('searchInventoryPlaceholder')}
           />
         </div>
+        <CustomSelect
+          className="location-filter-select"
+          icon={MapPin}
+          value={town}
+          onChange={setTown}
+          placeholder="All Locations"
+          searchable
+          searchPlaceholder="Search district or town…"
+          options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
+          triggerStyle={{ minWidth: 180 }}
+        />
         <button
           onClick={() => { resetForm(); setShowAddModal(true); }}
           className="btn btn-primary"
@@ -11815,6 +11592,21 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                   </div>
                   <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('tapToCallHint')}</span>
                 </div>
+
+                {type === 'PRODUCT' && (
+                  <div className="reg-field">
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><CalendarRange /></div><b>{t('machineExpiryLabel')}</b></div>
+                    <div className="input-wrap">
+                      <input
+                        type="date" required value={validUntil}
+                        min={new Date().toISOString().slice(0, 10)}
+                        max={(() => { const d = new Date(); d.setDate(d.getDate() + PRODUCT_MAX_VALIDITY_DAYS); return d.toISOString().slice(0, 10); })()}
+                        onChange={(e) => setValidUntil(e.target.value)}
+                      />
+                    </div>
+                    <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('machineExpiryHint')}</span>
+                  </div>
+                )}
               </div>
 
               {type === 'OFFER' && (

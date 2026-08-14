@@ -1,7 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { TenantService } from '../tenant/tenant.service';
 import { CreatePromotionDto, UpdatePromotionDto } from './dto/promotion.dto';
 import { FileService } from '../customer/file.service';
+
+// A Machine/Product listing may never outlive this many days from the
+// moment it's created - the create/update form lets the shop pick an
+// earlier expiry, but never a later one (see clampProductExpiry below).
+// Existing pre-feature listings (validUntil left null) are backfilled to
+// createdAt + this many days by scripts/backfill-promotion-expiry.ts.
+const PRODUCT_MAX_VALIDITY_DAYS = 30;
 
 // Shared include shape so every response (list/create/update) surfaces the
 // creator-identification fields required by the feature spec: shop name,
@@ -27,6 +35,8 @@ const PUBLIC_PROMOTION_SELECT = {
 
 @Injectable()
 export class PromotionService {
+  private readonly logger = new Logger(PromotionService.name);
+
   constructor(
     private readonly tenantService: TenantService,
     private readonly fileService: FileService,
@@ -80,8 +90,15 @@ export class PromotionService {
     const { includeExpiredOffers = false, category, search, type, excludeOffers, ownerShopId, ownerUserId, shopId, town } = opts;
 
     const andConditions: any[] = [];
+    // Applies to every listing type, not just OFFER: Machine/Product listings
+    // now carry their own validUntil too (see PRODUCT_MAX_VALIDITY_DAYS) and
+    // must stop appearing in every feed the instant they expire, without
+    // waiting for the cleanup cron to actually delete the row. Callers that
+    // pass includeExpiredOffers=true (Offer Management moderation) always
+    // also pass type: 'OFFER', so relaxing this from OFFER-only to universal
+    // doesn't let any expired PRODUCT/AD row leak into that view.
     if (!includeExpiredOffers) {
-      andConditions.push({ OR: [{ type: { not: 'OFFER' as const } }, { validUntil: null }, { validUntil: { gte: new Date() } }] });
+      andConditions.push({ OR: [{ validUntil: null }, { validUntil: { gte: new Date() } }] });
     }
     if (category) {
       andConditions.push({ productType: category });
@@ -137,6 +154,7 @@ export class PromotionService {
     // no shop, their own createdById), never anyone else's.
     ownerShopId?: string | null;
     ownerUserId?: string;
+    town?: string;
   } = {}) {
     const { cursor, limit } = opts;
     const where = this.buildPromotionWhere(opts);
@@ -208,10 +226,28 @@ export class PromotionService {
     });
   }
 
+  // Caps a PRODUCT (Machine/Product) listing's expiry at PRODUCT_MAX_VALIDITY_DAYS
+  // from `anchor` (creation time on create, the row's original createdAt on
+  // update - never extended by editing) - a requested date past that cap is
+  // pulled back to the cap rather than rejected, and no requested date at all
+  // defaults to the cap itself, so every PRODUCT row always ends up with a
+  // concrete validUntil. Every other type (AD/OFFER) passes through
+  // unchanged - their expiry has its own separate, uncapped semantics.
+  private clampProductExpiry(type: string, requestedIso: string | undefined, anchor: Date): Date | undefined {
+    if (type !== 'PRODUCT') {
+      return requestedIso ? new Date(requestedIso) : undefined;
+    }
+    const maxDate = new Date(anchor.getTime() + PRODUCT_MAX_VALIDITY_DAYS * 24 * 60 * 60 * 1000);
+    if (!requestedIso) return maxDate;
+    const requested = new Date(requestedIso);
+    return requested > maxDate ? maxDate : requested;
+  }
+
   // Create a listing. shopId is null for a Super-Admin-created product, which
   // makes it independent of every shop's inventory (see schema comment on
   // Promotion.shopId); otherwise it's the creating Shop Admin's own shop.
   async createPromotion(shopId: string | null, userId: string, dto: CreatePromotionDto) {
+    const now = new Date();
     return this.tenantService.prisma.promotion.create({
       data: {
         type: dto.type,
@@ -220,7 +256,7 @@ export class PromotionService {
         imageUrl: dto.imageUrl,
         price: dto.price,
         discountPercentage: dto.discountPercentage,
-        validUntil: dto.validUntil ? new Date(dto.validUntil) : undefined,
+        validUntil: this.clampProductExpiry(dto.type, dto.validUntil, now),
         linkedPromotionId: dto.linkedPromotionId,
         productType: dto.productType,
         phone: dto.phone,
@@ -238,7 +274,7 @@ export class PromotionService {
 
     return this.tenantService.prisma.promotion.update({
       where: { id },
-      data: this.buildUpdateData(dto),
+      data: this.buildUpdateData(dto, existing.type, existing.createdAt),
       include: CREATOR_INCLUDE,
     });
   }
@@ -261,7 +297,7 @@ export class PromotionService {
 
     return this.tenantService.prisma.promotion.update({
       where: { id },
-      data: this.buildUpdateData(dto),
+      data: this.buildUpdateData(dto, existing.type, existing.createdAt),
       include: CREATOR_INCLUDE,
     });
   }
@@ -276,13 +312,32 @@ export class PromotionService {
   }
 
   // Shared update-payload builder: converts the DTO's ISO validUntil string
-  // into a real Date (mirrors AdService.updateAd's startDate/endDate handling)
-  // and leaves every other already-scalar field untouched.
-  private buildUpdateData(dto: UpdatePromotionDto) {
+  // into a real Date (mirrors AdService.updateAd's startDate/endDate handling),
+  // re-clamping it against the row's own type/original createdAt for PRODUCT
+  // listings (see clampProductExpiry - `existingCreatedAt` anchors the 30-day
+  // cap to when the listing was first created, not to this edit), and leaves
+  // every other already-scalar field untouched.
+  private buildUpdateData(dto: UpdatePromotionDto, existingType: string, existingCreatedAt: Date) {
     const data: any = { ...dto };
     if (dto.validUntil !== undefined) {
-      data.validUntil = dto.validUntil ? new Date(dto.validUntil) : null;
+      data.validUntil = dto.validUntil ? this.clampProductExpiry(existingType, dto.validUntil, existingCreatedAt) : null;
     }
     return data;
+  }
+
+  // Hard-deletes every Machine/Product listing whose expiry has passed -
+  // the query-time filter in buildPromotionWhere already hides these from
+  // every feed the instant they expire, but the user-facing requirement is
+  // that expired machines are actually removed, not just hidden, so this
+  // periodically purges them for real. Scoped to type PRODUCT only - AD/OFFER
+  // expiry is a separate, pre-existing concept (hide, never auto-delete).
+  @Cron(CronExpression.EVERY_HOUR)
+  async deleteExpiredProducts() {
+    const { count } = await this.tenantService.prisma.promotion.deleteMany({
+      where: { type: 'PRODUCT', validUntil: { lt: new Date() } },
+    });
+    if (count > 0) {
+      this.logger.log(`Auto-deleted ${count} expired machine/product listing(s)`);
+    }
   }
 }

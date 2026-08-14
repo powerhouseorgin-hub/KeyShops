@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_INTERCEPTOR, APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { GeoController } from './geo/geo.controller';
 import { TenantModule } from './tenant/tenant.module';
@@ -25,6 +26,9 @@ import { TenantInterceptor } from './tenant/tenant.interceptor';
     // Sensitive routes (OTP send/verify) apply a much tighter @Throttle
     // override directly on their controller methods - see auth.controller.ts.
     ThrottlerModule.forRoot([{ name: 'default', ttl: 60000, limit: 120 }]),
+    // Powers PromotionService's @Cron hourly purge of expired Machine/Product
+    // listings (see PromotionService.deleteExpiredProducts).
+    ScheduleModule.forRoot(),
     TenantModule,
     CryptoModule,
     AuthModule,

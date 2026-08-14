@@ -101,8 +101,8 @@ export class ShopService {
   // client-side over the full loaded list; now that the list is paginated,
   // that filtering has to happen server-side instead to stay correct across
   // pages.
-  async getShops(pageOpts: { search?: string; cursor?: string; limit?: number } = {}) {
-    const { search, cursor, limit } = pageOpts;
+  async getShops(pageOpts: { search?: string; town?: string; cursor?: string; limit?: number } = {}) {
+    const { search, town, cursor, limit } = pageOpts;
     const include = {
       subscriptions: {
         orderBy: { createdAt: 'desc' as const },
@@ -114,24 +114,35 @@ export class ShopService {
       },
       ...ACTIVE_DOCUMENTS_INCLUDE,
     };
-    const where = search
-      ? {
-          OR: [
-            { name: { contains: search, mode: 'insensitive' as const } },
-            {
-              users: {
-                some: {
-                  role: Role.SHOP_ADMIN,
-                  OR: [
-                    { name: { contains: search, mode: 'insensitive' as const } },
-                    { email: { contains: search, mode: 'insensitive' as const } },
-                  ],
-                },
+    const andConditions: any[] = [];
+    if (search) {
+      andConditions.push({
+        OR: [
+          { name: { contains: search, mode: 'insensitive' as const } },
+          {
+            users: {
+              some: {
+                role: Role.SHOP_ADMIN,
+                OR: [
+                  { name: { contains: search, mode: 'insensitive' as const } },
+                  { email: { contains: search, mode: 'insensitive' as const } },
+                ],
               },
             },
-          ],
-        }
-      : undefined;
+          },
+        ],
+      });
+    }
+    // Matches either granularity (town or district), same as the public
+    // Shops/Machines directories - see ShopService.searchPublicShops.
+    if (town) {
+      andConditions.push({ OR: [{ town }, { district: town }] });
+    }
+    const where = andConditions.length === 0
+      ? undefined
+      : andConditions.length === 1
+        ? andConditions[0]
+        : { AND: andConditions };
 
     if (!limit) {
       return this.tenantService.prisma.shop.findMany({ where, include });

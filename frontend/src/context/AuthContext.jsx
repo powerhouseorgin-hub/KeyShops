@@ -356,9 +356,10 @@ export const AuthProvider = ({ children }) => {
     // this is a separate method rather than extending getShops itself
     // (several other call sites depend on its plain-flat-array,
     // unpaginated shape).
-    getShopsPage: async ({ search = '', cursor, limit } = {}) => {
+    getShopsPage: async ({ search = '', town = '', cursor, limit } = {}) => {
       const params = new URLSearchParams();
       if (search) params.append('search', search);
+      if (town) params.append('town', town);
       if (cursor) params.append('cursor', cursor);
       if (limit) params.append('limit', String(limit));
       return request(`/api/super/shops?${params.toString()}`);
@@ -539,7 +540,7 @@ export const AuthProvider = ({ children }) => {
     // offer-linking dropdown); pass `limit` to get `{ items, nextCursor }`
     // pages instead (used by the Machines/Inventory feed's infinite scroll).
     getPromotions: async (opts = {}) => {
-      const { includeExpiredOffers = false, cursor, limit, category, search, type, excludeOffers, mine } = opts;
+      const { includeExpiredOffers = false, cursor, limit, category, search, type, excludeOffers, mine, town } = opts;
       const params = new URLSearchParams();
       if (includeExpiredOffers) params.append('includeExpiredOffers', 'true');
       if (cursor) params.append('cursor', cursor);
@@ -549,6 +550,7 @@ export const AuthProvider = ({ children }) => {
       if (type) params.append('type', type);
       if (excludeOffers) params.append('excludeOffers', 'true');
       if (mine) params.append('mine', 'true');
+      if (town) params.append('town', town);
       const qs = params.toString();
       return request(`/api/promotions${qs ? `?${qs}` : ''}`);
     },
