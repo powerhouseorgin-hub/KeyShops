@@ -12,6 +12,7 @@ import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import { categoryImage } from '../utils/categoryIcon';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 import ImageCarousel from './ImageCarousel';
+import { useLocationFilter } from '../utils/locationFilter';
 
 // Mirrors App.jsx's TERMS_AND_CONDITIONS_TITLE/BODY - duplicated rather than
 // imported since App.jsx isn't a module other components import from
@@ -319,13 +320,13 @@ function PublicHomeTab({ api, onOpenShop, onOpenMachine, onGoTab }) {
   );
 }
 
-function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
+function PublicShopsTab({ api, categories, onOpenShop, initialCategory, defaultTown }) {
   const [category, setCategory] = useState(initialCategory || '');
   const [items, setItems] = useState(null);
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
-  const [town, setTown] = useState('');
+  const [town, setTown] = useLocationFilter(defaultTown);
 
   const fetchFirst = () => {
     setItems(null);
@@ -387,13 +388,13 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory }) {
   );
 }
 
-function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory }) {
+function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory, defaultTown }) {
   const [category, setCategory] = useState(initialCategory || '');
   const [items, setItems] = useState(null);
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
-  const [town, setTown] = useState('');
+  const [town, setTown] = useLocationFilter(defaultTown);
 
   const fetchFirst = () => {
     setItems(null);
@@ -794,7 +795,7 @@ function PublicMachineDetailsScreen({ api, machineId, onBack, onOpenMachine }) {
   }, [item]);
 
   return (
-    <div className="public-mobile-tab" style={{ paddingBottom: item?.phone ? 66 : 0 }}>
+    <div className="public-mobile-tab">
       <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}><ChevronLeft className="h-4 w-4" /> Back</button>
       {!item && !error ? <LoadingState /> : error ? <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." /> : (
         <>
@@ -813,6 +814,14 @@ function PublicMachineDetailsScreen({ api, machineId, onBack, onOpenMachine }) {
             {item.shop?.name && <div className="public-shop-meta" style={{ marginTop: 4 }}><Store className="h-3.5 w-3.5" /> {item.shop.name}</div>}
             <div style={{ marginTop: 8 }}><PriceTag price={item.price} discountPercentage={item.discountPercentage} size="lg" /></div>
             {item.description && <p style={{ marginTop: 10, fontSize: 13, color: 'var(--text-2)', lineHeight: 1.5 }}>{item.description}</p>}
+            {/* Inline, not a screen-wide fixed bar pinned above the bottom
+                nav - keeps the Call action right next to the details it
+                belongs to instead of permanently reserving screen space. */}
+            {item.phone && (
+              <a href={`tel:${item.phone}`} className="btn btn-primary" style={{ marginTop: 12 }}>
+                <Phone className="h-4 w-4" /> Call {item.phone}
+              </a>
+            )}
           </div>
 
           {related && related.length > 0 && (
@@ -824,13 +833,6 @@ function PublicMachineDetailsScreen({ api, machineId, onBack, onOpenMachine }) {
             </div>
           )}
         </>
-      )}
-      {item?.phone && (
-        <div className="pub-sticky-call-bar">
-          <a href={`tel:${item.phone}`} className="btn btn-primary">
-            <Phone className="h-4 w-4" /> Call {item.phone}
-          </a>
-        </div>
       )}
     </div>
   );
@@ -974,7 +976,7 @@ export function PublicBottomNav({ activeTab, onGoTab, onAddAds }) {
   );
 }
 
-export default function PublicMobileApp({ api, onLogin, initialTab }) {
+export default function PublicMobileApp({ api, onLogin, initialTab, defaultTown }) {
   const [publicTab, setPublicTab] = useState(initialTab || 'home');
   const [screen, setScreen] = useState({ type: 'tab' });
   // Shop/Machine detail navigation stack - tapping a shop/machine card
@@ -1036,9 +1038,9 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
   } else if (screen.type === 'feedback') {
     body = <PublicFeedbackScreen api={api} onBack={backToTab} />;
   } else if (publicTab === 'shops') {
-    body = <PublicShopsTab api={api} categories={categories} onOpenShop={openShop} initialCategory={tabCategoryHint} />;
+    body = <PublicShopsTab api={api} categories={categories} onOpenShop={openShop} initialCategory={tabCategoryHint} defaultTown={defaultTown} />;
   } else if (publicTab === 'machines') {
-    body = <PublicMachinesTab api={api} productTypes={productTypes} onOpenMachine={openMachine} initialCategory={tabCategoryHint} />;
+    body = <PublicMachinesTab api={api} productTypes={productTypes} onOpenMachine={openMachine} initialCategory={tabCategoryHint} defaultTown={defaultTown} />;
   } else if (publicTab === 'contact') {
     body = <PublicContactTab api={api} />;
   } else {

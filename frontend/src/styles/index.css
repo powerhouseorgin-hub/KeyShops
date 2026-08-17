@@ -541,10 +541,9 @@
 
 /* Floating "+" action button - replaces an inline header create button on
    Super Admin list screens (Shop Management, Ad Campaigns, Customer
-   Registry). Bottom offset mirrors .pub-sticky-call-bar above: on narrow
-   viewports (.mobile-bottom-nav visible, same md:hidden breakpoint - see
-   App.jsx) it sits above the bottom nav bar instead of under it; on wider
-   layouts there's no bottom nav to clear. */
+   Registry). On narrow viewports (.mobile-bottom-nav visible, same
+   md:hidden breakpoint - see App.jsx) it sits above the bottom nav bar
+   instead of under it; on wider layouts there's no bottom nav to clear. */
 .fab {
   position: fixed; right: 20px; bottom: 24px; z-index: 45;
   width: 56px; height: 56px; border-radius: 50%;
@@ -2196,17 +2195,6 @@ select.sel:focus { border-color: var(--gold); }
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
   padding: 50px 20px; color: var(--text-3); font-size: 13px; font-weight: 700; text-align: center;
 }
-/* Sticky bottom Call button on the machine/product details screen - sits
-   just above the 4-item bottom nav (see .mobile-bottom-nav's own height)
-   rather than inline in the scrolling content, so it's always reachable
-   without scrolling. */
-.pub-sticky-call-bar {
-  position: fixed; left: 0; right: 0; bottom: calc(62px + env(safe-area-inset-bottom, 0px));
-  z-index: 39; max-width: 720px; margin: 0 auto;
-  padding: 10px 16px; background: var(--card); border-top: 1px solid var(--border);
-}
-.pub-sticky-call-bar .btn { width: 100%; }
-
 /* Search overlay */
 .public-search-overlay {
   position: fixed; inset: 0; z-index: 45; background: var(--bg-0);
@@ -2287,12 +2275,14 @@ select.sel:focus { border-color: var(--gold); }
 
 /* ============================================================
    Shared Image Carousel (ImageCarousel.jsx) - a Product/Shop Details
-   page's photo strip. CSS scroll-snap, no JS animation loop (unlike
-   AdCarousel, which auto-advances/loops) - the user pages it directly.
-   Same "unstyled enough for either surface" approach as .img-zoom-*
-   above; callers set a height via the `className` prop if the default
-   doesn't fit (e.g. a shorter strip on a compact card). */
-.img-carousel { position: relative; width: 100%; }
+   page's photo strip. Same clone-first-slide + transform + transitionend
+   snap-back loop as AdCarousel (frontend/src/components/PublicMobileApp.jsx)
+   so it auto-advances indefinitely while staying swipeable - `overflow:
+   hidden` + `transform: translateX()` on the track, not native scroll/
+   scroll-snap. Same "unstyled enough for either surface" approach as
+   .img-zoom-* above; callers set a height via the `className` prop if the
+   default doesn't fit (e.g. a shorter strip on a compact card). */
+.img-carousel { position: relative; width: 100%; overflow: hidden; }
 .img-carousel-single, .img-carousel-slide {
   width: 100%; aspect-ratio: 4 / 3; background: var(--card-2, #f4f1ec);
   display: flex; align-items: center; justify-content: center; overflow: hidden;
@@ -2301,11 +2291,15 @@ select.sel:focus { border-color: var(--gold); }
   width: 100%; height: 100%; object-fit: cover; cursor: zoom-in;
 }
 .img-carousel-track {
-  display: flex; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory;
-  scrollbar-width: none; -ms-overflow-style: none;
+  display: flex; width: 100%;
+  transition: transform .35s ease;
 }
-.img-carousel-track::-webkit-scrollbar { display: none; }
-.img-carousel-slide { flex: 0 0 100%; scroll-snap-align: center; }
+.img-carousel-slide { flex: 0 0 100%; }
+.img-carousel-counter {
+  position: absolute; top: 10px; right: 10px; z-index: 1;
+  color: #fff; font-size: 11px; font-weight: 700; background: rgba(0,0,0,0.45);
+  padding: 3px 9px; border-radius: 999px;
+}
 .img-carousel-dots {
   position: absolute; bottom: 10px; left: 0; right: 0; z-index: 1;
   display: flex; align-items: center; justify-content: center; gap: 6px;

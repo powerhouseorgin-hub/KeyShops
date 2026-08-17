@@ -23,6 +23,7 @@ import lostKeyIcon from './assets/addlostkeys/redkey.png';
 import { downloadPdf, sharePdf } from './utils/pdfDelivery';
 import { openRazorpayCheckout } from './utils/razorpay';
 import { ALL_TN_LOCATIONS } from './utils/tamilNaduLocations';
+import { useLocationFilter } from './utils/locationFilter';
 import { categoryImage } from './utils/categoryIcon';
 import PublicSite from './components/PublicSite';
 import PublicMobileApp, { PublicBottomNav } from './components/PublicMobileApp';
@@ -5843,29 +5844,6 @@ async function reverseGeocode(lat, lng) {
   }
 }
 
-// Shared by every location-dropdown screen that should default to the
-// user's GPS-resolved location (see App()'s defaultLocation resolution) -
-// Key Shops/ECM/Meter/Scanning via CategoryShopsView, and Used Machines via
-// PromotionsFeed. Applies `defaultTown` (once it resolves - it starts as ''
-// and may arrive asynchronously after this screen has already mounted)
-// exactly once, and never overwrites a choice the user already made
-// themselves, including deliberately picking "All Locations" (empty string)
-// back after a GPS default was applied.
-function useLocationFilter(defaultTown) {
-  const [town, setTownState] = useState(defaultTown || '');
-  const userPicked = useRef(false);
-  useEffect(() => {
-    if (defaultTown && !userPicked.current && !town) {
-      setTownState(defaultTown);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultTown]);
-  const setTown = (value) => {
-    userPicked.current = true;
-    setTownState(value);
-  };
-  return [town, setTown];
-}
 
 // Opens the device's native location-settings screen (Android/iOS only - a
 // no-op on web, where there's no equivalent OS settings screen to deep-link
@@ -6836,7 +6814,7 @@ export default function App() {
       {!isAuthenticated ? (
         <>
         {IS_NATIVE_APP && (
-          <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} />
+          <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} defaultTown={defaultLocation} />
         )}
         {publicPage !== 'login' ? (
           !IS_NATIVE_APP && <PublicSite page={publicPage} onNavigate={setPublicPage} api={api} />
@@ -8004,19 +7982,6 @@ export default function App() {
             >
               <span className="nav-ico-sm" style={{ background: 'var(--maroon)' }}><Home /></span>
               <span>{t('dashboard')}</span>
-            </button>
-            <button
-              className={`mbn-item ${(user.role === 'SUPER_ADMIN' ? activeTab === 'shops' : activeTab === 'settings') ? 'active' : ''}`}
-              onClick={() => {
-                // Super Admin has no shop of their own, so "Account" here
-                // routes to Shops Management instead of the Shop Admin-only
-                // Settings screen (which requires a specific shopId).
-                setActiveTab(user.role === 'SUPER_ADMIN' ? 'shops' : 'settings');
-                setMobileNavOpen(false);
-              }}
-            >
-              <span className="nav-ico-sm" style={{ background: 'var(--purple)' }}><User /></span>
-              <span>{t('account')}</span>
             </button>
             <button
               className="mbn-item"
