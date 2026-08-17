@@ -23,14 +23,17 @@ describe('PromotionService', () => {
   });
 
   describe('getAllPromotions', () => {
-    it('lists promotions across every shop (no shopId filter), newest first, with shop/creator joined, excluding expired offers by default', async () => {
+    it('lists promotions across every shop (no shopId filter), newest first, with shop/creator joined, excluding every expired listing by default', async () => {
       prismaMock.promotion.findMany.mockResolvedValue([]);
 
       await service.getAllPromotions();
 
       const callArgs = prismaMock.promotion.findMany.mock.calls[0][0];
+      // Expiry filtering applies to every listing type, not just OFFER - see
+      // buildPromotionWhere's comment (machine/product listings now carry
+      // their own validUntil too, PRODUCT_MAX_VALIDITY_DAYS).
       expect(callArgs.where).toEqual({
-        OR: [{ type: { not: 'OFFER' } }, { validUntil: null }, { validUntil: { gte: expect.any(Date) } }],
+        OR: [{ validUntil: null }, { validUntil: { gte: expect.any(Date) } }],
       });
       expect(callArgs.orderBy).toEqual({ createdAt: 'desc' });
       expect(callArgs.include.shop).toEqual({ select: { id: true, name: true } });
@@ -60,15 +63,22 @@ describe('PromotionService', () => {
           type: 'PRODUCT',
           title: 'Spare Key Blanks',
           description: undefined,
-          imageUrl: undefined,
+          imageUrl: null,
+          imageUrls: [],
           price: 99,
           discountPercentage: undefined,
-          validUntil: undefined,
+          validUntil: expect.any(Date),
           linkedPromotionId: undefined,
+          productType: undefined,
+          phone: undefined,
           shopId: 'shop-1',
           createdById: 'user-1',
         },
-        include: expect.any(Object),
+        include: {
+          shop: { select: { id: true, name: true } },
+          createdBy: { select: { id: true, name: true, email: true } },
+          linkedPromotion: { select: { id: true, title: true, type: true } },
+        },
       });
       expect(result).toEqual({ id: 'promo-1' });
     });
