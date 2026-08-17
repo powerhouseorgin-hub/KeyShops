@@ -5994,8 +5994,29 @@ export default function App() {
   // consumer already treats '' as "All Locations", so there's no separate
   // error path to show the user and nothing is ever blocked.
   const [defaultLocation, setDefaultLocation] = useState('');
+  // Flips true exactly once, when the GPS-default resolution attempt below
+  // finishes - success, failure, or "no match" all count as "we now know the
+  // location status." Every Shops/Products screen (CategoryShopsView,
+  // DealersView, ShopsManagementView, PromotionsFeed, PublicMobileApp's
+  // Shops/Machines tabs) gates its very first data fetch on this instead of
+  // fetching immediately with an unresolved '' town: without it, a screen
+  // would show all-location results the instant it mounts, then silently
+  // re-fetch and swap to location-filtered results once GPS/reverse-geocode
+  // finishes a few seconds later - a flicker between two different result
+  // sets. Gating on this instead means each screen's skeleton loader simply
+  // stays up until the location status (and, if available, the matching
+  // fetch) is fully resolved, then renders the correct result set once.
+  const [locationReady, setLocationReady] = useState(false);
   useEffect(() => {
-    if (gpsDefaultLocationAttempted) return;
+    if (gpsDefaultLocationAttempted) {
+      // Only reachable in dev (React StrictMode's mount/unmount/remount) or
+      // HMR - a previous instance already resolved (or is resolving) this
+      // same app session, and there's no way to recover that result into
+      // this fresh instance. Unblock rendering immediately instead of
+      // leaving every Shops/Products screen stuck on its skeleton forever.
+      setLocationReady(true);
+      return;
+    }
     gpsDefaultLocationAttempted = true;
     (async () => {
       try {
@@ -6015,6 +6036,8 @@ export default function App() {
       } catch (e) {
         // Permission denied / GPS disabled / timeout - fall through to the
         // '' default (All Locations) already set above.
+      } finally {
+        setLocationReady(true);
       }
     })();
   }, []);
@@ -6814,7 +6837,7 @@ export default function App() {
       {!isAuthenticated ? (
         <>
         {IS_NATIVE_APP && (
-          <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} defaultTown={defaultLocation} />
+          <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} defaultTown={defaultLocation} locationReady={locationReady} />
         )}
         {publicPage !== 'login' ? (
           !IS_NATIVE_APP && <PublicSite page={publicPage} onNavigate={setPublicPage} api={api} />
@@ -7950,16 +7973,16 @@ export default function App() {
             </header>
 
             {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} />}
-            {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
-            {activeTab === 'dealers' && <DealersView t={t} api={api} />}
-            {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" icon={KeyRound} t={t} api={api} defaultTown={defaultLocation} />}
-            {activeTab === 'ecm' && <CategoryShopsView categoryKey="ECM" icon={Cpu} t={t} api={api} defaultTown={defaultLocation} />}
-            {activeTab === 'meter' && <CategoryShopsView categoryKey="METER" icon={Gauge} t={t} api={api} defaultTown={defaultLocation} />}
-            {activeTab === 'scanning' && <CategoryShopsView categoryKey="SCANNER" icon={ScanLine} t={t} api={api} defaultTown={defaultLocation} />}
+            {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} defaultTown={defaultLocation} locationReady={locationReady} />}
+            {activeTab === 'dealers' && <DealersView t={t} api={api} defaultTown={defaultLocation} locationReady={locationReady} />}
+            {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" icon={KeyRound} t={t} api={api} defaultTown={defaultLocation} locationReady={locationReady} />}
+            {activeTab === 'ecm' && <CategoryShopsView categoryKey="ECM" icon={Cpu} t={t} api={api} defaultTown={defaultLocation} locationReady={locationReady} />}
+            {activeTab === 'meter' && <CategoryShopsView categoryKey="METER" icon={Gauge} t={t} api={api} defaultTown={defaultLocation} locationReady={locationReady} />}
+            {activeTab === 'scanning' && <CategoryShopsView categoryKey="SCANNER" icon={ScanLine} t={t} api={api} defaultTown={defaultLocation} locationReady={locationReady} />}
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
-            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} defaultTown={defaultLocation} />}
+            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} defaultTown={defaultLocation} locationReady={locationReady} />}
             {activeTab === 'banner-offer-management' && <AdsManagementView t={t} api={api} />}
             {activeTab === 'offers-ads-banners' && <OffersAdsBannersView t={t} api={api} />}
             {activeTab === 'search-keys' && <KeysSearchView t={t} api={api} searchDispatch={activeTab === 'search-keys' ? searchDispatch : null} />}
@@ -8524,7 +8547,7 @@ const SHOP_MANAGEMENT_PAGE_SIZE = 20;
 // even with an empty search box.
 let shopsFirstPageCache = null;
 
-function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOpen, searchDispatch }) {
+function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOpen, searchDispatch, defaultTown, locationReady }) {
   const [shops, setShops] = useState(shopsFirstPageCache ? shopsFirstPageCache.items : []);
   const [loading, setLoading] = useState(!shopsFirstPageCache);
   // Infinite-scroll pagination state - `shops` only ever holds the pages
@@ -8540,7 +8563,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // already-fully-loaded list.
   const [shopSearchQuery, setShopSearchQuery] = useState('');
   const [debouncedShopSearchQuery, setDebouncedShopSearchQuery] = useState('');
-  const [town, setTown] = useState('');
+  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
   useEffect(() => {
     const handle = setTimeout(() => setDebouncedShopSearchQuery(shopSearchQuery.trim()), 300);
     return () => clearTimeout(handle);
@@ -8655,7 +8678,14 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       setShops(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
-      if (!debouncedShopSearchQuery && !town) {
+      // "Default view" now means "town is either empty or whatever GPS
+      // resolved as the default" - not just empty - since locationReady
+      // gating (see App()'s locationReady) means the very first fetch may
+      // already carry a GPS-resolved town instead of ''. Comparing against
+      // '' only would mean this cache (and the instant-render-on-revisit it
+      // powers) never populates at all for any user with a resolved
+      // location.
+      if (!debouncedShopSearchQuery && (!town || town === defaultTown)) {
         shopsFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
       }
     } catch (e) {
@@ -8682,9 +8712,18 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     }
   };
 
+  // Waits for locationReady (GPS permission/coordinate resolution to finish)
+  // before firing the very first fetch - otherwise this would fetch with an
+  // unresolved '' town immediately on mount, then re-fetch and swap results
+  // once the GPS default arrives, flickering between all-location and
+  // location-filtered results (see App()'s locationReady for the full
+  // rationale). A bare revisit still renders the cached first page (see
+  // `shopsFirstPageCache` above) regardless, since locationReady is already
+  // true by then.
   useEffect(() => {
+    if (!locationReady) return;
     fetchShops();
-  }, [debouncedShopSearchQuery, town]);
+  }, [debouncedShopSearchQuery, town, locationReady]);
 
   useEffect(() => {
     const node = loadMoreSentinelRef.current;
@@ -11001,7 +11040,7 @@ function AdsManagementView({ t, api }) {
 // create/edit form; every new listing is created as a plain PRODUCT and
 // categorized purely via this list.
 
-function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, defaultTown }) {
+function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, defaultTown, locationReady }) {
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
 
   return (
@@ -11024,6 +11063,7 @@ function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, o
         initiallyOpenAddModal={initiallyOpenAddModal}
         onCloseInitiallyOpen={onCloseInitiallyOpen}
         defaultTown={defaultTown}
+        locationReady={locationReady}
       />
     </div>
   );
@@ -11042,7 +11082,7 @@ const PRODUCT_MAX_VALIDITY_DAYS = 30;
 // matching backend-side enforcement.
 const PRODUCT_MAX_PHOTOS = 4;
 
-function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, defaultTown }) {
+function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, defaultTown, locationReady }) {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
   // Infinite-scroll pagination state - `promotions` above only ever holds
@@ -11152,7 +11192,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   // keystroke.
   const [textQuery, setTextQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [town, setTown] = useLocationFilter(defaultTown);
+  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
   useEffect(() => {
     const handle = setTimeout(() => setDebouncedQuery(textQuery.trim()), 300);
     return () => clearTimeout(handle);
@@ -11238,10 +11278,13 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   };
 
   // Re-fetch page 1 whenever a filter changes (also covers the initial
-  // mount-time load).
+  // mount-time load). Waits for locationReady first - see App()'s
+  // locationReady state for why the very first fetch must not fire with an
+  // unresolved '' town.
   useEffect(() => {
+    if (!locationReady) return;
     fetchPromotions();
-  }, [categoryFilter, debouncedQuery, onlyOffers, town]);
+  }, [categoryFilter, debouncedQuery, onlyOffers, town, locationReady]);
 
   // Infinite scroll: fetch the next page as soon as the sentinel div at the
   // bottom of the grid scrolls into view. Re-observing on every relevant
@@ -12237,25 +12280,28 @@ function OffersAdsBannersView({ t, api }) {
 // the DashboardView fix.
 const categoryShopsCache = {};
 
-function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTown }) {
+function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTown, locationReady }) {
   const cachedDealers = categoryShopsCache[categoryKey] || null;
   const [dealers, setDealers] = useState(cachedDealers || []);
   const [loading, setLoading] = useState(!cachedDealers);
   const [query, setQuery] = useState('');
-  const [town, setTown] = useLocationFilter(defaultTown);
+  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
 
   // Debounced (350ms, matching Blank Key Search) - this previously fired a
   // fresh request (and blanked the list to a spinner) on every keystroke,
   // with no debounce at all. `town` is a discrete dropdown pick rather than
   // free typing, so it doesn't strictly need debouncing, but riding the same
   // effect keeps this simple and the added latency is imperceptible.
+  // Also waits for locationReady before the very first fetch - see App()'s
+  // locationReady state for the full "no flicker" rationale.
   useEffect(() => {
+    if (!locationReady) return;
     const timer = setTimeout(() => {
       fetchDealers();
     }, 350);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, town, categoryKey]);
+  }, [query, town, categoryKey, locationReady]);
 
   const fetchDealers = async () => {
     // Only blank to a spinner when there's nothing on screen yet - a bare
@@ -12266,10 +12312,14 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTo
       const res = await api.searchPublicShops({ query, category: categoryKey, town });
       const list = Array.isArray(res) ? res : [];
       setDealers(list);
-      // Only cache the true "everything in this category" result - a
-      // search/location-filtered result must never be mistaken for it on a
-      // later unfiltered revisit.
-      if (!query && !town) categoryShopsCache[categoryKey] = list;
+      // Only cache the "default view" result - a search or a town the user
+      // explicitly picked must never be mistaken for it on a later revisit.
+      // "Default" means town is either empty or whatever GPS resolved as
+      // the default (not just empty) - locationReady gating (see App()'s
+      // locationReady) means the very first fetch may already carry a
+      // GPS-resolved town, so comparing against '' only would mean this
+      // cache never populates for any user with a resolved location.
+      if (!query && (!town || town === defaultTown)) categoryShopsCache[categoryKey] = list;
     } catch (e) {
       console.error('Failed to fetch category dealers', e);
     } finally {
@@ -12431,7 +12481,7 @@ const DEALERS_PAGE_SIZE = 20;
 // list - module scope, same rationale as shopsFirstPageCache above.
 let dealersFirstPageCache = null;
 
-function DealersView({ t, api }) {
+function DealersView({ t, api, defaultTown, locationReady }) {
   const [dealers, setDealers] = useState(dealersFirstPageCache ? dealersFirstPageCache.items : []);
   const [loading, setLoading] = useState(!dealersFirstPageCache);
   // Infinite-scroll pagination state - `dealers` only ever holds the pages
@@ -12441,7 +12491,7 @@ function DealersView({ t, api }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [query, setQuery] = useState('');
-  const [town, setTown] = useState('');
+  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
   // Debounced before it reaches the server - see PromotionsFeed's identical
   // pattern for why (every change now triggers a network request).
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -12455,7 +12505,11 @@ function DealersView({ t, api }) {
   // browses every category now (see ShopService.searchPublicShops's
   // `category` param, simply omitted here).
   const fetchDealers = async () => {
-    const isDefaultView = !debouncedQuery && !town;
+    // "Default view" means town is either empty or whatever GPS resolved as
+    // the default (not just empty) - see CategoryShopsView's identical
+    // comment for why: locationReady gating means the very first fetch may
+    // already carry a GPS-resolved town.
+    const isDefaultView = !debouncedQuery && (!town || town === defaultTown);
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
@@ -12492,9 +12546,12 @@ function DealersView({ t, api }) {
     }
   };
 
+  // Waits for locationReady before the very first fetch - see
+  // ShopsManagementView's identical guard for the full rationale.
   useEffect(() => {
+    if (!locationReady) return;
     fetchDealers();
-  }, [debouncedQuery, town]);
+  }, [debouncedQuery, town, locationReady]);
 
   useEffect(() => {
     const node = loadMoreSentinelRef.current;

@@ -320,15 +320,20 @@ function PublicHomeTab({ api, onOpenShop, onOpenMachine, onGoTab }) {
   );
 }
 
-function PublicShopsTab({ api, categories, onOpenShop, initialCategory, defaultTown }) {
+function PublicShopsTab({ api, categories, onOpenShop, initialCategory, defaultTown, locationReady }) {
   const [category, setCategory] = useState(initialCategory || '');
   const [items, setItems] = useState(null);
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
-  const [town, setTown] = useLocationFilter(defaultTown);
+  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
 
+  // Waits for locationReady (GPS permission/coordinate resolution to finish)
+  // before firing the very first fetch - `items` stays null (skeleton grid
+  // below) until then, instead of fetching all-location results immediately
+  // and flickering to location-filtered results once GPS resolves.
   const fetchFirst = () => {
+    if (!locationReady) return;
     setItems(null);
     setError(false);
     api.searchPublicShops({ category, town, limit: 20 })
@@ -336,7 +341,7 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory, defaultT
       .catch(() => setError(true));
   };
 
-  useEffect(fetchFirst, [category, town]);
+  useEffect(fetchFirst, [category, town, locationReady]);
 
   const loadMore = () => {
     if (!nextCursor || loadingMore) return;
@@ -388,15 +393,18 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory, defaultT
   );
 }
 
-function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory, defaultTown }) {
+function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory, defaultTown, locationReady }) {
   const [category, setCategory] = useState(initialCategory || '');
   const [items, setItems] = useState(null);
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
-  const [town, setTown] = useLocationFilter(defaultTown);
+  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
 
+  // Waits for locationReady before the very first fetch - see
+  // PublicShopsTab's identical guard for the full rationale.
   const fetchFirst = () => {
+    if (!locationReady) return;
     setItems(null);
     setError(false);
     api.getPublicMachines({ category, town, limit: 20 })
@@ -404,7 +412,7 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory, 
       .catch(() => setError(true));
   };
 
-  useEffect(fetchFirst, [category, town]);
+  useEffect(fetchFirst, [category, town, locationReady]);
 
   const loadMore = () => {
     if (!nextCursor || loadingMore) return;
@@ -976,7 +984,7 @@ export function PublicBottomNav({ activeTab, onGoTab, onAddAds }) {
   );
 }
 
-export default function PublicMobileApp({ api, onLogin, initialTab, defaultTown }) {
+export default function PublicMobileApp({ api, onLogin, initialTab, defaultTown, locationReady }) {
   const [publicTab, setPublicTab] = useState(initialTab || 'home');
   const [screen, setScreen] = useState({ type: 'tab' });
   // Shop/Machine detail navigation stack - tapping a shop/machine card
@@ -1038,9 +1046,9 @@ export default function PublicMobileApp({ api, onLogin, initialTab, defaultTown 
   } else if (screen.type === 'feedback') {
     body = <PublicFeedbackScreen api={api} onBack={backToTab} />;
   } else if (publicTab === 'shops') {
-    body = <PublicShopsTab api={api} categories={categories} onOpenShop={openShop} initialCategory={tabCategoryHint} defaultTown={defaultTown} />;
+    body = <PublicShopsTab api={api} categories={categories} onOpenShop={openShop} initialCategory={tabCategoryHint} defaultTown={defaultTown} locationReady={locationReady} />;
   } else if (publicTab === 'machines') {
-    body = <PublicMachinesTab api={api} productTypes={productTypes} onOpenMachine={openMachine} initialCategory={tabCategoryHint} defaultTown={defaultTown} />;
+    body = <PublicMachinesTab api={api} productTypes={productTypes} onOpenMachine={openMachine} initialCategory={tabCategoryHint} defaultTown={defaultTown} locationReady={locationReady} />;
   } else if (publicTab === 'contact') {
     body = <PublicContactTab api={api} />;
   } else {

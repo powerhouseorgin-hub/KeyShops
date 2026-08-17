@@ -8,20 +8,28 @@ import { useState, useRef, useEffect } from 'react';
 // use it too without a circular import - App.jsx already imports
 // PublicMobileApp, so the reverse can't hold.
 //
-// Applies `defaultTown` (once it resolves - it starts as '' and may arrive
-// asynchronously after this screen has already mounted) exactly once, and
-// never overwrites a choice the user already made themselves, including
-// deliberately picking "All Locations" (empty string) back after a GPS
-// default was applied.
-export function useLocationFilter(defaultTown) {
+// Applies `defaultTown` once App()'s GPS resolution attempt finishes
+// (`locationReady` flips true - see App()'s defaultLocation/locationReady
+// effect), and never overwrites a choice the user already made themselves,
+// including deliberately picking "All Locations" (empty string) back after a
+// GPS default was applied.
+//
+// `locationReady` isn't just informational here - every caller also gates
+// its own initial data-fetch effect on it (`if (!locationReady) return;`),
+// so the first fetch never fires with an unresolved '' town and then
+// re-fires once GPS/reverse-geocode completes. That two-fetch sequence is
+// exactly the "load all, then flicker to filtered results" bug this and the
+// gating pattern together are meant to prevent - see App()'s locationReady
+// state for the single source of truth all consumers share.
+export function useLocationFilter(defaultTown, locationReady) {
   const [town, setTownState] = useState(defaultTown || '');
   const userPicked = useRef(false);
   useEffect(() => {
-    if (defaultTown && !userPicked.current && !town) {
+    if (locationReady && defaultTown && !userPicked.current && !town) {
       setTownState(defaultTown);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [defaultTown]);
+  }, [locationReady, defaultTown]);
   const setTown = (value) => {
     userPicked.current = true;
     setTownState(value);
