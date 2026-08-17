@@ -82,6 +82,13 @@ model Shop {
   id             String  @id @default(uuid())
   name           String
   companyDetails String? // Stores JSON or text details (GST, address, city, state, pinCode, phone, etc. - NOT documents, see ShopDocument)
+  // Shop's own uploaded logo/photo, shown on its public Shop Details page
+  // (falls back to a category icon when null, since most existing shops
+  // predate this field) - see ShopService.uploadLogo. A real long-lived
+  // file URL via FileService.uploadLongLivedFile, same pattern as
+  // Promotion.imageUrl/imageUrls - not a ShopDocument row, since it's a
+  // single always-current image, not a versioned/verifiable document.
+  logoUrl        String?
   themeColor     String  @default("#9C27B0")
   isActive       Boolean @default(true)
   storageUsed    BigInt  @default(0) // bytes

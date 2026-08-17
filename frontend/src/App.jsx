@@ -29,6 +29,7 @@ import PublicMobileApp, { PublicBottomNav } from './components/PublicMobileApp';
 import CustomSelect from './components/CustomSelect';
 import PriceTag from './components/PriceTag';
 import OtpVerificationModal from './components/OtpVerificationModal';
+import ImageCarousel from './components/ImageCarousel';
 import {
   Key, Users, Radio, BarChart3, Database, LogOut, Check, X,
   Plus, Settings, FileText, Search, Filter, UserCheck, MapPin, Camera, AlertTriangle,
@@ -1170,6 +1171,13 @@ const LANGUAGES = {
     referralMessageCopiedMsg: 'Referral message copied to clipboard!',
     referBtnTitle: 'Refer & Invite',
     verificationDocumentLabel: 'Verification Document',
+    relatedProductsTitle: 'Related Products',
+    shopLogoLabel: 'Shop Logo',
+    uploadLogoBtn: 'Upload Logo',
+    changeLogoBtn: 'Change Logo',
+    onlyJpegPngWebpMsg: 'Only JPEG, PNG, and WebP images are accepted.',
+    previousLabel: 'Previous',
+    nextLabel: 'Next',
     useCameraBtn: 'Use Camera',
     chooseFromGalleryBtn: 'Choose from Gallery',
     generateReportBtn: 'Generate Report',
@@ -2044,6 +2052,13 @@ const LANGUAGES = {
     referralMessageCopiedMsg: 'रेफ़रल संदेश क्लिपबोर्ड पर कॉपी हो गया!',
     referBtnTitle: 'रेफर और आमंत्रित करें',
     verificationDocumentLabel: 'सत्यापन दस्तावेज़',
+    relatedProductsTitle: 'संबंधित उत्पाद',
+    shopLogoLabel: 'दुकान का लोगो',
+    uploadLogoBtn: 'लोगो अपलोड करें',
+    changeLogoBtn: 'लोगो बदलें',
+    onlyJpegPngWebpMsg: 'केवल JPEG, PNG, और WebP छवियां स्वीकार की जाती हैं।',
+    previousLabel: 'पिछला',
+    nextLabel: 'अगला',
     useCameraBtn: 'कैमरा उपयोग करें',
     chooseFromGalleryBtn: 'गैलरी से चुनें',
     generateReportBtn: 'रिपोर्ट बनाएं',
@@ -2912,6 +2927,13 @@ const LANGUAGES = {
     referralMessageCopiedMsg: 'பரிந்துரை செய்தி கிளிப்போர்டுக்கு நகலெடுக்கப்பட்டது!',
     referBtnTitle: 'பரிந்துரை & அழை',
     verificationDocumentLabel: 'சரிபார்ப்பு ஆவணம்',
+    relatedProductsTitle: 'தொடர்புடைய தயாரிப்புகள்',
+    shopLogoLabel: 'கடை லோகோ',
+    uploadLogoBtn: 'லோகோவை பதிவேற்றவும்',
+    changeLogoBtn: 'லோகோவை மாற்று',
+    onlyJpegPngWebpMsg: 'JPEG, PNG, மற்றும் WebP படங்கள் மட்டுமே ஏற்கப்படும்.',
+    previousLabel: 'முந்தையது',
+    nextLabel: 'அடுத்தது',
     useCameraBtn: 'கேமராவைப் பயன்படுத்து',
     chooseFromGalleryBtn: 'கேலரியில் இருந்து தேர்ந்தெடு',
     generateReportBtn: 'அறிக்கையை உருவாக்கு',
@@ -3786,6 +3808,13 @@ const LANGUAGES = {
     referralMessageCopiedMsg: 'రెఫరల్ సందేశం క్లిప్‌బోర్డ్‌కు కాపీ చేయబడింది!',
     referBtnTitle: 'రెఫర్ & ఆహ్వానించండి',
     verificationDocumentLabel: 'ధృవీకరణ పత్రం',
+    relatedProductsTitle: 'సంబంధిత ఉత్పత్తులు',
+    shopLogoLabel: 'షాప్ లోగో',
+    uploadLogoBtn: 'లోగోను అప్‌లోడ్ చేయండి',
+    changeLogoBtn: 'లోగోను మార్చండి',
+    onlyJpegPngWebpMsg: 'JPEG, PNG మరియు WebP చిత్రాలు మాత్రమే ఆమోదించబడతాయి.',
+    previousLabel: 'మునుపటి',
+    nextLabel: 'తదుపరి',
     useCameraBtn: 'కెమెరా వాడండి',
     chooseFromGalleryBtn: 'గ్యాలరీ నుండి ఎంచుకోండి',
     generateReportBtn: 'నివేదికను రూపొందించండి',
@@ -4654,6 +4683,13 @@ const LANGUAGES = {
     referralMessageCopiedMsg: 'ರೆಫರಲ್ ಸಂದೇಶವನ್ನು ಕ್ಲಿಪ್‌ಬೋರ್ಡ್‌ಗೆ ನಕಲಿಸಲಾಗಿದೆ!',
     referBtnTitle: 'ರೆಫರ್ ಮಾಡಿ & ಆಹ್ವಾನಿಸಿ',
     verificationDocumentLabel: 'ಪರಿಶೀಲನಾ ದಾಖಲೆ',
+    relatedProductsTitle: 'ಸಂಬಂಧಿತ ಉತ್ಪನ್ನಗಳು',
+    shopLogoLabel: 'ಅಂಗಡಿ ಲೋಗೋ',
+    uploadLogoBtn: 'ಲೋಗೋ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ',
+    changeLogoBtn: 'ಲೋಗೋ ಬದಲಾಯಿಸಿ',
+    onlyJpegPngWebpMsg: 'JPEG, PNG ಮತ್ತು WebP ಚಿತ್ರಗಳು ಮಾತ್ರ ಅಂಗೀಕರಿಸಲ್ಪಡುತ್ತವೆ.',
+    previousLabel: 'ಹಿಂದಿನ',
+    nextLabel: 'ಮುಂದಿನ',
     useCameraBtn: 'ಕ್ಯಾಮರಾ ಬಳಸಿ',
     chooseFromGalleryBtn: 'ಗ್ಯಾಲರಿಯಿಂದ ಆಯ್ಕೆಮಾಡಿ',
     generateReportBtn: 'ವರದಿಯನ್ನು ರಚಿಸಿ',
@@ -5528,6 +5564,13 @@ const LANGUAGES = {
     referralMessageCopiedMsg: 'റഫറൽ സന്ദേശം ക്ലിപ്പ്ബോർഡിലേക്ക് പകർത്തി!',
     referBtnTitle: 'റഫർ ചെയ്യുക & ക്ഷണിക്കുക',
     verificationDocumentLabel: 'വെരിഫിക്കേഷൻ ഡോക്യുമെന്റ്',
+    relatedProductsTitle: 'ബന്ധപ്പെട്ട ഉൽപ്പന്നങ്ങൾ',
+    shopLogoLabel: 'ഷോപ്പ് ലോഗോ',
+    uploadLogoBtn: 'ലോഗോ അപ്‌ലോഡ് ചെയ്യുക',
+    changeLogoBtn: 'ലോഗോ മാറ്റുക',
+    onlyJpegPngWebpMsg: 'JPEG, PNG, WebP ചിത്രങ്ങൾ മാത്രമേ സ്വീകരിക്കൂ.',
+    previousLabel: 'മുമ്പത്തേത്',
+    nextLabel: 'അടുത്തത്',
     useCameraBtn: 'ക്യാമറ ഉപയോഗിക്കുക',
     chooseFromGalleryBtn: 'ഗ്യാലറിയിൽ നിന്ന് തിരഞ്ഞെടുക്കുക',
     generateReportBtn: 'റിപ്പോർട്ട് സൃഷ്ടിക്കുക',
@@ -11049,6 +11092,18 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   const [editingId, setEditingId] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // Product Details navigation stack - tapping a product card pushes it;
+  // tapping a Related Product on the details page pushes another level
+  // (so hardware Back steps back through every product visited before
+  // finally returning to this list), rather than replacing the current one.
+  // One useBackHandler registration pops an arbitrary-depth stack one level
+  // at a time (functional update avoids stale-closure issues) - same
+  // pattern used by PublicMobileApp's screenStack.
+  const [detailStack, setDetailStack] = useState([]);
+  useBackHandler(detailStack.length > 0, () => setDetailStack((prev) => prev.slice(0, -1)));
+  const pushDetail = (promo) => setDetailStack((prev) => [...prev, promo]);
+  const popDetail = () => setDetailStack((prev) => prev.slice(0, -1));
+
   // Dashboard "Add Machines" quick action - open the create-listing dialog
   // as soon as this feed mounts, then let the parent clear the one-shot flag.
   useEffect(() => {
@@ -11366,6 +11421,18 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   // fetchPromotions) - no further client-side filtering needed.
   const visiblePromotions = promotions;
 
+  if (detailStack.length > 0) {
+    return (
+      <ProductDetailsView
+        promo={detailStack[detailStack.length - 1]}
+        t={t}
+        api={api}
+        onBack={popDetail}
+        onOpenRelated={pushDetail}
+      />
+    );
+  }
+
   return (
     <div>
       <div className="flex justify-between items-center" style={{ marginTop: 4, marginBottom: 18, gap: 10, flexWrap: 'wrap' }}>
@@ -11445,7 +11512,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
               // room for the Call button, date and Edit/Remove), so the body's
               // normally-fixed height/overflow/truncation are overridden inline
               // to grow with content instead of clipping it.
-              <div key={promo.id} className="pub-card" style={{ cursor: 'default' }}>
+              <div key={promo.id} className="pub-card" style={{ cursor: 'pointer' }} onClick={() => pushDetail(promo)}>
                 <div className="pub-card-media">
                   {promo.imageUrl ? (
                     <img src={cleanGoogleImageUrl(promo.imageUrl)} alt={promo.title} loading="lazy" />
@@ -11470,7 +11537,8 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                     // the native Android app (Capacitor's default WebViewClient
                     // launches an external ACTION_VIEW intent for non-http schemes),
                     // and falls back to the browser's normal tel: handling on web.
-                    <a href={`tel:${promo.phone}`} className="btn btn-primary btn-sm btn-block">
+                    // stopPropagation so tapping Call doesn't also open details.
+                    <a href={`tel:${promo.phone}`} className="btn btn-primary btn-sm btn-block" onClick={(e) => e.stopPropagation()}>
                       <Phone className="h-3.5 w-3.5" />
                       <span>{t('callPrefix')} {promo.phone}</span>
                     </a>
@@ -11484,7 +11552,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                   {canManage(promo) && (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => handleEditClick(promo)}
+                        onClick={(e) => { e.stopPropagation(); handleEditClick(promo); }}
                         className="btn btn-ghost btn-sm btn-block"
                         style={{ whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.2 }}
                       >
@@ -11492,7 +11560,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                         <span>{t('editBtn')}</span>
                       </button>
                       <button
-                        onClick={() => handleDelete(promo.id)}
+                        onClick={(e) => { e.stopPropagation(); handleDelete(promo.id); }}
                         className="btn btn-danger-outline btn-sm btn-block"
                         style={{ whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.2 }}
                       >
@@ -11864,6 +11932,144 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
           <Plus />
         </button>,
         document.body
+      )}
+    </div>
+  );
+}
+
+// Dedicated Product Details page for Shop Admin + Super Admin (both share
+// PromotionsFeed above via its `isSuperAdmin` prop, so this one component
+// covers both surfaces). Read-only - edit/delete stay on the card in the
+// list, not duplicated here. Pushed onto PromotionsFeed's `detailStack`;
+// tapping a Related Product pushes another level rather than replacing this
+// one, so Back steps back through everything visited (see pushDetail/popDetail).
+function ProductDetailsView({ promo, t, api, onBack, onOpenRelated }) {
+  const [related, setRelated] = useState([]);
+  const [loadingRelated, setLoadingRelated] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!promo.productType) { setRelated([]); return; }
+    setLoadingRelated(true);
+    api.getPromotions({ category: promo.productType, type: 'PRODUCT', limit: 7 })
+      .then((res) => {
+        if (cancelled) return;
+        const items = (res.items || res || []).filter((p) => p.id !== promo.id).slice(0, 6);
+        setRelated(items);
+      })
+      .catch(() => { if (!cancelled) setRelated([]); })
+      .finally(() => { if (!cancelled) setLoadingRelated(false); });
+    return () => { cancelled = true; };
+  }, [promo.id, promo.productType]);
+
+  // Address/phone aren't real Shop columns - parsed from the same
+  // companyDetails JSON blob every other screen already reads (see
+  // ShopSettingsView) - CREATOR_INCLUDE now selects it for exactly this.
+  let shopAddress = null;
+  let shopPhone = null;
+  if (promo.shop?.companyDetails) {
+    try {
+      const details = JSON.parse(promo.shop.companyDetails);
+      shopAddress = details.address || null;
+      shopPhone = details.phone || null;
+    } catch { /* not valid JSON - just omit */ }
+  }
+  const shopLocation = [promo.shop?.town, promo.shop?.district].filter(Boolean).join(', ');
+  const images = [...(promo.imageUrls || []), ...(promo.imageUrls?.length ? [] : [promo.imageUrl])]
+    .filter(Boolean)
+    .map(cleanGoogleImageUrl);
+
+  return (
+    <div className="animate-fade-in">
+      <button type="button" onClick={onBack} className="btn btn-ghost btn-sm" style={{ marginBottom: 14 }}>
+        <ArrowLeft className="h-4 w-4" />
+        <span>{t('btnBack')}</span>
+      </button>
+
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <ImageCarousel images={images} t={t} />
+
+        <div style={{ padding: 18 }}>
+          <h1 style={{ fontSize: 19, marginBottom: 6 }}>{promo.title}</h1>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
+            {promo.productType && (
+              <span className="badge" style={{ background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+                <Tag className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} /> {promo.productType}
+              </span>
+            )}
+            {promo.discountPercentage != null && (
+              <span className="badge badge-active">
+                <Percent className="h-3 w-3" style={{ display: 'inline', verticalAlign: '-1px' }} />
+                {promo.discountPercentage}{t('percentOffSuffix')}
+              </span>
+            )}
+          </div>
+
+          <PriceTag price={promo.price} discountPercentage={promo.discountPercentage} offSuffix={t('percentOffSuffix')} />
+
+          {promo.description && (
+            <p style={{ fontSize: 13.5, color: 'var(--text-2)', marginTop: 12, lineHeight: 1.5, wordBreak: 'break-word' }}>{promo.description}</p>
+          )}
+
+          <div className="cell-sub" style={{ fontSize: 11.5, marginTop: 12 }}>
+            <Calendar className="h-3 w-3" style={{ display: 'inline', marginRight: 4, verticalAlign: '-2px' }} />
+            {new Date(promo.createdAt).toLocaleDateString()}
+          </div>
+
+          {/* Shop details block */}
+          <div style={{ marginTop: 18, background: 'var(--card-2)', border: '1px solid var(--border)', borderRadius: 14, padding: 14 }}>
+            <div style={{ fontSize: 10.5, fontWeight: 800, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 8 }}>
+              {t('shopLabel')}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 13.5, marginBottom: shopLocation || shopAddress || shopPhone ? 6 : 0 }}>
+              <Store className="h-3.5 w-3.5" style={{ flexShrink: 0, color: 'var(--text-3)' }} />
+              <span>{promo.shop?.name || t('superAdminIndependentLabel')}</span>
+            </div>
+            {shopLocation && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12.5, color: 'var(--text-2)', marginBottom: 4 }}>
+                <MapPin className="h-3.5 w-3.5" style={{ flexShrink: 0, color: 'var(--text-3)' }} />
+                <span>{shopAddress ? `${shopAddress} · ${shopLocation}` : shopLocation}</span>
+              </div>
+            )}
+            {shopPhone && (
+              <a href={`tel:${shopPhone}`} className="btn btn-primary btn-sm btn-block" style={{ marginTop: 10 }}>
+                <Phone className="h-3.5 w-3.5" />
+                <span>{t('callPrefix')} {shopPhone}</span>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Related Products */}
+      {(loadingRelated || related.length > 0) && (
+        <div style={{ marginTop: 22 }}>
+          <h2 style={{ fontSize: 15, marginBottom: 12 }}>{t('relatedProductsTitle', 'Related Products')}</h2>
+          {loadingRelated ? (
+            <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 100 }}>
+              <RefreshCw className="animate-spin" style={{ width: 22, height: 22, color: 'var(--gold)' }} />
+            </div>
+          ) : (
+            <div className="product-grid stagger-in">
+              {related.map((rp) => (
+                <div key={rp.id} className="pub-card" style={{ cursor: 'pointer' }} onClick={() => onOpenRelated(rp)}>
+                  <div className="pub-card-media">
+                    {rp.imageUrl ? (
+                      <img src={cleanGoogleImageUrl(rp.imageUrl)} alt={rp.title} loading="lazy" />
+                    ) : (
+                      <div className="icon-badge teal"><Package /></div>
+                    )}
+                  </div>
+                  <div className="pub-card-body">
+                    <div className="pub-card-title">{rp.title}</div>
+                    <div className="pub-card-meta"><Store className="h-3 w-3" /><span>{rp.shop?.name || t('superAdminIndependentLabel')}</span></div>
+                    <PriceTag price={rp.price} discountPercentage={rp.discountPercentage} offSuffix={t('percentOffSuffix')} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
@@ -15924,6 +16130,12 @@ function ShopSettingsView({ t, api, shopId }) {
   const [phone, setPhone] = useState('');
   const [verificationDoc, setVerificationDoc] = useState(null);
   const [docUploading, setDocUploading] = useState(false);
+  // Shop's own logo, shown on its public Shop Details page (see
+  // ShopService.uploadLogo) - a single always-current image, not a
+  // versioned document like verificationDoc above, so there's no separate
+  // "remove" flow: uploading again just replaces it.
+  const [logoUrl, setLogoUrl] = useState(null);
+  const [logoUploading, setLogoUploading] = useState(false);
   const [loading, setLoading] = useState(true);
   const [settingsError, setSettingsError] = useState('');
   const [referralCode, setReferralCode] = useState(cachedReferral ? cachedReferral.referralCode : null);
@@ -15986,6 +16198,7 @@ function ShopSettingsView({ t, api, shopId }) {
     try {
       const res = await api.getSettings(shopId);
       setShopName(res.name);
+      setLogoUrl(res.logoUrl || null);
 
       if (res.companyDetails) {
         try {
@@ -16060,6 +16273,28 @@ function ShopSettingsView({ t, api, shopId }) {
       alert(err.message || t('documentUploadFailedMsg'));
     } finally {
       setDocUploading(false);
+    }
+  };
+
+  const handleLogoFileSelected = async (file) => {
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      alert(t('fileSizeExceeds5MBMsg'));
+      return;
+    }
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      alert(t('onlyJpegPngWebpMsg', 'Only JPEG, PNG, and WebP images are accepted.'));
+      return;
+    }
+    setLogoUploading(true);
+    try {
+      const updated = await api.uploadShopLogo(file, shopId);
+      setLogoUrl(updated.logoUrl || null);
+    } catch (err) {
+      alert(err.message || t('documentUploadFailedMsg'));
+    } finally {
+      setLogoUploading(false);
     }
   };
 
@@ -16339,6 +16574,65 @@ function ShopSettingsView({ t, api, shopId }) {
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>{t('registeredAddressLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input type="text" required value={address} onChange={(e) => setAddress(e.target.value)} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Shop Logo Section - shown on the public Shop Details page,
+                  falling back to a category icon when absent (see
+                  PublicShopDetailsScreen). Simpler than the Verification
+                  Document upload below: a single always-current image, no
+                  document "type" concept, upload immediately replaces it. */}
+              <div className="reg-section" style={{ marginBottom: 0 }}>
+                <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 14, padding: 12, display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 320 }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, fontWeight: 800, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
+                    <span className="icon-badge teal" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><ImageIcon style={{ width: 10, height: 10 }} /></span>
+                    {t('shopLogoLabel', 'Shop Logo')}
+                  </span>
+                  {logoUrl ? (
+                    <div style={{ height: 110, width: 110, borderRadius: '50%', overflow: 'hidden', border: '1px solid var(--border-2)', background: '#fff' }}>
+                      <img src={getAssetUrl(logoUrl)} className="w-full h-full object-cover" alt={t('shopLogoLabel', 'Shop Logo')} />
+                    </div>
+                  ) : (
+                    <div style={{ height: 110, width: 110, borderRadius: '50%', border: '1.5px dashed var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)' }}>
+                      <ImageIcon style={{ width: 24, height: 24 }} />
+                    </div>
+                  )}
+                  <div className="flex gap-2">
+                    {IS_NATIVE_APP && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
+                            const photo = await Camera.getPhoto({ resultType: CameraResultType.Uri, source: CameraSource.Camera, quality: 85 });
+                            const response = await fetch(photo.webPath);
+                            const blob = await response.blob();
+                            const file = new File([blob], `shop_logo.${photo.format || 'jpg'}`, { type: blob.type || 'image/jpeg' });
+                            await handleLogoFileSelected(file);
+                          } catch (err) {
+                            if (err && err.message && !/cancell?ed/i.test(err.message)) {
+                              alert(err.message || t('documentUploadFailedMsg'));
+                            }
+                          }
+                        }}
+                        disabled={logoUploading}
+                        className="btn btn-ghost btn-sm"
+                        style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', opacity: logoUploading ? 0.6 : 1 }}
+                      >
+                        <Camera style={{ width: 12, height: 12 }} />
+                        <span>{t('useCameraBtn')}</span>
+                      </button>
+                    )}
+                    <label className="btn btn-ghost btn-sm" style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', cursor: logoUploading ? 'not-allowed' : 'pointer', opacity: logoUploading ? 0.6 : 1 }}>
+                      {logoUploading ? <RefreshCw className="animate-spin" style={{ width: 12, height: 12 }} /> : <Upload style={{ width: 12, height: 12 }} />}
+                      <span>{logoUploading ? t('uploadingEllipsisLabel') : (logoUrl ? t('changeLogoBtn', 'Change Logo') : t('uploadLogoBtn', 'Upload Logo'))}</span>
+                      <input
+                        type="file" accept="image/jpeg,image/png,image/webp" className="hidden" disabled={logoUploading}
+                        onClick={primeStoragePermission}
+                        onChange={(e) => { const file = e.target.files[0]; e.target.value = ''; handleLogoFileSelected(file); }}
+                      />
+                    </label>
                   </div>
                 </div>
               </div>

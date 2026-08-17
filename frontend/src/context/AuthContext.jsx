@@ -500,6 +500,17 @@ export const AuthProvider = ({ children }) => {
       return request(`/api/shop/settings/documents/${id}${qs}`, 'DELETE');
     },
 
+    // Uploads (and immediately persists) the shop's logo, shown on its
+    // public Shop Details page - see ShopService.uploadLogo. Unlike the
+    // verification documents above, this isn't a versioned document row;
+    // returns the updated shop record (data.logoUrl is the new URL).
+    uploadShopLogo: async (file, shopId) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      const qs = shopId ? `?shopId=${encodeURIComponent(shopId)}` : '';
+      return request(`/api/shop/settings/logo/upload${qs}`, 'POST', formData, true);
+    },
+
     // Idempotent - returns the shop's existing referralCode if one was
     // already generated, otherwise mints a new one (see ShopService.getOrCreateReferralCode).
     generateReferralCode: async (shopId) => {

@@ -16,7 +16,12 @@ const PRODUCT_MAX_VALIDITY_DAYS = 30;
 // shop admin (creator) name, in addition to the raw shopId/createdById FKs.
 // Also surfaces the linked product/ad title for OFFER listings.
 const CREATOR_INCLUDE = {
-  shop: { select: { id: true, name: true } },
+  // town/district/companyDetails power the Product Details page's "shop
+  // details" block (phone/address parsed client-side from companyDetails,
+  // same pattern already used in ShopSettingsView) - safe here since this
+  // include is only ever used on the authenticated shop-admin/super-admin
+  // feed, not the public one (see PUBLIC_PROMOTION_SELECT below).
+  shop: { select: { id: true, name: true, town: true, district: true, companyDetails: true } },
   createdBy: { select: { id: true, name: true, email: true } },
   linkedPromotion: { select: { id: true, title: true, type: true } },
 };

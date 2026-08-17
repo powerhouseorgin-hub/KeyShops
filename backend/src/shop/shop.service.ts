@@ -235,7 +235,7 @@ export class ShopService {
   // documents), used by both the unpaginated and cursor-paginated return paths.
   private mapPublicShop(shop: {
     id: string; name: string; themeColor: string; companyDetails: string | null;
-    town: string | null; district: string | null;
+    town: string | null; district: string | null; logoUrl: string | null;
     category: { name: string } | null;
   }) {
     let address: string | null = null;
@@ -265,6 +265,10 @@ export class ShopService {
       // location badge.
       town: shop.town || null,
       district: shop.district || null,
+      // Shop's own uploaded logo/photo (see ShopService.uploadLogo) - null
+      // for most existing shops that predate this field; callers fall back
+      // to a category icon when this is absent.
+      logoUrl: shop.logoUrl || null,
       category: shop.category?.name || null,
     };
   }
@@ -349,6 +353,7 @@ export class ShopService {
       companyDetails: true,
       town: true,
       district: true,
+      logoUrl: true,
       createdAt: true,
       category: { select: { name: true } },
     };
@@ -387,7 +392,7 @@ export class ShopService {
     const shop = await this.tenantService.prisma.shop.findFirst({
       where: { id, isActive: true },
       select: {
-        id: true, name: true, themeColor: true, companyDetails: true, town: true, district: true,
+        id: true, name: true, themeColor: true, companyDetails: true, town: true, district: true, logoUrl: true,
         createdAt: true, category: { select: { name: true } },
       },
     });
@@ -415,6 +420,23 @@ export class ShopService {
     return this.tenantService.prisma.shop.update({
       where: { id: shopId },
       data: dto,
+    });
+  }
+
+  // SHOP ADMIN: Upload/replace the shop's logo - a single always-current
+  // image (unlike ShopDocument rows below, which are versioned/verifiable
+  // documents), so this just overwrites Shop.logoUrl directly rather than
+  // soft-deleting a prior row. Long-lived URL via uploadLongLivedFile, same
+  // pattern as PromotionService.uploadImage.
+  async uploadLogo(shopId: string, file: { originalname: string; buffer: Buffer }) {
+    const shop = await this.tenantService.prisma.shop.findUnique({ where: { id: shopId } });
+    if (!shop) throw new NotFoundException('Shop not found');
+
+    const { fileUrl } = await this.fileService.uploadLongLivedFile(file.originalname, file.buffer, shopId);
+
+    return this.tenantService.prisma.shop.update({
+      where: { id: shopId },
+      data: { logoUrl: fileUrl },
     });
   }
 

@@ -11,6 +11,7 @@ import PriceTag from './PriceTag';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import { categoryImage } from '../utils/categoryIcon';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
+import ImageCarousel from './ImageCarousel';
 
 // Mirrors App.jsx's TERMS_AND_CONDITIONS_TITLE/BODY - duplicated rather than
 // imported since App.jsx isn't a module other components import from
@@ -686,44 +687,79 @@ function PublicNavDrawer({ open, onClose, onNavigate }) {
   );
 }
 
-function PublicShopDetailsScreen({ api, shopId, onBack, onOpenMachine }) {
+function PublicShopDetailsScreen({ api, shopId, onBack, onOpenMachine, onOpenShop }) {
   const [shop, setShop] = useState(null);
   const [error, setError] = useState(false);
+  const [related, setRelated] = useState(null);
   useBackHandler(true, onBack);
 
   useEffect(() => {
     let cancelled = false;
     setShop(null);
     setError(false);
+    setRelated(null);
     api.getPublicShopById(shopId).then((res) => { if (!cancelled) setShop(res); }).catch(() => { if (!cancelled) setError(true); });
     return () => { cancelled = true; };
   }, [shopId]);
+
+  // "Related Shops" strip - other shops sharing this one's category, same
+  // pattern as PublicMachineDetailsScreen's Related Products below.
+  useEffect(() => {
+    if (!shop) return;
+    if (!shop.category) { setRelated([]); return; }
+    let cancelled = false;
+    api.searchPublicShops({ category: shop.category, limit: 7 })
+      .then((res) => { if (!cancelled) setRelated((res.items || []).filter((s) => s.id !== shop.id).slice(0, 6)); })
+      .catch(() => { if (!cancelled) setRelated([]); });
+    return () => { cancelled = true; };
+  }, [shop]);
 
   return (
     <div className="public-mobile-tab">
       <button type="button" className="btn btn-ghost btn-sm" onClick={onBack}><ChevronLeft className="h-4 w-4" /> Back</button>
       {!shop && !error ? <LoadingState /> : error ? <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." /> : (
-        <div className="card public-shop-card" style={{ marginTop: 14 }}>
-          <div className="public-shop-card-top">
-            <div className="icon-badge blue"><Store /></div>
-            <div>
-              <h3>{shop.name}</h3>
+        <>
+          <div className="card public-shop-card" style={{ marginTop: 14 }}>
+            <div className="public-shop-card-top">
+              {shop.logoUrl ? (
+                <div style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1px solid var(--border-2)' }}>
+                  <img src={shop.logoUrl} alt="" className="w-full h-full object-cover" />
+                </div>
+              ) : shop.category ? (
+                <div style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--card-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src={categoryImage(shop.category)} alt="" style={{ width: 26, height: 26, objectFit: 'contain' }} />
+                </div>
+              ) : (
+                <div className="icon-badge blue"><Store /></div>
+              )}
+              <div>
+                <h3>{shop.name}</h3>
+              </div>
             </div>
-          </div>
-          {shop.category && <div className="public-shop-meta"><Tag className="h-3.5 w-3.5" /> {shop.category}</div>}
-          {shop.address && <div className="public-shop-meta"><MapPin className="h-3.5 w-3.5" /> {shop.address}</div>}
-          {shop.phone && <div className="public-shop-meta"><Phone className="h-3.5 w-3.5" /> <a href={`tel:${shop.phone}`}>{shop.phone}</a></div>}
-          {shop.website && <div className="public-shop-meta"><Globe className="h-3.5 w-3.5" /> <a href={safeUrl(shop.website)} target="_blank" rel="noreferrer">{shop.website}</a></div>}
+            {shop.category && <div className="public-shop-meta"><Tag className="h-3.5 w-3.5" /> {shop.category}</div>}
+            {shop.address && <div className="public-shop-meta"><MapPin className="h-3.5 w-3.5" /> {shop.address}</div>}
+            {shop.phone && <div className="public-shop-meta"><Phone className="h-3.5 w-3.5" /> <a href={`tel:${shop.phone}`}>{shop.phone}</a></div>}
+            {shop.website && <div className="public-shop-meta"><Globe className="h-3.5 w-3.5" /> <a href={safeUrl(shop.website)} target="_blank" rel="noreferrer">{shop.website}</a></div>}
 
-          {shop.products && shop.products.length > 0 && (
-            <div style={{ marginTop: 18 }}>
-              <h4 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>Machines/products available</h4>
+            {shop.products && shop.products.length > 0 && (
+              <div style={{ marginTop: 18 }}>
+                <h4 style={{ fontSize: 13, fontWeight: 800, marginBottom: 10 }}>Machines/products available</h4>
+                <div className="pub-card-grid">
+                  {shop.products.map((m) => <PublicMachineCard key={m.id} item={m} onOpen={onOpenMachine} />)}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {related && related.length > 0 && (
+            <div className="public-mobile-section" style={{ marginTop: 20 }}>
+              <div className="public-mobile-section-head"><h3>Related Shops</h3></div>
               <div className="pub-card-grid">
-                {shop.products.map((m) => <PublicMachineCard key={m.id} item={m} onOpen={onOpenMachine} />)}
+                {related.map((s) => <PublicShopCard key={s.id} shop={s} onOpen={onOpenShop} />)}
               </div>
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
@@ -763,9 +799,15 @@ function PublicMachineDetailsScreen({ api, machineId, onBack, onOpenMachine }) {
       {!item && !error ? <LoadingState /> : error ? <EmptyState icon={RefreshCw} text="Unable to load data. Please try again." /> : (
         <>
           <div className="card" style={{ marginTop: 12, padding: 14 }}>
-            <div className="pub-card-media" style={{ height: 170, borderRadius: 14, marginBottom: 12 }}>
-              {item.imageUrl ? <img src={item.imageUrl} alt={item.title} /> : <Package className="h-10 w-10" />}
-            </div>
+            {(item.imageUrls?.length || item.imageUrl) ? (
+              <div style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 12 }}>
+                <ImageCarousel images={item.imageUrls?.length ? item.imageUrls : [item.imageUrl]} />
+              </div>
+            ) : (
+              <div className="pub-card-media" style={{ height: 170, borderRadius: 14, marginBottom: 12 }}>
+                <Package className="h-10 w-10" />
+              </div>
+            )}
             <h3 style={{ marginBottom: 4 }}>{item.title}</h3>
             {item.productType && <div className="public-shop-meta" style={{ marginTop: 2 }}><Tag className="h-3.5 w-3.5" /> {item.productType}</div>}
             {item.shop?.name && <div className="public-shop-meta" style={{ marginTop: 4 }}><Store className="h-3.5 w-3.5" /> {item.shop.name}</div>}
@@ -935,6 +977,18 @@ export function PublicBottomNav({ activeTab, onGoTab, onAddAds }) {
 export default function PublicMobileApp({ api, onLogin, initialTab }) {
   const [publicTab, setPublicTab] = useState(initialTab || 'home');
   const [screen, setScreen] = useState({ type: 'tab' });
+  // Shop/Machine detail navigation stack - tapping a shop/machine card
+  // pushes it; tapping a Related Shop/Product on a detail screen pushes
+  // another level (so Back steps back through everything visited before
+  // finally returning to the tab underneath), rather than replacing the
+  // current one. Kept separate from `screen` above (which still handles
+  // the simple non-stacked terms/feedback static screens) so the
+  // Shops/Machines tab components below never get unmounted while this is
+  // non-empty - see the `<main>` render below, where they stay mounted and
+  // the top-of-stack detail renders as an overlay on top of them instead of
+  // replacing them, which is what preserves their search/filter/scroll
+  // state across an open-detail-then-Back round trip.
+  const [detailStack, setDetailStack] = useState([]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showAddAdsPrompt, setShowAddAdsPrompt] = useState(false);
@@ -953,13 +1007,19 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
   // a detail screen first, then a subsequent Back returns Shops/Machines/My
   // Ads to Home, and only then (empty stack) does the standard Android
   // double-back-to-exit behavior take over.
-  useBackHandler(publicTab !== 'home' && screen.type === 'tab' && !searchOpen, () => setPublicTab('home'));
+  useBackHandler(publicTab !== 'home' && screen.type === 'tab' && detailStack.length === 0 && !searchOpen, () => setPublicTab('home'));
+  // One registration pops an arbitrary-depth stack one level at a time
+  // (functional update avoids stale-closure issues) - same pattern used by
+  // PromotionsFeed's detailStack in App.jsx.
+  useBackHandler(detailStack.length > 0, () => setDetailStack((prev) => prev.slice(0, -1)));
 
-  const openShop = (id) => setScreen({ type: 'shop', id });
-  const openMachine = (id) => setScreen({ type: 'machine', id });
+  const openShop = (id) => setDetailStack((prev) => [...prev, { type: 'shop', id }]);
+  const openMachine = (id) => setDetailStack((prev) => [...prev, { type: 'machine', id }]);
+  const popDetail = () => setDetailStack((prev) => prev.slice(0, -1));
   const backToTab = () => setScreen({ type: 'tab' });
   const goTab = (tab, categoryHint) => {
     setScreen({ type: 'tab' });
+    setDetailStack([]);
     setTabCategoryHint(categoryHint || '');
     setPublicTab(tab);
   };
@@ -971,11 +1031,7 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
   };
 
   let body;
-  if (screen.type === 'shop') {
-    body = <PublicShopDetailsScreen api={api} shopId={screen.id} onBack={backToTab} onOpenMachine={openMachine} />;
-  } else if (screen.type === 'machine') {
-    body = <PublicMachineDetailsScreen api={api} machineId={screen.id} onBack={backToTab} onOpenMachine={openMachine} />;
-  } else if (screen.type === 'terms') {
+  if (screen.type === 'terms') {
     body = <PublicStaticInfoScreen icon={FileText} color="var(--blue)" title="Terms & Conditions" body={TERMS_AND_CONDITIONS_BODY} onBack={backToTab} />;
   } else if (screen.type === 'feedback') {
     body = <PublicFeedbackScreen api={api} onBack={backToTab} />;
@@ -989,10 +1045,27 @@ export default function PublicMobileApp({ api, onLogin, initialTab }) {
     body = <PublicHomeTab api={api} onOpenShop={openShop} onOpenMachine={openMachine} onGoTab={goTab} />;
   }
 
+  const topDetail = detailStack.length > 0 ? detailStack[detailStack.length - 1] : null;
+
   return (
     <div className="public-mobile-app">
       <PublicTopBar onSearch={() => setSearchOpen(true)} onLogin={onLogin} onMenu={() => setMenuOpen(true)} />
       <main className="public-mobile-main">{body}</main>
+      {topDetail && (
+        // position:fixed (not absolute-within-main) so this sits above
+        // everything - including the bottom nav, reading as a proper
+        // dedicated page - the same "escape any ancestor's layout"
+        // approach already used by PublicAdViewer below. Rendered as a
+        // sibling of <main>, not inside it, so the tab body above stays
+        // mounted (and its search/filter/scroll state intact) underneath.
+        <div className="pub-detail-overlay">
+          {topDetail.type === 'shop' ? (
+            <PublicShopDetailsScreen api={api} shopId={topDetail.id} onBack={popDetail} onOpenMachine={openMachine} onOpenShop={openShop} />
+          ) : (
+            <PublicMachineDetailsScreen api={api} machineId={topDetail.id} onBack={popDetail} onOpenMachine={openMachine} />
+          )}
+        </div>
+      )}
       <PublicBottomNav activeTab={publicTab} onGoTab={goTab} onAddAds={() => setShowAddAdsPrompt(true)} />
       {searchOpen && <PublicSearchOverlay api={api} onClose={() => setSearchOpen(false)} onOpenShop={openShop} onOpenMachine={openMachine} />}
       <PublicNavDrawer open={menuOpen} onClose={() => setMenuOpen(false)} onNavigate={openStatic} />

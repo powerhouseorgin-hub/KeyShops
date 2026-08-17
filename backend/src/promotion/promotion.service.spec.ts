@@ -36,7 +36,7 @@ describe('PromotionService', () => {
         OR: [{ validUntil: null }, { validUntil: { gte: expect.any(Date) } }],
       });
       expect(callArgs.orderBy).toEqual({ createdAt: 'desc' });
-      expect(callArgs.include.shop).toEqual({ select: { id: true, name: true } });
+      expect(callArgs.include.shop).toEqual({ select: { id: true, name: true, town: true, district: true, companyDetails: true } });
       expect(callArgs.include.createdBy).toEqual({ select: { id: true, name: true, email: true } });
       expect(callArgs.include.linkedPromotion).toEqual({ select: { id: true, title: true, type: true } });
     });
@@ -75,7 +75,7 @@ describe('PromotionService', () => {
           createdById: 'user-1',
         },
         include: {
-          shop: { select: { id: true, name: true } },
+          shop: { select: { id: true, name: true, town: true, district: true, companyDetails: true } },
           createdBy: { select: { id: true, name: true, email: true } },
           linkedPromotion: { select: { id: true, title: true, type: true } },
         },

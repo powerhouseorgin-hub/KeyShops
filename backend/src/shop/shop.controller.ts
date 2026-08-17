@@ -124,6 +124,27 @@ export class ShopController {
     return this.shopService.deleteShopDocument(this.resolveShopId(req, shopId), id);
   }
 
+  // Shop's own logo/photo, shown on its public Shop Details page (see
+  // ShopService.mapPublicShop). Unlike the verification document above,
+  // this is a single always-current image (not a versioned/verifiable
+  // document row) - upload directly overwrites Shop.logoUrl.
+  @Post('shop/settings/logo/upload')
+  @Roles(Role.SHOP_ADMIN, Role.SUPER_ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadShopLogo(@Request() req, @Query('shopId') shopId: string, @UploadedFile() file: any) {
+    if (!file) {
+      throw new BadRequestException('A file is required');
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      throw new BadRequestException('File size exceeds the 5MB limit');
+    }
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedMimeTypes.includes(file.mimetype)) {
+      throw new BadRequestException('Only JPEG, PNG, and WebP images are accepted');
+    }
+    return this.shopService.uploadLogo(this.resolveShopId(req, shopId), file);
+  }
+
   @Post('shop/settings/referral')
   @Roles(Role.SHOP_ADMIN, Role.SUPER_ADMIN)
   async generateReferralCode(@Request() req, @Query('shopId') shopId?: string) {

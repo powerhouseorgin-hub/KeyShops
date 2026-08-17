@@ -1957,6 +1957,21 @@ select.sel:focus { border-color: var(--gold); }
   max-width: 720px; margin: 0 auto; width: 100%; box-sizing: border-box;
 }
 .public-mobile-tab { animation: fadeIn .2s ease; }
+
+/* Shop/Machine Details "page" (see PublicMobileApp's detailStack) - a
+   proper full-screen page over everything (topbar, bottom nav included),
+   not just the tab content area, matching the dedicated-page framing the
+   in-app Back button already implies. position:fixed (not absolute-inside-
+   main) so the Shops/Machines tab underneath stays mounted and keeps its
+   search/filter/scroll state intact for when this closes - see the FAB
+   overlap fix elsewhere in this app for why fixed positioning (not a
+   transformed ancestor's containing block) is what makes that reliable. */
+.pub-detail-overlay {
+  position: fixed; inset: 0; z-index: 45;
+  background: var(--bg-0); overflow-y: auto;
+  padding: 16px; padding-top: calc(16px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+}
 .pub-page-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
 .pub-page-header-icon {
   width: 40px; height: 40px; border-radius: 13px; color: #fff; flex-shrink: 0;
@@ -2217,3 +2232,86 @@ select.sel:focus { border-color: var(--gold); }
 @media (max-width: 480px) {
   .public-mobile-hcard { flex-basis: 220px; }
 }
+
+/* ============================================================
+   Shared Image Zoom Viewer (ImageZoomViewer.jsx) - Amazon-style
+   full-screen swipe/pinch-zoom/pan image viewer. Used by both the
+   authenticated app (Product Details) and the pre-login app (product/
+   machine detail screens), so it's deliberately unstyled by either
+   surface's own design system (.card/.btn vs .pub-*) - just enough
+   chrome to be legible over any photo. Highest z-index in the app
+   (above .pub-modal-backdrop's 100010) since it can be opened from
+   inside any other overlay/detail screen. */
+.img-zoom-viewer {
+  position: fixed; inset: 0; z-index: 100020;
+  background: #000; overflow: hidden;
+  touch-action: none;
+  display: flex; align-items: center; justify-content: center;
+}
+.img-zoom-track {
+  display: flex; width: 100%; height: 100%; will-change: transform;
+}
+.img-zoom-slide {
+  flex: 0 0 100%; width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.img-zoom-slide img {
+  max-width: 100%; max-height: 100%; object-fit: contain;
+  user-select: none; -webkit-user-drag: none; will-change: transform;
+}
+.img-zoom-close {
+  position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); right: 16px; z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,0.14); color: #fff;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.img-zoom-close svg { width: 20px; height: 20px; }
+.img-zoom-counter {
+  position: absolute; top: calc(20px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: 2;
+  color: #fff; font-size: 12.5px; font-weight: 700; background: rgba(255,255,255,0.14);
+  padding: 4px 12px; border-radius: 999px;
+}
+.img-zoom-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 40px; height: 40px; border-radius: 50%; border: none;
+  background: rgba(255,255,255,0.14); color: #fff;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.img-zoom-nav svg { width: 22px; height: 22px; }
+.img-zoom-nav-prev { left: 12px; }
+.img-zoom-nav-next { right: 12px; }
+@media (max-width: 640px) {
+  .img-zoom-nav { display: none; } /* swipe is the primary gesture on touch devices */
+}
+
+/* ============================================================
+   Shared Image Carousel (ImageCarousel.jsx) - a Product/Shop Details
+   page's photo strip. CSS scroll-snap, no JS animation loop (unlike
+   AdCarousel, which auto-advances/loops) - the user pages it directly.
+   Same "unstyled enough for either surface" approach as .img-zoom-*
+   above; callers set a height via the `className` prop if the default
+   doesn't fit (e.g. a shorter strip on a compact card). */
+.img-carousel { position: relative; width: 100%; }
+.img-carousel-single, .img-carousel-slide {
+  width: 100%; aspect-ratio: 4 / 3; background: var(--card-2, #f4f1ec);
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.img-carousel-single img, .img-carousel-slide img {
+  width: 100%; height: 100%; object-fit: cover; cursor: zoom-in;
+}
+.img-carousel-track {
+  display: flex; width: 100%; overflow-x: auto; scroll-snap-type: x mandatory;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.img-carousel-track::-webkit-scrollbar { display: none; }
+.img-carousel-slide { flex: 0 0 100%; scroll-snap-align: center; }
+.img-carousel-dots {
+  position: absolute; bottom: 10px; left: 0; right: 0; z-index: 1;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.img-carousel-dot {
+  width: 6px; height: 6px; border-radius: 50%; border: none; padding: 0;
+  background: rgba(255,255,255,0.55); cursor: pointer; transition: transform .15s ease, background .15s ease;
+}
+.img-carousel-dot.active { background: #fff; transform: scale(1.35); }
