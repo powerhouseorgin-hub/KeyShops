@@ -8563,7 +8563,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // already-fully-loaded list.
   const [shopSearchQuery, setShopSearchQuery] = useState('');
   const [debouncedShopSearchQuery, setDebouncedShopSearchQuery] = useState('');
-  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
+  const [town, setTown, filterReady] = useLocationFilter(defaultTown, locationReady);
   useEffect(() => {
     const handle = setTimeout(() => setDebouncedShopSearchQuery(shopSearchQuery.trim()), 300);
     return () => clearTimeout(handle);
@@ -8716,14 +8716,16 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // before firing the very first fetch - otherwise this would fetch with an
   // unresolved '' town immediately on mount, then re-fetch and swap results
   // once the GPS default arrives, flickering between all-location and
-  // location-filtered results (see App()'s locationReady for the full
-  // rationale). A bare revisit still renders the cached first page (see
-  // `shopsFirstPageCache` above) regardless, since locationReady is already
-  // true by then.
+  // location-filtered results. Deliberately `filterReady` (useLocationFilter's
+  // 3rd return value), not the raw `locationReady` prop - see that hook's
+  // comment for why gating on `locationReady` alone still let one fetch
+  // through with a stale '' town. A bare revisit still renders the cached
+  // first page (see `shopsFirstPageCache` above) regardless, since
+  // filterReady is already true by then.
   useEffect(() => {
-    if (!locationReady) return;
+    if (!filterReady) return;
     fetchShops();
-  }, [debouncedShopSearchQuery, town, locationReady]);
+  }, [debouncedShopSearchQuery, town, filterReady]);
 
   useEffect(() => {
     const node = loadMoreSentinelRef.current;
@@ -11192,7 +11194,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   // keystroke.
   const [textQuery, setTextQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
+  const [town, setTown, filterReady] = useLocationFilter(defaultTown, locationReady);
   useEffect(() => {
     const handle = setTimeout(() => setDebouncedQuery(textQuery.trim()), 300);
     return () => clearTimeout(handle);
@@ -11278,13 +11280,14 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   };
 
   // Re-fetch page 1 whenever a filter changes (also covers the initial
-  // mount-time load). Waits for locationReady first - see App()'s
-  // locationReady state for why the very first fetch must not fire with an
+  // mount-time load). Waits for `filterReady` (useLocationFilter's 3rd
+  // return value), not the raw `locationReady` prop, first - see that
+  // hook's comment for why the very first fetch must not fire with an
   // unresolved '' town.
   useEffect(() => {
-    if (!locationReady) return;
+    if (!filterReady) return;
     fetchPromotions();
-  }, [categoryFilter, debouncedQuery, onlyOffers, town, locationReady]);
+  }, [categoryFilter, debouncedQuery, onlyOffers, town, filterReady]);
 
   // Infinite scroll: fetch the next page as soon as the sentinel div at the
   // bottom of the grid scrolls into view. Re-observing on every relevant
@@ -12285,23 +12288,25 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTo
   const [dealers, setDealers] = useState(cachedDealers || []);
   const [loading, setLoading] = useState(!cachedDealers);
   const [query, setQuery] = useState('');
-  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
+  const [town, setTown, filterReady] = useLocationFilter(defaultTown, locationReady);
 
   // Debounced (350ms, matching Blank Key Search) - this previously fired a
   // fresh request (and blanked the list to a spinner) on every keystroke,
   // with no debounce at all. `town` is a discrete dropdown pick rather than
   // free typing, so it doesn't strictly need debouncing, but riding the same
   // effect keeps this simple and the added latency is imperceptible.
-  // Also waits for locationReady before the very first fetch - see App()'s
-  // locationReady state for the full "no flicker" rationale.
+  // Also waits for `filterReady` (useLocationFilter's 3rd return value),
+  // not the raw `locationReady` prop, before the very first fetch - see
+  // that hook's comment for the full "no flicker, no stale intermediate
+  // fetch" rationale.
   useEffect(() => {
-    if (!locationReady) return;
+    if (!filterReady) return;
     const timer = setTimeout(() => {
       fetchDealers();
     }, 350);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, town, categoryKey, locationReady]);
+  }, [query, town, categoryKey, filterReady]);
 
   const fetchDealers = async () => {
     // Only blank to a spinner when there's nothing on screen yet - a bare
@@ -12491,7 +12496,7 @@ function DealersView({ t, api, defaultTown, locationReady }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [query, setQuery] = useState('');
-  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
+  const [town, setTown, filterReady] = useLocationFilter(defaultTown, locationReady);
   // Debounced before it reaches the server - see PromotionsFeed's identical
   // pattern for why (every change now triggers a network request).
   const [debouncedQuery, setDebouncedQuery] = useState('');
@@ -12546,12 +12551,12 @@ function DealersView({ t, api, defaultTown, locationReady }) {
     }
   };
 
-  // Waits for locationReady before the very first fetch - see
+  // Waits for `filterReady` before the very first fetch - see
   // ShopsManagementView's identical guard for the full rationale.
   useEffect(() => {
-    if (!locationReady) return;
+    if (!filterReady) return;
     fetchDealers();
-  }, [debouncedQuery, town, locationReady]);
+  }, [debouncedQuery, town, filterReady]);
 
   useEffect(() => {
     const node = loadMoreSentinelRef.current;

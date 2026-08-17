@@ -326,14 +326,17 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory, defaultT
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
-  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
+  const [town, setTown, filterReady] = useLocationFilter(defaultTown, locationReady);
 
-  // Waits for locationReady (GPS permission/coordinate resolution to finish)
-  // before firing the very first fetch - `items` stays null (skeleton grid
-  // below) until then, instead of fetching all-location results immediately
-  // and flickering to location-filtered results once GPS resolves.
+  // Waits for `filterReady` (useLocationFilter's 3rd return value - GPS
+  // permission/coordinate resolution finished AND `town` already reflects
+  // its resolved default) before firing the very first fetch - `items`
+  // stays null (skeleton grid below) until then. Gating on the raw
+  // `locationReady` prop instead would still let one fetch through with a
+  // stale '' town before `town` catches up - see useLocationFilter's
+  // comment for why.
   const fetchFirst = () => {
-    if (!locationReady) return;
+    if (!filterReady) return;
     setItems(null);
     setError(false);
     api.searchPublicShops({ category, town, limit: 20 })
@@ -341,7 +344,7 @@ function PublicShopsTab({ api, categories, onOpenShop, initialCategory, defaultT
       .catch(() => setError(true));
   };
 
-  useEffect(fetchFirst, [category, town, locationReady]);
+  useEffect(fetchFirst, [category, town, filterReady]);
 
   const loadMore = () => {
     if (!nextCursor || loadingMore) return;
@@ -399,12 +402,12 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory, 
   const [nextCursor, setNextCursor] = useState(null);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(false);
-  const [town, setTown] = useLocationFilter(defaultTown, locationReady);
+  const [town, setTown, filterReady] = useLocationFilter(defaultTown, locationReady);
 
-  // Waits for locationReady before the very first fetch - see
+  // Waits for `filterReady` before the very first fetch - see
   // PublicShopsTab's identical guard for the full rationale.
   const fetchFirst = () => {
-    if (!locationReady) return;
+    if (!filterReady) return;
     setItems(null);
     setError(false);
     api.getPublicMachines({ category, town, limit: 20 })
@@ -412,7 +415,7 @@ function PublicMachinesTab({ api, productTypes, onOpenMachine, initialCategory, 
       .catch(() => setError(true));
   };
 
-  useEffect(fetchFirst, [category, town, locationReady]);
+  useEffect(fetchFirst, [category, town, filterReady]);
 
   const loadMore = () => {
     if (!nextCursor || loadingMore) return;
