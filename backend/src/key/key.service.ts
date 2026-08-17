@@ -78,10 +78,16 @@ export class KeyService {
     };
 
     if (!limit) {
+      // Unlike getShopKeys below, this branch used to have no cap at all -
+      // but it's platform-wide (every shop's key catalog combined) and hit
+      // by the same high-frequency, per-keystroke call sites (global header
+      // search, Blank Key Search, Customer Registration's key dropdown), so
+      // it has the exact same unbounded-growth risk. Same defensive 500 cap.
       return this.tenantService.prisma.masterKey.findMany({
         where: whereClause,
         orderBy: { keyNumber: 'asc' },
         include,
+        take: 500,
       });
     }
 

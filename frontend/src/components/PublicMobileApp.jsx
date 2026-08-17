@@ -853,14 +853,22 @@ function PublicSearchOverlay({ api, onClose, onOpenShop, onOpenMachine }) {
   const [q, setQ] = useState('');
   const [results, setResults] = useState(null);
   const [error, setError] = useState(false);
+  // Bumped on every search fired; a response is only applied if it's still
+  // the most recent one requested - otherwise a slower response for an
+  // earlier keystroke can resolve after a faster one and overwrite the list
+  // with results for a query the search box no longer shows.
+  const searchTokenRef = useRef(0);
   useBackHandler(true, onClose);
 
   useEffect(() => {
     const query = q.trim();
+    const token = ++searchTokenRef.current;
     if (!query) { setResults(null); setError(false); return; }
     setError(false);
     const timer = setTimeout(() => {
-      api.getPublicSearch(query).then(setResults).catch(() => setError(true));
+      api.getPublicSearch(query)
+        .then((res) => { if (token === searchTokenRef.current) setResults(res); })
+        .catch(() => { if (token === searchTokenRef.current) setError(true); });
     }, 300);
     return () => clearTimeout(timer);
   }, [q]);

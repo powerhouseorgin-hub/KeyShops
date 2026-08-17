@@ -13009,6 +13009,12 @@ function KeysSearchView({ t, api, searchDispatch }) {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
   const [selectedResult, setSelectedResult] = useState(null);
+  // Bumped on every search fired; a response is only applied if it's still
+  // the most recent one requested. Without this, a slower response for an
+  // earlier keystroke (e.g. "hon") can resolve after a faster response for a
+  // later one (e.g. "honda") and overwrite the list with stale results while
+  // the search box already shows the newer query.
+  const searchTokenRef = useRef(0);
 
   // Debounced (350ms, matching the dashboard's global search) so typing a
   // query doesn't fire a fresh fetch on every keystroke.
@@ -13028,6 +13034,7 @@ function KeysSearchView({ t, api, searchDispatch }) {
   }, [searchDispatch?.nonce]);
 
   const performSearch = async () => {
+    const token = ++searchTokenRef.current;
     setLoading(true);
     try {
       // Every result is a customer registration with a key code, scoped to
@@ -13036,12 +13043,14 @@ function KeysSearchView({ t, api, searchDispatch }) {
       // param) - there's no separate "key blank with no customer" concept
       // to cross-reference anymore, so this is a single direct fetch.
       const res = await api.getShopKeysCatalogue({ search: query });
+      if (token !== searchTokenRef.current) return;
       setResults(res);
     } catch (e) {
+      if (token !== searchTokenRef.current) return;
       console.error(e);
       setResults([]);
     } finally {
-      setLoading(false);
+      if (token === searchTokenRef.current) setLoading(false);
     }
   };
 

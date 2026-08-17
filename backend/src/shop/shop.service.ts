@@ -208,25 +208,29 @@ export class ShopService {
     const shop = await this.tenantService.prisma.shop.findUnique({ where: { id: shopId } });
     if (!shop) throw new NotFoundException('Shop not found');
 
-    // End current active subscriptions
-    await this.tenantService.prisma.subscription.updateMany({
-      where: { shopId, status: 'ACTIVE' },
-      data: { status: 'EXPIRED' },
-    });
-
     const startDate = new Date();
     const endDate = new Date(startDate);
     endDate.setFullYear(endDate.getFullYear() + 1);
 
-    // Create new subscription record
-    return this.tenantService.prisma.subscription.create({
-      data: {
-        shopId,
-        plan: 'YEARLY',
-        status: dto.status,
-        startDate,
-        endDate,
-      },
+    // Expiring the old subscription and creating the new one must succeed or
+    // fail together - a crash between the two steps used to be able to leave
+    // a shop with zero ACTIVE subscriptions (old one expired, new one never
+    // created), same risk pattern as createShop above.
+    return this.tenantService.prisma.$transaction(async (tx) => {
+      await tx.subscription.updateMany({
+        where: { shopId, status: 'ACTIVE' },
+        data: { status: 'EXPIRED' },
+      });
+
+      return tx.subscription.create({
+        data: {
+          shopId,
+          plan: 'YEARLY',
+          status: dto.status,
+          startDate,
+          endDate,
+        },
+      });
     });
   }
 
@@ -448,21 +452,29 @@ export class ShopService {
     const shop = await this.tenantService.prisma.shop.findUnique({ where: { id: shopId } });
     if (!shop) throw new NotFoundException('Shop not found');
 
-    await this.tenantService.prisma.shopDocument.deleteMany({
-      where: { shopId, documentType },
-    });
-
+    // Upload first (external I/O, can't be part of a DB transaction) so a
+    // failed upload never touches the existing document row. Then the
+    // delete-old + create-new pair runs as one $transaction - previously
+    // these were two separate calls, so a crash in between (or the create
+    // failing e.g. on a DB constraint) could leave the shop with zero active
+    // documents of this type even though the old one was already deleted.
     const upload = await this.fileService.uploadFile(file.originalname, file.buffer, shopId);
 
-    return this.tenantService.prisma.shopDocument.create({
-      data: {
-        shopId,
-        documentType,
-        fileUrl: upload.fileUrl,
-        fileKey: upload.fileKey,
-        fileSize: file.size,
-        originalName: file.originalname || null,
-      },
+    return this.tenantService.prisma.$transaction(async (tx) => {
+      await tx.shopDocument.deleteMany({
+        where: { shopId, documentType },
+      });
+
+      return tx.shopDocument.create({
+        data: {
+          shopId,
+          documentType,
+          fileUrl: upload.fileUrl,
+          fileKey: upload.fileKey,
+          fileSize: file.size,
+          originalName: file.originalname || null,
+        },
+      });
     });
   }
 
