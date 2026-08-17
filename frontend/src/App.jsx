@@ -11848,15 +11848,23 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         document.body
       )}
 
-      <button
-        type="button"
-        onClick={() => { resetForm(); setShowAddModal(true); }}
-        className="fab"
-        aria-label={t('newListingBtn')}
-        title={t('newListingBtn')}
-      >
-        <Plus />
-      </button>
+      {/* Portaled to escape .animate-fade-in's permanent transform (fill-mode
+          forwards) - see ShopsManagementView's identical FAB for why. Without
+          this, the button ends up "fixed" relative to that ancestor's box
+          instead of the viewport, so it drifts down and overlaps the bottom
+          nav as the product grid grows taller. */}
+      {createPortal(
+        <button
+          type="button"
+          onClick={() => { resetForm(); setShowAddModal(true); }}
+          className="fab"
+          aria-label={t('newListingBtn')}
+          title={t('newListingBtn')}
+        >
+          <Plus />
+        </button>,
+        document.body
+      )}
     </div>
   );
 }
