@@ -49,6 +49,22 @@ export class ResetPasswordPublicDto {
   newPassword: string;
 }
 
+// Updates the caller's own login email and/or phone (both are valid login
+// identifiers - see AuthService.login). Requires a recently-verified OTP for
+// whichever identifier is being changed - see AuthService.updateLoginCredentials
+// for the exact verification window, mirroring resetPasswordPublic's model
+// (verify-otp first, consuming it; this endpoint then just checks that
+// verification happened recently rather than re-accepting the code).
+export class UpdateLoginCredentialsDto {
+  @IsOptional()
+  @IsEmail({}, { message: 'Please enter a valid email address' })
+  newEmail?: string;
+
+  @IsOptional()
+  @IsString()
+  newPhone?: string;
+}
+
 export class SendOtpDto {
   @IsString()
   @IsNotEmpty()

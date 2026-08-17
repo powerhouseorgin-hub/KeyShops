@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TenantService } from '../tenant/tenant.service';
 import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
-import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, VerifyFirebasePhoneDto } from './dto/auth.dto';
+import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, VerifyFirebasePhoneDto, UpdateLoginCredentialsDto } from './dto/auth.dto';
 import { Role } from '@prisma/client';
 import { PHONE_REGEX_MESSAGE, normalizePhone } from '../common/validators/phone';
 import { CryptoService } from '../crypto/crypto.service';
@@ -360,6 +360,7 @@ export class AuthService implements OnModuleInit {
       user: {
         id: user.id,
         email: user.email,
+        phone: user.phone,
         name: user.name,
         role: user.role,
         shopId: user.shopId,
@@ -466,6 +467,83 @@ export class AuthService implements OnModuleInit {
     });
 
     return { success: true, message: 'Password reset successfully' };
+  }
+
+  // AUTHENTICATED: changes the caller's own login email and/or phone -
+  // called after the frontend has already run the OTP send/verify flow
+  // (OtpVerificationModal) against whichever new identifier is being set.
+  // Mirrors resetPasswordPublic's security model exactly: the OTP was
+  // already consumed by a prior verify-otp call, so this only re-checks that
+  // a matching, recently-consumed OtpCode row exists (rather than accepting
+  // the raw code again) - same CHANGE_CREDENTIALS_OTP_WINDOW_MS replay-window
+  // guard as RESET_OTP_WINDOW_MS above, for the same reason (a stale,
+  // long-ago-verified row can't be replayed indefinitely).
+  async updateLoginCredentials(userId: string, dto: UpdateLoginCredentialsDto) {
+    if (!dto.newEmail && !dto.newPhone) {
+      throw new BadRequestException('Provide a new email or phone number to update.');
+    }
+
+    const user = await this.tenantService.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException('Account not found.');
+    }
+
+    const CHANGE_CREDENTIALS_OTP_WINDOW_MS = 15 * 60 * 1000;
+    const data: { email?: string; phone?: string } = {};
+    const changedFields: string[] = [];
+
+    if (dto.newEmail) {
+      const newEmail = dto.newEmail.trim().toLowerCase();
+      const verifiedOtp = await this.tenantService.prisma.otpCode.findFirst({
+        where: { identifier: newEmail, purpose: 'change-credentials', consumed: true },
+        orderBy: { updatedAt: 'desc' },
+      });
+      if (!verifiedOtp || Date.now() - verifiedOtp.updatedAt.getTime() > CHANGE_CREDENTIALS_OTP_WINDOW_MS) {
+        throw new BadRequestException('Please verify your new email with an OTP before saving.');
+      }
+      const existing = await this.tenantService.prisma.user.findUnique({ where: { email: newEmail } });
+      if (existing && existing.id !== userId) {
+        throw new BadRequestException('This email address is already in use by another account.');
+      }
+      data.email = newEmail;
+      changedFields.push('email');
+    }
+
+    if (dto.newPhone) {
+      const normalizedPhone = normalizePhone(dto.newPhone);
+      if (!normalizedPhone) {
+        throw new BadRequestException(PHONE_REGEX_MESSAGE);
+      }
+      const verifiedOtp = await this.tenantService.prisma.otpCode.findFirst({
+        where: { identifier: normalizedPhone, purpose: 'change-credentials', consumed: true },
+        orderBy: { updatedAt: 'desc' },
+      });
+      if (!verifiedOtp || Date.now() - verifiedOtp.updatedAt.getTime() > CHANGE_CREDENTIALS_OTP_WINDOW_MS) {
+        throw new BadRequestException('Please verify your new phone number with an OTP before saving.');
+      }
+      const existing = await this.tenantService.prisma.user.findUnique({ where: { phone: normalizedPhone } });
+      if (existing && existing.id !== userId) {
+        throw new BadRequestException('This phone number is already in use by another account.');
+      }
+      data.phone = normalizedPhone;
+      changedFields.push('phone');
+    }
+
+    await this.tenantService.prisma.user.update({ where: { id: userId }, data });
+
+    // Log that a change happened and which fields, but never the actual new
+    // value(s) - login identifiers are sensitive enough to keep out of the
+    // activity log's plaintext JSON.
+    await this.tenantService.prisma.activityLog.create({
+      data: {
+        userId: user.id,
+        shopId: user.shopId,
+        action: 'UPDATE_LOGIN_CREDENTIALS',
+        details: JSON.stringify({ message: 'Login credentials updated successfully', fields: changedFields }),
+      },
+    });
+
+    return { success: true, email: data.email ?? user.email, phone: data.phone ?? user.phone };
   }
 
   // Public self-registration wizard's submit handler - two frontend steps

@@ -30,7 +30,7 @@ import CustomSelect from './components/CustomSelect';
 import PriceTag from './components/PriceTag';
 import OtpVerificationModal from './components/OtpVerificationModal';
 import {
-  Key, Users, Shield, Radio, BarChart3, Database, LogOut, Check, X,
+  Key, Users, Radio, BarChart3, Database, LogOut, Check, X,
   Plus, Settings, FileText, Search, Filter, UserCheck, MapPin, Camera, AlertTriangle,
   Trash, RefreshCw, Layers, Edit, ExternalLink, Sliders, DollarSign,
   Bell, Eye, EyeOff, CheckCircle2, ChevronRight,
@@ -542,6 +542,8 @@ const LANGUAGES = {
     dealersPageDesc: 'Explore verified Key Shop dealers and key specialist partners across India.',
     allCategoriesCard: 'All',
     searchDealersPlaceholder: 'Search dealers by name, location, category...',
+    allLocationsLabel: 'All Locations',
+    searchDistrictTownPlaceholder: 'Search district or town…',
     noDealersFoundMsg: 'No dealers found matching your search.',
     customerSupport: 'Customer Support',
     manageCustomerSupportDesc: 'Manage the customer support contact & resources',
@@ -866,7 +868,7 @@ const LANGUAGES = {
     masterKeyCatalogSearchTitle: 'Master Key Catalog Search',
     lookupBlankSpecDesc: 'Search your shop\'s registered keys by key code, customer name, or vehicle category in seconds.',
     keyCodeVehicleCategoryLabel: 'Key Code, Vehicle No, or Category',
-    searchByKeyCodePlaceholder: 'Search by key code, vehicle number, customer location, category\u2026',
+    searchByKeyCodePlaceholder: 'Search Your Registered Key',
     searchingRegistryMsg: 'Searching registry\u2026',
     noMatchingKeysMsg: 'No matching keys or customer records found',
     registeredCustomerKeyLabel: 'Registered Customer Key',
@@ -1115,6 +1117,13 @@ const LANGUAGES = {
     usernameNameLabel: 'Username / Name',
     emailAddressLabel: 'Email Address',
     noEmailOnFileLabel: 'No email on file',
+    editLoginCredentialTitle: 'Edit',
+    pleaseEnterNewValueMsg: 'Please enter a new value',
+    newValueSameAsCurrentMsg: 'This is already your current value',
+    enterNewEmailPlaceholder: 'Enter new email address',
+    enterNewPhonePlaceholder: 'Enter new phone number',
+    loginCredentialsUpdatedMsg: 'Login credentials updated successfully',
+    failedUpdateCredentialsMsg: 'Failed to update login credentials',
     optionalLabel: 'Optional',
     workspacePasswordLabel: 'Workspace Password',
     hidePasswordTitle: 'Hide password',
@@ -1313,6 +1322,8 @@ const LANGUAGES = {
     meterDesc: 'मीटर रिकॉर्ड को ट्रैक और प्रबंधित करें',
     directory: 'निर्देशिका',
     searchDealersPlaceholder: 'नाम, स्थान या श्रेणी द्वारा दुकान खोजें...',
+    allLocationsLabel: 'सभी स्थान',
+    searchDistrictTownPlaceholder: 'ज़िला या शहर खोजें…',
     noShopsFound: 'आपकी खोज से मेल खाने वाली कोई दुकान नहीं मिली।',
     navOverview: 'अवलोकन',
     navOperations: 'संचालन',
@@ -1748,7 +1759,7 @@ const LANGUAGES = {
     masterKeyCatalogSearchTitle: 'मास्टर की कैटलॉग खोज',
     lookupBlankSpecDesc: 'अपनी दुकान की पंजीकृत चाबियों को की कोड, ग्राहक नाम या वाहन श्रेणी से सेकंडों में खोजें।',
     keyCodeVehicleCategoryLabel: 'की कोड, वाहन नंबर, या श्रेणी',
-    searchByKeyCodePlaceholder: 'की कोड, वाहन नंबर, ग्राहक स्थान, श्रेणी से खोजें\u2026',
+    searchByKeyCodePlaceholder: 'अपनी पंजीकृत चाबी खोजें',
     searchingRegistryMsg: 'रजिस्ट्री खोजी जा रही है\u2026',
     noMatchingKeysMsg: 'कोई मेल खाती चाबी या ग्राहक रिकॉर्ड नहीं मिला',
     registeredCustomerKeyLabel: 'पंजीकृत ग्राहक की',
@@ -1980,6 +1991,13 @@ const LANGUAGES = {
     usernameNameLabel: 'उपयोगकर्ता नाम / नाम',
     emailAddressLabel: 'ईमेल पता',
     noEmailOnFileLabel: 'कोई ईमेल दर्ज नहीं है',
+    editLoginCredentialTitle: 'संपादित करें',
+    pleaseEnterNewValueMsg: 'कृपया एक नया मान दर्ज करें',
+    newValueSameAsCurrentMsg: 'यह पहले से ही आपका वर्तमान मान है',
+    enterNewEmailPlaceholder: 'नया ईमेल पता दर्ज करें',
+    enterNewPhonePlaceholder: 'नया फ़ोन नंबर दर्ज करें',
+    loginCredentialsUpdatedMsg: 'लॉगिन क्रेडेंशियल्स सफलतापूर्वक अपडेट हुए',
+    failedUpdateCredentialsMsg: 'लॉगिन क्रेडेंशियल्स अपडेट करने में विफल',
     optionalLabel: 'वैकल्पिक',
     workspacePasswordLabel: 'वर्कस्पेस पासवर्ड',
     hidePasswordTitle: 'पासवर्ड छिपाएं',
@@ -2180,6 +2198,8 @@ const LANGUAGES = {
     usedMachinesDesc: 'பயன்படுத்திய இயந்திரங்களைக் காணவும் நிர்வகிக்கவும்',
     directory: 'கோப்பகம்',
     searchDealersPlaceholder: 'பெயர், இருப்பிடம் அல்லது வகை மூலம் தேடவும்...',
+    allLocationsLabel: 'அனைத்து இடங்களும்',
+    searchDistrictTownPlaceholder: 'மாவட்டம் அல்லது நகரத்தைத் தேடுங்கள்…',
     noShopsFound: 'கடைகள் எதுவும் கிடைக்கவில்லை.',
     navOverview: 'கண்ணோட்டம்',
     navOperations: 'செயல்பாடுகள்',
@@ -2607,7 +2627,7 @@ const LANGUAGES = {
     masterKeyCatalogSearchTitle: 'மாஸ்டர் சாவி பட்டியல் தேடல்',
     lookupBlankSpecDesc: 'உங்கள் கடையின் பதிவுசெய்யப்பட்ட சாவிகளை சாவி குறியீடு, வாடிக்கையாளர் பெயர் அல்லது வாகன வகை மூலம் நொடிகளில் தேடுங்கள்.',
     keyCodeVehicleCategoryLabel: 'சாவி குறியீடு, வாகன எண், அல்லது வகை',
-    searchByKeyCodePlaceholder: 'சாவி குறியீடு, வாகன எண், வாடிக்கையாளர் இடம், வகை மூலம் தேடுங்கள்\u2026',
+    searchByKeyCodePlaceholder: 'உங்கள் பதிவு செய்யப்பட்ட சாவியைத் தேடுங்கள்',
     searchingRegistryMsg: 'பதிவேட்டைத் தேடுகிறது\u2026',
     noMatchingKeysMsg: 'பொருந்தும் சாவிகள் அல்லது வாடிக்கையாளர் ரெக்கார்டுகள் இல்லை',
     registeredCustomerKeyLabel: 'பதிவுசெய்யப்பட்ட வாடிக்கையாளர் சாவி',
@@ -2839,6 +2859,13 @@ const LANGUAGES = {
     usernameNameLabel: 'பயனர்பெயர் / பெயர்',
     emailAddressLabel: 'மின்னஞ்சல் முகவரி',
     noEmailOnFileLabel: 'மின்னஞ்சல் பதிவு செய்யப்படவில்லை',
+    editLoginCredentialTitle: 'திருத்து',
+    pleaseEnterNewValueMsg: 'தயவுசெய்து ஒரு புதிய மதிப்பை உள்ளிடவும்',
+    newValueSameAsCurrentMsg: 'இது ஏற்கனவே உங்கள் தற்போதைய மதிப்பு',
+    enterNewEmailPlaceholder: 'புதிய மின்னஞ்சல் முகவரியை உள்ளிடவும்',
+    enterNewPhonePlaceholder: 'புதிய தொலைபேசி எண்ணை உள்ளிடவும்',
+    loginCredentialsUpdatedMsg: 'உள்நுழைவு சான்றுகள் வெற்றிகரமாக புதுப்பிக்கப்பட்டன',
+    failedUpdateCredentialsMsg: 'உள்நுழைவு சான்றுகளை புதுப்பிக்க முடியவில்லை',
     optionalLabel: 'விருப்பத்தேர்வு',
     workspacePasswordLabel: 'பணிமனை கடவுச்சொல்',
     hidePasswordTitle: 'கடவுச்சொல்லை மறை',
@@ -3037,6 +3064,8 @@ const LANGUAGES = {
     meterDesc: 'మీటర్ రికార్డులను ట్రాక్ చేయండి & నిర్వహించండి',
     directory: 'డైరెక్టరీ',
     searchDealersPlaceholder: 'పేరు, లొకేషన్ లేదా కేటగిరీ ద్వారా వెతకండి...',
+    allLocationsLabel: 'అన్ని ప్రాంతాలు',
+    searchDistrictTownPlaceholder: 'జిల్లా లేదా పట్టణం శోధించండి…',
     noShopsFound: 'షాపులు ఏవీ లభించలేదు.',
     navOverview: 'అవలోకనం',
     navOperations: 'కార్యకలాపాలు',
@@ -3472,7 +3501,7 @@ const LANGUAGES = {
     masterKeyCatalogSearchTitle: 'మాస్టర్ కీ కేటలాగ్ శోధన',
     lookupBlankSpecDesc: 'మీ షాప్ యొక్క నమోదైన కీలను కీ కోడ్, కస్టమర్ పేరు లేదా వాహన వర్గం ద్వారా సెకన్లలో శోధించండి.',
     keyCodeVehicleCategoryLabel: 'కీ కోడ్, వాహన నంబర్, లేదా వర్గం',
-    searchByKeyCodePlaceholder: 'కీ కోడ్, వాహన నంబర్, కస్టమర్ లొకేషన్, వర్గం ద్వారా శోధించండి\u2026',
+    searchByKeyCodePlaceholder: 'మీ నమోదిత కీని శోధించండి',
     searchingRegistryMsg: 'రిజిస్ట్రీని శోధిస్తోంది\u2026',
     noMatchingKeysMsg: 'సరిపోలే కీలు లేదా కస్టమర్ రికార్డులు కనుగొనబడలేదు',
     registeredCustomerKeyLabel: 'నమోదైన కస్టమర్ కీ',
@@ -3704,6 +3733,13 @@ const LANGUAGES = {
     usernameNameLabel: 'యూజర్‌నేమ్ / పేరు',
     emailAddressLabel: 'ఇమెయిల్ చిరునామా',
     noEmailOnFileLabel: 'ఇమెయిల్ నమోదు చేయలేదు',
+    editLoginCredentialTitle: 'సవరించు',
+    pleaseEnterNewValueMsg: 'దయచేసి కొత్త విలువను నమోదు చేయండి',
+    newValueSameAsCurrentMsg: 'ఇది ఇప్పటికే మీ ప్రస్తుత విలువ',
+    enterNewEmailPlaceholder: 'కొత్త ఇమెయిల్ చిరునామాను నమోదు చేయండి',
+    enterNewPhonePlaceholder: 'కొత్త ఫోన్ నంబర్‌ను నమోదు చేయండి',
+    loginCredentialsUpdatedMsg: 'లాగిన్ ఆధారాలు విజయవంతంగా నవీకరించబడ్డాయి',
+    failedUpdateCredentialsMsg: 'లాగిన్ ఆధారాలను నవీకరించడంలో విఫలమైంది',
     optionalLabel: 'ఐచ్ఛికం',
     workspacePasswordLabel: 'వర్క్‌స్పేస్ పాస్‌వర్డ్',
     hidePasswordTitle: 'పాస్‌వర్డ్ దాచండి',
@@ -3904,6 +3940,8 @@ const LANGUAGES = {
     usedMachinesDesc: 'ಬಳಸಿದ ಯಂತ್ರಗಳನ್ನು ವೀಕ್ಷಿಸಿ ಮತ್ತು ನಿರ್ವಹಿಸಿ',
     directory: 'ಡೈರೆಕ್ಟರಿ',
     searchDealersPlaceholder: 'ಹೆಸರು, ಸ್ಥಳ ಅಥವಾ ವರ್ಗದ ಮೂಲಕ ಹುಡುಕಿ...',
+    allLocationsLabel: 'ಎಲ್ಲಾ ಸ್ಥಳಗಳು',
+    searchDistrictTownPlaceholder: 'ಜಿಲ್ಲೆ ಅಥವಾ ಪಟ್ಟಣ ಹುಡುಕಿ…',
     noShopsFound: 'ಯಾವುದೇ ಅಂಗಡಿಗಳು ಕಂಡುಬಂದಿಲ್ಲ.',
     navOverview: 'ಅವಲೋಕನ',
     navOperations: 'ಕಾರ್ಯಾಚರಣೆಗಳು',
@@ -4331,7 +4369,7 @@ const LANGUAGES = {
     masterKeyCatalogSearchTitle: 'ಮಾಸ್ಟರ್ ಕೀ ಕ್ಯಾಟಲಾಗ್ ಹುಡುಕಾಟ',
     lookupBlankSpecDesc: 'ನಿಮ್ಮ ಅಂಗಡಿಯ ನೋಂದಾಯಿತ ಕೀಗಳನ್ನು ಕೀ ಕೋಡ್, ಗ್ರಾಹಕರ ಹೆಸರು ಅಥವಾ ವಾಹನ ವರ್ಗದ ಮೂಲಕ ಕ್ಷಣಗಳಲ್ಲಿ ಹುಡುಕಿ.',
     keyCodeVehicleCategoryLabel: 'ಕೀ ಕೋಡ್, ವಾಹನ ಸಂಖ್ಯೆ, ಅಥವಾ ವರ್ಗ',
-    searchByKeyCodePlaceholder: 'ಕೀ ಕೋಡ್, ವಾಹನ ಸಂಖ್ಯೆ, ಗ್ರಾಹಕ ಸ್ಥಳ, ವರ್ಗದ ಮೂಲಕ ಹುಡುಕಿ\u2026',
+    searchByKeyCodePlaceholder: 'ನಿಮ್ಮ ನೋಂದಾಯಿತ ಕೀಯನ್ನು ಹುಡುಕಿ',
     searchingRegistryMsg: 'ನೋಂದಣಿಯನ್ನು ಹುಡುಕಲಾಗುತ್ತಿದೆ\u2026',
     noMatchingKeysMsg: 'ಹೊಂದಾಣಿಕೆಯಾಗುವ ಕೀಗಳು ಅಥವಾ ಗ್ರಾಹಕ ದಾಖಲೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ',
     registeredCustomerKeyLabel: 'ನೋಂದಾಯಿತ ಗ್ರಾಹಕ ಕೀ',
@@ -4563,6 +4601,13 @@ const LANGUAGES = {
     usernameNameLabel: 'ಬಳಕೆದಾರ ಹೆಸರು / ಹೆಸರು',
     emailAddressLabel: 'ಇಮೇಲ್ ವಿಳಾಸ',
     noEmailOnFileLabel: 'ಇಮೇಲ್ ನೋಂದಾಯಿಸಿಲ್ಲ',
+    editLoginCredentialTitle: 'ಸಂಪಾದಿಸಿ',
+    pleaseEnterNewValueMsg: 'ದಯವಿಟ್ಟು ಹೊಸ ಮೌಲ್ಯವನ್ನು ನಮೂದಿಸಿ',
+    newValueSameAsCurrentMsg: 'ಇದು ಈಗಾಗಲೇ ನಿಮ್ಮ ಪ್ರಸ್ತುತ ಮೌಲ್ಯವಾಗಿದೆ',
+    enterNewEmailPlaceholder: 'ಹೊಸ ಇಮೇಲ್ ವಿಳಾಸವನ್ನು ನಮೂದಿಸಿ',
+    enterNewPhonePlaceholder: 'ಹೊಸ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ',
+    loginCredentialsUpdatedMsg: 'ಲಾಗಿನ್ ರುಜುವಾತುಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ',
+    failedUpdateCredentialsMsg: 'ಲಾಗಿನ್ ರುಜುವಾತುಗಳನ್ನು ನವೀಕರಿಸಲು ವಿಫಲವಾಗಿದೆ',
     optionalLabel: 'ಐಚ್ಛಿಕ',
     workspacePasswordLabel: 'ಕಾರ್ಯಸ್ಥಳ ಪಾಸ್‌ವರ್ಡ್',
     hidePasswordTitle: 'ಪಾಸ್‌ವರ್ಡ್ ಮರೆಮಾಡಿ',
@@ -4761,6 +4806,8 @@ const LANGUAGES = {
     meterDesc: 'മീറ്റർ റെക്കോർഡുകൾ ട്രാക്ക് ചെയ്യുകയും മാനേജ് ചെയ്യുകയും ചെയ്യുക',
     directory: 'ഡയറക്ടറി',
     searchDealersPlaceholder: 'പേര്, സ്ഥലം അല്ലെങ്കിൽ കാറ്റഗറി വഴി തിരയുക...',
+    allLocationsLabel: 'എല്ലാ സ്ഥലങ്ങളും',
+    searchDistrictTownPlaceholder: 'ജില്ല അല്ലെങ്കിൽ പട്ടണം തിരയുക…',
     noShopsFound: 'കടകൾ ഒന്നും കണ്ടെത്തിയില്ല.',
     navOverview: 'അവലോകനം',
     navOperations: 'പ്രവർത്തനങ്ങൾ',
@@ -5196,7 +5243,7 @@ const LANGUAGES = {
     masterKeyCatalogSearchTitle: 'മാസ്റ്റർ കീ കാറ്റലോഗ് തിരയൽ',
     lookupBlankSpecDesc: 'നിങ്ങളുടെ ഷോപ്പിന്റെ രജിസ്റ്റർ ചെയ്ത കീകൾ കീ കോഡ്, ഉപഭോക്താവിന്റെ പേര്, അല്ലെങ്കിൽ വാഹന വിഭാഗം എന്നിവയാൽ സെക്കൻഡുകൾക്കുള്ളിൽ തിരയുക.',
     keyCodeVehicleCategoryLabel: 'കീ കോഡ്, വാഹന നമ്പർ, അല്ലെങ്കിൽ വിഭാഗം',
-    searchByKeyCodePlaceholder: 'കീ കോഡ്, വാഹന നമ്പർ, ഉപഭോക്തൃ സ്ഥലം, വിഭാഗം എന്നിവയാൽ തിരയുക\u2026',
+    searchByKeyCodePlaceholder: 'നിങ്ങളുടെ രജിസ്റ്റർ ചെയ്ത കീ തിരയുക',
     searchingRegistryMsg: 'രജിസ്ട്രി തിരയുന്നു\u2026',
     noMatchingKeysMsg: 'പൊരുത്തപ്പെടുന്ന കീകളോ ഉപഭോക്തൃ രേഖകളോ കണ്ടെത്തിയില്ല',
     registeredCustomerKeyLabel: 'രജിസ്റ്റർ ചെയ്ത ഉപഭോക്തൃ കീ',
@@ -5428,6 +5475,13 @@ const LANGUAGES = {
     usernameNameLabel: 'ഉപയോക്തൃനാമം / പേര്',
     emailAddressLabel: 'ഇമെയിൽ വിലാസം',
     noEmailOnFileLabel: 'ഇമെയിൽ രേഖപ്പെടുത്തിയിട്ടില്ല',
+    editLoginCredentialTitle: 'എഡിറ്റ് ചെയ്യുക',
+    pleaseEnterNewValueMsg: 'ദയവായി ഒരു പുതിയ മൂല്യം നൽകുക',
+    newValueSameAsCurrentMsg: 'ഇത് ഇതിനകം നിങ്ങളുടെ നിലവിലെ മൂല്യമാണ്',
+    enterNewEmailPlaceholder: 'പുതിയ ഇമെയിൽ വിലാസം നൽകുക',
+    enterNewPhonePlaceholder: 'പുതിയ ഫോൺ നമ്പർ നൽകുക',
+    loginCredentialsUpdatedMsg: 'ലോഗിൻ ക്രെഡൻഷ്യലുകൾ വിജയകരമായി അപ്ഡേറ്റ് ചെയ്തു',
+    failedUpdateCredentialsMsg: 'ലോഗിൻ ക്രെഡൻഷ്യലുകൾ അപ്ഡേറ്റ് ചെയ്യുന്നതിൽ പരാജയപ്പെട്ടു',
     optionalLabel: 'ഐച്ഛികം',
     workspacePasswordLabel: 'വർക്ക്‌സ്‌പേസ് പാസ്‌വേഡ്',
     hidePasswordTitle: 'പാസ്‌വേഡ് മറയ്ക്കുക',
@@ -5746,6 +5800,30 @@ async function reverseGeocode(lat, lng) {
   }
 }
 
+// Shared by every location-dropdown screen that should default to the
+// user's GPS-resolved location (see App()'s defaultLocation resolution) -
+// Key Shops/ECM/Meter/Scanning via CategoryShopsView, and Used Machines via
+// PromotionsFeed. Applies `defaultTown` (once it resolves - it starts as ''
+// and may arrive asynchronously after this screen has already mounted)
+// exactly once, and never overwrites a choice the user already made
+// themselves, including deliberately picking "All Locations" (empty string)
+// back after a GPS default was applied.
+function useLocationFilter(defaultTown) {
+  const [town, setTownState] = useState(defaultTown || '');
+  const userPicked = useRef(false);
+  useEffect(() => {
+    if (defaultTown && !userPicked.current && !town) {
+      setTownState(defaultTown);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultTown]);
+  const setTown = (value) => {
+    userPicked.current = true;
+    setTownState(value);
+  };
+  return [town, setTown];
+}
+
 // Opens the device's native location-settings screen (Android/iOS only - a
 // no-op on web, where there's no equivalent OS settings screen to deep-link
 // to). Used by the "Enable Location Services" prompt shown when GPS is off.
@@ -5844,6 +5922,10 @@ function AppPosterOverlay({ ad, onClose }) {
   );
 }
 
+// Guards the GPS-default-location resolution (see App()'s effect below) so
+// it only ever runs once per app session, never re-attempted on re-render.
+let gpsDefaultLocationAttempted = false;
+
 export default function App() {
   const { user, isAuthenticated, loading, login, logout, api } = useAuth();
   const [lang, setLang] = useState(localStorage.getItem('kee_lang') || 'en');
@@ -5879,6 +5961,41 @@ export default function App() {
   useEffect(() => {
     if (!IS_NATIVE_APP) return;
     api.getPublicAppPoster().then((ad) => setAppPoster(ad || null)).catch(() => {});
+  }, []);
+
+  // GPS-based default location for the Key Shops/ECM/Meter/Scanning
+  // (CategoryShopsView) and Used Machines (PromotionsFeed) location
+  // dropdowns - resolved once per app session (mount-only effect, guarded
+  // by the module-level flag below so it's never re-attempted on
+  // navigation/re-render, honoring "don't repeatedly request location
+  // permission"). On any failure (permission denied, GPS/Location Services
+  // off, timeout, no reverse-geocode match) this silently stays '' - every
+  // consumer already treats '' as "All Locations", so there's no separate
+  // error path to show the user and nothing is ever blocked.
+  const [defaultLocation, setDefaultLocation] = useState('');
+  useEffect(() => {
+    if (gpsDefaultLocationAttempted) return;
+    gpsDefaultLocationAttempted = true;
+    (async () => {
+      try {
+        const { lat, lng } = await resolveCurrentLocation();
+        const geo = await reverseGeocode(lat, lng);
+        if (!geo) return;
+        // `city` is the finer town-level granularity, `district` the
+        // coarser fallback - matched against the same canonical
+        // ALL_TN_LOCATIONS list the dropdowns themselves are built from, so
+        // whatever this resolves to is guaranteed to be a valid, selectable
+        // option.
+        const candidates = [geo.city, geo.district].filter(Boolean);
+        const match = candidates
+          .map((c) => ALL_TN_LOCATIONS.find((loc) => loc.toLowerCase() === c.toLowerCase()))
+          .find(Boolean);
+        if (match) setDefaultLocation(match);
+      } catch (e) {
+        // Permission denied / GPS disabled / timeout - fall through to the
+        // '' default (All Locations) already set above.
+      }
+    })();
   }, []);
 
   // Navigation stack for proper Android Back button / back-swipe-gesture
@@ -7814,14 +7931,14 @@ export default function App() {
             {activeTab === 'dashboard' && <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} />}
             {activeTab === 'shops' && <ShopsManagementView t={t} api={api} initiallyOpenAddModal={autoOpenShopModal} onCloseInitiallyOpen={() => setAutoOpenShopModal(false)} searchDispatch={searchDispatch} />}
             {activeTab === 'dealers' && <DealersView t={t} api={api} />}
-            {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" icon={KeyRound} t={t} api={api} />}
-            {activeTab === 'ecm' && <CategoryShopsView categoryKey="ECM" icon={Cpu} t={t} api={api} />}
-            {activeTab === 'meter' && <CategoryShopsView categoryKey="METER" icon={Gauge} t={t} api={api} />}
-            {activeTab === 'scanning' && <CategoryShopsView categoryKey="SCANNER" icon={ScanLine} t={t} api={api} />}
+            {activeTab === 'key-shops' && <CategoryShopsView categoryKey="KEY_SHOPS" icon={KeyRound} t={t} api={api} defaultTown={defaultLocation} />}
+            {activeTab === 'ecm' && <CategoryShopsView categoryKey="ECM" icon={Cpu} t={t} api={api} defaultTown={defaultLocation} />}
+            {activeTab === 'meter' && <CategoryShopsView categoryKey="METER" icon={Gauge} t={t} api={api} defaultTown={defaultLocation} />}
+            {activeTab === 'scanning' && <CategoryShopsView categoryKey="SCANNER" icon={ScanLine} t={t} api={api} defaultTown={defaultLocation} />}
             {activeTab === 'super-customers' && <SuperCustomersView t={t} api={api} searchDispatch={activeTab === 'super-customers' ? searchDispatch : null} />}
             {activeTab === 'keys' && <KeysCatalogView t={t} api={api} searchDispatch={activeTab === 'keys' ? searchDispatch : null} />}
             {activeTab === 'revenue' && <RevenueManagementView t={t} api={api} />}
-            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} />}
+            {activeTab === 'promotions' && <PromotionsView t={t} api={api} user={user} searchDispatch={activeTab === 'promotions' ? searchDispatch : null} initiallyOpenAddModal={autoOpenListingModal} onCloseInitiallyOpen={() => setAutoOpenListingModal(false)} defaultTown={defaultLocation} />}
             {activeTab === 'banner-offer-management' && <AdsManagementView t={t} api={api} />}
             {activeTab === 'offers-ads-banners' && <OffersAdsBannersView t={t} api={api} />}
             {activeTab === 'search-keys' && <KeysSearchView t={t} api={api} searchDispatch={activeTab === 'search-keys' ? searchDispatch : null} />}
@@ -8110,6 +8227,14 @@ function DashCardGrid({ items }) {
 // login, same page session) can't leak stale data across users.
 let dashboardCache = null;
 
+// Shared by both the Shop Admin and Super Admin Dashboard greetings.
+function getTimeBasedGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good Morning';
+  if (hour < 18) return 'Good Afternoon';
+  return 'Good Evening';
+}
+
 function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal }) {
   const { user, api } = useAuth();
   const cachedData = dashboardCache && dashboardCache.userId === user.id ? dashboardCache.data : null;
@@ -8234,9 +8359,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
             dashboard's card grid on one screen without scrolling. */}
         <div className="page-head" style={{ marginBottom: 10 }}>
           <div>
-            <div className="eyebrow"><Shield /> {t('superAdminControl')}</div>
-            <h1>{t('welcomeBack')}, {(user.name || 'Admin').split(' ')[0]} 👋</h1>
-            <p>{t('superAdmin')} {t('portal')} — {t('platformOverviewDesc')}</p>
+            <h1>{getTimeBasedGreeting()}, {(user.name || 'Admin').split(' ')[0]} 👋</h1>
           </div>
         </div>
 
@@ -8275,9 +8398,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <img src={keyShopLogo} alt="Key Shop" style={{ width: 84, height: 84, objectFit: 'contain', flexShrink: 0 }} />
           <div>
-            <div className="eyebrow"><Store /> {t('shopTerminal')}</div>
-            <h1>{t('namaste')}, {firstName} 👋</h1>
-            <p>{data.shop ? data.shop.name : `${t('shopTerminal')} ${t('workspace')}`} — {t('complianceInventoryTerminal')}</p>
+            <h1>{getTimeBasedGreeting()}, {firstName} 👋</h1>
           </div>
         </div>
       </div>
@@ -10376,12 +10497,11 @@ function KeysCatalogView({ t, api, searchDispatch }) {
         </div>
       ) : (
         <div className="product-grid stagger-in">
-          {keys.map((c, idx) => {
-            const catalogAccents = ['var(--purple)', 'var(--pink)', 'var(--blue)', 'var(--orange)', 'var(--teal)', 'var(--skyblue)', 'var(--rose)', 'var(--jgreen)'];
+          {keys.map((c) => {
             const typeLabel = keyTypeDisplayLabel(t, c.vehicleCategory);
             return (
               <div key={c.id} className="product-card">
-                <div className="product-img" style={{ background: catalogAccents[idx % catalogAccents.length] }}>
+                <div className="product-img" style={{ background: 'var(--maroon)' }}>
                   <KeyRound style={{ color: '#ffffff' }} />
                   <span className="product-tag">{c.addKey ? t('addKeyLabel') : c.lostKey ? t('lostKeyLabel') : t('registeredKeyLabel')}</span>
                 </div>
@@ -10873,7 +10993,7 @@ function AdsManagementView({ t, api }) {
 // create/edit form; every new listing is created as a plain PRODUCT and
 // categorized purely via this list.
 
-function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
+function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, defaultTown }) {
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
 
   return (
@@ -10895,6 +11015,7 @@ function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, o
         searchDispatch={searchDispatch}
         initiallyOpenAddModal={initiallyOpenAddModal}
         onCloseInitiallyOpen={onCloseInitiallyOpen}
+        defaultTown={defaultTown}
       />
     </div>
   );
@@ -10913,7 +11034,7 @@ const PRODUCT_MAX_VALIDITY_DAYS = 30;
 // matching backend-side enforcement.
 const PRODUCT_MAX_PHOTOS = 4;
 
-function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen }) {
+function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, defaultTown }) {
   const [promotions, setPromotions] = useState([]);
   const [loading, setLoading] = useState(true);
   // Infinite-scroll pagination state - `promotions` above only ever holds
@@ -11011,7 +11132,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   // keystroke.
   const [textQuery, setTextQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [town, setTown] = useState('');
+  const [town, setTown] = useLocationFilter(defaultTown);
   useEffect(() => {
     const handle = setTimeout(() => setDebouncedQuery(textQuery.trim()), 300);
     return () => clearTimeout(handle);
@@ -11272,14 +11393,6 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
             options={[{ value: '', label: 'All Locations' }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
           />
         </div>
-        <button
-          onClick={() => { resetForm(); setShowAddModal(true); }}
-          className="btn btn-primary"
-          style={{ flexShrink: 0 }}
-        >
-          <Plus />
-          <span>{t('newListingBtn')}</span>
-        </button>
       </div>
 
       {availableCategories.length > 0 && (
@@ -11734,6 +11847,16 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         </div>,
         document.body
       )}
+
+      <button
+        type="button"
+        onClick={() => { resetForm(); setShowAddModal(true); }}
+        className="fab"
+        aria-label={t('newListingBtn')}
+        title={t('newListingBtn')}
+      >
+        <Plus />
+      </button>
     </div>
   );
 }
@@ -11752,6 +11875,17 @@ function OffersAdsBannersView({ t, api }) {
   // Advertisement) - tapping a card just shows its image at full size, same
   // pattern as the public pre-login app's PublicAdViewer.
   const [viewingAd, setViewingAd] = useState(null);
+
+  // Locks background scroll while the full-screen poster is open - it's a
+  // `position: fixed` overlay so the page behind it can't visually move,
+  // but without this the body itself could still scroll underneath it on
+  // touch devices.
+  useEffect(() => {
+    if (!viewingAd) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prevOverflow; };
+  }, [viewingAd]);
 
   useEffect(() => {
     (async () => {
@@ -11866,9 +12000,18 @@ function OffersAdsBannersView({ t, api }) {
         </>
       )}
 
-      {viewingAd && (
+      {viewingAd && createPortal(
+        // Portaled to document.body - rendering this inline (as it was
+        // before) put it under app-main's own stacking/scroll context, so
+        // `position: fixed` was computing relative to that scrolled
+        // ancestor instead of the true viewport: tapping a poster near the
+        // bottom of a long list opened it below the visible screen,
+        // requiring a scroll to find it. Every other full-screen modal in
+        // this file already portals to document.body for exactly this
+        // reason - this one had been missed.
         <div
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+          style={{ overflow: 'hidden' }}
           onClick={() => setViewingAd(null)}
         >
           <button
@@ -11889,7 +12032,8 @@ function OffersAdsBannersView({ t, api }) {
           {viewingAd.title && (
             <span style={{ color: '#fff', fontWeight: 700, fontSize: 14, marginTop: 14, textAlign: 'center' }}>{viewingAd.title}</span>
           )}
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
@@ -11914,12 +12058,12 @@ function OffersAdsBannersView({ t, api }) {
 // the DashboardView fix.
 const categoryShopsCache = {};
 
-function CategoryShopsView({ categoryKey, icon: IconComponent, t, api }) {
+function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTown }) {
   const cachedDealers = categoryShopsCache[categoryKey] || null;
   const [dealers, setDealers] = useState(cachedDealers || []);
   const [loading, setLoading] = useState(!cachedDealers);
   const [query, setQuery] = useState('');
-  const [town, setTown] = useState('');
+  const [town, setTown] = useLocationFilter(defaultTown);
 
   // Debounced (350ms, matching Blank Key Search) - this previously fired a
   // fresh request (and blanked the list to a spinner) on every keystroke,
@@ -12633,37 +12777,34 @@ function KeysSearchView({ t, api, searchDispatch }) {
         </div>
       ) : (
         <div className="product-grid stagger-in">
-          {(() => {
-            const resultAccents = ['var(--purple)', 'var(--pink)', 'var(--blue)', 'var(--orange)', 'var(--teal)', 'var(--skyblue)', 'var(--rose)', 'var(--jgreen)'];
-            return results.map((c, idx) => {
-              const typeLabel = keyTypeDisplayLabel(t, c.vehicleCategory);
-              return (
-                <div
-                  key={c.id} onClick={() => setSelectedResult(c)}
-                  className="product-card"
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className="product-img" style={{ background: resultAccents[idx % resultAccents.length] }}>
-                    <KeyRound style={{ color: '#ffffff' }} />
-                    <span className="product-tag">{c.addKey ? t('addKeyLabel') : c.lostKey ? t('lostKeyLabel') : t('registeredKeyLabel')}</span>
-                  </div>
-                  <div className="product-body">
-                    <span className="pname">{c.keyNumber}</span>
-                    <p className="pcat">{c.name}</p>
-                    {typeLabel && (
-                      <span className="badge" style={{ alignSelf: 'flex-start', background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
-                        {typeLabel}
-                      </span>
-                    )}
-                    <div className="product-foot" style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
-                      <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--gold)' }}>{t('viewFullDetailsLabel')}</span>
-                      <ExternalLink style={{ width: 13, height: 13, color: 'var(--gold)' }} />
-                    </div>
+          {results.map((c) => {
+            const typeLabel = keyTypeDisplayLabel(t, c.vehicleCategory);
+            return (
+              <div
+                key={c.id} onClick={() => setSelectedResult(c)}
+                className="product-card"
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="product-img" style={{ background: 'var(--maroon)' }}>
+                  <KeyRound style={{ color: '#ffffff' }} />
+                  <span className="product-tag">{c.addKey ? t('addKeyLabel') : c.lostKey ? t('lostKeyLabel') : t('registeredKeyLabel')}</span>
+                </div>
+                <div className="product-body">
+                  <span className="pname">{c.keyNumber}</span>
+                  <p className="pcat">{c.name}</p>
+                  {typeLabel && (
+                    <span className="badge" style={{ alignSelf: 'flex-start', background: 'var(--card-2)', border: '1px solid var(--border)', color: 'var(--text-2)' }}>
+                      {typeLabel}
+                    </span>
+                  )}
+                  <div className="product-foot" style={{ marginTop: 8, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
+                    <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--gold)' }}>{t('viewFullDetailsLabel')}</span>
+                    <ExternalLink style={{ width: 13, height: 13, color: 'var(--gold)' }} />
                   </div>
                 </div>
-              );
-            });
-          })()}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -14204,6 +14345,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [search, setSearch] = useState('');
+  const [town, setTown] = useState('');
   // Debounced before it reaches the server - see PromotionsFeed's identical
   // pattern for why (every change now triggers a network request instead of
   // filtering an already-fully-loaded list).
@@ -14330,13 +14472,13 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
-    if (debouncedSearch || customers.length === 0) setLoading(true);
+    if (debouncedSearch || town || customers.length === 0) setLoading(true);
     try {
-      const res = await api.getCustomersPage({ search: debouncedSearch, limit: CUSTOMER_HISTORY_PAGE_SIZE });
+      const res = await api.getCustomersPage({ search: debouncedSearch, town, limit: CUSTOMER_HISTORY_PAGE_SIZE });
       setCustomers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
-      if (!debouncedSearch) {
+      if (!debouncedSearch && !town) {
         customerHistoryFirstPageCache = { shopId: user.shopId, items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
       }
     } catch (e) {
@@ -14352,7 +14494,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
     try {
-      const res = await api.getCustomersPage({ search: debouncedSearch, cursor: nextCursor, limit: CUSTOMER_HISTORY_PAGE_SIZE });
+      const res = await api.getCustomersPage({ search: debouncedSearch, town, cursor: nextCursor, limit: CUSTOMER_HISTORY_PAGE_SIZE });
       setCustomers((prev) => [...prev, ...res.items]);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -14365,7 +14507,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
 
   useEffect(() => {
     fetchHistory();
-  }, [debouncedSearch]);
+  }, [debouncedSearch, town]);
 
   useEffect(() => {
     const node = loadMoreSentinelRef.current;
@@ -14378,7 +14520,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     );
     observer.observe(node);
     return () => observer.disconnect();
-  }, [hasMore, nextCursor, loadingMore, debouncedSearch]);
+  }, [hasMore, nextCursor, loadingMore, debouncedSearch, town]);
 
   const handleSaveChanges = async (e) => {
     e.preventDefault();
@@ -14437,6 +14579,17 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
               placeholder={t('searchByNamePhoneKeyCode')}
             />
           </div>
+          <CustomSelect
+            className="location-filter-select"
+            icon={MapPin}
+            value={town}
+            onChange={setTown}
+            placeholder={t('allLocationsLabel')}
+            searchable
+            searchPlaceholder={t('searchDistrictTownPlaceholder')}
+            options={[{ value: '', label: t('allLocationsLabel') }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
+            triggerStyle={{ minWidth: 180 }}
+          />
         </div>
 
         {loading ? (
@@ -15796,6 +15949,18 @@ function ShopSettingsView({ t, api, shopId }) {
   const [otpResetLoading, setOtpResetLoading] = useState(false);
   const [otpResetError, setOtpResetError] = useState('');
 
+  // Edit Login Credentials - email and phone are both valid login
+  // identifiers (see AuthService.login), so either can be changed here.
+  // The new value must be OTP-verified (OtpVerificationModal, purpose
+  // 'change-credentials') before AuthService.updateLoginCredentials will
+  // accept it - see that method for the verification-window check.
+  const [editingCredField, setEditingCredField] = useState(null); // 'email' | 'phone' | null
+  const [credNewValue, setCredNewValue] = useState('');
+  const [credFieldError, setCredFieldError] = useState('');
+  const [credSaving, setCredSaving] = useState(false);
+  const [showCredOtpModal, setShowCredOtpModal] = useState(false);
+  useBackHandler(showCredOtpModal, () => setShowCredOtpModal(false));
+
   useEffect(() => {
     fetchSettings();
     fetchReferralOverview();
@@ -16035,6 +16200,66 @@ function ShopSettingsView({ t, api, shopId }) {
     }
   };
 
+  // Edit Login Credentials handlers
+  const startEditCredential = (field) => {
+    setEditingCredField(field);
+    setCredNewValue('');
+    setCredFieldError('');
+  };
+
+  const cancelEditCredential = () => {
+    setEditingCredField(null);
+    setCredNewValue('');
+    setCredFieldError('');
+  };
+
+  const handleRequestCredentialOtp = () => {
+    const value = credNewValue.trim();
+    if (!value) {
+      setCredFieldError(t('pleaseEnterNewValueMsg'));
+      return;
+    }
+    if (editingCredField === 'email') {
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+        setCredFieldError(t('pleaseEnterValidEmailMsg'));
+        return;
+      }
+      if (user.email && value.toLowerCase() === user.email.toLowerCase()) {
+        setCredFieldError(t('newValueSameAsCurrentMsg'));
+        return;
+      }
+    } else {
+      if (!PHONE_REGEX.test(value)) {
+        setCredFieldError(PHONE_REGEX_MESSAGE);
+        return;
+      }
+      if (user.phone && value === user.phone) {
+        setCredFieldError(t('newValueSameAsCurrentMsg'));
+        return;
+      }
+    }
+    setCredFieldError('');
+    setShowCredOtpModal(true);
+  };
+
+  const handleCredentialOtpVerified = async () => {
+    setCredSaving(true);
+    setCredFieldError('');
+    try {
+      const value = credNewValue.trim();
+      const payload = editingCredField === 'email'
+        ? { newEmail: value }
+        : { newPhone: value };
+      await api.updateLoginCredentials(payload);
+      alert(t('loginCredentialsUpdatedMsg'));
+      cancelEditCredential();
+    } catch (err) {
+      setCredFieldError(err.message || t('failedUpdateCredentialsMsg'));
+    } finally {
+      setCredSaving(false);
+    }
+  };
+
   const refreshAll = () => {
     fetchSettings();
     fetchReferralOverview();
@@ -16224,11 +16449,65 @@ function ShopSettingsView({ t, api, shopId }) {
                 </div>
                 <div className="reg-field" style={{ marginBottom: 12 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
-                  <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email || t('noEmailOnFileLabel')}</p>
+                  {editingCredField === 'email' ? (
+                    <div>
+                      <div className="input-wrap">
+                        <input
+                          type="email"
+                          autoFocus
+                          disabled={credSaving}
+                          value={credNewValue}
+                          onChange={(e) => setCredNewValue(e.target.value)}
+                          placeholder={t('enterNewEmailPlaceholder')}
+                        />
+                      </div>
+                      {credFieldError && <p style={{ fontSize: 11.5, color: 'var(--red)', fontWeight: 700, marginTop: 6 }}>{credFieldError}</p>}
+                      <div className="flex gap-2" style={{ marginTop: 8 }}>
+                        <button type="button" disabled={credSaving} onClick={cancelEditCredential} className="btn btn-ghost" style={{ flex: 1 }}>{t('btnCancel')}</button>
+                        <button type="button" disabled={credSaving} onClick={handleRequestCredentialOtp} className="btn btn-primary" style={{ flex: 2 }}>
+                          {credSaving ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('sendOtpBtn')}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email || t('noEmailOnFileLabel')}</p>
+                      <button onClick={() => startEditCredential('email')} className="icon-btn" title={t('editLoginCredentialTitle')}>
+                        <Edit style={{ width: 14, height: 14 }} />
+                      </button>
+                    </div>
+                  )}
                 </div>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
-                  <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{phone || 'N/A'}</p>
+                  {editingCredField === 'phone' ? (
+                    <div>
+                      <div className="input-wrap">
+                        <input
+                          type="tel"
+                          autoFocus
+                          disabled={credSaving}
+                          value={credNewValue}
+                          onChange={(e) => setCredNewValue(e.target.value)}
+                          placeholder={t('enterNewPhonePlaceholder')}
+                        />
+                      </div>
+                      {credFieldError && <p style={{ fontSize: 11.5, color: 'var(--red)', fontWeight: 700, marginTop: 6 }}>{credFieldError}</p>}
+                      <div className="flex gap-2" style={{ marginTop: 8 }}>
+                        <button type="button" disabled={credSaving} onClick={cancelEditCredential} className="btn btn-ghost" style={{ flex: 1 }}>{t('btnCancel')}</button>
+                        <button type="button" disabled={credSaving} onClick={handleRequestCredentialOtp} className="btn btn-primary" style={{ flex: 2 }}>
+                          {credSaving ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('sendOtpBtn')}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between">
+                      <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.phone || 'N/A'}</p>
+                      <button onClick={() => startEditCredential('phone')} className="icon-btn" title={t('editLoginCredentialTitle')}>
+                        <Edit style={{ width: 14, height: 14 }} />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -16391,6 +16670,19 @@ function ShopSettingsView({ t, api, shopId }) {
         </div>,
         document.body
       )}
+
+      <OtpVerificationModal
+        open={showCredOtpModal}
+        onClose={() => setShowCredOtpModal(false)}
+        onVerified={handleCredentialOtpVerified}
+        api={api}
+        identifier={credNewValue.trim()}
+        method={editingCredField || 'email'}
+        purpose="change-credentials"
+        title={t('verifyOtpModalTitle')}
+        description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', credNewValue.trim())}
+        t={t}
+      />
 
       {/* OTP Password Reset Modal inside Settings */}
       {otpResetOpen && createPortal(

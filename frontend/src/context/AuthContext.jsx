@@ -133,6 +133,25 @@ export const AuthProvider = ({ children }) => {
       return request('/api/auth/change-password', 'POST', { oldPassword, newPassword });
     },
 
+    // Changes the caller's own login email and/or phone - only call this
+    // after the new identifier has already been through the OTP send/verify
+    // flow (see OtpVerificationModal, purpose: 'change-credentials'); the
+    // backend re-checks that a recently-verified OTP exists rather than
+    // accepting a raw code here (see AuthService.updateLoginCredentials).
+    updateLoginCredentials: async ({ newEmail, newPhone } = {}) => {
+      const res = await request('/api/auth/update-credentials', 'POST', { newEmail, newPhone });
+      // Reflects the change immediately (header, Settings display, etc.)
+      // without requiring the user to log out and back in - res.email/phone
+      // are the account's final values regardless of which one(s) changed.
+      setUser((prev) => {
+        if (!prev) return prev;
+        const next = { ...prev, email: res.email, phone: res.phone };
+        localStorage.setItem('kee_auth_user', JSON.stringify(next));
+        return next;
+      });
+      return res;
+    },
+
     resetPasswordPublic: async (identifier, method, newPassword) => {
       const response = await fetch(`${API_BASE}/api/auth/reset-password-public`, {
         method: 'POST',
@@ -405,9 +424,10 @@ export const AuthProvider = ({ children }) => {
     // CustomerService.getCustomers for why this is a separate method rather
     // than extending getCustomers itself (several other call sites depend
     // on its plain-flat-array, unpaginated shape).
-    getCustomersPage: async ({ search = '', cursor, limit } = {}) => {
+    getCustomersPage: async ({ search = '', town = '', cursor, limit } = {}) => {
       const params = new URLSearchParams();
       if (search) params.append('search', search);
+      if (town) params.append('town', town);
       if (cursor) params.append('cursor', cursor);
       if (limit) params.append('limit', String(limit));
       return request(`/api/shop/customers?${params.toString()}`);

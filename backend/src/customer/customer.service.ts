@@ -216,8 +216,8 @@ export class CustomerService {
   // global-search route, the duplicate-key scan, and the revenue-by-date
   // report generator) rely on that shape and aren't part of the Customer
   // History screen this pagination was added for.
-  async getCustomers(shopId: string, query?: string, pageOpts: { cursor?: string; limit?: number; keysOnly?: boolean } = {}) {
-    const { cursor, limit, keysOnly } = pageOpts;
+  async getCustomers(shopId: string, query?: string, pageOpts: { cursor?: string; limit?: number; keysOnly?: boolean; town?: string } = {}) {
+    const { cursor, limit, keysOnly, town } = pageOpts;
     const whereClause: any = { shopId };
     // Master Key Catalog Search (KeysSearchView) - only registrations that
     // actually have a key code count as a "key" (the wizard lets a shop
@@ -226,14 +226,35 @@ export class CustomerService {
       whereClause.keyNumber = { not: null };
     }
 
+    const andConditions: any[] = [];
     if (query) {
-      whereClause.OR = [
-        { name: { contains: query, mode: 'insensitive' } },
-        { phone: { contains: query, mode: 'insensitive' } },
-        { keyNumber: { contains: query, mode: 'insensitive' } },
-        { vehicleNumber: { contains: query, mode: 'insensitive' } },
-        { capturedAddress: { contains: query, mode: 'insensitive' } },
-      ];
+      andConditions.push({
+        OR: [
+          { name: { contains: query, mode: 'insensitive' } },
+          { phone: { contains: query, mode: 'insensitive' } },
+          { keyNumber: { contains: query, mode: 'insensitive' } },
+          { vehicleNumber: { contains: query, mode: 'insensitive' } },
+          { capturedAddress: { contains: query, mode: 'insensitive' } },
+        ],
+      });
+    }
+    // Customer History's location filter - Customer has no structured
+    // town/district column (just free-text address/capturedAddress), so this
+    // matches the selected Tamil Nadu district/town name against whichever
+    // of those two fields actually holds it, same approximate-match approach
+    // as the free-text search above.
+    if (town) {
+      andConditions.push({
+        OR: [
+          { address: { contains: town, mode: 'insensitive' } },
+          { capturedAddress: { contains: town, mode: 'insensitive' } },
+        ],
+      });
+    }
+    if (andConditions.length === 1) {
+      Object.assign(whereClause, andConditions[0]);
+    } else if (andConditions.length > 1) {
+      whereClause.AND = andConditions;
     }
 
     const include = {

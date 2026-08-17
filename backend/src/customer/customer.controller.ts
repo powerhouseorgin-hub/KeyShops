@@ -30,11 +30,13 @@ export class CustomerController {
     @Query('cursor') cursor?: string,
     @Query('limit') limit?: string,
     @Query('keysOnly') keysOnly?: string,
+    @Query('town') town?: string,
   ) {
     return this.customerService.getCustomers(req.user.shopId, search, {
       cursor,
       limit: limit ? Number(limit) : undefined,
       keysOnly: keysOnly === 'true',
+      town,
     });
   }
 
