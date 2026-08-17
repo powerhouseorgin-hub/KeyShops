@@ -460,10 +460,23 @@ export class CustomerService {
     };
 
     if (!limit) {
+      // Unlike getCustomers() above (shop-scoped, so naturally bounded by
+      // one shop's registration volume, and relied on unbounded for the
+      // revenue report generator's full-dataset export), this query has no
+      // shopId filter at all - it searches every customer platform-wide.
+      // Every current call site passes a specific search term (an id or a
+      // typed key code) expecting at most a handful of matches, but nothing
+      // stops a pathologically short/empty query from matching everyone,
+      // and each row gets AES-GCM PII decrypted below - so an unbounded
+      // result here is a PII-exposure risk on top of the perf cost. This
+      // cap doesn't change the return shape (still a flat array, not
+      // `{items, nextCursor}`), so no caller needs to change - it's purely
+      // a worst-case bound, same pattern as AdService.getAllAds's `take: 200`.
       const customers = await this.tenantService.prisma.customer.findMany({
         where: whereClause,
         orderBy: { createdAt: 'desc' },
         include,
+        take: 200,
       });
       return customers.map(c => this.decryptCustomerPII(c));
     }

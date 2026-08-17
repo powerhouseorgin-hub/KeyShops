@@ -12280,57 +12280,111 @@ function OffersAdsBannersView({ t, api }) {
 // needed) - this view unmounts/remounts on every tab switch (Key Shops/ECM/
 // Meter/Scanning each mount a fresh instance), so without this every bare
 // revisit blanked to a spinner before showing anything, same root cause as
-// the DashboardView fix.
+// the DashboardView fix. Shape mirrors dealersFirstPageCache below (an
+// `{items, nextCursor, hasMore}` page, not a flat array) now that this view
+// paginates too.
 const categoryShopsCache = {};
+// Page size for this view's cursor pagination - see DEALERS_PAGE_SIZE below
+// (same value, same rationale) and ShopService.searchPublicShops. This view
+// previously fetched every shop in a category with no `limit` at all - the
+// backend's unpaginated branch silently caps at 50, so any category (Key
+// Shops/ECM/Meter/Scanning) with more than 50 active shops had entries that
+// were simply unreachable, with no error and no "Load More" affordance.
+const CATEGORY_SHOPS_PAGE_SIZE = 20;
 
 function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTown, locationReady }) {
-  const cachedDealers = categoryShopsCache[categoryKey] || null;
-  const [dealers, setDealers] = useState(cachedDealers || []);
-  const [loading, setLoading] = useState(!cachedDealers);
+  const cachedPage = categoryShopsCache[categoryKey] || null;
+  const [dealers, setDealers] = useState(cachedPage ? cachedPage.items : []);
+  const [loading, setLoading] = useState(!cachedPage);
+  // Infinite-scroll pagination state - `dealers` only ever holds the pages
+  // loaded so far, never every shop in the category (see fetchDealers/
+  // fetchMoreDealers below) - mirrors DealersView's identical state.
+  const [nextCursor, setNextCursor] = useState(cachedPage ? cachedPage.nextCursor : null);
+  const [hasMore, setHasMore] = useState(cachedPage ? cachedPage.hasMore : false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const loadMoreSentinelRef = useRef(null);
   const [query, setQuery] = useState('');
   const [town, setTown, filterReady] = useLocationFilter(defaultTown, locationReady);
-
-  // Debounced (350ms, matching Blank Key Search) - this previously fired a
-  // fresh request (and blanked the list to a spinner) on every keystroke,
-  // with no debounce at all. `town` is a discrete dropdown pick rather than
-  // free typing, so it doesn't strictly need debouncing, but riding the same
-  // effect keeps this simple and the added latency is imperceptible.
-  // Also waits for `filterReady` (useLocationFilter's 3rd return value),
-  // not the raw `locationReady` prop, before the very first fetch - see
-  // that hook's comment for the full "no flicker, no stale intermediate
-  // fetch" rationale.
+  // Debounced before it reaches the server - see DealersView/PromotionsFeed's
+  // identical pattern for why (every change now triggers a network request).
+  // A separate debounced value (not just a debounced fetch call) matters
+  // here specifically because fetchMoreDealers below needs a stable filter
+  // to page through - if it read the raw, still-being-typed `query` instead,
+  // a "Load More" that fires while the user is mid-keystroke would page
+  // through a different filter than the one the visible list was loaded
+  // with.
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   useEffect(() => {
-    if (!filterReady) return;
-    const timer = setTimeout(() => {
-      fetchDealers();
-    }, 350);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, town, categoryKey, filterReady]);
+    const handle = setTimeout(() => setDebouncedQuery(query.trim()), 300);
+    return () => clearTimeout(handle);
+  }, [query]);
 
   const fetchDealers = async () => {
-    // Only blank to a spinner when there's nothing on screen yet - a bare
-    // revisit renders the last-fetched list instantly from cache above and
+    // "Default view" means town is either empty or whatever GPS resolved as
+    // the default (not just empty) - locationReady gating (see App()'s
+    // locationReady) means the very first fetch may already carry a
+    // GPS-resolved town, so comparing against '' only would mean this cache
+    // never populates for any user with a resolved location.
+    const isDefaultView = !debouncedQuery && (!town || town === defaultTown);
+    // Only blank to a spinner for a real search/filter or a genuinely empty
+    // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
-    if (dealers.length === 0) setLoading(true);
+    if (!isDefaultView || dealers.length === 0) setLoading(true);
     try {
-      const res = await api.searchPublicShops({ query, category: categoryKey, town });
-      const list = Array.isArray(res) ? res : [];
-      setDealers(list);
-      // Only cache the "default view" result - a search or a town the user
-      // explicitly picked must never be mistaken for it on a later revisit.
-      // "Default" means town is either empty or whatever GPS resolved as
-      // the default (not just empty) - locationReady gating (see App()'s
-      // locationReady) means the very first fetch may already carry a
-      // GPS-resolved town, so comparing against '' only would mean this
-      // cache never populates for any user with a resolved location.
-      if (!query && (!town || town === defaultTown)) categoryShopsCache[categoryKey] = list;
+      const res = await api.searchPublicShops({ query: debouncedQuery, category: categoryKey, town, limit: CATEGORY_SHOPS_PAGE_SIZE });
+      setDealers(res.items);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
+      if (isDefaultView) {
+        categoryShopsCache[categoryKey] = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+      }
     } catch (e) {
       console.error('Failed to fetch category dealers', e);
     } finally {
       setLoading(false);
     }
   };
+
+  // Appends the next page - triggered by the sentinel scrolling into view or
+  // the manual "Load More" fallback button. Mirrors DealersView's identical
+  // fetchMoreDealers.
+  const fetchMoreDealers = async () => {
+    if (!hasMore || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const res = await api.searchPublicShops({ query: debouncedQuery, category: categoryKey, town, cursor: nextCursor, limit: CATEGORY_SHOPS_PAGE_SIZE });
+      setDealers((prev) => [...prev, ...res.items]);
+      setNextCursor(res.nextCursor);
+      setHasMore(!!res.nextCursor);
+    } catch (e) {
+      console.error('Failed to fetch more category dealers', e);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  // Also waits for `filterReady` (useLocationFilter's 3rd return value),
+  // not the raw `locationReady` prop, before the very first fetch - see
+  // that hook's comment for the full "no flicker, no stale intermediate
+  // fetch" rationale.
+  useEffect(() => {
+    if (!filterReady) return;
+    fetchDealers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery, town, categoryKey, filterReady]);
+
+  useEffect(() => {
+    const node = loadMoreSentinelRef.current;
+    if (!node || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) fetchMoreDealers();
+      },
+      { rootMargin: '400px' },
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [hasMore, nextCursor, loadingMore, debouncedQuery, town]);
 
   let title = t('dealers');
   let description = t('dealersDesc');
@@ -12467,6 +12521,20 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTo
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Infinite scroll (sentinel) + manual "Load More" fallback - see
+          DealersView/PromotionsFeed's identical pattern for why both exist. */}
+      {!loading && hasMore && (
+        <div ref={loadMoreSentinelRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10, padding: 20 }}>
+          {loadingMore ? (
+            <RefreshCw className="animate-spin" style={{ width: 20, height: 20, color: accentColor }} />
+          ) : (
+            <button type="button" onClick={fetchMoreDealers} className="btn btn-outline btn-sm">
+              {t('loadMoreBtn')}
+            </button>
+          )}
         </div>
       )}
     </div>
