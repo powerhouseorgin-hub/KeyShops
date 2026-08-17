@@ -517,12 +517,26 @@
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .mbn-item {
-  flex: 1 1 0%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  /* min-width: 0 overrides the flex default (min-width: auto), which would
+     otherwise let this item grow past its 1/4 share to fit a long label's
+     intrinsic width instead of letting the label's own ellipsis rule (below)
+     truncate it - without this, a long label bulges its column wider than
+     its siblings rather than getting cut off with "…". */
+  flex: 1 1 0%; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 3px; padding: 9px 4px 10px; background: transparent; border: none; cursor: pointer;
   color: var(--text-3); font-size: 10.5px; font-weight: 700; font-family: var(--sans);
   transition: color .15s ease;
 }
 .mbn-item svg { width: 20px; height: 20px; stroke-width: 2; }
+/* Longer labels ("Customer Service" and its equivalents in other languages)
+   would otherwise wrap to 2 lines and - since .mobile-bottom-nav's siblings
+   stretch to match the tallest item - silently grow the whole bar's height
+   beyond what .fab's hardcoded bottom offset (below) assumes, causing the
+   FAB to sit partly underneath it. Truncating with ellipsis instead keeps
+   the bar's height fixed across every language/screen width. */
+.mbn-item span:last-child {
+  max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .mbn-item.active { color: var(--gold); }
 
 /* Floating "+" action button - replaces an inline header create button on
@@ -542,7 +556,11 @@
 .fab:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(37, 99, 235, 0.55); }
 .fab svg { width: 26px; height: 26px; stroke-width: 2.5; }
 @media (max-width: 767px) {
-  .fab { bottom: calc(62px + 20px + env(safe-area-inset-bottom, 0px)); }
+  /* .mobile-bottom-nav's real rendered height (30px icon badge + 3px gap +
+     one text line + 19px vertical padding + 1px border) comes to ~70px, a
+     bit more than this used to assume - bumped up so the FAB always clears
+     it with a comfortable 16px gap instead of nearly touching it. */
+  .fab { bottom: calc(70px + 16px + env(safe-area-inset-bottom, 0px)); }
 }
 
 .lang-option-btn {
