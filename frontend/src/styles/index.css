@@ -307,12 +307,15 @@
 .btn-primary:active:not(:disabled) { transform: translateY(0) scale(.98); }
 .btn-outline { background: transparent; color: #2563EB; border: 1.5px solid rgba(37, 99, 235, 0.45); }
 .btn-outline:hover:not(:disabled) { background: rgba(37, 99, 235, 0.12); transform: translateY(-1px); }
+.btn-outline:active:not(:disabled) { transform: translateY(0) scale(.98); }
 .btn-ghost { background: var(--card-2); color: var(--text-1); border: 1px solid var(--border-2); }
 .btn-ghost:hover:not(:disabled) { background: #FFFFFF; color: var(--text-0); }
+.btn-ghost:active:not(:disabled) { transform: scale(.98); }
 .btn-sm { padding: 9px 16px; font-size: 12.5px; }
 .btn-block { width: 100%; }
 .btn-danger-outline { background: transparent; color: var(--red); border: 1.5px solid rgba(220, 38, 38, 0.4); }
 .btn-danger-outline:hover:not(:disabled) { background: var(--red-dim); }
+.btn-danger-outline:active:not(:disabled) { transform: scale(.98); }
 
 /* cards */
 .card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px; box-shadow: 0 20px 40px rgba(30, 41, 59, 0.1), 0 2px 6px rgba(30, 41, 59, 0.06); }
@@ -1396,8 +1399,19 @@ select.sel:focus { border-color: var(--gold); }
 .public-hero-ctas { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 30px; }
 .public-hero-ghost-btn { background: rgba(255, 255, 255, .12); color: #fff; }
 .public-hero-ghost-btn:hover:not(:disabled) { background: rgba(255, 255, 255, .2); transform: translateY(-1px); }
+.public-hero-ghost-btn:active:not(:disabled) { transform: translateY(0) scale(.98); }
 .public-hero-panel-visual { padding: 40px; display: flex; justify-content: center; position: relative; z-index: 1; }
-.public-hero-panel-visual img { width: 340px; max-width: 100%; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .35)); }
+.public-hero-panel-visual img {
+  width: 340px; max-width: 100%; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .35));
+  animation: heroFloat 6s ease-in-out infinite;
+}
+@keyframes heroFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-1.5deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-hero-panel-visual img { animation: none; }
+}
 @media (max-width: 860px) { .public-hero-panel-visual { display: none; } }
 
 /* floating stat cards, overlapping the hero panel's bottom edge */
@@ -1418,7 +1432,7 @@ select.sel:focus { border-color: var(--gold); }
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
 .public-stat-icon svg { width: 20px; height: 20px; stroke-width: 2.2; }
-.public-stat-num { font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--text-0); }
+.public-stat-num { font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--text-0); font-variant-numeric: tabular-nums; }
 .public-stat-label { font-size: 12px; color: var(--text-2); font-weight: 600; margin-top: 2px; }
 
 /* generic public section */

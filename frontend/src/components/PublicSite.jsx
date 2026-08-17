@@ -61,6 +61,48 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
   );
 }
 
+// Counts up from 0 to `end` once the element scrolls into view (reuses the
+// same IntersectionObserver-on-mount pattern as Reveal above, but drives a
+// number instead of a CSS class). Respects prefers-reduced-motion by jumping
+// straight to the final value instead of animating.
+function CountUp({ end, suffix = '', duration = 1400 }) {
+  const ref = useRef(null);
+  const [value, setValue] = useState(0);
+  const started = useRef(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started.current) {
+          started.current = true;
+          io.disconnect();
+
+          if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            setValue(end);
+            return;
+          }
+
+          const startTime = performance.now();
+          const tick = (now) => {
+            const progress = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+            setValue(Math.round(end * eased));
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [end, duration]);
+
+  return <span ref={ref}>{value}{suffix}</span>;
+}
+
 const NAV_ITEMS = [
   { key: 'home', label: 'Home' },
   { key: 'search', label: 'Find a Shop' },
@@ -224,21 +266,21 @@ function HomePage({ onNavigate }) {
         <div className="public-stat-card">
           <div className="public-stat-icon"><Store /></div>
           <div>
-            <div className="public-stat-num">500+</div>
+            <div className="public-stat-num"><CountUp end={500} suffix="+" /></div>
             <div className="public-stat-label">Shops onboarded</div>
           </div>
         </div>
         <div className="public-stat-card">
           <div className="public-stat-icon"><Key /></div>
           <div>
-            <div className="public-stat-num">50k+</div>
+            <div className="public-stat-num"><CountUp end={50} suffix="k+" /></div>
             <div className="public-stat-label">Keys duplicated</div>
           </div>
         </div>
         <div className="public-stat-card">
           <div className="public-stat-icon"><MapPin /></div>
           <div>
-            <div className="public-stat-num">100+</div>
+            <div className="public-stat-num"><CountUp end={100} suffix="+" /></div>
             <div className="public-stat-label">Cities served</div>
           </div>
         </div>
@@ -563,15 +605,20 @@ export default function PublicSite({ page, onNavigate, api }) {
     <div className="public-site">
       <div className="public-topbar">The <b>Super Admin</b> web console &mdash; Shop Admins, get the app below.</div>
       <PublicNav page={page} onNavigate={onNavigate} />
-      {page === 'search' ? (
-        <SearchPage api={api} />
-      ) : page === 'about' ? (
-        <AboutPage />
-      ) : page === 'contact' ? (
-        <ContactPage />
-      ) : (
-        <HomePage onNavigate={onNavigate} />
-      )}
+      {/* Keyed on `page` so switching nav tabs remounts this wrapper and
+          replays the fade-in, instead of the instant content swap this used
+          to be. */}
+      <div key={page} className="animate-fade-in">
+        {page === 'search' ? (
+          <SearchPage api={api} />
+        ) : page === 'about' ? (
+          <AboutPage />
+        ) : page === 'contact' ? (
+          <ContactPage />
+        ) : (
+          <HomePage onNavigate={onNavigate} />
+        )}
+      </div>
       <PublicFooter onNavigate={onNavigate} />
     </div>
   );
