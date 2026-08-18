@@ -4,12 +4,13 @@ import { useAuth } from '../context/AuthContext';
 import { useBackHandler } from '../utils/backHandler';
 import { getAssetUrl, downloadAsset, filenameForAsset } from '../apiConfig';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
-import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL } from '../utils/platform';
+import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../utils/platform';
 import {
   AlertTriangle, Award, BadgePercent, Camera, Check, CheckCircle2, Copy,
   Download, Edit, Eye, EyeOff, FileCheck, FileText, Image as ImageIcon,
   KeyRound, Link2, Lock, Mail, MapPin, Phone, RefreshCw, ShieldCheck,
   Store, Trash, Upload, User, Users,
+  X,
 } from 'lucide-react';
 
 // Lazy-loaded: pulls in the Capacitor Firebase Authentication SDK - see the

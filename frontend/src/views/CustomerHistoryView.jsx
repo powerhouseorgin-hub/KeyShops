@@ -12,6 +12,7 @@ import {
   DollarSign, Eye, CheckCircle2, Lock, ShieldCheck, Phone, Calendar, User,
   UploadCloud, FileCheck, Navigation, KeyRound, Car, Tag, MessageCircle,
   Download, Fingerprint, Home, Copy,
+  X,
 } from 'lucide-react';
 
 // Lazy-loaded (Track B): the edit-customer flow reuses the full registration

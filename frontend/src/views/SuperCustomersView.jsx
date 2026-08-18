@@ -8,6 +8,7 @@ import {
   Key, Plus, FileText, Search, MapPin, Camera, RefreshCw, Edit, ExternalLink,
   Eye, Lock, ShieldCheck, Phone, Calendar, Store, User, FileCheck, KeyRound,
   MessageCircle, Download, Fingerprint, Home,
+  X,
 } from 'lucide-react';
 
 // Lazy-loaded (Track B): Add/Edit Customer both reuse the full registration

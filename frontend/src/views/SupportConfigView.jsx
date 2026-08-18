@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Check, Plus, Trash, RefreshCw, Layers, Edit, ExternalLink, Mail, Phone,
   IndianRupee, User, Tag, Percent, PlayCircle, MessageCircle, LifeBuoy, GripVertical,
+  X,
 } from 'lucide-react';
 
 export function SupportConfigView({ t, api }) {

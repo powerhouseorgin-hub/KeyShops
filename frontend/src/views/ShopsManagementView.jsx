@@ -8,16 +8,61 @@ import { resolveCurrentLocation, reverseGeocode } from '../utils/geolocation';
 import { useLocationFilter } from '../utils/locationFilter';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import CustomSelect from '../components/CustomSelect';
+import keyShopLogo from '../assets/branding/keyshop-logo.png';
 import {
   Key, Check, Plus, Settings, FileText, Search, MapPin, Camera, AlertTriangle,
   RefreshCw, Layers, Edit, DollarSign, ChevronRight, CreditCard, QrCode, Lock,
   ShieldCheck, Mail, Phone, Calendar, Store, User, Crosshair, Tag, Percent, Globe,
+  X,
 } from 'lucide-react';
 
 // Lazy-loaded (Track B): keeps the Shop Settings modal ("Manage Settings"
 // from this screen's shop list) out of the initial bundle - see App.jsx's
 // identical lazy import for the primary Settings-tab call site.
 const ShopSettingsView = lazy(() => import('./ShopSettingsView'));
+
+// Downscales a base64 data URL to a small (<=120px) JPEG thumbnail before it
+// gets embedded inline (not uploaded) in the shop-registration document
+// fields (photo/license/owner Aadhaar preview) - passes non-image uploads
+// (PDFs) through unmodified.
+const compressBase64Image = (base64, callback) => {
+  if (!base64) {
+    callback('');
+    return;
+  }
+  if (!base64.startsWith('data:image')) {
+    callback(base64);
+    return;
+  }
+  const img = new Image();
+  img.src = base64;
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    const MAX_WIDTH = 120;
+    const MAX_HEIGHT = 120;
+    let width = img.width;
+    let height = img.height;
+    if (width > height) {
+      if (width > MAX_WIDTH) {
+        height *= MAX_WIDTH / width;
+        width = MAX_WIDTH;
+      }
+    } else {
+      if (height > MAX_HEIGHT) {
+        width *= MAX_HEIGHT / height;
+        height = MAX_HEIGHT;
+      }
+    }
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+    callback(canvas.toDataURL('image/jpeg', 0.5));
+  };
+  img.onerror = () => {
+    callback(base64);
+  };
+};
 
 // Page size for the Shop Management screen's cursor pagination - see
 // ShopService.getShops.

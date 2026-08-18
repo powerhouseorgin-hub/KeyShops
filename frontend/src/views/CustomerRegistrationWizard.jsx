@@ -5,7 +5,7 @@ import { useBackHandler } from '../utils/backHandler';
 import { downloadAsset } from '../apiConfig';
 import { downloadPdf, sharePdf } from '../utils/pdfDelivery';
 import { VEHICLE_CATEGORIES, isAutomobileCategory } from '../utils/vehicleCategory';
-import { normalizePhone } from '../utils/phone';
+import { normalizePhone, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { ALL_DOC_TYPES, INDIAN_STATES_DISTRICTS } from '../utils/registrationData';
 import { IS_NATIVE_APP, primeStoragePermission } from '../utils/platform';
 import { resolveCurrentLocation, reverseGeocode, openDeviceLocationSettings, openAppSettings } from '../utils/geolocation';
@@ -21,6 +21,7 @@ import {
   Key, Check, MapPin, Camera, AlertTriangle, RefreshCw, Edit, Eye, CheckCircle2,
   Lock, Phone, ArrowRight, ArrowLeft, Store, UserPlus, IndianRupee, User,
   UploadCloud, Crosshair, FileCheck, Navigation, KeyRound, Car, Download, Home, Save,
+  X,
 } from 'lucide-react';
 
 // Lazy-loaded: pulls in the Capacitor Firebase Authentication SDK - see the
