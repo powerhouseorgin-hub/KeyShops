@@ -161,15 +161,6 @@
 }
 
 .navmeta { display: flex; align-items: center; gap: 14px; }
-.role-pill {
-  display: flex; align-items: center; gap: 6px;
-  background: var(--gold-dim); color: var(--gold);
-  border: 1px solid rgba(200, 148, 22, 0.28);
-  padding: 6px 12px; border-radius: 999px;
-  font-size: 12px; font-weight: 800; font-family: var(--display);
-  letter-spacing: .02em;
-}
-.role-pill svg { width: 13px; height: 13px; }
 .avatar {
   width: 36px; height: 36px; border-radius: 999px;
   background: var(--card-2); border: 1px solid var(--border-2);

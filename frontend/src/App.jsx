@@ -421,8 +421,6 @@ const LANGUAGES = {
     settings: 'Shop Settings',
     logout: 'Log Out',
     welcome: 'KEY SHOP WORKSPACE',
-    superAdmin: 'Super Admin',
-    shopTerminal: 'Shop Terminal',
     supportConfig: 'Support Configuration',
     inventory: 'Machines',
     customerCare: 'Customer Care',
@@ -1313,8 +1311,6 @@ const LANGUAGES = {
     settings: 'दुकान सेटिंग्स',
     logout: 'लॉग आउट',
     welcome: 'की वर्कस्पेस',
-    superAdmin: 'सुपर एडमिन',
-    shopTerminal: 'दुकान टर्मिनल',
     supportConfig: 'सहायता कॉन्फ़िगरेशन',
     inventory: 'मशीनें',
     customerCare: 'ग्राहक सेवा',
@@ -2194,8 +2190,6 @@ const LANGUAGES = {
     settings: 'கடை அமைப்புகள்',
     logout: 'வெளியேறு',
     welcome: 'கீ ஒர்க்ஸ்பேஸ்',
-    superAdmin: 'சூப்பர் அட்மின்',
-    shopTerminal: 'கடை முனையம்',
     supportConfig: 'ஆதரவு உள்ளமைவு',
     inventory: 'இயந்திரங்கள்',
     customerCare: 'வாடிக்கையாளர் சேவை',
@@ -3069,8 +3063,6 @@ const LANGUAGES = {
     settings: 'షాప్ సెట్టింగులు',
     logout: 'లాగ్ అవుట్',
     welcome: 'కీ వర్క్‌స్పేస్',
-    superAdmin: 'సూపర్ అడ్మిన్',
-    shopTerminal: 'షాప్ టెర్మినల్',
     supportConfig: 'మద్దతు కాన్ఫిగరేషన్',
     inventory: 'మెషీన్లు',
     customerCare: 'కస్టమర్ కేర్',
@@ -3950,8 +3942,6 @@ const LANGUAGES = {
     settings: 'ಅಂಗಡಿ ಸೆಟ್ಟಿಂಗ್‌ಗಳು',
     logout: 'ಲಾಗ್ ಔಟ್',
     welcome: 'ಕೀ ವರ್ಕ್‌ಸ್ಪೇಸ್',
-    superAdmin: 'ಸೂಪರ್ ಅಡ್ಮಿನ್',
-    shopTerminal: 'ಅಂಗಡಿ ಟರ್ಮಿನಲ್',
     supportConfig: 'ಬೆಂಬಲ ಸಂರಚನೆ',
     inventory: 'ಯಂತ್ರಗಳು',
     customerCare: 'ಗ್ರಾಹಕ ಸೇವೆ',
@@ -4825,8 +4815,6 @@ const LANGUAGES = {
     settings: 'ഷോപ്പ് ക്രമീകരണങ്ങൾ',
     logout: 'ലോഗ് ഔട്ട്',
     welcome: 'കീ വർക്ക്സ്പേസ്',
-    superAdmin: 'സൂപ്പർ അഡ്മിൻ',
-    shopTerminal: 'ഷോപ്പ് ടെർമിനൽ',
     supportConfig: 'സപ്പോർട്ട് കോൺഫിഗറേഷൻ',
     inventory: 'മെഷീനുകൾ',
     customerCare: 'കസ്റ്റമർ കെയർ',
@@ -7648,13 +7636,6 @@ export default function App() {
               <button className="icon-btn md:hidden" onClick={() => setMobileNavOpen(false)}>
                 <X />
               </button>
-            </div>
-
-            <div style={{ padding: '0 20px 18px' }}>
-              <span className="role-pill">
-                <ShieldCheck />
-                {user.role === 'SUPER_ADMIN' ? t('superAdmin') : t('shopTerminal')}
-              </span>
             </div>
 
             {/* Language Selector Dropdown */}
