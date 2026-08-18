@@ -2,12 +2,45 @@ import React, { useEffect } from 'react';
 import { ChevronDown, ChevronUp, MapPin, Phone, Clock, Star } from 'lucide-react';
 import { useState } from 'react';
 
+// Map cities to their states
+const cityToState = {
+  'chennai': 'Tamil Nadu',
+  'tamil-nadu': 'Tamil Nadu',
+  'bangalore': 'Karnataka',
+  'hyderabad': 'Telangana',
+  'pune': 'Maharashtra',
+  'mumbai': 'Maharashtra',
+  'coimbatore': 'Tamil Nadu',
+  'madurai': 'Tamil Nadu',
+  'kochi': 'Kerala'
+};
+
+// Normalize city name for display
+function normalizeCityName(city) {
+  const map = {
+    'tamil-nadu': 'Tamil Nadu',
+    'chennai': 'Chennai',
+    'bangalore': 'Bangalore',
+    'hyderabad': 'Hyderabad',
+    'pune': 'Pune',
+    'mumbai': 'Mumbai',
+    'coimbatore': 'Coimbatore',
+    'madurai': 'Madurai',
+    'kochi': 'Kochi'
+  };
+  return map[city.toLowerCase()] || city;
+}
+
 export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu' }) {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
   const [expandedFaq, setExpandedFaq] = useState(null);
+
+  // Normalize location name for lookup
+  const normalizedCity = normalizeCityName(location);
+  const finalState = cityToState[location.toLowerCase()] || state;
 
   const locationData = {
     'Chennai': {
@@ -108,7 +141,7 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
     }
   };
 
-  const data = locationData[location] || locationData['Chennai'];
+  const data = locationData[normalizedCity] || locationData['Chennai'];
 
   return (
     <div className="bg-white">
@@ -117,7 +150,7 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
         {JSON.stringify({
           "@context": "https://schema.org",
           "@type": "LocalBusiness",
-          "name": `KeyShops.in - ${location}, ${state}`,
+          "name": `KeyShops.in - ${normalizedCity}, ${finalState}`,
           "description": data.description,
           "url": `https://keyshops.in/key-shops/${location.toLowerCase()}`,
           "areaServed": {
@@ -134,8 +167,8 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
       {/* Header */}
       <div className="bg-gradient-to-r from-primary-600 to-primary-700 text-white py-12 px-4">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold mb-4">{data.title}</h1>
-          <p className="text-lg text-primary-100">{data.description}</p>
+          <h1 className="text-4xl font-bold mb-4">{data.title.replace('{location}', normalizedCity).replace('{state}', finalState)}</h1>
+          <p className="text-lg text-primary-100">{data.description.replace('{location}', normalizedCity).replace('{state}', finalState)}</p>
           <p className="text-sm text-primary-200 mt-4">Published: August 18, 2026</p>
         </div>
       </div>
@@ -143,7 +176,7 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Services Overview */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Key Duplication Services in {location}</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Key Duplication Services in {normalizedCity}</h2>
           <div className="grid md:grid-cols-2 gap-4 mb-8">
             {data.services.map((service, idx) => (
               <div key={idx} className="flex items-start p-4 bg-blue-50 rounded-lg">
@@ -156,7 +189,7 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
 
         {/* Service Areas */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Service Areas in {location}</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Service Areas in {normalizedCity}</h2>
           <div className="grid md:grid-cols-3 gap-3">
             {data.areas.map((area, idx) => (
               <div key={idx} className="flex items-center p-3 bg-gray-100 rounded-lg">
@@ -169,16 +202,16 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
 
         {/* Pricing Section */}
         <section className="mb-12 bg-green-50 border-l-4 border-green-500 p-8 rounded-lg">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Average Cost in {location}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Average Cost in {normalizedCity}</h2>
           <p className="text-lg text-gray-700 font-semibold">{data.avgCost}</p>
           <p className="text-gray-600 mt-4">
-            Prices may vary based on key complexity, shop location, and certification level. Use KeyShops.in to compare rates from multiple shops in {location}.
+            Prices may vary based on key complexity, shop location, and certification level. Use KeyShops.in to compare rates from multiple shops in {normalizedCity}.
           </p>
         </section>
 
         {/* Why Choose Professional Shops */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Why Choose Professional Key Shops in {location}?</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Why Choose Professional Key Shops in {normalizedCity}?</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-blue-50 border-l-4 border-blue-500 p-6">
               <h3 className="font-bold text-gray-900 mb-3">Quality & Reliability</h3>
@@ -201,7 +234,7 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
 
         {/* How to Find Best Shops */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">How to Find the Best Key Shop in {location}</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">How to Find the Best Key Shop in {normalizedCity}</h2>
           <ol className="space-y-4 mb-8">
             <li className="flex">
               <span className="font-bold text-primary-600 mr-4 text-lg">1.</span>
@@ -243,7 +276,7 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
 
         {/* FAQ */}
         <section className="mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions about {location}</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-6">Frequently Asked Questions about {normalizedCity}</h2>
           <div className="space-y-4">
             {data.faq.map((item, idx) => (
               <div key={idx} className="border border-gray-300 rounded-lg">
@@ -266,10 +299,10 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
 
         {/* CTA */}
         <section className="bg-primary-50 border-l-4 border-primary-500 p-8 rounded-lg text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Find Key Shops Near You in {location}</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">Find Key Shops Near You in {normalizedCity}</h2>
           <p className="text-gray-700 mb-6">Browse verified key shops, compare prices, read reviews, and book your service today.</p>
           <a href="/search?q=key+shops" className="inline-block bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors">
-            Search Key Shops in {location}
+            Search Key Shops in {normalizedCity}
           </a>
         </section>
 

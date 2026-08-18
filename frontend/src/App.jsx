@@ -41,6 +41,10 @@ import CountUp from './components/CountUp';
 // already gated behind the login-shell or the authenticated dashboard, so
 // pre-login browsing never triggers this chunk's fetch at all.
 const OtpVerificationModal = lazy(() => import('./components/OtpVerificationModal'));
+// SEO blog and location page components
+const BlogKeyCostGuide = lazy(() => import('./components/BlogKeyCostGuide'));
+const BlogCarKeyGuide = lazy(() => import('./components/BlogCarKeyGuide'));
+const LocationPage = lazy(() => import('./components/LocationPage'));
 // Lazy-loaded (Track B pilot): keeps the Shop Settings screen - referral
 // program, document/logo upload, credential changes - out of the initial
 // bundle. It's only ever reached from inside the authenticated dashboard, so
@@ -119,6 +123,19 @@ import keyShopLogo from './assets/branding/keyshop-logo.png';
 // map is scoped to the `!IS_NATIVE_APP` code paths.
 const PUBLIC_PATH_BY_PAGE = { home: '/', search: '/search', about: '/about', contact: '/contact', login: '/login' };
 const PUBLIC_PAGE_BY_PATH = { '/': 'home', '/search': 'search', '/about': 'about', '/contact': 'contact', '/login': 'login' };
+
+// Helper to detect and parse blog/location page routes
+function parseSpecialRoute(pathname) {
+  if (pathname === '/blog/key-duplication-cost-guide') return { type: 'blog', name: 'cost-guide' };
+  if (pathname === '/blog/car-key-duplication-guide') return { type: 'blog', name: 'car-key-guide' };
+  if (pathname === '/blog/how-to-find-reliable-key-shop') return { type: 'blog', name: 'find-shop' };
+  if (pathname === '/blog/lost-car-key-recovery-guide') return { type: 'blog', name: 'lost-key' };
+
+  const locationMatch = pathname.match(/^\/key-shops\/([a-z-]+)$/);
+  if (locationMatch) return { type: 'location', city: locationMatch[1] };
+
+  return null;
+}
 
 const TERMS_AND_CONDITIONS_TITLE = 'Terms and Conditions';
 const TERMS_AND_CONDITIONS_BODY = `By creating an account and using this application, you agree to the following:
@@ -531,21 +548,60 @@ export default function App() {
     if (IS_NATIVE_APP || typeof window === 'undefined') return 'home';
     return PUBLIC_PAGE_BY_PATH[window.location.pathname] || 'home';
   });
+  // Track special routes (blog posts and location pages)
+  const [specialRoute, setSpecialRoute] = useState(() => {
+    if (IS_NATIVE_APP || typeof window === 'undefined') return null;
+    return parseSpecialRoute(window.location.pathname);
+  });
   // Web-only: pushes a real URL alongside the state change (native call
   // sites keep using the plain setPublicPage setter above, since the native
   // app has no address bar to reflect). Passed as PublicSite's `onNavigate`.
   const navigatePublicPage = (next) => {
     setPublicPage(next);
+    setSpecialRoute(null);
     if (typeof window === 'undefined') return;
     const path = PUBLIC_PATH_BY_PAGE[next] || '/';
     if (window.location.pathname !== path) {
       window.history.pushState({ publicPage: next }, '', path);
     }
   };
-  // Keeps `publicPage` in sync with browser Back/Forward navigation.
+
+  // Navigate to blog/location pages
+  const navigateSpecialRoute = (route) => {
+    setSpecialRoute(route);
+    setPublicPage('blog-or-location');
+    if (typeof window === 'undefined') return;
+
+    let path = '/';
+    if (route.type === 'blog') {
+      const blogPaths = {
+        'cost-guide': '/blog/key-duplication-cost-guide',
+        'car-key-guide': '/blog/car-key-duplication-guide',
+        'find-shop': '/blog/how-to-find-reliable-key-shop',
+        'lost-key': '/blog/lost-car-key-recovery-guide'
+      };
+      path = blogPaths[route.name] || '/';
+    } else if (route.type === 'location') {
+      path = `/key-shops/${route.city}`;
+    }
+
+    if (window.location.pathname !== path) {
+      window.history.pushState(route, '', path);
+    }
+  };
+  // Keeps `publicPage` and `specialRoute` in sync with browser Back/Forward navigation.
   useEffect(() => {
     if (IS_NATIVE_APP || typeof window === 'undefined') return;
-    const onPopState = () => setPublicPage(PUBLIC_PAGE_BY_PATH[window.location.pathname] || 'home');
+    const onPopState = () => {
+      const special = parseSpecialRoute(window.location.pathname);
+      if (special) {
+        setSpecialRoute(special);
+        setPublicPage('blog-or-location');
+      } else {
+        setSpecialRoute(null);
+        setPublicPage(PUBLIC_PAGE_BY_PATH[window.location.pathname] || 'home');
+      }
+    };
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
@@ -1158,7 +1214,23 @@ export default function App() {
           <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} defaultTown={defaultLocation} locationReady={locationReady} />
         )}
         {publicPage !== 'login' ? (
-          !IS_NATIVE_APP && <PublicSite page={publicPage} onNavigate={navigatePublicPage} api={api} />
+          !IS_NATIVE_APP && (
+            specialRoute ? (
+              <Suspense fallback={<div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}><div className="brand-loading-track"><div className="brand-loading-fill" /></div></div>}>
+                {specialRoute.type === 'blog' ? (
+                  specialRoute.name === 'cost-guide' ? <BlogKeyCostGuide /> :
+                  specialRoute.name === 'car-key-guide' ? <BlogCarKeyGuide /> :
+                  <PublicSite page="home" onNavigate={navigatePublicPage} api={api} />
+                ) : specialRoute.type === 'location' ? (
+                  <LocationPage location={specialRoute.city} state="Tamil Nadu" />
+                ) : (
+                  <PublicSite page="home" onNavigate={navigatePublicPage} api={api} />
+                )}
+              </Suspense>
+            ) : (
+              <PublicSite page={publicPage} onNavigate={navigatePublicPage} api={api} />
+            )
+          )
         ) : !langData ? (
           <TranslationsLoadingFallback />
         ) : (
