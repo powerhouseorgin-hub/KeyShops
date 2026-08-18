@@ -1333,7 +1333,7 @@ select.sel:focus { border-color: var(--gold); }
 .public-navtabs button.active { color: #ffffff; background: linear-gradient(135deg, var(--gold), var(--gold-2)); }
 .public-nav-actions { display: flex; align-items: center; gap: 10px; }
 .public-nav-burger {
-  display: flex; width: 38px; height: 38px; border-radius: 11px;
+  display: flex; width: 44px; height: 44px; border-radius: 12px;
   align-items: center; justify-content: center;
   background: var(--card-2); border: 1px solid var(--border-2); color: var(--text-1);
 }
