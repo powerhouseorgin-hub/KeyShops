@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { updateMetaTags, getCanonicalUrl, getOGImageUrl } from '../utils/seoHelpers';
 
 export default function BlogKeyCostGuide() {
   useEffect(() => {
     window.scrollTo(0, 0);
+    updateMetaTags(
+      'Key Duplication Cost Guide 2025: How Much Should You Pay? | KeyShops.in',
+      'Complete breakdown of key duplication costs by type, city, and service - mechanical, transponder, remote fob, and smart keys.',
+      getCanonicalUrl('/blog/key-duplication-cost-guide'),
+      getOGImageUrl()
+    );
   }, []);
 
   const [expandedFaq, setExpandedFaq] = useState(null);

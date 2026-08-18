@@ -187,7 +187,7 @@ export const getCanonicalUrl = (path) => {
  * Get OG image URL (default to brand image)
  */
 export const getOGImageUrl = () => {
-  return 'https://keyshops.in/og-image.png';
+  return 'https://keyshops.in/favicon-192.png';
 };
 
 /**

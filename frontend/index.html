@@ -6,13 +6,16 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Key Shop — Duplicate Key Management Platform</title>
+    <title>Key Shop - Duplicate Keys Near Me | Car, Bike & Home Keys</title>
 
     <!-- Static baseline description/canonical/social tags for crawlers that
          don't execute JS (Google does and gets the real per-page values set
-         by PublicSite.jsx's effect; these Home-page defaults are what
-         everyone else - link-preview bots, social share cards - sees). -->
-    <meta name="description" content="Kee is the gold-standard workspace for Indian duplicate-key shops - manage customers, keys, store inventory and reports in one bold dashboard. Trusted by 500+ key shops across India." />
+         by PublicSite.jsx's / the blog+location pages' own effects; these
+         Home-page defaults are what everyone else - link-preview bots,
+         social share cards - sees). -->
+    <meta name="description" content="KeyShops.in connects you with verified key shops for duplicate keys, key replacement & lost key services. Find car keys, bike keys, home keys near you across Tamil Nadu, Karnataka & Telangana." />
+    <meta name="keywords" content="duplicate keys near me, key shop, car key duplicate, bike key duplicate, lost keys, key replacement, key duplication" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
     <link rel="canonical" href="https://keyshops.in/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Kee" />
@@ -41,6 +44,56 @@
         "addressRegion": "Tamil Nadu",
         "addressCountry": "IN"
       }
+    }
+    </script>
+
+    <!-- WebSite schema - powers Google's sitelinks search box for the
+         /search page's query param, which PublicSite.jsx already reads. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "KeyShops.in",
+      "url": "https://keyshops.in/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://keyshops.in/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- LocalBusiness schema - areaServed only lists cities that currently
+         have real, unique content (see LocationPage.jsx's locationData) so
+         this doesn't claim coverage the site can't back up yet. Extend this
+         list as more city pages get real content written for them. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "KeyShops.in",
+      "url": "https://keyshops.in/",
+      "logo": "https://keyshops.in/favicon-192.png",
+      "image": "https://keyshops.in/favicon-192.png",
+      "description": "India's leading duplicate key management platform connecting customers with verified key shops.",
+      "email": "keyshops666@gmail.com",
+      "telephone": "+91-90250-88853",
+      "priceRange": "₹50-₹2000",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Coimbatore",
+        "addressRegion": "Tamil Nadu",
+        "addressCountry": "IN"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Chennai" },
+        { "@type": "City", "name": "Bangalore" },
+        { "@type": "City", "name": "Hyderabad" }
+      ],
+      "serviceType": ["Duplicate Keys", "Key Replacement", "Car Keys", "Bike Keys", "Home Keys", "Office Keys"]
     }
     </script>
 

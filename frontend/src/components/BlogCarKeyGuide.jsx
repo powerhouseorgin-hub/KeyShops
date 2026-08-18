@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { updateMetaTags, getCanonicalUrl, getOGImageUrl } from '../utils/seoHelpers';
 
 export default function BlogCarKeyGuide() {
   useEffect(() => {
     window.scrollTo(0, 0);
+    updateMetaTags(
+      'Complete Guide to Car Key Duplication: Costs, Methods & Tips | KeyShops.in',
+      'Everything you need to know about duplicating a car key - mechanical, transponder, and smart key methods, costs, and how to choose a shop.',
+      getCanonicalUrl('/blog/car-key-duplication-guide'),
+      getOGImageUrl()
+    );
   }, []);
 
   const [expandedFaq, setExpandedFaq] = useState(null);

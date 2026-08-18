@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { ChevronDown, ChevronUp, MapPin, Phone, Clock, Star } from 'lucide-react';
 import { useState } from 'react';
+import { updateMetaTags, getCanonicalUrl, getOGImageUrl } from '../utils/seoHelpers';
 
 // Map cities to their states
 const cityToState = {
@@ -142,6 +143,16 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
   };
 
   const data = locationData[normalizedCity] || locationData['Chennai'];
+
+  useEffect(() => {
+    updateMetaTags(
+      `${data.title.replace('{location}', normalizedCity).replace('{state}', finalState)} | KeyShops.in`,
+      data.description.replace('{location}', normalizedCity).replace('{state}', finalState),
+      getCanonicalUrl(`/key-shops/${location.toLowerCase()}`),
+      getOGImageUrl()
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [normalizedCity, finalState]);
 
   return (
     <div className="bg-white">
