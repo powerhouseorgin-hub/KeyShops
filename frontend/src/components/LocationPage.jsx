@@ -139,6 +139,102 @@ export default function LocationPage({ location = 'Chennai', state = 'Tamil Nadu
           a: 'Most certified shops can handle mechanical and transponder keys. Smart keys usually need dealer service.'
         }
       ]
+    },
+    'Pune': {
+      title: 'Key Duplication & Replacement Services in Pune, Maharashtra',
+      description: 'Compare verified key shops in Pune for car, bike, home, and office key duplication, plus emergency lost-key replacement.',
+      services: [
+        'Car key duplication & replacement',
+        'Bike & scooter key duplication',
+        'Home & office key duplication',
+        'Lost key replacement',
+        'Transponder & remote key services',
+        'Emergency lockout assistance'
+      ],
+      areas: ['Koregaon Park', 'Hinjewadi', 'Viman Nagar', 'Kothrud', 'Baner', 'Camp', 'Hadapsar', 'Aundh'],
+      avgCost: 'Mechanical: ₹50-150, Transponder: ₹220-500, Smart Keys: ₹550-2000',
+      faq: [
+        {
+          q: 'Where can I get a car key duplicated in Pune quickly?',
+          a: 'Areas like Hinjewadi, Koregaon Park, and Camp have several key shops offering same-day mechanical and transponder key duplication. Use KeyShops.in to find one near you.'
+        },
+        {
+          q: 'How much does key duplication cost in Pune?',
+          a: 'Mechanical keys typically cost ₹50-150, transponder keys ₹220-500, and smart keys ₹550-2000, depending on the vehicle and shop.'
+        },
+        {
+          q: 'Are there 24-hour key shops in Pune for emergencies?',
+          a: 'Several shops near IT hubs like Hinjewadi and Viman Nagar offer extended or 24/7 emergency service; premium charges may apply outside normal hours.'
+        },
+        {
+          q: 'Can I duplicate a smart key in Pune without visiting a dealer?',
+          a: 'Some certified independent shops in Pune can programme aftermarket smart-key blanks, but availability depends on your vehicle\'s make and model — call ahead to confirm.'
+        }
+      ]
+    },
+    'Mumbai': {
+      title: 'Duplicate Key Shops & Locksmith Services in Mumbai, Maharashtra',
+      description: 'Find trusted key duplication shops across Mumbai for car, bike, home, and office keys, with same-day and emergency service options.',
+      services: [
+        'Car key duplication & replacement',
+        'Bike & motorcycle key services',
+        'Residential key duplication',
+        'Commercial/office key services',
+        'Smart key & remote programming',
+        '24/7 emergency lockout services'
+      ],
+      areas: ['Andheri', 'Bandra', 'Borivali', 'Dadar', 'Thane', 'Powai', 'Malad', 'Chembur'],
+      avgCost: 'Mechanical: ₹60-160, Transponder: ₹250-550, Smart Keys: ₹600-2200',
+      faq: [
+        {
+          q: 'Which areas in Mumbai have the most key shops?',
+          a: 'Andheri, Dadar, and Borivali have a high concentration of independent key shops and locksmiths. Search KeyShops.in by locality for the closest options.'
+        },
+        {
+          q: 'What does key duplication typically cost in Mumbai?',
+          a: 'Basic mechanical keys run ₹60-160, transponder keys ₹250-550, and smart/remote keys ₹600-2200, depending on vehicle and shop.'
+        },
+        {
+          q: 'Can a Mumbai key shop help if I\'ve lost my only car key?',
+          a: 'Yes — most shops can cut a new key from the vehicle\'s lock or ignition; for transponder/smart keys without an original, an authorized dealer visit is usually required and costs more.'
+        },
+        {
+          q: 'Is home delivery or on-site key cutting available in Mumbai?',
+          a: 'Some locksmiths in busy areas like Andheri and Powai offer on-site/mobile key-cutting for an added call-out fee — check individual shop listings for this option.'
+        }
+      ]
+    },
+    'Tamil Nadu': {
+      title: 'Key Duplication Shops Across Tamil Nadu | Chennai, Coimbatore, Madurai & More',
+      description: 'Browse verified key duplication and locksmith services across Tamil Nadu — compare shops in Chennai, Coimbatore, Madurai, and other major cities.',
+      services: [
+        'Car key duplication & replacement',
+        'Bike key duplication',
+        'Home & office key duplication',
+        'Lost key replacement',
+        'Transponder & smart key programming',
+        'Emergency locksmith services'
+      ],
+      areas: ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Vellore', 'Erode', 'Tirunelveli'],
+      avgCost: 'Mechanical: ₹50-150, Transponder: ₹200-500, Smart Keys: ₹500-2000',
+      faq: [
+        {
+          q: 'Does KeyShops.in cover cities beyond Chennai in Tamil Nadu?',
+          a: 'Yes — shops are listed across Tamil Nadu, including Coimbatore, Madurai, Tiruchirappalli, and other districts. Use the location filter to search a specific city.'
+        },
+        {
+          q: 'Do key duplication prices vary much across Tamil Nadu?',
+          a: 'Prices are broadly similar statewide — mechanical keys ₹50-150, transponder keys ₹200-500 — with slightly higher rates in larger cities like Chennai and Coimbatore.'
+        },
+        {
+          q: 'How do I find a key shop in a smaller Tamil Nadu town?',
+          a: 'Search KeyShops.in by district or town name; the directory includes shops beyond the major metros, and new listings are added regularly.'
+        },
+        {
+          q: 'Are transponder and smart key services available outside Chennai?',
+          a: 'Larger cities like Coimbatore and Madurai have shops offering transponder programming; smart key services are more limited outside metro areas — confirm availability before visiting.'
+        }
+      ]
     }
   };
 

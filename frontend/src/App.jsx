@@ -26,6 +26,7 @@ import { ALL_TN_LOCATIONS } from './utils/tamilNaduLocations';
 import { useLocationFilter } from './utils/locationFilter';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from './utils/phone';
 import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from './utils/platform';
+import { initAnalytics } from './utils/analytics';
 import { resolveCurrentLocation, reverseGeocode, openDeviceLocationSettings, openAppSettings } from './utils/geolocation';
 import { ALL_DOC_TYPES, INDIAN_STATES_DISTRICTS } from './utils/registrationData';
 import { cleanGoogleImageUrl } from './utils/imageUtils';
@@ -41,10 +42,14 @@ import CountUp from './components/CountUp';
 // already gated behind the login-shell or the authenticated dashboard, so
 // pre-login browsing never triggers this chunk's fetch at all.
 const OtpVerificationModal = lazy(() => import('./components/OtpVerificationModal'));
-// SEO blog and location page components
+// SEO blog, service, and location page components
 const BlogKeyCostGuide = lazy(() => import('./components/BlogKeyCostGuide'));
 const BlogCarKeyGuide = lazy(() => import('./components/BlogCarKeyGuide'));
+const BlogFindReliableShop = lazy(() => import('./components/BlogFindReliableShop'));
+const BlogLostKeyRecovery = lazy(() => import('./components/BlogLostKeyRecovery'));
+const BlogBikeKeyGuide = lazy(() => import('./components/BlogBikeKeyGuide'));
 const LocationPage = lazy(() => import('./components/LocationPage'));
+const ServicePage = lazy(() => import('./components/ServicePage'));
 // Lazy-loaded (Track B pilot): keeps the Shop Settings screen - referral
 // program, document/logo upload, credential changes - out of the initial
 // bundle. It's only ever reached from inside the authenticated dashboard, so
@@ -125,14 +130,20 @@ const PUBLIC_PATH_BY_PAGE = { home: '/', search: '/search', about: '/about', con
 const PUBLIC_PAGE_BY_PATH = { '/': 'home', '/search': 'search', '/about': 'about', '/contact': 'contact', '/login': 'login' };
 
 // Helper to detect and parse blog/location page routes
+const SERVICE_SLUGS = ['duplicate-car-keys', 'duplicate-bike-keys', 'home-key-duplication', 'lost-key-replacement', 'office-key-duplication'];
+
 function parseSpecialRoute(pathname) {
   if (pathname === '/blog/key-duplication-cost-guide') return { type: 'blog', name: 'cost-guide' };
   if (pathname === '/blog/car-key-duplication-guide') return { type: 'blog', name: 'car-key-guide' };
   if (pathname === '/blog/how-to-find-reliable-key-shop') return { type: 'blog', name: 'find-shop' };
   if (pathname === '/blog/lost-car-key-recovery-guide') return { type: 'blog', name: 'lost-key' };
+  if (pathname === '/blog/bike-key-duplication-guide') return { type: 'blog', name: 'bike-key-guide' };
 
   const locationMatch = pathname.match(/^\/key-shops\/([a-z-]+)$/);
   if (locationMatch) return { type: 'location', city: locationMatch[1] };
+
+  const serviceMatch = pathname.match(/^\/services\/([a-z-]+)$/);
+  if (serviceMatch && SERVICE_SLUGS.includes(serviceMatch[1])) return { type: 'service', slug: serviceMatch[1] };
 
   return null;
 }
@@ -241,6 +252,11 @@ export default function App() {
     translationsPromise.then((m) => setLangData(m.default));
   }, []);
   const t = (key) => langData?.[lang]?.[key] || langData?.['en']?.[key] || key;
+
+  // No-ops until VITE_GA_MEASUREMENT_ID is configured - see analytics.js.
+  useEffect(() => {
+    initAnalytics();
+  }, []);
 
   // capacitor.config.json sets SplashScreen.launchAutoHide: false, so the
   // native splash (logo on white, see styles.xml) stays on screen until this
@@ -1220,9 +1236,14 @@ export default function App() {
                 {specialRoute.type === 'blog' ? (
                   specialRoute.name === 'cost-guide' ? <BlogKeyCostGuide /> :
                   specialRoute.name === 'car-key-guide' ? <BlogCarKeyGuide /> :
+                  specialRoute.name === 'find-shop' ? <BlogFindReliableShop /> :
+                  specialRoute.name === 'lost-key' ? <BlogLostKeyRecovery /> :
+                  specialRoute.name === 'bike-key-guide' ? <BlogBikeKeyGuide /> :
                   <PublicSite page="home" onNavigate={navigatePublicPage} api={api} />
                 ) : specialRoute.type === 'location' ? (
                   <LocationPage location={specialRoute.city} state="Tamil Nadu" />
+                ) : specialRoute.type === 'service' ? (
+                  <ServicePage slug={specialRoute.slug} />
                 ) : (
                   <PublicSite page="home" onNavigate={navigatePublicPage} api={api} />
                 )}

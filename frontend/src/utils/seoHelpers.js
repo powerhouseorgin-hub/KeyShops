@@ -241,7 +241,11 @@ export const generateSitemapUrls = () => {
  */
 export const trackPageView = (pageTitle, pageCategory) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', 'GA_MEASUREMENT_ID', {
+    // A GA4 'page_view' event, not 'config' - this is a client-routed SPA, so
+    // re-issuing 'config' on every navigation would re-initialize the
+    // property instead of recording a virtual pageview (see analytics.js,
+    // which calls 'config' exactly once with send_page_view:false).
+    window.gtag('event', 'page_view', {
       'page_title': pageTitle,
       'page_category': pageCategory,
       'page_location': window.location.href
