@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { backHandlerStack, useBackHandler } from './utils/backHandler';
@@ -29,7 +29,13 @@ import PublicSite from './components/PublicSite';
 import PublicMobileApp, { PublicBottomNav } from './components/PublicMobileApp';
 import CustomSelect from './components/CustomSelect';
 import PriceTag from './components/PriceTag';
-import OtpVerificationModal from './components/OtpVerificationModal';
+// Lazy-loaded: pulls in the Capacitor Firebase Authentication SDK, which
+// anonymous pre-login visitors (Home/Search/About/Contact) never need until
+// they actually tap Login - a static import here would ship that weight in
+// the main bundle for every visitor regardless. Every usage site below is
+// already gated behind the login-shell or the authenticated dashboard, so
+// pre-login browsing never triggers this chunk's fetch at all.
+const OtpVerificationModal = lazy(() => import('./components/OtpVerificationModal'));
 import ImageCarousel from './components/ImageCarousel';
 import {
   Key, Users, Radio, BarChart3, Database, LogOut, Check, X,
@@ -7137,6 +7143,7 @@ export default function App() {
                         </button>
                       </div>
 
+                      <Suspense fallback={null}>
                       <OtpVerificationModal
                         open={showResetOtpModal}
                         onClose={() => setShowResetOtpModal(false)}
@@ -7149,6 +7156,7 @@ export default function App() {
                         description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', resetIdentifier)}
                         t={t}
                       />
+                      </Suspense>
                     </form>
                   ) : (
                     <form onSubmit={handleResetPasswordSubmit}>
@@ -7435,6 +7443,7 @@ export default function App() {
                               </button>
                             )}
 
+                            <Suspense fallback={null}>
                             <OtpVerificationModal
                               open={showRegOtpModal}
                               onClose={() => setShowRegOtpModal(false)}
@@ -7447,6 +7456,7 @@ export default function App() {
                               description={t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', regPhone)}
                               t={t}
                             />
+                            </Suspense>
 
                             <div className="reg-field" style={{ marginTop: 13 }}>
                               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Lock /></div><b>{t('passwordLabel')} <span className="req">*</span></b></div>
@@ -13905,6 +13915,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                       <span style={{ color: 'var(--green)', fontSize: 12, fontWeight: 700 }}>{t('mobileNumberVerifiedMsg')}</span>
                     </div>
                   )}
+                  <Suspense fallback={null}>
                   <OtpVerificationModal
                     open={showCustomerOtpModal}
                     onClose={() => setShowCustomerOtpModal(false)}
@@ -13917,6 +13928,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                     description={t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', phone)}
                     t={t}
                   />
+                  </Suspense>
                 </div>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label">
@@ -17089,6 +17101,7 @@ function ShopSettingsView({ t, api, shopId }) {
         document.body
       )}
 
+      <Suspense fallback={null}>
       <OtpVerificationModal
         open={showCredOtpModal}
         onClose={() => setShowCredOtpModal(false)}
@@ -17101,6 +17114,7 @@ function ShopSettingsView({ t, api, shopId }) {
         description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', credNewValue.trim())}
         t={t}
       />
+      </Suspense>
 
       {/* OTP Password Reset Modal inside Settings */}
       {otpResetOpen && createPortal(
@@ -17154,6 +17168,7 @@ function ShopSettingsView({ t, api, shopId }) {
                   <span>{t('sendOtpVerificationCodeBtn')}</span>
                 </button>
 
+                <Suspense fallback={null}>
                 <OtpVerificationModal
                   open={showShopOtpResetModal}
                   onClose={() => setShowShopOtpResetModal(false)}
@@ -17166,6 +17181,7 @@ function ShopSettingsView({ t, api, shopId }) {
                   description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', otpResetIdentifier)}
                   t={t}
                 />
+                </Suspense>
               </div>
             ) : (
               <form onSubmit={handleOtpResetSubmit}>
