@@ -1,5 +1,20 @@
 User-agent: *
 Allow: /
 Disallow: /login
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /api/
+
+Allow: /search
+Allow: /about
+Allow: /contact
+Allow: /services
+Allow: /blog
+
+Disallow: /*.json$
+Disallow: /*.pdf$
+
+Crawl-delay: 2
+Request-rate: 30/60
 
 Sitemap: https://keyshops.in/sitemap.xml
