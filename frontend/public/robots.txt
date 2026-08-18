@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /login
 
-Sitemap: https://keee-7d6cb.web.app/sitemap.xml
+Sitemap: https://keyshops.in/sitemap.xml

@@ -103,9 +103,13 @@ function CountUp({ end, suffix = '', duration = 1400 }) {
   return <span ref={ref}>{value}{suffix}</span>;
 }
 
-// Real deployed origin - matches KEE_LANDING_PAGE_URL in App.jsx, robots.txt
-// and sitemap.xml. Used to build absolute canonical URLs per page.
-const PUBLIC_BASE_URL = 'https://keee-7d6cb.web.app';
+// Real production origin - the custom domain connected to Firebase Hosting
+// (keee-7d6cb.web.app/.firebaseapp.com serve the exact same content and
+// still work, but this is what's registered in Google Search Console, so
+// every canonical/sitemap/OG URL must match it or Google's sitemap
+// validator rejects cross-domain <loc> entries). Matches robots.txt and
+// sitemap.xml - keep those in sync if this ever changes.
+const PUBLIC_BASE_URL = 'https://keyshops.in';
 
 // Per-page <title>/description/canonical - previously the whole public site
 // shared one static <title> from index.html regardless of which tab was
