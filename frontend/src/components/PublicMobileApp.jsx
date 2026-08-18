@@ -10,6 +10,7 @@ import CustomSelect from './CustomSelect';
 import PriceTag from './PriceTag';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import { categoryImage } from '../utils/categoryIcon';
+import { cleanGoogleImageUrl } from '../utils/imageUtils';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 import ImageCarousel from './ImageCarousel';
 import { useLocationFilter } from '../utils/locationFilter';
@@ -128,7 +129,7 @@ function AdCarousel({ api }) {
         >
           {slides.map((ad, i) => (
             <div className="ad-carousel-slide" key={`${ad.id}-${i}`}>
-              <img src={ad.imageUrl} alt={ad.title || ''} />
+              <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title || ''} />
             </div>
           ))}
         </div>
@@ -191,7 +192,7 @@ function PublicMachineCard({ item, onOpen }) {
       <div className="pub-card-media">
         {item.imageUrl ? (
           <img
-            src={item.imageUrl}
+            src={cleanGoogleImageUrl(item.imageUrl)}
             alt={item.title}
             style={fillWidth ? { objectFit: 'cover' } : undefined}
             onLoad={handleCardImageLoad(setFillWidth)}
@@ -474,7 +475,7 @@ function PublicAdCard({ ad, onOpen }) {
       <div className="pub-card-media" style={{ height: 140 }}>
         {ad.imageUrl ? (
           <img
-            src={ad.imageUrl}
+            src={cleanGoogleImageUrl(ad.imageUrl)}
             alt={ad.title || ''}
             style={fillWidth ? { objectFit: 'cover' } : undefined}
             onLoad={handleCardImageLoad(setFillWidth)}
@@ -499,7 +500,7 @@ function PublicAdViewer({ ad, onClose }) {
     <div className="pub-ad-viewer">
       <button type="button" className="pub-ad-viewer-close" onClick={onClose} aria-label="Close"><X /></button>
       <div className="pub-ad-viewer-media">
-        {ad.imageUrl ? <img src={ad.imageUrl} alt={ad.title || ''} /> : <Megaphone className="h-10 w-10" />}
+        {ad.imageUrl ? <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title || ''} /> : <Megaphone className="h-10 w-10" />}
       </div>
       {ad.title && <div className="pub-ad-viewer-title">{ad.title}</div>}
     </div>
@@ -735,7 +736,7 @@ function PublicShopDetailsScreen({ api, shopId, onBack, onOpenMachine, onOpenSho
             <div className="public-shop-card-top">
               {shop.logoUrl ? (
                 <div style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, border: '1px solid var(--border-2)' }}>
-                  <img src={shop.logoUrl} alt="" className="w-full h-full object-cover" />
+                  <img src={cleanGoogleImageUrl(shop.logoUrl)} alt="" className="w-full h-full object-cover" />
                 </div>
               ) : shop.category ? (
                 <div style={{ width: 44, height: 44, borderRadius: '50%', overflow: 'hidden', flexShrink: 0, background: 'var(--card-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -813,7 +814,7 @@ function PublicMachineDetailsScreen({ api, machineId, onBack, onOpenMachine }) {
           <div className="card" style={{ marginTop: 12, padding: 14 }}>
             {(item.imageUrls?.length || item.imageUrl) ? (
               <div style={{ borderRadius: 14, overflow: 'hidden', marginBottom: 12 }}>
-                <ImageCarousel images={item.imageUrls?.length ? item.imageUrls : [item.imageUrl]} />
+                <ImageCarousel images={(item.imageUrls?.length ? item.imageUrls : [item.imageUrl]).map(cleanGoogleImageUrl)} />
               </div>
             ) : (
               <div className="pub-card-media" style={{ height: 170, borderRadius: 14, marginBottom: 12 }}>

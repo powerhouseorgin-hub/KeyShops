@@ -1,7 +1,7 @@
 {
   "name": "kee-frontend",
   "private": true,
-  "version": "1.55.19",
+  "version": "1.55.20",
   "type": "module",
   "scripts": {
     "dev": "vite",

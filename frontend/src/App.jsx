@@ -176,7 +176,7 @@ function AppPosterOverlay({ ad, onClose }) {
     <div className="app-poster-overlay">
       <button type="button" className="app-poster-close" onClick={onClose} aria-label="Close"><X /></button>
       <div className="app-poster-media">
-        {ad.imageUrl && <img src={ad.imageUrl} alt={ad.title || ''} />}
+        {ad.imageUrl && <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title || ''} />}
       </div>
     </div>
   );
