@@ -5686,7 +5686,7 @@ const IS_NATIVE_APP = Capacitor.isNativePlatform();
 // used for the subscription payment QR code below. Must be the real deployed
 // Firebase Hosting URL (not a placeholder) since recipients actually need to
 // be able to open it.
-const KEE_LANDING_PAGE_URL = 'https://keee-7d6cb.web.app';
+const KEE_LANDING_PAGE_URL = 'https://keyshops.in';
 
 // Web-only URL <-> publicPage mapping (see the `publicPage` state below) so
 // PublicSite's Home/Search/About/Contact tabs become real, distinct,
