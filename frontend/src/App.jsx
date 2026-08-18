@@ -5688,6 +5688,16 @@ const IS_NATIVE_APP = Capacitor.isNativePlatform();
 // be able to open it.
 const KEE_LANDING_PAGE_URL = 'https://keee-7d6cb.web.app';
 
+// Web-only URL <-> publicPage mapping (see the `publicPage` state below) so
+// PublicSite's Home/Search/About/Contact tabs become real, distinct,
+// crawlable URLs instead of one URL with client-only state - previously
+// Google could only ever discover a single page for the entire public site.
+// Native app never uses this (it has no address bar and PublicMobileApp
+// manages its own internal tab state instead), so every reference to this
+// map is scoped to the `!IS_NATIVE_APP` code paths.
+const PUBLIC_PATH_BY_PAGE = { home: '/', search: '/search', about: '/about', contact: '/contact', login: '/login' };
+const PUBLIC_PAGE_BY_PATH = { '/': 'home', '/search': 'search', '/about': 'about', '/contact': 'contact', '/login': 'login' };
+
 const TERMS_AND_CONDITIONS_TITLE = 'Terms and Conditions';
 const TERMS_AND_CONDITIONS_BODY = `By creating an account and using this application, you agree to the following:
 
@@ -6223,7 +6233,28 @@ export default function App() {
   // its own internal Home/Shops/Machines/My Ads tab state). Anonymous
   // visitors land on 'home' either way; tapping Login switches this to
   // 'login', which renders the existing, unmodified login-shell UI below.
-  const [publicPage, setPublicPage] = useState('home');
+  const [publicPage, setPublicPage] = useState(() => {
+    if (IS_NATIVE_APP || typeof window === 'undefined') return 'home';
+    return PUBLIC_PAGE_BY_PATH[window.location.pathname] || 'home';
+  });
+  // Web-only: pushes a real URL alongside the state change (native call
+  // sites keep using the plain setPublicPage setter above, since the native
+  // app has no address bar to reflect). Passed as PublicSite's `onNavigate`.
+  const navigatePublicPage = (next) => {
+    setPublicPage(next);
+    if (typeof window === 'undefined') return;
+    const path = PUBLIC_PATH_BY_PAGE[next] || '/';
+    if (window.location.pathname !== path) {
+      window.history.pushState({ publicPage: next }, '', path);
+    }
+  };
+  // Keeps `publicPage` in sync with browser Back/Forward navigation.
+  useEffect(() => {
+    if (IS_NATIVE_APP || typeof window === 'undefined') return;
+    const onPopState = () => setPublicPage(PUBLIC_PAGE_BY_PATH[window.location.pathname] || 'home');
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, []);
   // Which PublicMobileApp tab to land on when native returns from the login
   // screen to browsing - set right before switching publicPage back, e.g. by
   // the login screen's own bottom nav (see the login-shell render branch).
@@ -6828,7 +6859,7 @@ export default function App() {
           <PublicMobileApp api={api} onLogin={() => setPublicPage('login')} initialTab={publicInitialTab} defaultTown={defaultLocation} locationReady={locationReady} />
         )}
         {publicPage !== 'login' ? (
-          !IS_NATIVE_APP && <PublicSite page={publicPage} onNavigate={setPublicPage} api={api} />
+          !IS_NATIVE_APP && <PublicSite page={publicPage} onNavigate={navigatePublicPage} api={api} />
         ) : (
           <>
           <div className={`login-shell${IS_NATIVE_APP ? ' native-login login-overlay' : ''}`}>

@@ -103,6 +103,38 @@ function CountUp({ end, suffix = '', duration = 1400 }) {
   return <span ref={ref}>{value}{suffix}</span>;
 }
 
+// Real deployed origin - matches KEE_LANDING_PAGE_URL in App.jsx, robots.txt
+// and sitemap.xml. Used to build absolute canonical URLs per page.
+const PUBLIC_BASE_URL = 'https://keee-7d6cb.web.app';
+
+// Per-page <title>/description/canonical - previously the whole public site
+// shared one static <title> from index.html regardless of which tab was
+// showing, and had no meta description at all, so Search Console had no way
+// to tell Home/Search/About/Contact apart or show a real snippet for any of
+// them. Paths must match PUBLIC_PATH_BY_PAGE in App.jsx.
+const PAGE_META = {
+  home: {
+    title: 'Kee — Duplicate Key Shop Management Software for India',
+    description: 'Kee is the gold-standard workspace for Indian duplicate-key shops - manage customers, keys, store inventory and reports in one bold dashboard. Trusted by 500+ key shops across India.',
+    path: '/',
+  },
+  search: {
+    title: 'Find a Key Shop Near You | Kee',
+    description: 'Search Kee-powered duplicate-key shops by name, city/locality or category to find a trusted key specialist near you.',
+    path: '/search',
+  },
+  about: {
+    title: 'About Kee | Software Built for Key Specialists',
+    description: 'Kee started with one observation: duplicate-key shops deserved better than paper registers. Learn about our mission to modernize Indian key shops.',
+    path: '/about',
+  },
+  contact: {
+    title: 'Contact Kee | Get in Touch',
+    description: 'Questions about Kee, a demo request, or support for an existing shop - reach out by email, phone, WhatsApp or the form below.',
+    path: '/contact',
+  },
+};
+
 const NAV_ITEMS = [
   { key: 'home', label: 'Home' },
   { key: 'search', label: 'Find a Shop' },
@@ -596,9 +628,54 @@ function ContactPage() {
   );
 }
 
+// Creates the tag if missing (index.html ships without most of these so
+// there's nothing stale to fight on first mount), otherwise updates it in
+// place - keeps a single tag per attribute instead of piling up duplicates
+// across page switches.
+function setMetaTag(selector, create, attr, value) {
+  let el = document.querySelector(selector);
+  if (!el) {
+    el = create();
+    document.head.appendChild(el);
+  }
+  el.setAttribute(attr, value);
+}
+
 export default function PublicSite({ page, onNavigate, api }) {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const meta = PAGE_META[page] || PAGE_META.home;
+    const canonicalUrl = `${PUBLIC_BASE_URL}${meta.path}`;
+    document.title = meta.title;
+
+    setMetaTag('meta[name="description"]', () => {
+      const el = document.createElement('meta');
+      el.setAttribute('name', 'description');
+      return el;
+    }, 'content', meta.description);
+
+    setMetaTag('link[rel="canonical"]', () => {
+      const el = document.createElement('link');
+      el.setAttribute('rel', 'canonical');
+      return el;
+    }, 'href', canonicalUrl);
+
+    setMetaTag('meta[property="og:title"]', () => {
+      const el = document.createElement('meta');
+      el.setAttribute('property', 'og:title');
+      return el;
+    }, 'content', meta.title);
+    setMetaTag('meta[property="og:description"]', () => {
+      const el = document.createElement('meta');
+      el.setAttribute('property', 'og:description');
+      return el;
+    }, 'content', meta.description);
+    setMetaTag('meta[property="og:url"]', () => {
+      const el = document.createElement('meta');
+      el.setAttribute('property', 'og:url');
+      return el;
+    }, 'content', canonicalUrl);
   }, [page]);
 
   return (
