@@ -5,6 +5,10 @@ import {
   RefreshCw, Clock, Store, Star, Send, Download, Tag, MessageCircle, Globe,
 } from 'lucide-react';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
+// Nav/footer only ever render this at .brand-logo's 44px CSS height (~81px
+// wide) - a separate, much smaller source keeps that request tiny instead of
+// shipping the same 680px file used by the 340px-wide hero image.
+import keyShopLogoSm from '../assets/branding/keyshop-logo-sm.png';
 
 // Static Android APK, copied into public/downloads at build time (see
 // frontend/public/downloads/keyshop-app.keeapp) so Vite/Firebase Hosting
@@ -158,7 +162,7 @@ function PublicNav({ page, onNavigate }) {
     <div className="public-nav">
       <div className="public-nav-inner">
         <button type="button" className="brand" onClick={() => go('home')} style={{ background: 'none', border: 'none' }}>
-          <img src={keyShopLogo} alt="Key Shop" className="brand-logo" width={680} height={367} />
+          <img src={keyShopLogoSm} alt="Key Shop" className="brand-logo" width={170} height={92} />
         </button>
 
         <div className="public-navtabs">
@@ -218,7 +222,7 @@ function PublicFooter({ onNavigate }) {
       <div className="public-footer-inner">
         <div>
           <div className="brand" style={{ marginBottom: 14 }}>
-            <img src={keyShopLogo} alt="Key Shop" className="brand-logo" width={680} height={367} />
+            <img src={keyShopLogoSm} alt="Key Shop" className="brand-logo" width={170} height={92} />
           </div>
           <p style={{ color: 'var(--text-2)', fontSize: 13.5, fontWeight: 600, maxWidth: 320, lineHeight: 1.6 }}>
             The bold, gold-standard workspace for Indian duplicate-key shops &mdash;
