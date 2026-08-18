@@ -1,0 +1,9 @@
+# Kee
+
+> Kee is a management platform for Indian duplicate-key shops, covering
+> customer registration, key/master catalogs, store inventory and reports.
+
+- [Home](https://keyshops.in/): Overview of the Kee platform.
+- [Find a Shop](https://keyshops.in/search): Search Kee-powered key shops by name, city or category.
+- [About](https://keyshops.in/about): Background on Kee and who it's built for.
+- [Contact](https://keyshops.in/contact): Support and contact details.

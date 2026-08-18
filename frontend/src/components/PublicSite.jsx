@@ -158,7 +158,7 @@ function PublicNav({ page, onNavigate }) {
     <div className="public-nav">
       <div className="public-nav-inner">
         <button type="button" className="brand" onClick={() => go('home')} style={{ background: 'none', border: 'none' }}>
-          <img src={keyShopLogo} alt="Key Shop" className="brand-logo" />
+          <img src={keyShopLogo} alt="Key Shop" className="brand-logo" width={680} height={367} />
         </button>
 
         <div className="public-navtabs">
@@ -181,7 +181,13 @@ function PublicNav({ page, onNavigate }) {
           <button type="button" className="btn btn-primary btn-sm" onClick={() => go('login')}>
             Login <ArrowRight className="h-4 w-4" />
           </button>
-          <button type="button" className="public-nav-burger" onClick={() => setMobileOpen((v) => !v)}>
+          <button
+            type="button"
+            className="public-nav-burger"
+            onClick={() => setMobileOpen((v) => !v)}
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+          >
             {mobileOpen ? <X /> : <Menu />}
           </button>
         </div>
@@ -212,7 +218,7 @@ function PublicFooter({ onNavigate }) {
       <div className="public-footer-inner">
         <div>
           <div className="brand" style={{ marginBottom: 14 }}>
-            <img src={keyShopLogo} alt="Key Shop" className="brand-logo" />
+            <img src={keyShopLogo} alt="Key Shop" className="brand-logo" width={680} height={367} />
           </div>
           <p style={{ color: 'var(--text-2)', fontSize: 13.5, fontWeight: 600, maxWidth: 320, lineHeight: 1.6 }}>
             The bold, gold-standard workspace for Indian duplicate-key shops &mdash;
@@ -293,7 +299,7 @@ function HomePage({ onNavigate }) {
             </Reveal>
           </div>
           <div className="public-hero-panel-visual">
-            <img src={keyShopLogo} alt="Key Shop" />
+            <img src={keyShopLogo} alt="Key Shop" width={680} height={367} />
           </div>
         </div>
       </section>
@@ -689,7 +695,7 @@ export default function PublicSite({ page, onNavigate, api }) {
       {/* Keyed on `page` so switching nav tabs remounts this wrapper and
           replays the fade-in, instead of the instant content swap this used
           to be. */}
-      <div key={page} className="animate-fade-in">
+      <main key={page} className="animate-fade-in">
         {page === 'search' ? (
           <SearchPage api={api} />
         ) : page === 'about' ? (
@@ -699,7 +705,7 @@ export default function PublicSite({ page, onNavigate, api }) {
         ) : (
           <HomePage onNavigate={onNavigate} />
         )}
-      </div>
+      </main>
       <PublicFooter onNavigate={onNavigate} />
     </div>
   );

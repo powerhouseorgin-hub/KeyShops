@@ -6012,6 +6012,25 @@ export default function App() {
   // fetch) is fully resolved, then renders the correct result set once.
   const [locationReady, setLocationReady] = useState(false);
   useEffect(() => {
+    // Wait until AuthContext's own mount effect has restored (or ruled out)
+    // a saved session - `isAuthenticated` is unreliably `false` before that,
+    // since AuthProvider wraps App and child effects fire before parent
+    // effects. Deciding the skip/proceed branch below on a still-loading
+    // auth state would incorrectly skip GPS for an actually-authenticated
+    // Super Admin web user on every page reload.
+    if (loading) return;
+
+    // defaultLocation/locationReady are only ever consumed by PublicMobileApp
+    // (native, pre-login) and the authenticated Shops/Products dashboard
+    // views (native Shop Admin or web Super Admin) - never by the anonymous
+    // web marketing site (PublicSite). Requesting GPS there was pure waste
+    // and, worse, popped an unsolicited browser location-permission prompt
+    // for visitors just browsing Home/About/Contact who never asked for it.
+    if (!IS_NATIVE_APP && !isAuthenticated) {
+      setLocationReady(true);
+      return;
+    }
+
     if (gpsDefaultLocationAttempted) {
       // Only reachable in dev (React StrictMode's mount/unmount/remount) or
       // HMR - a previous instance already resolved (or is resolving) this
@@ -6044,7 +6063,7 @@ export default function App() {
         setLocationReady(true);
       }
     })();
-  }, []);
+  }, [loading, isAuthenticated]);
 
   // Navigation stack for proper Android Back button / back-swipe-gesture
   // support. This app has no router (activeTab is a flat string, switched by

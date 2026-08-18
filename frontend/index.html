@@ -44,10 +44,15 @@
     }
     </script>
 
-    <!-- Modern Typography: Outfit & Inter from Google Fonts -->
+    <!-- Modern Typography: Outfit & Inter from Google Fonts. Loaded
+         non-render-blocking (media="print" trick, swapped to "all" once
+         loaded) since `&display=swap` already means text renders
+         immediately in a fallback font either way - this just stops the
+         stylesheet fetch itself from delaying first paint. -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"></noscript>
     <!-- Applies instantly, before the bundled stylesheet loads/parses - matches
          the native Android launch theme's white background so there's no
          flash between the native splash screen and the app's own branded
