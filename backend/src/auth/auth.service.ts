@@ -2,7 +2,6 @@ import { Injectable, UnauthorizedException, BadRequestException, OnModuleInit } 
 import { JwtService } from '@nestjs/jwt';
 import { TenantService } from '../tenant/tenant.service';
 import * as bcrypt from 'bcrypt';
-import * as nodemailer from 'nodemailer';
 import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, VerifyFirebasePhoneDto, UpdateLoginCredentialsDto } from './dto/auth.dto';
 import { Role } from '@prisma/client';
 import { PHONE_REGEX_MESSAGE, normalizePhone } from '../common/validators/phone';
@@ -72,51 +71,25 @@ export class AuthService implements OnModuleInit {
   }
 
   async sendOtp(dto: { identifier: string, method: string, purpose?: string }) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (dto.method === 'email' && !emailRegex.test(dto.identifier)) {
-      throw new BadRequestException('Invalid email address format');
+    // Accepts +91/91-prefixed, leading-0, spaced/dashed, or bare 10-digit
+    // input and normalizes to the canonical bare 10-digit form so every
+    // downstream lookup/store below (User.phone uniqueness check,
+    // OtpCode.identifier, MSG91 delivery) uses one consistent value
+    // regardless of how the caller typed it. dto.method is always 'phone'
+    // here - SendOtpDto's @IsIn(['phone']) rejects anything else before this
+    // method ever runs.
+    const normalized = normalizePhone(dto.identifier);
+    if (!normalized) {
+      throw new BadRequestException(PHONE_REGEX_MESSAGE);
     }
-    if (dto.method === 'phone') {
-      // Accepts +91/91-prefixed, leading-0, spaced/dashed, or bare 10-digit
-      // input and normalizes to the canonical bare 10-digit form so every
-      // downstream lookup/store below (User.phone uniqueness check,
-      // OtpCode.identifier, MSG91 delivery) uses one consistent value
-      // regardless of how the caller typed it.
-      const normalized = normalizePhone(dto.identifier);
-      if (!normalized) {
-        throw new BadRequestException(PHONE_REGEX_MESSAGE);
-      }
-      dto.identifier = normalized;
-    }
+    dto.identifier = normalized;
 
     if (dto.purpose === 'register') {
-      if (dto.method === 'email') {
-        const existing = await this.tenantService.prisma.user.findUnique({
-          where: { email: dto.identifier },
-        });
-        if (existing) {
-          throw new BadRequestException('Email address already registered to another user');
-        }
-      }
-      if (dto.method === 'phone') {
-        const existing = await this.tenantService.prisma.user.findUnique({
-          where: { phone: dto.identifier },
-        });
-        if (existing) {
-          throw new BadRequestException('This mobile number is already registered to another shop');
-        }
-      }
-    }
-
-    if (dto.purpose === 'reset') {
-      if (dto.method === 'email') {
-        const existing = await this.tenantService.prisma.user.findUnique({
-          where: { email: dto.identifier },
-        });
-        if (!existing) {
-          throw new BadRequestException('No registered account found with this email');
-        }
+      const existing = await this.tenantService.prisma.user.findUnique({
+        where: { phone: dto.identifier },
+      });
+      if (existing) {
+        throw new BadRequestException('This mobile number is already registered to another shop');
       }
     }
 
@@ -142,92 +115,62 @@ export class AuthService implements OnModuleInit {
 
     let delivered = false;
 
-    if (dto.method === 'email') {
-      const host = process.env.SMTP_HOST || '';
-      const user = process.env.SMTP_USER || '';
-      const pass = process.env.SMTP_PASS || '';
+    // MSG91's OTP-send endpoint, passed our own bcrypt-hashed-and-stored
+    // `otpCode` as the `otp` query param rather than letting MSG91 generate
+    // and verify it themselves - keeps verifyOtp() above (DB-backed,
+    // already working) as the single source of truth, MSG91 is purely a
+    // delivery channel. template_id must be an approved OTP template in
+    // the MSG91 dashboard (DLT-registered, required for Indian numbers).
+    const authKey = process.env.MSG91_AUTH_KEY || '';
+    const templateId = process.env.MSG91_OTP_TEMPLATE_ID || '';
 
-      if (host && user && pass) {
-        const transporter = nodemailer.createTransport({
-          host,
-          port: Number(process.env.SMTP_PORT) || 587,
-          secure: process.env.SMTP_SECURE === 'true',
-          auth: { user, pass },
+    if (authKey && templateId) {
+      try {
+        const digits = dto.identifier.replace(/\D/g, '');
+        const mobile = digits.length === 10 ? `91${digits}` : digits;
+        const params = new URLSearchParams({
+          authkey: authKey,
+          template_id: templateId,
+          mobile,
+          otp: otpCode,
         });
-
-        try {
-          await transporter.sendMail({
-            from: process.env.SMTP_FROM || '"KEE Key Space Platform" <no-reply@kee.com>',
-            to: dto.identifier,
-            subject: 'KEE Secure Verification Code',
-            text: `Your KEE verification code is: ${otpCode}`,
-            html: `<h3>KEE Verification Code</h3><p>Your OTP code is: <strong>${otpCode}</strong></p>`,
-          });
+        const res = await fetch(`https://control.msg91.com/api/v5/otp?${params.toString()}`, { method: 'POST' });
+        const body = await res.json();
+        if (res.ok && body.type === 'success') {
           delivered = true;
-        } catch (err) {
-          console.error('SMTP email send failed:', err.message);
+        } else {
+          console.error('MSG91 SMS send failed:', body);
         }
-      }
-    } else {
-      // MSG91's OTP-send endpoint, passed our own bcrypt-hashed-and-stored
-      // `otpCode` as the `otp` query param rather than letting MSG91 generate
-      // and verify it themselves - keeps verifyOtp() below (DB-backed,
-      // already working) as the single source of truth, MSG91 is purely a
-      // delivery channel. template_id must be an approved OTP template in
-      // the MSG91 dashboard (DLT-registered, required for Indian numbers).
-      const authKey = process.env.MSG91_AUTH_KEY || '';
-      const templateId = process.env.MSG91_OTP_TEMPLATE_ID || '';
-
-      if (authKey && templateId) {
-        try {
-          const digits = dto.identifier.replace(/\D/g, '');
-          const mobile = digits.length === 10 ? `91${digits}` : digits;
-          const params = new URLSearchParams({
-            authkey: authKey,
-            template_id: templateId,
-            mobile,
-            otp: otpCode,
-          });
-          const res = await fetch(`https://control.msg91.com/api/v5/otp?${params.toString()}`, { method: 'POST' });
-          const body = await res.json();
-          if (res.ok && body.type === 'success') {
-            delivered = true;
-          } else {
-            console.error('MSG91 SMS send failed:', body);
-          }
-        } catch (err) {
-          console.error('MSG91 SMS send failed:', err.message);
-        }
+      } catch (err) {
+        console.error('MSG91 SMS send failed:', err.message);
       }
     }
 
     if (!delivered) {
-      // No SMTP/MSG91 provider is configured (or delivery failed) - the code
-      // is only ever visible in this server log, never in the API response.
-      // It used to be echoed back to the client as `devCode` so the frontend
+      // No MSG91 provider is configured (or delivery failed) - the code is
+      // only ever visible in this server log, never in the API response. It
+      // used to be echoed back to the client as `devCode` so the frontend
       // could show it during local development without a provider set up,
       // but that meant anyone could read a real user's OTP straight out of
       // the send-otp response on any environment where delivery isn't
       // configured - defeating verification everywhere it's required
-      // (registration, password reset, phone/email confirmation). Check this
-      // log if you need the code while testing without a provider set up.
-      console.log(`[OTP dev fallback] No ${dto.method} provider configured — code for ${dto.identifier}: ${otpCode}`);
+      // (registration, password reset, phone confirmation). Check this log
+      // if you need the code while testing without a provider set up.
+      console.log(`[OTP dev fallback] No SMS provider configured — code for ${dto.identifier}: ${otpCode}`);
     }
 
     return { success: true, delivered };
   }
 
   async verifyOtp(dto: { identifier: string, method: string, purpose?: string, code: string }) {
-    if (dto.method === 'phone') {
-      // Must normalize the same way sendOtp() did so the identifier matches
-      // the OtpCode row it created, regardless of which format the caller
-      // typed this time around.
-      const normalized = normalizePhone(dto.identifier);
-      if (!normalized) {
-        throw new BadRequestException(PHONE_REGEX_MESSAGE);
-      }
-      dto.identifier = normalized;
+    // Must normalize the same way sendOtp() did so the identifier matches
+    // the OtpCode row it created, regardless of which format the caller
+    // typed this time around.
+    const normalized = normalizePhone(dto.identifier);
+    if (!normalized) {
+      throw new BadRequestException(PHONE_REGEX_MESSAGE);
     }
+    dto.identifier = normalized;
 
     const purpose = dto.purpose || 'default';
 
@@ -407,16 +350,14 @@ export class AuthService implements OnModuleInit {
   }
 
   async resetPasswordPublic(dto: ResetPasswordPublicDto) {
-    if (dto.method === 'phone') {
-      // Must normalize the same way sendOtp()/verifyOtp() did so this
-      // matches the OtpCode row's identifier below, regardless of which
-      // format the caller typed this time around.
-      const normalized = normalizePhone(dto.identifier);
-      if (!normalized) {
-        throw new BadRequestException(PHONE_REGEX_MESSAGE);
-      }
-      dto.identifier = normalized;
+    // Must normalize the same way sendOtp()/verifyOtp() did so this matches
+    // the OtpCode row's identifier below, regardless of which format the
+    // caller typed this time around.
+    const normalized = normalizePhone(dto.identifier);
+    if (!normalized) {
+      throw new BadRequestException(PHONE_REGEX_MESSAGE);
     }
+    dto.identifier = normalized;
 
     // This endpoint is unauthenticated by design (the user forgot their
     // password) - a verified OTP for this exact identifier/purpose IS the
@@ -433,19 +374,12 @@ export class AuthService implements OnModuleInit {
       throw new BadRequestException('Please verify your OTP again before resetting your password.');
     }
 
-    let user;
-    if (dto.method === 'email') {
-      user = await this.tenantService.prisma.user.findUnique({
-        where: { email: dto.identifier },
-      });
-    } else {
-      user = await this.tenantService.prisma.user.findUnique({
-        where: { phone: dto.identifier },
-      });
-    }
+    const user = await this.tenantService.prisma.user.findUnique({
+      where: { phone: dto.identifier },
+    });
 
     if (!user) {
-      throw new BadRequestException(`No active profile registered with this ${dto.method}`);
+      throw new BadRequestException('No active profile registered with this phone number');
     }
 
     const salt = await bcrypt.genSalt(PASSWORD_HASH_COST);
@@ -462,7 +396,7 @@ export class AuthService implements OnModuleInit {
         userId: user.id,
         shopId: user.shopId,
         action: 'RESET_PASSWORD_PUBLIC',
-        details: JSON.stringify({ message: `Password reset successfully via public ${dto.method} recovery` }),
+        details: JSON.stringify({ message: 'Password reset successfully via public phone recovery' }),
       },
     });
 
