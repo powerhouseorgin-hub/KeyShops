@@ -8,14 +8,14 @@ import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 // but that API only returns locality/city/state granularity, never a street
 // name or house number.
 //
-// OpenStreetMap's Nominatim does return full street-level detail
-// (house_number, road, suburb, postcode - see addressdetails=1 below), but
-// it does NOT send an Access-Control-Allow-Origin header, so a direct
-// client-side fetch() from the app gets blocked by CORS. Routing it through
-// our own backend sidesteps that entirely (server-to-server calls aren't
-// subject to browser CORS) and lets us set the identifying User-Agent that
-// Nominatim's usage policy requires:
-// https://operations.osmfoundation.org/policies/nominatim/
+// This used to call OpenStreetMap's Nominatim directly (still the data
+// source behind LocationIQ below, and the reason the response shape/field
+// names are unchanged), but Nominatim identifies and rate-limits callers by
+// IP rather than API key - Render's outbound IP is shared with unrelated
+// tenants, and their combined traffic was enough to get the whole IP
+// blocked with HTTP 429 regardless of how little *this* app called it.
+// LocationIQ fronts the same OSM data behind a real API key, so the quota is
+// ours alone: https://locationiq.com/docs#reverse-geocoding
 @Controller('geo')
 export class GeoController {
   @Get('reverse-geocode')
@@ -26,32 +26,24 @@ export class GeoController {
       throw new BadRequestException('lat and lng query params are required numbers.');
     }
 
-    const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`;
+    const apiKey = process.env.LOCATIONIQ_API_KEY || '';
+    const url = `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`;
 
     let res: Response;
     try {
-      res = await fetch(url, {
-        headers: {
-          // Nominatim rejects/rate-limits requests with no identifying
-          // User-Agent - this can't be set from browser fetch() (it's a
-          // forbidden header there), which is the other reason this has to
-          // run server-side rather than client-side.
-          'User-Agent': 'KEE-KeySpacePlatform/1.0 (contact: admin@kee.com)',
-          'Accept-Language': 'en',
-        },
-      });
+      res = await fetch(url);
     } catch (e: any) {
       // Logged separately from the generic client-facing message below -
-      // Nominatim can fail for very different reasons (DNS/timeout here vs.
-      // a 403/429 policy block below) that look identical to the client but
-      // need different fixes, so the real cause has to survive somewhere.
+      // this can fail for very different reasons (DNS/timeout here vs. a
+      // non-2xx response below) that look identical to the client but need
+      // different fixes, so the real cause has to survive somewhere.
       console.error(`[GeoController] reverse-geocode fetch threw: ${e?.message || e}`);
       throw new BadRequestException('Reverse geocoding lookup failed.');
     }
 
     if (!res.ok) {
       const bodyText = await res.text().catch(() => '');
-      console.error(`[GeoController] reverse-geocode got ${res.status} ${res.statusText} from Nominatim: ${bodyText.slice(0, 500)}`);
+      console.error(`[GeoController] reverse-geocode got ${res.status} ${res.statusText} from LocationIQ: ${bodyText.slice(0, 500)}`);
       throw new BadRequestException('Reverse geocoding lookup failed.');
     }
 
