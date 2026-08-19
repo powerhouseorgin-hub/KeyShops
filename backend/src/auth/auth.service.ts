@@ -690,7 +690,7 @@ export class AuthService implements OnModuleInit {
 
       // 2. Create User - both email and phone are stored as login
       // identifiers, sharing the single password the owner chose.
-      await tx.user.create({
+      const user = await tx.user.create({
         data: {
           email: dto.email || null,
           phone: dto.phone,
@@ -698,6 +698,15 @@ export class AuthService implements OnModuleInit {
           passwordHash,
           role: Role.SHOP_ADMIN,
           shopId: shop.id,
+        },
+      });
+
+      await tx.activityLog.create({
+        data: {
+          userId: user.id,
+          shopId: shop.id,
+          action: 'SHOP_REGISTERED',
+          details: JSON.stringify({ message: `Shop "${dto.shopName}" registered`, shopName: dto.shopName }),
         },
       });
 

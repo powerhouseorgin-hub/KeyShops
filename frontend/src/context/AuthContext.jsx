@@ -676,6 +676,17 @@ export const AuthProvider = ({ children }) => {
     getSupportConfig: async () => request('/api/support-config'),
     updateSupportConfig: async (dto) => request('/api/super/support-config', 'POST', dto),
 
+    // A Shop Admin's request is automatically scoped to their own shop
+    // server-side (TenantInterceptor + ActivityLog's tenant-scoping - see
+    // ReportService.getActivityLog) regardless of what's passed here; a
+    // Super Admin sees every shop's entries and may narrow with shopId.
+    getActivityLog: async ({ page = 1, limit = 25, shopId, action } = {}) => {
+      const params = new URLSearchParams({ page: String(page), limit: String(limit) });
+      if (shopId) params.set('shopId', shopId);
+      if (action) params.set('action', action);
+      return request(`/api/activity-log?${params.toString()}`);
+    },
+
     // --- SHOP CATEGORIES ---
     // getShopCategories is intentionally callable pre-login (no auth header
     // required by the backend) since it also powers the Category dropdown on

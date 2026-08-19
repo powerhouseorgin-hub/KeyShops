@@ -46,20 +46,20 @@ export class ShopController {
 
   @Put('super/shops/:id')
   @Roles(Role.SUPER_ADMIN)
-  async updateShop(@Param('id') id: string, @Body() dto: UpdateShopDto) {
-    return this.shopService.updateShop(id, dto);
+  async updateShop(@Param('id') id: string, @Body() dto: UpdateShopDto, @Request() req) {
+    return this.shopService.updateShop(id, dto, req.user.id);
   }
 
   @Post('super/shops/:id/suspend')
   @Roles(Role.SUPER_ADMIN)
-  async suspendShop(@Param('id') id: string, @Body('isActive') isActive: boolean) {
-    return this.shopService.setShopStatus(id, isActive);
+  async suspendShop(@Param('id') id: string, @Body('isActive') isActive: boolean, @Request() req) {
+    return this.shopService.setShopStatus(id, isActive, req.user.id);
   }
 
   @Post('super/subscriptions/:shopId')
   @Roles(Role.SUPER_ADMIN)
-  async manageSubscription(@Param('shopId') shopId: string, @Body() dto: ManageSubscriptionDto) {
-    return this.shopService.updateSubscription(shopId, dto);
+  async manageSubscription(@Param('shopId') shopId: string, @Body() dto: ManageSubscriptionDto, @Request() req) {
+    return this.shopService.updateSubscription(shopId, dto, req.user.id);
   }
 
   // ==========================================

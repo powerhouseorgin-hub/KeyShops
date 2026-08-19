@@ -19,6 +19,7 @@ import { ProductTypeModule } from './product-type/product-type.module';
 import { KeyTypeModule } from './key-type/key-type.module';
 import { PaymentModule } from './payment/payment.module';
 import { TenantInterceptor } from './tenant/tenant.interceptor';
+import { RequestLoggingInterceptor } from './common/request-logging.interceptor';
 
 @Module({
   imports: [
@@ -46,6 +47,13 @@ import { TenantInterceptor } from './tenant/tenant.interceptor';
   ],
   controllers: [AppController, GeoController],
   providers: [
+    // Registration order matters: interceptors wrap outer-to-inner in the
+    // order they're provided, so logging runs outermost - its start/end
+    // timing spans the tenant-context setup too, not just the handler.
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestLoggingInterceptor,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: TenantInterceptor,

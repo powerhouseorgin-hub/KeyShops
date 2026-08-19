@@ -87,6 +87,7 @@ const CustomerCareView = lazy(() => import('./views/CustomerCareView'));
 const SupportContactView = lazy(() => import('./views/SupportContactView'));
 const StaticInfoView = lazy(() => import('./views/StaticInfoView'));
 const FeedbackView = lazy(() => import('./views/FeedbackView'));
+const ActivityLogView = lazy(() => import('./views/ActivityLogView'));
 import {
   Key, Users, Radio, BarChart3, Database, LogOut, Check, X,
   Plus, Settings, FileText, Search, Filter, UserCheck, MapPin, Camera, AlertTriangle,
@@ -101,7 +102,7 @@ import {
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
   Download, Fingerprint, Menu, Home, Languages, Globe,
   Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2,
-  GripVertical, Smartphone
+  GripVertical, Smartphone, History
 } from 'lucide-react';
 
 // Product photos shown on the Dashboard's product-type cards instead of the
@@ -545,6 +546,7 @@ export default function App() {
     'customer-care': t('customerCare'),
     'support-contact': t('supportContactTitle'),
     settings: t('settings'),
+    'activity-log': t('activityLogTitle'),
   };
 
   // The header no longer shows the page title as text (replaced by the global
@@ -2124,6 +2126,13 @@ export default function App() {
                     <span className="nav-ico" style={{ background: 'var(--rose)' }}><Phone /></span>
                     <span>{t('supportConfig')}</span>
                   </button>
+                  <button
+                    onClick={() => setActiveTab('activity-log')}
+                    className={`side-link ${activeTab === 'activity-log' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><History /></span>
+                    <span>{t('activityLogTitle')}</span>
+                  </button>
                 </>
               ) : (
                 <>
@@ -2187,6 +2196,13 @@ export default function App() {
                   >
                     <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Settings /></span>
                     <span>{t('settings')}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('activity-log')}
+                    className={`side-link ${activeTab === 'activity-log' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><History /></span>
+                    <span>{t('activityLogTitle')}</span>
                   </button>
 
                   <div className="side-section-label">{t('navMoreSection')}</div>
@@ -2443,6 +2459,11 @@ export default function App() {
             {activeTab === 'settings' && (
               <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
                 <ShopSettingsView t={t} api={api} />
+              </Suspense>
+            )}
+            {activeTab === 'activity-log' && (
+              <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
+                <ActivityLogView t={t} api={api} />
               </Suspense>
             )}
             {activeTab === 'terms' && (

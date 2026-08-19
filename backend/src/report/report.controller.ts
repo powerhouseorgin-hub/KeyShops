@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Request, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query, Request, UseGuards, BadRequestException } from '@nestjs/common';
 import { ReportService } from './report.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -66,5 +66,26 @@ export class ReportController {
   @Roles(Role.SUPER_ADMIN)
   async updateSupportConfig(@Body() dto: UpdateSupportConfigDto) {
     return this.reportService.updateSupportConfig(dto);
+  }
+
+  // ==========================================
+  // ACTIVITY LOG (both roles - a Shop Admin's request is automatically
+  // scoped to their own shop by TenantInterceptor/TenantService, a Super
+  // Admin sees everything and may optionally narrow with `shopId`)
+  // ==========================================
+  @Get('activity-log')
+  @Roles(Role.SUPER_ADMIN, Role.SHOP_ADMIN)
+  async getActivityLog(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('shopId') shopId?: string,
+    @Query('action') action?: string,
+  ) {
+    return this.reportService.getActivityLog({
+      page: Number(page) || 1,
+      limit: Number(limit) || 25,
+      shopId,
+      action,
+    });
   }
 }

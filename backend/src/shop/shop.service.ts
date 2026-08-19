@@ -180,31 +180,57 @@ export class ShopService {
   }
 
   // SUPER ADMIN: Update Shop details
-  async updateShop(id: string, dto: UpdateShopDto) {
+  async updateShop(id: string, dto: UpdateShopDto, actorUserId: string) {
     const shop = await this.tenantService.prisma.shop.findUnique({ where: { id } });
     if (!shop) throw new NotFoundException('Shop not found');
 
-    return this.tenantService.prisma.shop.update({
+    const updated = await this.tenantService.prisma.shop.update({
       where: { id },
       data: dto,
     });
+
+    await this.tenantService.prisma.activityLog
+      .create({
+        data: {
+          userId: actorUserId,
+          shopId: id,
+          action: 'SHOP_UPDATED',
+          details: JSON.stringify({ message: `Shop "${shop.name}" details updated by Super Admin` }),
+        },
+      })
+      .catch((err) => console.error('Failed to write SHOP_UPDATED activity log for shop', id, err));
+
+    return updated;
   }
 
   // SUPER ADMIN: Toggle Shop Active/Suspend
-  async setShopStatus(id: string, isActive: boolean) {
+  async setShopStatus(id: string, isActive: boolean, actorUserId: string) {
     const shop = await this.tenantService.prisma.shop.findUnique({ where: { id } });
     if (!shop) throw new NotFoundException('Shop not found');
 
-    return this.tenantService.prisma.shop.update({
+    const updated = await this.tenantService.prisma.shop.update({
       where: { id },
       data: { isActive },
     });
+
+    await this.tenantService.prisma.activityLog
+      .create({
+        data: {
+          userId: actorUserId,
+          shopId: id,
+          action: isActive ? 'SHOP_REACTIVATED' : 'SHOP_SUSPENDED',
+          details: JSON.stringify({ message: `Shop "${shop.name}" ${isActive ? 'reactivated' : 'suspended'} by Super Admin` }),
+        },
+      })
+      .catch((err) => console.error('Failed to write SHOP_SUSPENDED/REACTIVATED activity log for shop', id, err));
+
+    return updated;
   }
 
   // SUPER ADMIN: Manage Subscriptions. Always renews for a fresh one-year
   // YEARLY window starting now, with the requested status - there's only one
   // plan tier, so "managing" a subscription just means renew + set status.
-  async updateSubscription(shopId: string, dto: ManageSubscriptionDto) {
+  async updateSubscription(shopId: string, dto: ManageSubscriptionDto, actorUserId: string) {
     const shop = await this.tenantService.prisma.shop.findUnique({ where: { id: shopId } });
     if (!shop) throw new NotFoundException('Shop not found');
 
@@ -216,7 +242,7 @@ export class ShopService {
     // fail together - a crash between the two steps used to be able to leave
     // a shop with zero ACTIVE subscriptions (old one expired, new one never
     // created), same risk pattern as createShop above.
-    return this.tenantService.prisma.$transaction(async (tx) => {
+    const subscription = await this.tenantService.prisma.$transaction(async (tx) => {
       await tx.subscription.updateMany({
         where: { shopId, status: 'ACTIVE' },
         data: { status: 'EXPIRED' },
@@ -232,6 +258,19 @@ export class ShopService {
         },
       });
     });
+
+    await this.tenantService.prisma.activityLog
+      .create({
+        data: {
+          userId: actorUserId,
+          shopId,
+          action: 'SUBSCRIPTION_RENEWED',
+          details: JSON.stringify({ message: `Subscription renewed for shop "${shop.name}" by Super Admin`, plan: 'YEARLY', status: dto.status, endDate }),
+        },
+      })
+      .catch((err) => console.error('Failed to write SUBSCRIPTION_RENEWED activity log for shop', shopId, err));
+
+    return subscription;
   }
 
   // Shared row -> public-safe DTO mapper for searchPublicShops - only safe,

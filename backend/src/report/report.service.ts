@@ -265,4 +265,36 @@ export class ReportService {
       gstPercent: updated.gstPercent,
     };
   }
+
+  // ==========================================
+  // ACTIVITY LOG (Super Admin: all shops, optionally narrowed to one via
+  // `shopId`; Shop Admin: TenantInterceptor's tenant context auto-injects
+  // `where.shopId` for the ActivityLog model - see tenant.service.ts's
+  // TENANT_SCOPED_MODELS - so a Shop Admin only ever sees their own shop's
+  // entries here regardless of what's passed in, with no extra filtering
+  // needed in this method.)
+  // ==========================================
+  async getActivityLog(params: { page: number; limit: number; shopId?: string; action?: string }) {
+    const page = Math.max(1, params.page || 1);
+    const limit = Math.min(100, Math.max(1, params.limit || 25));
+    const where: any = {};
+    if (params.shopId) where.shopId = params.shopId;
+    if (params.action) where.action = params.action;
+
+    const [items, total] = await Promise.all([
+      this.tenantService.prisma.activityLog.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+        include: {
+          user: { select: { name: true, email: true, phone: true, role: true } },
+          shop: { select: { name: true } },
+        },
+      }),
+      this.tenantService.prisma.activityLog.count({ where }),
+    ]);
+
+    return { items, total, page, limit };
+  }
 }
