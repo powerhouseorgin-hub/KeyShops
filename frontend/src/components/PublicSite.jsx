@@ -3,6 +3,7 @@ import {
   Key, ArrowRight, Search, MapPin, Phone, Mail, ShieldCheck, Users,
   Package, BarChart3, Building2, Sparkles, CheckCircle2, Menu, X,
   RefreshCw, Clock, Store, Star, Send, Download, Tag, MessageCircle, Globe,
+  Trash2,
 } from 'lucide-react';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 // Nav/footer only ever render this at .brand-logo's 44px CSS height (~81px
@@ -146,6 +147,11 @@ const PAGE_META = {
     description: 'How Kee collects, uses, stores and protects data for shop accounts, customer records and the Kee mobile app.',
     path: '/privacy-policy',
   },
+  deleteAccount: {
+    title: 'Delete Your Account | Kee',
+    description: 'How to request deletion of your Kee shop account and what happens to your data.',
+    path: '/delete-account-request',
+  },
 };
 
 const NAV_ITEMS = [
@@ -254,6 +260,8 @@ function PublicFooter({ onNavigate }) {
         &copy; {new Date().getFullYear()} Kee. All rights reserved.
         {' '}&middot;{' '}
         <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('privacy')}>Privacy Policy</button>
+        {' '}&middot;{' '}
+        <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('deleteAccount')}>Delete Account</button>
       </div>
     </footer>
   );
@@ -717,8 +725,9 @@ function PrivacyPolicyPage() {
     {
       title: '9. Data retention and deletion',
       body: `Shop and customer records are retained for as long as the shop account is active, as they form
-      part of the shop's own business records. To request deletion of your shop account or a specific
-      customer record, contact us using the details below.`,
+      part of the shop's own business records. A Shop Admin can delete their own account at any time from
+      Settings, OTP-verified before it takes effect - see our Delete Account page for the full process,
+      including how to request deletion without the app installed.`,
     },
     {
       title: '10. Your rights',
@@ -752,6 +761,66 @@ function PrivacyPolicyPage() {
             )}
           </Reveal>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function DeleteAccountRequestPage({ onNavigate }) {
+  return (
+    <section className="public-section">
+      <Reveal className="public-section-head">
+        <span className="eyebrow"><Trash2 className="h-3.5 w-3.5" /> Delete Account</span>
+        <h2>Request deletion of your Kee account</h2>
+        <p style={{ maxWidth: 640 }}>
+          You can close your Kee shop account and delete your data at any time. This page covers how,
+          whether you still have the app installed or not.
+        </p>
+      </Reveal>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 28, maxWidth: 760 }}>
+        <Reveal className="card" style={{ padding: '20px 24px' }}>
+          <h3 style={{ marginBottom: 10 }}>If you still have the Kee app</h3>
+          <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
+            Open the app and go to <b>Settings &rarr; Delete Account</b>. You&rsquo;ll be asked to confirm and verify
+            with an OTP sent to your registered mobile number before the deletion takes effect - this
+            confirms the request is really coming from the account owner.
+          </p>
+        </Reveal>
+
+        <Reveal delay={70} className="card" style={{ padding: '20px 24px' }}>
+          <h3 style={{ marginBottom: 10 }}>If you no longer have the app</h3>
+          <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
+            Email <a href="mailto:keyshops666@gmail.com">keyshops666@gmail.com</a> from the address on file (or
+            mention your registered shop name and mobile number) and ask us to delete your account. We&rsquo;ll
+            verify your identity and confirm once it&rsquo;s done.
+          </p>
+        </Reveal>
+
+        <Reveal delay={140} className="card" style={{ padding: '20px 24px' }}>
+          <h3 style={{ marginBottom: 10 }}>What gets deleted</h3>
+          <ul style={{ color: 'var(--text-2)', lineHeight: 1.7, paddingLeft: 20, margin: 0 }}>
+            <li>Your shop account and login details (name, email, phone, password).</li>
+            <li>Your shop&rsquo;s business details, documents and uploaded photos.</li>
+          </ul>
+        </Reveal>
+
+        <Reveal delay={210} className="card" style={{ padding: '20px 24px' }}>
+          <h3 style={{ marginBottom: 10 }}>What we retain, and why</h3>
+          <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
+            Records tied to completed subscription payments (via Razorpay) are kept as required for financial
+            and tax record-keeping, even after account deletion - this is limited to payment/order records, not
+            your login credentials or customer data. See our <button type="button" onClick={() => onNavigate('privacy')} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--gold)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Privacy Policy</button> for the full picture.
+          </p>
+        </Reveal>
+
+        <Reveal delay={280} className="card" style={{ padding: '20px 24px' }}>
+          <h3 style={{ marginBottom: 10 }}>How long it takes</h3>
+          <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
+            In-app deletion (Settings &rarr; Delete Account) takes effect immediately once OTP-verified. An
+            email request is processed within a few business days.
+          </p>
+        </Reveal>
       </div>
     </section>
   );
@@ -823,6 +892,8 @@ export default function PublicSite({ page, onNavigate, api }) {
           <ContactPage />
         ) : page === 'privacy' ? (
           <PrivacyPolicyPage />
+        ) : page === 'deleteAccount' ? (
+          <DeleteAccountRequestPage onNavigate={onNavigate} />
         ) : (
           <HomePage onNavigate={onNavigate} />
         )}

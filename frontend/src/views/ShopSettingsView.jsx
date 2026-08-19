@@ -90,6 +90,14 @@ function ShopSettingsView({ t, api, shopId }) {
   const [showCredOtpModal, setShowCredOtpModal] = useState(false);
   useBackHandler(showCredOtpModal, () => setShowCredOtpModal(false));
 
+  // Delete Account - requires the same OTP-verification-window pattern as the
+  // credential edit above (purpose 'delete-account'), against the account's
+  // own already-on-file phone number rather than a newly-entered one.
+  const [showDeleteOtpModal, setShowDeleteOtpModal] = useState(false);
+  const [deleteAccountBusy, setDeleteAccountBusy] = useState(false);
+  const [deleteAccountError, setDeleteAccountError] = useState('');
+  useBackHandler(showDeleteOtpModal, () => setShowDeleteOtpModal(false));
+
   useEffect(() => {
     fetchSettings();
     fetchReferralOverview();
@@ -395,6 +403,28 @@ function ShopSettingsView({ t, api, shopId }) {
       setCredFieldError(err.message || t('failedUpdateCredentialsMsg'));
     } finally {
       setCredSaving(false);
+    }
+  };
+
+  const handleRequestDeleteAccount = () => {
+    if (!window.confirm(t('deleteAccountConfirmPrompt'))) return;
+    setDeleteAccountError('');
+    setShowDeleteOtpModal(true);
+  };
+
+  const handleDeleteAccountOtpVerified = async () => {
+    setDeleteAccountBusy(true);
+    setDeleteAccountError('');
+    try {
+      await api.deleteAccount();
+      // api.deleteAccount() already clears the local session on success - the
+      // app shell's own isAuthenticated check takes it from here, the same
+      // way it does after a normal logout.
+    } catch (err) {
+      setDeleteAccountError(err.message || t('failedDeleteAccountMsg'));
+      setShowDeleteOtpModal(false);
+    } finally {
+      setDeleteAccountBusy(false);
     }
   };
 
@@ -713,6 +743,34 @@ function ShopSettingsView({ t, api, shopId }) {
             </div>
           )}
 
+          {/* Delete Account Block - own account only, same !shopId guard as
+          Admin Credentials above (a Super Admin managing another shop's
+          settings should use Suspend from Shops Management instead, not this). */}
+          {!shopId && (
+            <div className="card" style={{ marginTop: 20, borderColor: 'var(--red-dim)' }}>
+              <div className="section-title">
+                <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8, color: 'var(--red)' }}>
+                  <Trash style={{ width: 16, height: 16, color: 'var(--red)' }} />
+                  {t('deleteAccountTitle')}
+                </h2>
+              </div>
+              <p style={{ fontSize: 13, color: 'var(--text-2)', fontWeight: 600, lineHeight: 1.6, marginBottom: 14 }}>
+                {t('deleteAccountWarning')}
+              </p>
+              {deleteAccountError && <p style={{ fontSize: 11.5, color: 'var(--red)', fontWeight: 700, marginBottom: 10 }}>{deleteAccountError}</p>}
+              <button
+                type="button"
+                disabled={deleteAccountBusy}
+                onClick={handleRequestDeleteAccount}
+                className="btn btn-block"
+                style={{ background: 'var(--red-dim)', color: 'var(--red)', border: '1px solid var(--red)' }}
+              >
+                {deleteAccountBusy ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Trash style={{ width: 16, height: 16 }} />}
+                <span>{t('deleteAccountBtn')}</span>
+              </button>
+            </div>
+          )}
+
           {/* Referral & Rewards Block */}
           <div className="card" style={{ marginTop: shopId ? 0 : 20 }}>
             <div className="section-title">
@@ -852,6 +910,21 @@ function ShopSettingsView({ t, api, shopId }) {
         purpose="change-credentials"
         title={t('verifyOtpModalTitle')}
         description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', credNewValue.trim())}
+        t={t}
+      />
+      </Suspense>
+
+      <Suspense fallback={null}>
+      <OtpVerificationModal
+        open={showDeleteOtpModal}
+        onClose={() => setShowDeleteOtpModal(false)}
+        onVerified={handleDeleteAccountOtpVerified}
+        api={api}
+        identifier={user.phone}
+        method="phone"
+        purpose="delete-account"
+        title={t('verifyOtpModalTitle')}
+        description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', user.phone)}
         t={t}
       />
       </Suspense>

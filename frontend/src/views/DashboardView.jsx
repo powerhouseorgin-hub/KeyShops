@@ -108,7 +108,7 @@ function getTimeBasedGreeting() {
 }
 
 function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal }) {
-  const { user, api } = useAuth();
+  const { user, api, subscription } = useAuth();
   const cachedData = dashboardCache && dashboardCache.userId === user.id ? dashboardCache.data : null;
   const [data, setData] = useState(cachedData);
   const [loading, setLoading] = useState(!cachedData);
@@ -259,6 +259,12 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
   // SHOP ADMIN DASHBOARD
   const sub = data.subscription;
   const firstName = (user.name || 'there').split(' ')[0];
+  // Populated by AuthContext (GET /auth/me, refreshed whenever the session
+  // token changes) only when the shop's subscription is in its 3-day
+  // post-expiry grace period - see AuthService.getShopSubscriptionState on
+  // the backend. Distinct from `sub` above (the pre-expiry "renewing soon"
+  // nudge, still ACTIVE) - once truly in grace period this replaces it
+  // rather than showing both at once.
   return (
     <div className="animate-fade-in">
       {/* Dashboard-only compaction: page-head is shared across 16 other
@@ -275,7 +281,21 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         </div>
       </div>
 
-      {sub && sub.daysRemaining <= 7 && (
+      {subscription ? (
+        <div className="card" style={{ marginBottom: 10, padding: 14, borderColor: 'var(--red)', background: 'var(--red-dim)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
+          <div className="icon-badge" style={{ background: 'var(--red-dim)', color: 'var(--red)' }}><AlertTriangle /></div>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <p style={{ fontFamily: 'var(--display)', fontWeight: 800, color: 'var(--red)', fontSize: 14 }}>
+              ⚠️ {t('subscriptionExpiredAlertTitle')}
+            </p>
+            <p style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 600, marginTop: 2 }}>
+              {t('subscriptionGracePeriodMsg')
+                .replace('{days}', subscription.daysRemaining)
+                .replace('{dayWord}', subscription.daysRemaining === 1 ? t('dayLabel') : t('daysLabel'))}
+            </p>
+          </div>
+        </div>
+      ) : sub && sub.daysRemaining > 0 && sub.daysRemaining <= 7 && (
         <div className="card" style={{ marginBottom: 10, padding: 14, borderColor: 'rgba(240,185,11,0.4)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
             <div className="icon-badge rose"><AlertTriangle /></div>

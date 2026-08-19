@@ -28,6 +28,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Only ever set for a Shop Admin whose subscription is in GRACE_PERIOD - see
+  // AuthService.getSessionInfo/login on the backend, which omit this field
+  // entirely once ACTIVE. Refreshed below whenever `token` changes (covers a
+  // session that was already open when the grace period began, not just a
+  // fresh login) so the dashboard alert reflects the current day's count.
+  const [subscription, setSubscription] = useState(null);
 
   // Load auth state from LocalStorage on mount
   useEffect(() => {
@@ -78,6 +84,7 @@ export const AuthProvider = ({ children }) => {
       const res = await parseJsonSafe(response);
       setUser(res.user);
       setToken(res.accessToken);
+      setSubscription(res.subscription || null);
       localStorage.setItem('kee_auth_user', JSON.stringify(res.user));
       localStorage.setItem('kee_auth_token', res.accessToken);
       return res.user;
@@ -89,6 +96,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    setSubscription(null);
     localStorage.removeItem('kee_auth_user');
     localStorage.removeItem('kee_auth_token');
   };
@@ -127,6 +135,18 @@ export const AuthProvider = ({ children }) => {
     return parseJsonSafe(response);
   };
 
+  // Refreshes subscription status whenever a session becomes active - covers
+  // not just a fresh login (which already gets `subscription` in its own
+  // response) but a page reload of a session that was already open before the
+  // shop's subscription entered its grace period, so the dashboard alert
+  // still appears without requiring the user to log out and back in.
+  useEffect(() => {
+    if (!token) return;
+    request('/api/auth/me')
+      .then((res) => setSubscription(res.subscription || null))
+      .catch(() => {});
+  }, [token]);
+
   // Unified API Methods, backed entirely by the live NestJS backend
   const api = {
     changePassword: async (oldPassword, newPassword) => {
@@ -149,6 +169,16 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('kee_auth_user', JSON.stringify(next));
         return next;
       });
+      return res;
+    },
+
+    // Requires a recently-verified OTP against the caller's own phone
+    // (purpose: 'delete-account') - see AuthService.deleteOwnAccount. Only
+    // clears local session state on success; the caller is responsible for
+    // navigating away, since this hook has no route awareness.
+    deleteAccount: async () => {
+      const res = await request('/api/auth/account', 'DELETE');
+      logout();
       return res;
     },
 
@@ -677,7 +707,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated: !!user, loading, login, logout, api }}>
+    <AuthContext.Provider value={{ user, token, isAuthenticated: !!user, loading, login, logout, api, subscription }}>
       {children}
     </AuthContext.Provider>
   );

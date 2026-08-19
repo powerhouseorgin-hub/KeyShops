@@ -126,8 +126,8 @@ import keyShopLogo from './assets/branding/keyshop-logo.png';
 // Native app never uses this (it has no address bar and PublicMobileApp
 // manages its own internal tab state instead), so every reference to this
 // map is scoped to the `!IS_NATIVE_APP` code paths.
-const PUBLIC_PATH_BY_PAGE = { home: '/', search: '/search', about: '/about', contact: '/contact', login: '/login', privacy: '/privacy-policy' };
-const PUBLIC_PAGE_BY_PATH = { '/': 'home', '/search': 'search', '/about': 'about', '/contact': 'contact', '/login': 'login', '/privacy-policy': 'privacy' };
+const PUBLIC_PATH_BY_PAGE = { home: '/', search: '/search', about: '/about', contact: '/contact', login: '/login', privacy: '/privacy-policy', deleteAccount: '/delete-account-request' };
+const PUBLIC_PAGE_BY_PATH = { '/': 'home', '/search': 'search', '/about': 'about', '/contact': 'contact', '/login': 'login', '/privacy-policy': 'privacy', '/delete-account-request': 'deleteAccount' };
 
 // Helper to detect and parse blog/location page routes
 const SERVICE_SLUGS = ['duplicate-car-keys', 'duplicate-bike-keys', 'home-key-duplication', 'lost-key-replacement', 'office-key-duplication'];

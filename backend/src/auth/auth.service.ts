@@ -9,6 +9,7 @@ import { CryptoService } from '../crypto/crypto.service';
 import { PaymentService } from '../payment/payment.service';
 import { getFirebaseAdminApp } from './firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
+import { getShopSubscriptionState, SubscriptionState, SUBSCRIPTION_EXPIRED_MESSAGE } from '../common/subscription-status';
 
 // bcrypt's cost factor is exponential (each +1 roughly doubles the CPU time
 // spent per hash/compare) - 12 was fine on typical hardware (~200-300ms) but
@@ -276,9 +277,18 @@ export class AuthService implements OnModuleInit {
     }
 
     // Verify tenant is active if SHOP_ADMIN
+    let subscription: { state: SubscriptionState; daysRemaining: number | null; endDate: Date | null } | null = null;
     if (user.role === Role.SHOP_ADMIN && user.shopId) {
       if (!user.shop || !user.shop.isActive) {
         throw new UnauthorizedException('Your shop access has been suspended');
+      }
+
+      // Checked on every login attempt (not just enforced client-side) so an
+      // expired-past-grace shop can't bypass the block by simply not calling
+      // whatever frontend check would otherwise show the alert.
+      subscription = await getShopSubscriptionState(this.tenantService, user.shopId);
+      if (subscription.state === 'GRACE_PERIOD_EXPIRED') {
+        throw new UnauthorizedException(SUBSCRIPTION_EXPIRED_MESSAGE);
       }
     }
 
@@ -308,6 +318,10 @@ export class AuthService implements OnModuleInit {
         role: user.role,
         shopId: user.shopId,
       },
+      // Only present for a SHOP_ADMIN whose subscription is in GRACE_PERIOD -
+      // omitted entirely when ACTIVE, so the dashboard's alert logic can key
+      // off "is this field present" rather than string-comparing state.
+      ...(subscription && subscription.state === 'GRACE_PERIOD' ? { subscription } : {}),
     };
   }
 
@@ -461,6 +475,67 @@ export class AuthService implements OnModuleInit {
     });
 
     return { success: true, email: user.email, phone: data.phone ?? user.phone };
+  }
+
+  // AUTHENTICATED: lets the signed-in user close their own account. Requires a
+  // recently-verified OTP against their own phone (purpose 'delete-account') -
+  // same replay-window model as updateLoginCredentials/resetPasswordPublic above,
+  // so this can't be triggered by a stolen/idle session token alone. For a Shop
+  // Admin this also soft-deletes their Shop: today exactly one User owns each
+  // Shop (created together in registerShop), so "delete my account" and "close
+  // my shop" are the same action from the Shop Admin's perspective. Both rows
+  // use the existing soft-delete convention (TenantService.prisma's `delete`
+  // sets `deletedAt` rather than removing the row) - the very next request on
+  // this token already 401s via JwtStrategy, since the deleted User no longer
+  // resolves through the soft-delete filter.
+  async deleteOwnAccount(userId: string) {
+    const user = await this.tenantService.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException('Account not found.');
+    }
+    if (!user.phone) {
+      throw new BadRequestException('Account deletion requires a verified phone number.');
+    }
+
+    const DELETE_ACCOUNT_OTP_WINDOW_MS = 15 * 60 * 1000;
+    const verifiedOtp = await this.tenantService.prisma.otpCode.findFirst({
+      where: { identifier: user.phone, purpose: 'delete-account', consumed: true },
+      orderBy: { updatedAt: 'desc' },
+    });
+    if (!verifiedOtp || Date.now() - verifiedOtp.updatedAt.getTime() > DELETE_ACCOUNT_OTP_WINDOW_MS) {
+      throw new BadRequestException('Please verify your phone number with an OTP before deleting your account.');
+    }
+
+    await this.tenantService.prisma.$transaction(async (tx) => {
+      await tx.user.delete({ where: { id: user.id } });
+      if (user.shopId) {
+        await tx.shop.delete({ where: { id: user.shopId } });
+      }
+    });
+
+    await this.tenantService.prisma.activityLog
+      .create({
+        data: {
+          userId: user.id,
+          shopId: user.shopId,
+          action: 'DELETE_ACCOUNT',
+          details: JSON.stringify({ message: 'Account deleted by user request', email: user.email, phone: user.phone }),
+        },
+      })
+      .catch((err) => console.error('Failed to write DELETE_ACCOUNT activity log for user', user.id, err));
+
+    return { success: true, message: 'Your account has been deleted.' };
+  }
+
+  // Backs GET /auth/me - identity plus (for a Shop Admin) the current
+  // subscription state, so the dashboard can show/hide the expiry alert on
+  // every session without waiting for a fresh login response.
+  async getSessionInfo(user: { id: string; email: string | null; phone: string | null; name: string; role: Role; shopId: string | null }) {
+    if (user.role !== Role.SHOP_ADMIN || !user.shopId) {
+      return { user };
+    }
+    const subscription = await getShopSubscriptionState(this.tenantService, user.shopId);
+    return { user, subscription };
   }
 
   // Public self-registration wizard's submit handler - two frontend steps

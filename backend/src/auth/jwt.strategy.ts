@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { TenantService } from '../tenant/tenant.service';
+import { getShopSubscriptionState, SUBSCRIPTION_EXPIRED_MESSAGE } from '../common/subscription-status';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -46,6 +47,14 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       });
       if (!shop || !shop.isActive) {
         throw new UnauthorizedException('Your shop has been suspended. Please contact Super Admin.');
+      }
+
+      // Re-checked on every request (not just at login) so a shop that slides into
+      // GRACE_PERIOD_EXPIRED mid-session is locked out immediately, the same way an
+      // isActive suspension already is above - not just at their next login attempt.
+      const { state } = await getShopSubscriptionState(this.tenantService, user.shopId);
+      if (state === 'GRACE_PERIOD_EXPIRED') {
+        throw new UnauthorizedException(SUBSCRIPTION_EXPIRED_MESSAGE);
       }
     }
 
