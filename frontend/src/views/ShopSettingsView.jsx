@@ -6,9 +6,9 @@ import { getAssetUrl, downloadAsset, filenameForAsset } from '../apiConfig';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../utils/platform';
 import {
-  AlertTriangle, Award, BadgePercent, Calendar, Camera, Check, CheckCircle2, Copy,
+  AlertTriangle, Award, BadgePercent, Ban, Calendar, Camera, Check, CheckCircle2, Copy,
   Download, Edit, Eye, EyeOff, FileCheck, FileText,
-  KeyRound, Link2, Lock, Mail, MapPin, Phone, RefreshCw, ShieldCheck,
+  KeyRound, Link2, Lock, Mail, MapPin, Phone, PlayCircle, RefreshCw, ShieldCheck,
   Store, Trash, Upload, User, Users,
   X,
 } from 'lucide-react';
@@ -44,6 +44,11 @@ function ShopSettingsView({ t, api, shopId }) {
   // shown read-only here so a Shop Admin can see their own renewal date
   // without needing to hit the grace-period alert first.
   const [subscriptionInfo, setSubscriptionInfo] = useState(null);
+  // Only meaningful (and only rendered) when a Super Admin is managing
+  // another shop's settings (shopId is set) - a Shop Admin viewing their own
+  // settings has no use for suspending themselves.
+  const [shopIsActive, setShopIsActive] = useState(true);
+  const [suspendBusy, setSuspendBusy] = useState(false);
   const [loading, setLoading] = useState(true);
   const [settingsError, setSettingsError] = useState('');
   const [referralCode, setReferralCode] = useState(cachedReferral ? cachedReferral.referralCode : null);
@@ -114,6 +119,7 @@ function ShopSettingsView({ t, api, shopId }) {
     try {
       const res = await api.getSettings(shopId);
       setShopName(res.name);
+      setShopIsActive(res.isActive);
       // getSettings() already includes the shop's most recent subscription
       // row (see ShopService.getSettings's `subscriptions` include) - just
       // wasn't being read into state or rendered before.
@@ -414,6 +420,22 @@ function ShopSettingsView({ t, api, shopId }) {
     fetchReferralOverview();
   };
 
+  // Super Admin only (shopId set) - only suspending needs a confirm, since it
+  // blocks the shop's login immediately (see AuthService.login's
+  // suspended-account check), while reactivating is safe/reversible-in-place.
+  const handleToggleShopStatus = async () => {
+    if (shopIsActive && !confirm(t('confirmSuspendShopMsg').replace('{name}', shopName))) return;
+    setSuspendBusy(true);
+    try {
+      await api.suspendShop(shopId, !shopIsActive);
+      setShopIsActive(!shopIsActive);
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      setSuspendBusy(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 260 }}>
@@ -500,6 +522,49 @@ function ShopSettingsView({ t, api, shopId }) {
                       <span className={`badge ${subscriptionInfo.status === 'ACTIVE' ? 'badge-active' : 'badge-suspended'}`}>
                         <span className="dot"></span>{subscriptionInfo.plan}
                       </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Account Status - Super Admin only. Placed here (inside the
+                  shop being managed's own Workspace Profile) rather than as
+                  an icon on the Shops Management list card, so the action
+                  sits alongside the rest of that shop's details instead of
+                  cluttering the list with a per-row control. */}
+              {shopId && (
+                <div className="reg-section" style={{ marginBottom: 0 }}>
+                  <div className="reg-field" style={{ marginBottom: 0 }}>
+                    <div className="reg-field-label">
+                      <div className="reg-ico" style={{ background: shopIsActive ? 'var(--jgreen)' : 'var(--red)' }}>
+                        {shopIsActive ? <ShieldCheck /> : <Ban />}
+                      </div>
+                      <b>{t('accountStatusLabel')}</b>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className={`badge ${shopIsActive ? 'badge-active' : 'badge-suspended'}`}>
+                        <span className="dot"></span>{shopIsActive ? t('active') : t('suspended')}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleToggleShopStatus}
+                        disabled={suspendBusy}
+                        className="btn btn-sm"
+                        style={{
+                          background: shopIsActive ? 'var(--red-dim)' : 'var(--jgreen-dim)',
+                          color: shopIsActive ? 'var(--red)' : 'var(--jgreen)',
+                          border: `1px solid ${shopIsActive ? 'var(--red)' : 'var(--jgreen)'}`,
+                        }}
+                      >
+                        {suspendBusy ? (
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                        ) : shopIsActive ? (
+                          <Ban style={{ width: 14, height: 14 }} />
+                        ) : (
+                          <PlayCircle style={{ width: 14, height: 14 }} />
+                        )}
+                        <span>{shopIsActive ? t('suspendShopBtn') : t('reactivateShopBtn')}</span>
+                      </button>
                     </div>
                   </div>
                 </div>

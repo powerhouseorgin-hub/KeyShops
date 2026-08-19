@@ -13,7 +13,7 @@ import {
   Key, Check, Plus, Settings, FileText, Search, MapPin, Camera, AlertTriangle,
   RefreshCw, Layers, Edit, DollarSign, ChevronRight, CreditCard, QrCode, Lock,
   ShieldCheck, Mail, Phone, Calendar, Store, User, Crosshair, Tag, Percent, Globe,
-  X, Ban, PlayCircle,
+  X,
 } from 'lucide-react';
 
 // Lazy-loaded (Track B): keeps the Shop Settings modal ("Manage Settings"
@@ -120,7 +120,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   useBackHandler(showAddModal, () => { resetAddForm(); setShowAddModal(false); });
   useBackHandler(showSubModal, () => setShowSubModal(false));
   useBackHandler(showEditModal, () => setShowEditModal(false));
-  useBackHandler(!!fullSettingsShopId, () => setFullSettingsShopId(null));
+  useBackHandler(!!fullSettingsShopId, () => { setFullSettingsShopId(null); fetchShops(); });
 
   // Form States for Add Shop
   const [shopName, setShopName] = useState('');
@@ -399,19 +399,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     setErrorMsg('');
   };
 
-  const toggleShopStatus = async (shop) => {
-    // Only suspending needs a confirm - it blocks the shop's login
-    // immediately (see AuthService.login's suspended-account check), while
-    // reactivating is safe/reversible-in-place.
-    if (shop.isActive && !confirm(t('confirmSuspendShopMsg').replace('{name}', shop.name))) return;
-    try {
-      await api.suspendShop(shop.id, !shop.isActive);
-      fetchShops();
-    } catch (e) {
-      alert(e.message);
-    }
-  };
-
   // Renews the shop's subscription for a fresh one-year YEARLY window,
   // starting now (see ShopService.updateSubscription).
   const handleUpdateSubscriptionSubmit = async (e) => {
@@ -627,19 +614,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                           <span>{t('callPrefix') || 'Call'}</span>
                         </a>
                       )}
-                      <button
-                        type="button"
-                        onClick={(e) => { e.stopPropagation(); toggleShopStatus(s); }}
-                        className="icon-btn"
-                        style={{
-                          width: 34, height: 34, borderRadius: 10,
-                          background: s.isActive ? 'var(--red-dim)' : 'var(--jgreen-dim)',
-                          color: s.isActive ? 'var(--red)' : 'var(--jgreen)',
-                        }}
-                        title={s.isActive ? t('suspendShopBtn') : t('reactivateShopBtn')}
-                      >
-                        {s.isActive ? <Ban style={{ width: 17, height: 17 }} /> : <PlayCircle style={{ width: 17, height: 17 }} />}
-                      </button>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); setFullSettingsShopId(s.id); }}
@@ -1311,7 +1285,10 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10" style={{ background: 'rgba(5,4,3,0.82)' }}>
           <div style={{ width: '100%', maxWidth: 900, margin: 'auto' }}>
             <div className="flex justify-end" style={{ marginBottom: 10 }}>
-              <button onClick={() => setFullSettingsShopId(null)} className="icon-btn" style={{ background: 'var(--card)' }}>
+              {/* Closing re-fetches the shop list - the settings screen
+                  now includes the Suspend/Reactivate action, and the list's
+                  own status badge needs to reflect any change made in there. */}
+              <button onClick={() => { setFullSettingsShopId(null); fetchShops(); }} className="icon-btn" style={{ background: 'var(--card)' }}>
                 <X className="h-4 w-4" />
               </button>
             </div>
