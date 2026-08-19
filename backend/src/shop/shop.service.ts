@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from '@prisma/client';
 import { FileService } from '../customer/file.service';
 import { persistShopDocuments } from '../common/shop-document.util';
+import { normalizePhone } from '../common/validators/phone';
 
 // Shared `include` clause for pulling a shop's active (non-soft-deleted) documents.
 // Nested `include`/`select` relations are NOT covered by TenantService's soft-delete
@@ -460,10 +461,43 @@ export class ShopService {
 
   // SHOP ADMIN: Update Settings
   async updateSettings(shopId: string, dto: UpdateSettingsDto) {
-    return this.tenantService.prisma.shop.update({
-      where: { id: shopId },
-      data: dto,
-    });
+    // Referral codes are simply the shop's own phone number (see
+    // AuthService.registerShop's newShopReferralCode / getOrCreateReferralCode
+    // above) - when the Workspace Profile phone changes, whether the Shop
+    // Admin edits their own or a Super Admin edits it on their behalf, the
+    // referral code needs to follow it so the shop keeps sharing the number
+    // it actually shows people, not a stale one from before the edit.
+    const data: Record<string, any> = { ...dto };
+    if (dto.companyDetails) {
+      try {
+        const details = JSON.parse(dto.companyDetails);
+        const newPhone = details.phone ? normalizePhone(details.phone) || details.phone : null;
+        if (newPhone) {
+          const current = await this.tenantService.prisma.shop.findUnique({ where: { id: shopId }, select: { referralCode: true } });
+          if (current && current.referralCode !== newPhone) {
+            data.referralCode = newPhone;
+          }
+        }
+      } catch {
+        // Malformed companyDetails JSON - fall through and save the rest of
+        // the update untouched, same as before this referral-sync existed.
+      }
+    }
+
+    try {
+      return await this.tenantService.prisma.shop.update({ where: { id: shopId }, data });
+    } catch (e: any) {
+      // referralCode is @unique - the new phone number could collide with
+      // another shop's existing code (companyDetails.phone is free text, not
+      // validated for uniqueness across shops). Retry without touching
+      // referralCode so the rest of the workspace edit still saves rather
+      // than failing the whole request over an unrelated field.
+      if (e?.code === 'P2002' && data.referralCode) {
+        const { referralCode, ...rest } = data;
+        return this.tenantService.prisma.shop.update({ where: { id: shopId }, data: rest });
+      }
+      throw e;
+    }
   }
 
   // SHOP ADMIN: Upload/replace the shop's logo - a single always-current

@@ -680,6 +680,7 @@ export default function App() {
   const [showLangDialog, setShowLangDialog] = useState(false);
   const [downloadToastVisible, setDownloadToastVisible] = useState(false);
   const langDialogCardRef = useRef(null);
+  const notifDropdownRef = useRef(null);
 
   useEffect(() => {
     const handleDocDownloaded = () => {
@@ -826,6 +827,22 @@ export default function App() {
     document.addEventListener('mousedown', handleOutsideClick);
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, [showLangDialog]);
+
+  // Same pattern as the language dialog above - the notification dropdown
+  // previously only closed by tapping the bell again, which read as stuck
+  // open to anyone used to a normal dropdown. The ref wraps both the bell
+  // button and the panel, so toggling via the bell itself still works
+  // (that click is "inside") while anything else on the page closes it.
+  useEffect(() => {
+    if (!showNotifDropdown) return;
+    const handleOutsideClick = (e) => {
+      if (notifDropdownRef.current && !notifDropdownRef.current.contains(e.target)) {
+        setShowNotifDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showNotifDropdown]);
 
   // Forgot password flow states
   const [showForgotPassword, setShowForgotPassword] = useState(false);
@@ -2256,7 +2273,12 @@ export default function App() {
                   </button>
                 )}
 
-                {/* Notification Bell */}
+                {/* Notification Bell + dropdown share one ref so the
+                    click-outside handler below treats them as a single unit -
+                    toggling via the bell counts as "inside" (no
+                    open-then-immediately-close), while anything else on the
+                    page closes the dropdown. */}
+                <div ref={notifDropdownRef} style={{ position: 'relative' }}>
                 <button
                   onClick={() => setShowNotifDropdown(!showNotifDropdown)}
                   className="icon-btn"
@@ -2342,6 +2364,7 @@ export default function App() {
                     </div>
                   </div>
                 )}
+                </div>
 
                 <span className="avatar">{(user.name || 'U').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()}</span>
               </div>
