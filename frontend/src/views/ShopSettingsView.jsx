@@ -44,6 +44,10 @@ function ShopSettingsView({ t, api, shopId }) {
   // shown read-only here so a Shop Admin can see their own renewal date
   // without needing to hit the grace-period alert first.
   const [subscriptionInfo, setSubscriptionInfo] = useState(null);
+  // Workspace Profile fields are read-only until Edit is tapped - guards
+  // against an accidental keystroke/paste silently changing the shop's
+  // name/phone/address while just viewing this screen.
+  const [editMode, setEditMode] = useState(false);
   // Only meaningful (and only rendered) when a Super Admin is managing
   // another shop's settings (shopId is set) - a Shop Admin viewing their own
   // settings has no use for suspending themselves.
@@ -172,9 +176,17 @@ function ShopSettingsView({ t, api, shopId }) {
     try {
       await persistCompanyDetails();
       alert(t('shopWorkspaceSettingsSavedMsg'));
+      setEditMode(false);
     } catch (e) {
       alert(e.message);
     }
+  };
+
+  // Discards any unsaved edits by re-fetching the last-saved values from the
+  // server, rather than tracking a separate "original" snapshot in state.
+  const handleCancelEdit = () => {
+    fetchSettings();
+    setEditMode(false);
   };
 
   const handleDocFileSelected = async (file) => {
@@ -475,11 +487,19 @@ function ShopSettingsView({ t, api, shopId }) {
         <div>
           <div className="card">
             <div className="section-title">
-              <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Store style={{ width: 16, height: 16, color: 'var(--gold)' }} />
-                {t('workspaceProfileTitle')}
-              </h2>
-              <span className="sub">{t('businessIdentityContactDesc')}</span>
+              <div>
+                <h2 style={{ fontSize: 16, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Store style={{ width: 16, height: 16, color: 'var(--gold)' }} />
+                  {t('workspaceProfileTitle')}
+                </h2>
+                <span className="sub">{t('businessIdentityContactDesc')}</span>
+              </div>
+              {!editMode && (
+                <button type="button" onClick={() => setEditMode(true)} className="btn btn-outline btn-sm">
+                  <Edit style={{ width: 14, height: 14 }} />
+                  <span>{t('btnEdit')}</span>
+                </button>
+              )}
             </div>
 
             <form onSubmit={handleUpdate}>
@@ -487,21 +507,21 @@ function ShopSettingsView({ t, api, shopId }) {
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--purple)' }}><Store /></div><b>{t('workspaceDisplayNameLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
-                    <input type="text" required value={shopName} onChange={(e) => setShopName(e.target.value)} />
+                    <input type="text" required readOnly={!editMode} disabled={!editMode} value={shopName} onChange={(e) => setShopName(e.target.value)} />
                   </div>
                 </div>
 
                 <div className="reg-field">
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Phone /></div><b>{t('phoneNumberLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
-                    <input type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91..." />
+                    <input type="tel" required readOnly={!editMode} disabled={!editMode} value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91..." />
                   </div>
                 </div>
 
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--pink)' }}><MapPin /></div><b>{t('registeredAddressLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
-                    <input type="text" required value={address} onChange={(e) => setAddress(e.target.value)} />
+                    <input type="text" required readOnly={!editMode} disabled={!editMode} value={address} onChange={(e) => setAddress(e.target.value)} />
                   </div>
                 </div>
               </div>
@@ -648,12 +668,17 @@ function ShopSettingsView({ t, api, shopId }) {
                 })()}
               </div>
 
-              <div className="form-action-bar flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginTop: 20 }}>
-                <button type="submit" className="btn btn-primary">
-                  <Check />
-                  <span>{t('saveWorkspaceDetailsBtn')}</span>
-                </button>
-              </div>
+              {editMode && (
+                <div className="form-action-bar flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginTop: 20, gap: 10 }}>
+                  <button type="button" onClick={handleCancelEdit} className="btn btn-ghost">
+                    <span>{t('btnCancel')}</span>
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    <Check />
+                    <span>{t('saveWorkspaceDetailsBtn')}</span>
+                  </button>
+                </div>
+              )}
             </form>
           </div>
         </div>
