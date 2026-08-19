@@ -303,7 +303,7 @@ export class AuthService implements OnModuleInit {
           userId: user.id,
           shopId: user.shopId,
           action: 'LOGIN',
-          details: JSON.stringify({ email: user.email, name: user.name }),
+          details: JSON.stringify({ message: `${user.name} logged in`, email: user.email, name: user.name }),
         },
       })
       .catch((err) => console.error('Failed to write LOGIN activity log for user', user.id, err));
@@ -535,7 +535,15 @@ export class AuthService implements OnModuleInit {
       return { user };
     }
     const subscription = await getShopSubscriptionState(this.tenantService, user.shopId);
-    return { user, subscription };
+    // Mirrors login()'s response shape exactly: `subscription` is only present
+    // when GRACE_PERIOD. A previous version always included it (even for a
+    // perfectly healthy ACTIVE subscription, with daysRemaining: null) - the
+    // frontend's bare `subscription ? ... : ...` truthiness check then showed
+    // the "your subscription has expired" banner, with the literal string
+    // "null" in place of a day count, for every shop regardless of actual
+    // status. Confirmed via production logs against a real shop 345 days from
+    // expiry incorrectly showing the expired banner.
+    return { user, ...(subscription.state === 'GRACE_PERIOD' ? { subscription } : {}) };
   }
 
   // Public self-registration wizard's submit handler - two frontend steps

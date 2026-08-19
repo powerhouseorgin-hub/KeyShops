@@ -6,8 +6,8 @@ import { getAssetUrl, downloadAsset, filenameForAsset } from '../apiConfig';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../utils/platform';
 import {
-  AlertTriangle, Award, BadgePercent, Camera, Check, CheckCircle2, Copy,
-  Download, Edit, Eye, EyeOff, FileCheck, FileText, Image as ImageIcon,
+  AlertTriangle, Award, BadgePercent, Calendar, Camera, Check, CheckCircle2, Copy,
+  Download, Edit, Eye, EyeOff, FileCheck, FileText,
   KeyRound, Link2, Lock, Mail, MapPin, Phone, RefreshCw, ShieldCheck,
   Store, Trash, Upload, User, Users,
   X,
@@ -39,12 +39,11 @@ function ShopSettingsView({ t, api, shopId }) {
   const [phone, setPhone] = useState('');
   const [verificationDoc, setVerificationDoc] = useState(null);
   const [docUploading, setDocUploading] = useState(false);
-  // Shop's own logo, shown on its public Shop Details page (see
-  // ShopService.uploadLogo) - a single always-current image, not a
-  // versioned document like verificationDoc above, so there's no separate
-  // "remove" flow: uploading again just replaces it.
-  const [logoUrl, setLogoUrl] = useState(null);
-  const [logoUploading, setLogoUploading] = useState(false);
+  // The shop's current subscription, straight from getSettings()'s
+  // `subscriptions` relation (already fetched, just wasn't rendered before) -
+  // shown read-only here so a Shop Admin can see their own renewal date
+  // without needing to hit the grace-period alert first.
+  const [subscriptionInfo, setSubscriptionInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [settingsError, setSettingsError] = useState('');
   const [referralCode, setReferralCode] = useState(cachedReferral ? cachedReferral.referralCode : null);
@@ -115,7 +114,10 @@ function ShopSettingsView({ t, api, shopId }) {
     try {
       const res = await api.getSettings(shopId);
       setShopName(res.name);
-      setLogoUrl(res.logoUrl || null);
+      // getSettings() already includes the shop's most recent subscription
+      // row (see ShopService.getSettings's `subscriptions` include) - just
+      // wasn't being read into state or rendered before.
+      setSubscriptionInfo((res.subscriptions && res.subscriptions[0]) || null);
 
       if (res.companyDetails) {
         try {
@@ -193,27 +195,6 @@ function ShopSettingsView({ t, api, shopId }) {
     }
   };
 
-  const handleLogoFileSelected = async (file) => {
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      alert(t('fileSizeExceeds5MBMsg'));
-      return;
-    }
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      alert(t('onlyJpegPngWebpMsg', 'Only JPEG, PNG, and WebP images are accepted.'));
-      return;
-    }
-    setLogoUploading(true);
-    try {
-      const updated = await api.uploadShopLogo(file, shopId);
-      setLogoUrl(updated.logoUrl || null);
-    } catch (err) {
-      alert(err.message || t('documentUploadFailedMsg'));
-    } finally {
-      setLogoUploading(false);
-    }
-  };
 
   const handleCaptureDocPhoto = async () => {
     try {
@@ -503,64 +484,26 @@ function ShopSettingsView({ t, api, shopId }) {
                 </div>
               </div>
 
-              {/* Shop Logo Section - shown on the public Shop Details page,
-                  falling back to a category icon when absent (see
-                  PublicShopDetailsScreen). Simpler than the Verification
-                  Document upload below: a single always-current image, no
-                  document "type" concept, upload immediately replaces it. */}
-              <div className="reg-section" style={{ marginBottom: 0 }}>
-                <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', borderRadius: 14, padding: 12, display: 'flex', flexDirection: 'column', gap: 10, maxWidth: 320 }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 10.5, fontWeight: 800, color: 'var(--text-2)', textTransform: 'uppercase', letterSpacing: '.04em' }}>
-                    <span className="icon-badge teal" style={{ width: 20, height: 20, borderRadius: 6, flexShrink: 0 }}><ImageIcon style={{ width: 10, height: 10 }} /></span>
-                    {t('shopLogoLabel', 'Shop Logo')}
-                  </span>
-                  {logoUrl ? (
-                    <div style={{ height: 110, width: 110, borderRadius: '50%', overflow: 'hidden', border: '1px solid var(--border-2)', background: '#fff' }}>
-                      <img src={getAssetUrl(logoUrl)} className="w-full h-full object-cover" alt={t('shopLogoLabel', 'Shop Logo')} />
+              {/* Subscription Validity - read-only, sourced from
+                  getSettings()'s `subscriptions` relation. Renewal itself is
+                  a Super Admin action (see ShopService.updateSubscription);
+                  this is purely informational so a Shop Admin can check their
+                  own expiry date without waiting for the grace-period alert. */}
+              {subscriptionInfo && (
+                <div className="reg-section" style={{ marginBottom: 0 }}>
+                  <div className="reg-field" style={{ marginBottom: 0 }}>
+                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Calendar /></div><b>{t('subscriptionValidUntilLabel')}</b></div>
+                    <div className="flex items-center justify-between">
+                      <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>
+                        {new Date(subscriptionInfo.endDate).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </p>
+                      <span className={`badge ${subscriptionInfo.status === 'ACTIVE' ? 'badge-active' : 'badge-suspended'}`}>
+                        <span className="dot"></span>{subscriptionInfo.plan}
+                      </span>
                     </div>
-                  ) : (
-                    <div style={{ height: 110, width: 110, borderRadius: '50%', border: '1.5px dashed var(--border-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)' }}>
-                      <ImageIcon style={{ width: 24, height: 24 }} />
-                    </div>
-                  )}
-                  <div className="flex gap-2">
-                    {IS_NATIVE_APP && (
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          try {
-                            const { Camera, CameraResultType, CameraSource } = await import('@capacitor/camera');
-                            const photo = await Camera.getPhoto({ resultType: CameraResultType.Uri, source: CameraSource.Camera, quality: 85 });
-                            const response = await fetch(photo.webPath);
-                            const blob = await response.blob();
-                            const file = new File([blob], `shop_logo.${photo.format || 'jpg'}`, { type: blob.type || 'image/jpeg' });
-                            await handleLogoFileSelected(file);
-                          } catch (err) {
-                            if (err && err.message && !/cancell?ed/i.test(err.message)) {
-                              alert(err.message || t('documentUploadFailedMsg'));
-                            }
-                          }
-                        }}
-                        disabled={logoUploading}
-                        className="btn btn-ghost btn-sm"
-                        style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', opacity: logoUploading ? 0.6 : 1 }}
-                      >
-                        <Camera style={{ width: 12, height: 12 }} />
-                        <span>{t('useCameraBtn')}</span>
-                      </button>
-                    )}
-                    <label className="btn btn-ghost btn-sm" style={{ flex: 1, fontSize: 10.5, padding: '8px 10px', cursor: logoUploading ? 'not-allowed' : 'pointer', opacity: logoUploading ? 0.6 : 1 }}>
-                      {logoUploading ? <RefreshCw className="animate-spin" style={{ width: 12, height: 12 }} /> : <Upload style={{ width: 12, height: 12 }} />}
-                      <span>{logoUploading ? t('uploadingEllipsisLabel') : (logoUrl ? t('changeLogoBtn', 'Change Logo') : t('uploadLogoBtn', 'Upload Logo'))}</span>
-                      <input
-                        type="file" accept="image/jpeg,image/png,image/webp" className="hidden" disabled={logoUploading}
-                        onClick={primeStoragePermission}
-                        onChange={(e) => { const file = e.target.files[0]; e.target.value = ''; handleLogoFileSelected(file); }}
-                      />
-                    </label>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Shop Verification Document Section */}
               <div className="reg-section" style={{ marginBottom: 0 }}>

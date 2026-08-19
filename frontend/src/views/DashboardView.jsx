@@ -281,7 +281,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         </div>
       </div>
 
-      {subscription ? (
+      {subscription && subscription.state === 'GRACE_PERIOD' ? (
         <div className="card" style={{ marginBottom: 10, padding: 14, borderColor: 'var(--red)', background: 'var(--red-dim)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12 }}>
           <div className="icon-badge" style={{ background: 'var(--red-dim)', color: 'var(--red)' }}><AlertTriangle /></div>
           <div style={{ flex: 1, minWidth: 200 }}>

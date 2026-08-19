@@ -30,13 +30,23 @@ function actionMeta(action) {
 }
 
 // Best-effort readable summary from the JSON `details` string every
-// activityLog.create() call stores - falls back to the raw string if it
-// isn't parseable JSON, or to the bare action code if details is empty.
+// activityLog.create() call stores. Every write now includes a `message`
+// field, but older rows (written before that was consistent - e.g. LOGIN
+// entries predating this fix) don't, and previously fell through to showing
+// the raw `{"email":"...","name":"..."}` JSON blob verbatim, which is both
+// ugly and redundant with the action title already shown above it. Derive a
+// readable fallback from whatever fields the entry does have instead of ever
+// printing raw JSON.
 function summarize(entry, t) {
-  if (!entry.details) return t(`activityAction_${entry.action}`) || entry.action;
+  if (!entry.details) return '';
   try {
     const parsed = JSON.parse(entry.details);
-    return parsed.message || entry.details;
+    if (parsed.message) return parsed.message;
+    if (parsed.name) return parsed.name;
+    if (parsed.fields) return Array.isArray(parsed.fields) ? parsed.fields.join(', ') : String(parsed.fields);
+    // No known field to build a sentence from - still avoid dumping raw
+    // JSON; fall through to the action-title-only case below instead.
+    return '';
   } catch {
     return entry.details;
   }
@@ -135,9 +145,11 @@ function ActivityLogView({ t, api }) {
                       <span className="pill-badge" style={{ fontSize: 10 }}>{entry.shop.name}</span>
                     )}
                   </div>
-                  <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, marginTop: 3 }}>
-                    {summarize(entry, t)}
-                  </p>
+                  {summarize(entry, t) && (
+                    <p style={{ fontSize: 12.5, color: 'var(--text-2)', fontWeight: 600, marginTop: 3 }}>
+                      {summarize(entry, t)}
+                    </p>
+                  )}
                   <p style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, marginTop: 4 }}>
                     {entry.user?.name || t('unknownUserLabel')} &middot; {new Date(entry.createdAt).toLocaleString()}
                   </p>
