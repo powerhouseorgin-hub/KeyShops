@@ -13,7 +13,7 @@ import {
   Key, Check, Plus, Settings, FileText, Search, MapPin, Camera, AlertTriangle,
   RefreshCw, Layers, Edit, DollarSign, ChevronRight, CreditCard, QrCode, Lock,
   ShieldCheck, Mail, Phone, Calendar, Store, User, Crosshair, Tag, Percent, Globe,
-  X,
+  X, Ban, PlayCircle,
 } from 'lucide-react';
 
 // Lazy-loaded (Track B): keeps the Shop Settings modal ("Manage Settings"
@@ -400,6 +400,10 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   };
 
   const toggleShopStatus = async (shop) => {
+    // Only suspending needs a confirm - it blocks the shop's login
+    // immediately (see AuthService.login's suspended-account check), while
+    // reactivating is safe/reversible-in-place.
+    if (shop.isActive && !confirm(t('confirmSuspendShopMsg').replace('{name}', shop.name))) return;
     try {
       await api.suspendShop(shop.id, !shop.isActive);
       fetchShops();
@@ -586,14 +590,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       <div className="dealer-info">
                         <div className="dealer-name" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                           <span>{s.name}</span>
-                          <button
-                            onClick={(e) => { e.stopPropagation(); toggleShopStatus(s); }}
-                            title={t('toggleShopActiveStatusTitle')}
-                            className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`}
-                            style={{ border: 'none', cursor: 'pointer', padding: '2px 8px', fontSize: 10 }}
-                          >
+                          <span className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`} style={{ padding: '2px 8px', fontSize: 10 }}>
                             <span className="dot" />{s.isActive ? t('active') : t('suspended')}
-                          </button>
+                          </span>
                         </div>
                         {shopCategory && (
                           <div className="dealer-line">
@@ -628,6 +627,19 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                           <span>{t('callPrefix') || 'Call'}</span>
                         </a>
                       )}
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); toggleShopStatus(s); }}
+                        className="icon-btn"
+                        style={{
+                          width: 34, height: 34, borderRadius: 10,
+                          background: s.isActive ? 'var(--red-dim)' : 'var(--jgreen-dim)',
+                          color: s.isActive ? 'var(--red)' : 'var(--jgreen)',
+                        }}
+                        title={s.isActive ? t('suspendShopBtn') : t('reactivateShopBtn')}
+                      >
+                        {s.isActive ? <Ban style={{ width: 17, height: 17 }} /> : <PlayCircle style={{ width: 17, height: 17 }} />}
+                      </button>
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); setFullSettingsShopId(s.id); }}
