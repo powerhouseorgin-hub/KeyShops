@@ -479,8 +479,8 @@ export class AuthService implements OnModuleInit {
   // guard as RESET_OTP_WINDOW_MS above, for the same reason (a stale,
   // long-ago-verified row can't be replayed indefinitely).
   async updateLoginCredentials(userId: string, dto: UpdateLoginCredentialsDto) {
-    if (!dto.newEmail && !dto.newPhone) {
-      throw new BadRequestException('Provide a new email or phone number to update.');
+    if (!dto.newPhone) {
+      throw new BadRequestException('Provide a new phone number to update.');
     }
 
     const user = await this.tenantService.prisma.user.findUnique({ where: { id: userId } });
@@ -489,25 +489,8 @@ export class AuthService implements OnModuleInit {
     }
 
     const CHANGE_CREDENTIALS_OTP_WINDOW_MS = 15 * 60 * 1000;
-    const data: { email?: string; phone?: string } = {};
+    const data: { phone?: string } = {};
     const changedFields: string[] = [];
-
-    if (dto.newEmail) {
-      const newEmail = dto.newEmail.trim().toLowerCase();
-      const verifiedOtp = await this.tenantService.prisma.otpCode.findFirst({
-        where: { identifier: newEmail, purpose: 'change-credentials', consumed: true },
-        orderBy: { updatedAt: 'desc' },
-      });
-      if (!verifiedOtp || Date.now() - verifiedOtp.updatedAt.getTime() > CHANGE_CREDENTIALS_OTP_WINDOW_MS) {
-        throw new BadRequestException('Please verify your new email with an OTP before saving.');
-      }
-      const existing = await this.tenantService.prisma.user.findUnique({ where: { email: newEmail } });
-      if (existing && existing.id !== userId) {
-        throw new BadRequestException('This email address is already in use by another account.');
-      }
-      data.email = newEmail;
-      changedFields.push('email');
-    }
 
     if (dto.newPhone) {
       const normalizedPhone = normalizePhone(dto.newPhone);
@@ -543,7 +526,7 @@ export class AuthService implements OnModuleInit {
       },
     });
 
-    return { success: true, email: data.email ?? user.email, phone: data.phone ?? user.phone };
+    return { success: true, email: user.email, phone: data.phone ?? user.phone };
   }
 
   // Public self-registration wizard's submit handler - two frontend steps

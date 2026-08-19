@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsOptional, MinLength, Matches, IsNumber, IsUrl } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsOptional, MinLength, Matches, IsNumber, IsUrl, IsIn } from 'class-validator';
 
 export class LoginDto {
   // Accepts either the account's email address OR its mobile number - both
@@ -39,9 +39,10 @@ export class ResetPasswordPublicDto {
   @IsNotEmpty()
   identifier: string;
 
-  @IsString()
-  @IsNotEmpty()
-  method: string; // 'email' | 'phone'
+  // Phone-only - email OTP has been removed from every client; reject any
+  // other value here rather than silently accepting a value no UI can send.
+  @IsIn(['phone'], { message: "Only 'phone' is a supported OTP method" })
+  method: string;
 
   @IsString()
   @IsNotEmpty()
@@ -57,10 +58,6 @@ export class ResetPasswordPublicDto {
 // verification happened recently rather than re-accepting the code).
 export class UpdateLoginCredentialsDto {
   @IsOptional()
-  @IsEmail({}, { message: 'Please enter a valid email address' })
-  newEmail?: string;
-
-  @IsOptional()
   @IsString()
   newPhone?: string;
 }
@@ -70,9 +67,10 @@ export class SendOtpDto {
   @IsNotEmpty()
   identifier: string;
 
-  @IsString()
-  @IsNotEmpty()
-  method: string; // 'email' | 'phone'
+  // Phone-only - email OTP has been removed from every client; reject any
+  // other value here rather than silently accepting a value no UI can send.
+  @IsIn(['phone'], { message: "Only 'phone' is a supported OTP method" })
+  method: string;
 
   @IsString()
   @IsNotEmpty()
@@ -84,8 +82,7 @@ export class VerifyOtpDto {
   @IsNotEmpty()
   identifier: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @IsIn(['phone'], { message: "Only 'phone' is a supported OTP method" })
   method: string;
 
   @IsString()
