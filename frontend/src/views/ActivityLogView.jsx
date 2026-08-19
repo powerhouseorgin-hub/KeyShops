@@ -8,8 +8,10 @@ import {
 // auth.service.ts, shop.service.ts, customer.service.ts) to a display label,
 // icon and accent color grouped by category - security/account, shop/business,
 // customer/document - so the raw enum-like string reads as a real event.
+// LOGIN is deliberately absent - this view is a record of what changed
+// (registrations, edits, deletions), not a login/session audit trail, and
+// the backend (see ReportService.getActivityLog) excludes it by default.
 const ACTION_META = {
-  LOGIN: { icon: ShieldCheck, color: 'var(--blue)' },
   CHANGE_PASSWORD: { icon: ShieldCheck, color: 'var(--blue)' },
   RESET_PASSWORD_PUBLIC: { icon: ShieldCheck, color: 'var(--blue)' },
   UPDATE_LOGIN_CREDENTIALS: { icon: ShieldCheck, color: 'var(--blue)' },

@@ -277,7 +277,13 @@ export class ReportService {
   async getActivityLog(params: { page: number; limit: number; shopId?: string; action?: string }) {
     const page = Math.max(1, params.page || 1);
     const limit = Math.min(100, Math.max(1, params.limit || 25));
-    const where: any = {};
+    // LOGIN entries are excluded by default - this view is meant as a record
+    // of what changed (registrations, edits, deletions), not a session/login
+    // audit trail, and login events dominated the list with no useful
+    // detail. The explicit action filter still overrides this when a caller
+    // asks for a specific action (never LOGIN, since it's no longer offered
+    // in the frontend's filter dropdown).
+    const where: any = { action: { not: 'LOGIN' } };
     if (params.shopId) where.shopId = params.shopId;
     if (params.action) where.action = params.action;
 
