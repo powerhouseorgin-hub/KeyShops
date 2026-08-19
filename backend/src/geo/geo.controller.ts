@@ -16,6 +16,10 @@ import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 // blocked with HTTP 429 regardless of how little *this* app called it.
 // LocationIQ fronts the same OSM data behind a real API key, so the quota is
 // ours alone: https://locationiq.com/docs#reverse-geocoding
+function buildUrl(apiKey: string, lat: number, lng: number, zoom: number): string {
+  return `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${lat}&lon=${lng}&format=json&addressdetails=1&zoom=${zoom}`;
+}
+
 @Controller('geo')
 export class GeoController {
   @Get('reverse-geocode')
@@ -27,28 +31,24 @@ export class GeoController {
     }
 
     const apiKey = process.env.LOCATIONIQ_API_KEY || '';
-    const url = `https://us1.locationiq.com/v1/reverse?key=${apiKey}&lat=${latitude}&lon=${longitude}&format=json&addressdetails=1`;
 
-    let res: Response;
-    try {
-      res = await fetch(url);
-    } catch (e: any) {
-      // Logged separately from the generic client-facing message below -
-      // this can fail for very different reasons (DNS/timeout here vs. a
-      // non-2xx response below) that look identical to the client but need
-      // different fixes, so the real cause has to survive somewhere.
-      console.error(`[GeoController] reverse-geocode fetch threw: ${e?.message || e}`);
-      throw new BadRequestException('Reverse geocoding lookup failed.');
+    // zoom=18 (house/building level) is the right level of detail for a
+    // well-mapped urban address, but on a sparsely-tagged rural road it
+    // matches a bare, untagged OSM "way" with no locality attached at all -
+    // even though the surrounding village/suburb *is* tagged in OSM, just
+    // one zoom level out. Retrying once at zoom=14 (village/suburb level)
+    // recovers that context instead of returning an address with nothing
+    // but state/country in it. This can't invent a house number or street
+    // name that was never mapped - that's a real gap in the underlying map
+    // data, not something any reverse-geocoding provider can fix - but it
+    // does mean "somewhere unmapped" still comes back as "near <village>"
+    // rather than empty.
+    let addr = await fetchAddress(apiKey, latitude, longitude, 18);
+    const isSparse = !addr.road && !addr.suburb && !addr.neighbourhood && !addr.village && !addr.city && !addr.town;
+    if (isSparse) {
+      const fallback = await fetchAddress(apiKey, latitude, longitude, 14);
+      if (fallback) addr = { ...fallback, ...addr };
     }
-
-    if (!res.ok) {
-      const bodyText = await res.text().catch(() => '');
-      console.error(`[GeoController] reverse-geocode got ${res.status} ${res.statusText} from LocationIQ: ${bodyText.slice(0, 500)}`);
-      throw new BadRequestException('Reverse geocoding lookup failed.');
-    }
-
-    const data: any = await res.json();
-    const addr = data.address || {};
 
     // Not every point has every component (rural areas often lack
     // house_number/road entirely) - each field below is best-effort.
@@ -70,7 +70,31 @@ export class GeoController {
       state: addr.state || '',
       postcode: addr.postcode || '',
       country: addr.country || '',
-      displayName: data.display_name || '',
+      displayName: addr.__displayName || '',
     };
   }
+}
+
+async function fetchAddress(apiKey: string, lat: number, lng: number, zoom: number): Promise<any> {
+  const url = buildUrl(apiKey, lat, lng, zoom);
+  let res: Response;
+  try {
+    res = await fetch(url);
+  } catch (e: any) {
+    // Logged separately from the generic client-facing message thrown by the
+    // caller - this can fail for very different reasons (DNS/timeout here
+    // vs. a non-2xx response below) that look identical to the client but
+    // need different fixes, so the real cause has to survive somewhere.
+    console.error(`[GeoController] reverse-geocode fetch threw: ${e?.message || e}`);
+    throw new BadRequestException('Reverse geocoding lookup failed.');
+  }
+
+  if (!res.ok) {
+    const bodyText = await res.text().catch(() => '');
+    console.error(`[GeoController] reverse-geocode got ${res.status} ${res.statusText} from LocationIQ: ${bodyText.slice(0, 500)}`);
+    throw new BadRequestException('Reverse geocoding lookup failed.');
+  }
+
+  const data: any = await res.json();
+  return { ...(data.address || {}), __displayName: data.display_name || '' };
 }
