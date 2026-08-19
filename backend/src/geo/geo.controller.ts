@@ -40,11 +40,18 @@ export class GeoController {
           'Accept-Language': 'en',
         },
       });
-    } catch (e) {
+    } catch (e: any) {
+      // Logged separately from the generic client-facing message below -
+      // Nominatim can fail for very different reasons (DNS/timeout here vs.
+      // a 403/429 policy block below) that look identical to the client but
+      // need different fixes, so the real cause has to survive somewhere.
+      console.error(`[GeoController] reverse-geocode fetch threw: ${e?.message || e}`);
       throw new BadRequestException('Reverse geocoding lookup failed.');
     }
 
     if (!res.ok) {
+      const bodyText = await res.text().catch(() => '');
+      console.error(`[GeoController] reverse-geocode got ${res.status} ${res.statusText} from Nominatim: ${bodyText.slice(0, 500)}`);
       throw new BadRequestException('Reverse geocoding lookup failed.');
     }
 
