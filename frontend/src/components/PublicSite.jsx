@@ -141,6 +141,11 @@ const PAGE_META = {
     description: 'Questions about Kee, a demo request, or support for an existing shop - reach out by email, phone, WhatsApp or the form below.',
     path: '/contact',
   },
+  privacy: {
+    title: 'Privacy Policy | Kee',
+    description: 'How Kee collects, uses, stores and protects data for shop accounts, customer records and the Kee mobile app.',
+    path: '/privacy-policy',
+  },
 };
 
 const NAV_ITEMS = [
@@ -247,6 +252,8 @@ function PublicFooter({ onNavigate }) {
       </div>
       <div className="public-footer-bottom">
         &copy; {new Date().getFullYear()} Kee. All rights reserved.
+        {' '}&middot;{' '}
+        <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('privacy')}>Privacy Policy</button>
       </div>
     </footer>
   );
@@ -642,6 +649,114 @@ function ContactPage() {
   );
 }
 
+function PrivacyPolicyPage() {
+  const sections = [
+    {
+      title: '1. Who this policy covers',
+      body: `Kee ("we", "us") operates the keyshops.in website and the Kee mobile app, used by duplicate-key
+      shop owners ("Shop Admins") to run their business, and by their walk-in customers whose records a
+      Shop Admin enters into the app. This policy explains what data we collect, why, and how it's protected
+      for both groups.`,
+    },
+    {
+      title: '2. Data we collect from Shop Admins',
+      list: [
+        'Account details: owner name, shop name, mobile number (required, used as your login and OTP identifier), email address (optional), password (stored as a bcrypt hash, never in plain text).',
+        'Business details: shop address, GPS coordinates captured via your device location, city/district/state/PIN code, shop category, optional Aadhaar number and shop documents (photo, license) - Aadhaar and other sensitive ID numbers are encrypted at rest.',
+        'Payment details: subscription payments are processed entirely by Razorpay. Kee never receives or stores your card, UPI or bank details - only Razorpay\'s order ID, payment ID and signature, used solely to verify a payment succeeded.',
+      ],
+    },
+    {
+      title: '3. Data Shop Admins enter about their customers',
+      body: `When a Shop Admin registers a walk-in customer, the app stores the details the Shop Admin enters
+      for that visit: customer name, phone number, address, optional ID proof type/number (encrypted at rest),
+      photo, vehicle number and key/service details. This data is entered and controlled by the Shop Admin as
+      the shop's own business record, not collected by Kee directly from the customer. Each shop's customer
+      records are strictly isolated and never visible to other shops.`,
+    },
+    {
+      title: '4. Location and camera',
+      body: `We request device location to auto-fill your shop's address during registration and to power
+      "find a shop near you" search - you can decline location access and enter your address manually. We
+      request camera access so a Shop Admin can capture ID/document photos directly in the app instead of
+      uploading files. Neither permission is used for background tracking.`,
+    },
+    {
+      title: '5. OTP verification',
+      body: `Login, password reset and registration are verified using a one-time code sent to your mobile
+      number via SMS (delivered through MSG91) or, in the native app, verified directly on-device via Firebase
+      Phone Authentication. We never ask for or store your OTP anywhere the API response could expose it.`,
+    },
+    {
+      title: '6. How we use data',
+      list: [
+        'To create and secure your shop account and let you log in.',
+        'To let you manage customers, keys, inventory and reports within your own shop.',
+        'To process subscription payments via Razorpay.',
+        'To send OTP codes for login, registration and password reset.',
+        'To generate and share the customer key-registration report PDF you request, via a private, expiring download link.',
+      ],
+    },
+    {
+      title: '7. Data storage and security',
+      body: `Data is stored in a managed PostgreSQL database and uploaded files (photos, documents, reports)
+      in Supabase Storage, accessed only via short-lived signed URLs - files are never made public by default.
+      Sensitive fields such as Aadhaar and ID proof numbers are encrypted at rest. Every shop's data is
+      tenant-isolated: one shop's records are never visible to another.`,
+    },
+    {
+      title: '8. Third-party services we use',
+      list: [
+        'Razorpay - subscription payment processing.',
+        'MSG91 - SMS delivery for OTP codes.',
+        'Firebase - phone number verification and app push notifications (native app).',
+        'Supabase Storage - encrypted file storage for photos, documents and reports.',
+        'Google Analytics - anonymized usage analytics on the public website, where enabled.',
+      ],
+    },
+    {
+      title: '9. Data retention and deletion',
+      body: `Shop and customer records are retained for as long as the shop account is active, as they form
+      part of the shop's own business records. To request deletion of your shop account or a specific
+      customer record, contact us using the details below.`,
+    },
+    {
+      title: '10. Your rights',
+      body: `You can review or correct your shop account details at any time from Shop Settings. To request a
+      copy of your data, a correction, or deletion, email us at the address below and we'll respond within a
+      reasonable time.`,
+    },
+    {
+      title: '11. Contact us',
+      body: `Questions about this policy or your data: keyshops666@gmail.com or +91 90250 88853.`,
+    },
+  ];
+
+  return (
+    <section className="public-section">
+      <Reveal className="public-section-head">
+        <span className="eyebrow"><ShieldCheck className="h-3.5 w-3.5" /> Privacy Policy</span>
+        <h2>Your data, handled carefully</h2>
+        <p style={{ maxWidth: 640 }}>Last updated: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+      </Reveal>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 28, maxWidth: 760 }}>
+        {sections.map((s) => (
+          <Reveal key={s.title} className="card" style={{ padding: '20px 24px' }}>
+            <h3 style={{ marginBottom: 10 }}>{s.title}</h3>
+            {s.body && <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>{s.body}</p>}
+            {s.list && (
+              <ul style={{ color: 'var(--text-2)', lineHeight: 1.7, paddingLeft: 20, margin: 0 }}>
+                {s.list.map((item) => <li key={item}>{item}</li>)}
+              </ul>
+            )}
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 // Creates the tag if missing (index.html ships without most of these so
 // there's nothing stale to fight on first mount), otherwise updates it in
 // place - keeps a single tag per attribute instead of piling up duplicates
@@ -706,6 +821,8 @@ export default function PublicSite({ page, onNavigate, api }) {
           <AboutPage />
         ) : page === 'contact' ? (
           <ContactPage />
+        ) : page === 'privacy' ? (
+          <PrivacyPolicyPage />
         ) : (
           <HomePage onNavigate={onNavigate} />
         )}
