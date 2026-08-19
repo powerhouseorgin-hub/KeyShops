@@ -2039,27 +2039,6 @@ export default function App() {
               </button>
             </div>
 
-            {/* Language Selector Dropdown */}
-            <div style={{ padding: '0 20px 16px', borderBottom: '1px solid var(--border)', marginBottom: 8 }}>
-              <label className="side-section-label" style={{ padding: 0, marginBottom: 8, display: 'block' }}>Language &middot; भाषा &middot; மொழி</label>
-              <CustomSelect
-                value={lang}
-                onChange={(v) => {
-                  setLang(v);
-                  localStorage.setItem('kee_lang', v);
-                }}
-                triggerStyle={{ padding: '9px 32px 9px 12px', fontSize: 12 }}
-                options={[
-                  { value: 'en', label: 'English' },
-                  { value: 'hi', label: 'Hindi (हिन्दी)' },
-                  { value: 'ta', label: 'Tamil (தமிழ்)' },
-                  { value: 'te', label: 'Telugu (తెలుగు)' },
-                  { value: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
-                  { value: 'ml', label: 'Malayalam (മലയാളം)' },
-                ]}
-              />
-            </div>
-
             <nav style={{ flex: 1, padding: '0 12px', overflowY: 'auto' }} onClick={(e) => { if (e.target.closest('button')) setMobileNavOpen(false); }}>
               <div className="side-section-label">{t('navOverview')}</div>
               <button

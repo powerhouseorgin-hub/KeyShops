@@ -8,7 +8,7 @@ import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../
 import {
   AlertTriangle, Award, BadgePercent, Ban, Calendar, Camera, Check, CheckCircle2, Copy,
   Download, Edit, Eye, EyeOff, FileCheck, FileText,
-  KeyRound, Link2, Lock, Mail, MapPin, Phone, PlayCircle, RefreshCw, ShieldCheck,
+  KeyRound, Link2, Lock, Mail, MapPin, Phone, RefreshCw, ShieldCheck,
   Store, Trash, Upload, User, Users,
   X,
 } from 'lucide-react';
@@ -556,13 +556,7 @@ function ShopSettingsView({ t, api, shopId }) {
                           border: `1px solid ${shopIsActive ? 'var(--red)' : 'var(--jgreen)'}`,
                         }}
                       >
-                        {suspendBusy ? (
-                          <RefreshCw className="h-4 w-4 animate-spin" />
-                        ) : shopIsActive ? (
-                          <Ban style={{ width: 14, height: 14 }} />
-                        ) : (
-                          <PlayCircle style={{ width: 14, height: 14 }} />
-                        )}
+                        {suspendBusy && <RefreshCw className="h-4 w-4 animate-spin" />}
                         <span>{shopIsActive ? t('suspendShopBtn') : t('reactivateShopBtn')}</span>
                       </button>
                     </div>
