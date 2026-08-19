@@ -69,7 +69,7 @@ function ShopSettingsView({ t, api, shopId }) {
 
   // OTP Reset states inside Settings
   const [otpResetOpen, setOtpResetOpen] = useState(false);
-  const [otpResetMethod, setOtpResetMethod] = useState(null); // 'email' | 'phone'
+  const [otpResetMethod] = useState('phone'); // phone-only - email OTP removed
   const [otpResetIdentifier, setOtpResetIdentifier] = useState('');
   const [otpResetVerified, setOtpResetVerified] = useState(false);
   const [showShopOtpResetModal, setShowShopOtpResetModal] = useState(false);
@@ -78,12 +78,12 @@ function ShopSettingsView({ t, api, shopId }) {
   const [otpResetLoading, setOtpResetLoading] = useState(false);
   const [otpResetError, setOtpResetError] = useState('');
 
-  // Edit Login Credentials - email and phone are both valid login
-  // identifiers (see AuthService.login), so either can be changed here.
-  // The new value must be OTP-verified (OtpVerificationModal, purpose
-  // 'change-credentials') before AuthService.updateLoginCredentials will
-  // accept it - see that method for the verification-window check.
-  const [editingCredField, setEditingCredField] = useState(null); // 'email' | 'phone' | null
+  // Edit Login Credentials - phone-only (email verification removed; email
+  // is shown read-only above). The new phone number must be OTP-verified
+  // (OtpVerificationModal, purpose 'change-credentials') before
+  // AuthService.updateLoginCredentials will accept it - see that method for
+  // the verification-window check.
+  const [editingCredField, setEditingCredField] = useState(null); // 'phone' | null
   const [credNewValue, setCredNewValue] = useState('');
   const [credFieldError, setCredFieldError] = useState('');
   const [credSaving, setCredSaving] = useState(false);
@@ -336,7 +336,7 @@ function ShopSettingsView({ t, api, shopId }) {
     }
     setOtpResetLoading(true);
     try {
-      await api.resetPasswordPublic(otpResetIdentifier, otpResetMethod || 'email', otpResetNewPassword);
+      await api.resetPasswordPublic(otpResetIdentifier, 'phone', otpResetNewPassword);
       setRevealedPasswordVal(otpResetNewPassword);
       alert(t('passwordUpdatedSuccessfullyMsg'));
       setOtpResetOpen(false);
@@ -371,24 +371,13 @@ function ShopSettingsView({ t, api, shopId }) {
       setCredFieldError(t('pleaseEnterNewValueMsg'));
       return;
     }
-    if (editingCredField === 'email') {
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        setCredFieldError(t('pleaseEnterValidEmailMsg'));
-        return;
-      }
-      if (user.email && value.toLowerCase() === user.email.toLowerCase()) {
-        setCredFieldError(t('newValueSameAsCurrentMsg'));
-        return;
-      }
-    } else {
-      if (!PHONE_REGEX.test(value)) {
-        setCredFieldError(PHONE_REGEX_MESSAGE);
-        return;
-      }
-      if (user.phone && value === user.phone) {
-        setCredFieldError(t('newValueSameAsCurrentMsg'));
-        return;
-      }
+    if (!PHONE_REGEX.test(value)) {
+      setCredFieldError(PHONE_REGEX_MESSAGE);
+      return;
+    }
+    if (user.phone && value === user.phone) {
+      setCredFieldError(t('newValueSameAsCurrentMsg'));
+      return;
     }
     setCredFieldError('');
     setShowCredOtpModal(true);
@@ -399,10 +388,7 @@ function ShopSettingsView({ t, api, shopId }) {
     setCredFieldError('');
     try {
       const value = credNewValue.trim();
-      const payload = editingCredField === 'email'
-        ? { newEmail: value }
-        : { newPhone: value };
-      await api.updateLoginCredentials(payload);
+      await api.updateLoginCredentials({ newPhone: value });
       alert(t('loginCredentialsUpdatedMsg'));
       cancelEditCredential();
     } catch (err) {
@@ -660,34 +646,7 @@ function ShopSettingsView({ t, api, shopId }) {
                 </div>
                 <div className="reg-field" style={{ marginBottom: 12 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
-                  {editingCredField === 'email' ? (
-                    <div>
-                      <div className="input-wrap">
-                        <input
-                          type="email"
-                          autoFocus
-                          disabled={credSaving}
-                          value={credNewValue}
-                          onChange={(e) => setCredNewValue(e.target.value)}
-                          placeholder={t('enterNewEmailPlaceholder')}
-                        />
-                      </div>
-                      {credFieldError && <p style={{ fontSize: 11.5, color: 'var(--red)', fontWeight: 700, marginTop: 6 }}>{credFieldError}</p>}
-                      <div className="flex gap-2" style={{ marginTop: 8 }}>
-                        <button type="button" disabled={credSaving} onClick={cancelEditCredential} className="btn btn-ghost" style={{ flex: 1 }}>{t('btnCancel')}</button>
-                        <button type="button" disabled={credSaving} onClick={handleRequestCredentialOtp} className="btn btn-primary" style={{ flex: 2 }}>
-                          {credSaving ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('sendOtpBtn')}
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-between">
-                      <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email || t('noEmailOnFileLabel')}</p>
-                      <button onClick={() => startEditCredential('email')} className="icon-btn" title={t('editLoginCredentialTitle')}>
-                        <Edit style={{ width: 14, height: 14 }} />
-                      </button>
-                    </div>
-                  )}
+                  <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email || t('noEmailOnFileLabel')}</p>
                 </div>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
@@ -889,7 +848,7 @@ function ShopSettingsView({ t, api, shopId }) {
         onVerified={handleCredentialOtpVerified}
         api={api}
         identifier={credNewValue.trim()}
-        method={editingCredField || 'email'}
+        method="phone"
         purpose="change-credentials"
         title={t('verifyOtpModalTitle')}
         description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', credNewValue.trim())}
@@ -913,30 +872,12 @@ function ShopSettingsView({ t, api, shopId }) {
 
             {!otpResetVerified ? (
               <div>
-                <div className="store-tabs">
-                  <button
-                    type="button"
-                    onClick={() => setOtpResetMethod('email')}
-                    className={`store-tab ${otpResetMethod === 'email' || !otpResetMethod ? 'active' : ''}`}
-                    style={{ flex: 1 }}
-                  >
-                    {t('emailRecoveryTab')}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setOtpResetMethod('phone')}
-                    className={`store-tab ${otpResetMethod === 'phone' ? 'active' : ''}`}
-                    style={{ flex: 1 }}
-                  >
-                    {t('phoneRecoveryTab')}
-                  </button>
-                </div>
                 <div className="reg-field">
-                  <div className="reg-field-label"><div className="reg-ico" style={{ background: otpResetMethod === 'phone' ? 'var(--teal)' : 'var(--blue)' }}>{otpResetMethod === 'phone' ? <Phone /> : <Mail />}</div><b>{otpResetMethod === 'phone' ? t('registeredPhoneNumberLabel') : t('registeredEmailAddressLabel')} <span className="req">*</span></b></div>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('registeredPhoneNumberLabel')} <span className="req">*</span></b></div>
                   <div className="input-wrap">
                     <input
                       type="text" required value={otpResetIdentifier} onChange={(e) => setOtpResetIdentifier(e.target.value)}
-                      placeholder={otpResetMethod === 'phone' ? '+91 99999 99999' : 'owner@shop.com'}
+                      placeholder="+91 99999 99999"
                     />
                   </div>
                 </div>
@@ -945,7 +886,7 @@ function ShopSettingsView({ t, api, shopId }) {
                   onClick={handleOtpResetSend}
                   className="btn btn-primary btn-block"
                 >
-                  <Mail />
+                  <Phone />
                   <span>{t('sendOtpVerificationCodeBtn')}</span>
                 </button>
 
@@ -956,7 +897,7 @@ function ShopSettingsView({ t, api, shopId }) {
                   onVerified={() => setOtpResetVerified(true)}
                   api={api}
                   identifier={otpResetIdentifier}
-                  method={otpResetMethod || 'email'}
+                  method="phone"
                   purpose="reset"
                   title={t('verifyOtpModalTitle')}
                   description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', otpResetIdentifier)}

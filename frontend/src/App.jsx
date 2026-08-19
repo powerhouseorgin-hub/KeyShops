@@ -827,7 +827,7 @@ export default function App() {
 
   // Forgot password flow states
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [resetMethod, setResetMethod] = useState(null); // 'email' | 'phone' | null
+  const [resetMethod] = useState('phone'); // phone-only - email OTP removed
   const [resetIdentifier, setResetIdentifier] = useState('');
   const [otpVerified, setOtpVerified] = useState(false);
   const [showResetOtpModal, setShowResetOtpModal] = useState(false);
@@ -1014,7 +1014,6 @@ export default function App() {
 
   const resetForgotPasswordFlow = () => {
     setShowForgotPassword(false);
-    setResetMethod(null);
     setResetIdentifier('');
     setOtpVerified(false);
     setShowResetOtpModal(false);
@@ -1463,51 +1462,20 @@ export default function App() {
                         {t('returnToLoginBtn')}
                       </button>
                     </div>
-                  ) : resetMethod === null ? (
-                    <div>
-                      <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', lineHeight: 1.6, marginBottom: 18 }}>
-                        {t('selectVerificationMethodDesc')}
-                      </p>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          onClick={() => setResetMethod('email')}
-                          className="qa-btn"
-                          style={{ flexDirection: 'column', textAlign: 'center', gap: 10, minWidth: 0 }}
-                        >
-                          <span className="icon-badge blue"><Mail /></span>
-                          <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('emailOtpLabel')}</span>
-                        </button>
-                        <button
-                          onClick={() => setResetMethod('phone')}
-                          className="qa-btn"
-                          style={{ flexDirection: 'column', textAlign: 'center', gap: 10, minWidth: 0 }}
-                        >
-                          <span className="icon-badge teal"><Phone /></span>
-                          <span style={{ fontSize: 11, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '.03em' }}>{t('phoneOtpLabel')}</span>
-                        </button>
-                      </div>
-                      <button
-                        onClick={resetForgotPasswordFlow}
-                        className="btn btn-ghost btn-block"
-                        style={{ marginTop: 14 }}
-                      >
-                        {t('btnCancel')}
-                      </button>
-                    </div>
                   ) : !otpVerified ? (
                     <form onSubmit={(e) => { e.preventDefault(); setShowResetOtpModal(true); }}>
                       <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
-                        {t('enterRegisteredMethodTemplate').split('{method}')[0]}{resetMethod === 'email' ? t('emailOtpLabel') : t('phoneOtpLabel')}{t('enterRegisteredMethodTemplate').split('{method}')[1]}
+                        {t('enterRegisteredMethodTemplate').split('{method}')[0]}{t('phoneOtpLabel')}{t('enterRegisteredMethodTemplate').split('{method}')[1]}
                       </p>
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: resetMethod === 'email' ? 'var(--blue)' : 'var(--teal)' }}>{resetMethod === 'email' ? <Mail /> : <Phone />}</div><b>{resetMethod === 'email' ? t('registeredEmailLabel') : t('registeredPhoneNumberLabel')} <span className="req">*</span></b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('registeredPhoneNumberLabel')} <span className="req">*</span></b></div>
                         <div className="input-wrap">
                           <input
-                            type={resetMethod === 'email' ? 'email' : 'text'}
+                            type="text"
                             required
                             value={resetIdentifier}
                             onChange={(e) => setResetIdentifier(e.target.value)}
-                            placeholder={resetMethod === 'email' ? 'e.g. shop@keyshop.com' : 'e.g. +91 99999 99999'}
+                            placeholder="e.g. +91 99999 99999"
                           />
                         </div>
                       </div>
@@ -1515,11 +1483,11 @@ export default function App() {
                       <div className="flex gap-2">
                         <button
                           type="button"
-                          onClick={() => { setResetMethod(null); setResetIdentifier(''); }}
+                          onClick={resetForgotPasswordFlow}
                           className="btn btn-ghost"
                           style={{ flex: 1 }}
                         >
-                          {t('btnBack')}
+                          {t('btnCancel')}
                         </button>
                         <button
                           type="submit"
@@ -1538,7 +1506,7 @@ export default function App() {
                         onVerified={() => setOtpVerified(true)}
                         api={api}
                         identifier={resetIdentifier}
-                        method={resetMethod || 'email'}
+                        method="phone"
                         purpose="reset"
                         title={t('verifyOtpModalTitle')}
                         description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', resetIdentifier)}
