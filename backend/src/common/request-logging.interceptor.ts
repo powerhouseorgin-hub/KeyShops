@@ -2,24 +2,31 @@ import { Injectable, NestInterceptor, ExecutionContext, CallHandler } from '@nes
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 
-// Every field name (case-insensitive, substring match for the ones marked *)
-// that must never reach stdout in full - Render's log viewer is otherwise
-// plain text anyone with dashboard access can read, so credentials, OTPs,
-// tokens and government-ID numbers are replaced outright rather than merely
-// truncated.
+// Field names that must never reach stdout in full - Render's log viewer is
+// otherwise plain text anyone with dashboard access can read, so credentials,
+// OTPs, tokens and government-ID numbers are replaced outright rather than
+// merely truncated. Substring-matched: no legitimate field name would ever
+// coincidentally contain these as a substring without actually being that
+// kind of secret.
 const REDACT_KEY_SUBSTRINGS = [
-  'password', 'passwordhash', 'oldpassword', 'newpassword',
-  'token', 'authorization', 'secret',
-  'code', 'otp',
-  'aadhaar', 'idproofnumber',
-  'razorpaysignature',
+  'password', 'token', 'authorization', 'secret',
+  'aadhaar', 'idproofnumber', 'razorpaysignature',
 ];
+// Exact-match only (case-insensitive) - unlike the substring list above,
+// these words appear as innocuous *parts* of real field names (referralCode,
+// pinCode, discountPercentage) that must stay readable, so only the bare
+// field is redacted, not anything merely containing it.
+const REDACT_KEY_EXACT = ['code', 'otp'];
 
-// Large payloads (customer/document photos, base64 uploads) are neither
-// useful to read in a log line nor cheap to stringify - replaced with just
-// their size so a "why did this upload fail" investigation still has enough
-// to go on without the log line itself becoming the performance/cost problem.
-const BASE64_KEY_SUBSTRINGS = ['base64', 'photo', 'image', 'filedata'];
+// Large base64 payloads (customer/document photos, uploaded files - see
+// CreateCustomerDto.photoBase64) are neither useful to read in a log line nor
+// cheap to stringify - replaced with just their size so a "why did this
+// upload fail" investigation still has enough to go on without the log line
+// itself becoming the performance/cost problem. Matched narrowly on the
+// literal "base64" substring, not "image"/"photo" generally - those also
+// name perfectly normal, non-sensitive URL fields (imageUrl, photoUrl) that
+// should stay visible.
+const BASE64_KEY_SUBSTRINGS = ['base64'];
 
 const MAX_STRING_LEN = 300;
 const MAX_LOG_LEN = 3000;
@@ -27,6 +34,7 @@ const MAX_ARRAY_ITEMS = 20;
 
 function shouldRedactKey(key: string): boolean {
   const lower = key.toLowerCase();
+  if (REDACT_KEY_EXACT.includes(lower)) return true;
   return REDACT_KEY_SUBSTRINGS.some((s) => lower.includes(s));
 }
 
