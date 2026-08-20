@@ -347,11 +347,10 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         return;
       }
 
-      if (!provisionOwnerAadhaar) {
-        alert(t('ownerAadhaarMandatory'));
-        return;
-      }
-
+      // Verification documents (shop photo, license, owner Aadhaar) are all
+      // optional here - a Super Admin provisioning a shop on the platform's
+      // behalf may not have these on hand yet; the shop can upload them
+      // later from Shop Settings.
       // Verification documents are NOT embedded in companyDetails anymore -
       // they're sent as separate top-level DTO fields and persisted by the
       // backend as real files + ShopDocument rows (see
@@ -813,9 +812,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="reg-section">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div>
-                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--purple)' }}><Camera /></div><b>{t('shopPhotoLabel')} <span className="req">*</span></b></div>
+                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--purple)' }}><Camera /></div><b>{t('shopPhotoLabel')}</b></div>
                     <input
-                      type="file" accept="image/*" required
+                      type="file" accept="image/*"
                       onClick={primeStoragePermission}
                       onChange={(e) => {
                         const file = e.target.files[0];
@@ -830,9 +829,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     />
                   </div>
                   <div>
-                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--pink)' }}><FileText /></div><b>{t('shopLicenseLabel')} <span className="req">*</span></b></div>
+                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--pink)' }}><FileText /></div><b>{t('shopLicenseLabel')}</b></div>
                     <input
-                      type="file" accept="image/*,application/pdf" required
+                      type="file" accept="image/*,application/pdf"
                       onClick={primeStoragePermission}
                       onChange={(e) => {
                         const file = e.target.files[0];
@@ -847,9 +846,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     />
                   </div>
                   <div>
-                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>{t('ownerAadhaarLabel')} <span className="req">*</span></b></div>
+                    <div className="reg-field-label" style={{ marginBottom: 6 }}><div className="reg-ico" style={{ background: 'var(--blue)' }}><CreditCard /></div><b>{t('ownerAadhaarLabel')}</b></div>
                     <input
-                      type="file" accept="image/*,application/pdf" required
+                      type="file" accept="image/*,application/pdf"
                       onClick={primeStoragePermission}
                       onChange={(e) => {
                         const file = e.target.files[0];
