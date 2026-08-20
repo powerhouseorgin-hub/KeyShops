@@ -372,20 +372,27 @@ export class CustomerService {
     return this.createCustomerReport(customer.shopId, customerId, fileName, file);
   }
 
-  // PUBLIC: Resolve a report token to a freshly-signed download URL. No auth
-  // - the whole point of the link is that the customer (who never logs in)
+  // PUBLIC: Resolve a report token to the actual file bytes, for the
+  // controller to stream straight back through our own response. No auth -
+  // the whole point of the link is that the customer (who never logs in)
   // can open it. Not tenant-scoped for the same reason; the token itself
   // (a random UUID, never the customer/shop id) is what limits access, same
   // trust model as an "anyone with the link" share.
-  async getReportDownloadUrl(reportId: string) {
+  //
+  // Deliberately returns the file content rather than a signed Supabase URL
+  // (as this used to) - handing a client a signed URL to redirect to exposes
+  // the storage bucket name, internal file path and signature token in their
+  // browser's address bar once followed. Proxying keeps every request on our
+  // own domain end to end.
+  async getReportFile(reportId: string) {
     const report = await this.tenantService.prisma.customerReport.findUnique({
       where: { id: reportId },
     });
     if (!report) {
       throw new NotFoundException('Report not found');
     }
-    const url = await this.fileService.getSignedDownloadUrl(report.fileKey, report.fileName);
-    return { url };
+    const { buffer, contentType } = await this.fileService.downloadFileBuffer(report.fileKey);
+    return { buffer, contentType, fileName: report.fileName };
   }
 
   // SHOP ADMIN: Remove Document from Customer

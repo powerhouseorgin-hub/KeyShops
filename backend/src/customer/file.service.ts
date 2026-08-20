@@ -102,28 +102,30 @@ export class FileService implements OnModuleInit {
     return this.uploadFile(originalname, buffer, namespace, 60 * 60 * 24 * 365 * 10);
   }
 
-  // Re-signs a fresh, short-lived download URL for an already-uploaded file -
-  // used by the customer report download link, which needs to stay valid
-  // indefinitely (shared once via WhatsApp, possibly opened weeks later)
-  // without ever handing out a long-lived signed URL up front. `downloadName`
-  // becomes the browser's actual saved filename via Supabase's `download`
-  // option, which is what makes the link auto-download instead of just
-  // opening the PDF inline.
-  async getSignedDownloadUrl(fileKey: string, downloadName: string, expirySeconds = 120): Promise<string> {
-    const safeName = (downloadName || fileKey).replace(/[^a-zA-Z0-9._-]/g, '_');
+  // Fetches a file's actual bytes server-side (Supabase service role key
+  // bypasses the bucket's private RLS entirely - no signed URL needed) so a
+  // caller can stream it straight back through our own response instead of
+  // ever redirecting a client to the underlying Supabase Storage URL. Used
+  // by PublicReportController.download so the WhatsApp-shared link never
+  // exposes the storage bucket name, internal file path, or signature token
+  // in the recipient's browser address bar - see the redirect vs. proxy
+  // discussion there.
+  async downloadFileBuffer(fileKey: string): Promise<{ buffer: Buffer; contentType: string }> {
+    const fileExt = path.extname(fileKey);
+    const contentType = CONTENT_TYPE_BY_EXT[fileExt.toLowerCase()] || 'application/octet-stream';
+
     if (this.supabase) {
-      const { data, error } = await this.supabase.storage
-        .from(this.bucket)
-        .createSignedUrl(fileKey, expirySeconds, { download: safeName });
+      const { data, error } = await this.supabase.storage.from(this.bucket).download(fileKey);
       if (error || !data) {
-        throw new Error(`Supabase Storage signing failed: ${error?.message}`);
+        throw new Error(`Supabase Storage download failed: ${error?.message}`);
       }
-      return data.signedUrl;
+      const arrayBuffer = await data.arrayBuffer();
+      return { buffer: Buffer.from(arrayBuffer), contentType: data.type || contentType };
     }
-    // Local-disk fallback - already served with Content-Disposition:
-    // attachment by the static /api/uploads handler in main.ts, though the
-    // saved filename there is the stored fileKey rather than `downloadName`.
-    return `/api/uploads/${fileKey}`;
+
+    const filePath = path.join(this.uploadDir, fileKey);
+    const buffer = await fs.promises.readFile(filePath);
+    return { buffer, contentType };
   }
 
   async deleteFile(fileKey: string): Promise<void> {
