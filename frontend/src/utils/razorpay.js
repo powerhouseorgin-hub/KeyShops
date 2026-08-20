@@ -51,7 +51,7 @@ export async function openRazorpayCheckout({ order, prefill, description, onSucc
     key: order.keyId,
     amount: order.amount,
     currency: order.currency,
-    name: 'Kee',
+    name: 'Key Shops',
     description: description || 'Shop Subscription',
     order_id: order.orderId,
     prefill,
@@ -76,7 +76,7 @@ async function openNativeRazorpayCheckout({ order, prefill, description, onSucce
       // The native SDK wants amount as a string, unlike checkout.js's number.
       amount: String(order.amount),
       currency: order.currency,
-      name: 'Kee',
+      name: 'Key Shops',
       description: description || 'Shop Subscription',
       order_id: order.orderId,
       prefill,

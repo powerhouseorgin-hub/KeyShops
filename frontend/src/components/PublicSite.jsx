@@ -257,7 +257,7 @@ function PublicFooter({ onNavigate }) {
         </div>
       </div>
       <div className="public-footer-bottom">
-        &copy; {new Date().getFullYear()} Kee. All rights reserved.
+        &copy; {new Date().getFullYear()} Key Shops. All rights reserved.
         {' '}&middot;{' '}
         <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('privacy')}>Privacy Policy</button>
         {' '}&middot;{' '}
@@ -349,7 +349,7 @@ function HomePage({ onNavigate }) {
 
       <section className="public-section">
         <Reveal className="public-section-head">
-          <span className="eyebrow"><Sparkles className="h-3.5 w-3.5" /> Why Kee</span>
+          <span className="eyebrow"><Sparkles className="h-3.5 w-3.5" /> Why Key Shops</span>
           <h2>Everything a modern key shop needs</h2>
           <p>One workspace for the front counter, the back office and everything in between.</p>
         </Reveal>
@@ -386,7 +386,7 @@ function HomePage({ onNavigate }) {
         <Reveal className="public-cta-banner card">
           <div>
             <h2>Ready to modernize your shop?</h2>
-            <p>Login if you already have an account, or find a Kee-powered shop near you.</p>
+            <p>Login if you already have an account, or find a Key Shops-powered shop near you.</p>
           </div>
           <div className="public-hero-ctas">
             <button type="button" className="btn btn-primary" onClick={() => onNavigate('login')}>
@@ -410,7 +410,7 @@ function ShopResultCard({ shop, index }) {
         <div>
           <h3>{shop.name}</h3>
           <span className="pill-badge" style={{ animation: 'none', padding: '4px 10px 4px 8px', fontSize: 11 }}>
-            <Star className="h-3 w-3" /> Verified Kee shop
+            <Star className="h-3 w-3" /> Verified Key Shops partner
           </span>
         </div>
       </div>
@@ -476,8 +476,8 @@ function SearchPage({ api }) {
     <section className="public-section public-search-section">
       <Reveal className="public-section-head">
         <span className="eyebrow"><Search className="h-3.5 w-3.5" /> Find a shop</span>
-        <h2>Search Kee shops by name, location or category</h2>
-        <p>Looking for a duplicate-key shop that runs on Kee? Search by shop name, city/locality, or shop category/type - results update as you type.</p>
+        <h2>Search Key Shops by name, location or category</h2>
+        <p>Looking for a duplicate-key shop that runs on Key Shops? Search by shop name, city/locality, or shop category/type - results update as you type.</p>
       </Reveal>
 
       <Reveal className="public-search-box-wrap">
@@ -534,10 +534,10 @@ function AboutPage() {
   return (
     <section className="public-section">
       <Reveal className="public-section-head">
-        <span className="eyebrow"><Building2 className="h-3.5 w-3.5" /> About Kee</span>
+        <span className="eyebrow"><Building2 className="h-3.5 w-3.5" /> About Key Shops</span>
         <h2>Software built with key specialists, for key specialists</h2>
         <p style={{ maxWidth: 640 }}>
-          Kee started with one simple observation: duplicate-key shops were running on paper
+          Key Shops started with one simple observation: duplicate-key shops were running on paper
           registers and loose memory, even while handling sensitive customer ID proofs and
           high-value keys every single day. We set out to build a workspace that&rsquo;s as fast
           as the counter it replaces &mdash; without compromising on security or record-keeping.
@@ -556,7 +556,7 @@ function AboutPage() {
 
       <Reveal className="public-cta-banner card" style={{ marginTop: 40 }}>
         <div>
-          <h2>Want Kee for your shop?</h2>
+          <h2>Want Key Shops for your shop?</h2>
           <p>Reach out and we&rsquo;ll help you get set up in one call.</p>
         </div>
         <div className="public-hero-ctas">
@@ -587,7 +587,7 @@ function ContactPage() {
       <Reveal className="public-section-head">
         <span className="eyebrow"><Mail className="h-3.5 w-3.5" /> Contact</span>
         <h2>We&rsquo;d love to hear from you</h2>
-        <p>Questions about Kee, a demo request, or support for an existing shop &mdash; reach out any way that works for you.</p>
+        <p>Questions about Key Shops, a demo request, or support for an existing shop &mdash; reach out any way that works for you.</p>
       </Reveal>
 
       <div className="public-contact-grid">
@@ -661,7 +661,7 @@ function PrivacyPolicyPage() {
   const sections = [
     {
       title: '1. Who this policy covers',
-      body: `Kee ("we", "us") operates the keyshops.in website and the Kee mobile app, used by duplicate-key
+      body: `Key Shops ("we", "us") operates the keyshops.in website and the Key Shops mobile app, used by duplicate-key
       shop owners ("Shop Admins") to run their business, and by their walk-in customers whose records a
       Shop Admin enters into the app. This policy explains what data we collect, why, and how it's protected
       for both groups.`,
@@ -671,7 +671,7 @@ function PrivacyPolicyPage() {
       list: [
         'Account details: owner name, shop name, mobile number (required, used as your login and OTP identifier), email address (optional), password (stored as a bcrypt hash, never in plain text).',
         'Business details: shop address, GPS coordinates captured via your device location, city/district/state/PIN code, shop category, optional Aadhaar number and shop documents (photo, license) - Aadhaar and other sensitive ID numbers are encrypted at rest.',
-        'Payment details: subscription payments are processed entirely by Razorpay. Kee never receives or stores your card, UPI or bank details - only Razorpay\'s order ID, payment ID and signature, used solely to verify a payment succeeded.',
+        'Payment details: subscription payments are processed entirely by Razorpay. Key Shops never receives or stores your card, UPI or bank details - only Razorpay\'s order ID, payment ID and signature, used solely to verify a payment succeeded.',
       ],
     },
     {
@@ -679,7 +679,7 @@ function PrivacyPolicyPage() {
       body: `When a Shop Admin registers a walk-in customer, the app stores the details the Shop Admin enters
       for that visit: customer name, phone number, address, optional ID proof type/number (encrypted at rest),
       photo, vehicle number and key/service details. This data is entered and controlled by the Shop Admin as
-      the shop's own business record, not collected by Kee directly from the customer. Each shop's customer
+      the shop's own business record, not collected by Key Shops directly from the customer. Each shop's customer
       records are strictly isolated and never visible to other shops.`,
     },
     {
@@ -771,16 +771,16 @@ function DeleteAccountRequestPage({ onNavigate }) {
     <section className="public-section">
       <Reveal className="public-section-head">
         <span className="eyebrow"><Trash2 className="h-3.5 w-3.5" /> Delete Account</span>
-        <h2>Request deletion of your Kee account</h2>
+        <h2>Request deletion of your Key Shops account</h2>
         <p style={{ maxWidth: 640 }}>
-          You can close your Kee shop account and delete your data at any time. This page covers how,
+          You can close your Key Shops account and delete your data at any time. This page covers how,
           whether you still have the app installed or not.
         </p>
       </Reveal>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 28, maxWidth: 760 }}>
         <Reveal className="card" style={{ padding: '20px 24px' }}>
-          <h3 style={{ marginBottom: 10 }}>If you still have the Kee app</h3>
+          <h3 style={{ marginBottom: 10 }}>If you still have the Key Shops app</h3>
           <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
             Open the app and go to <b>Settings &rarr; Delete Account</b>. You&rsquo;ll be asked to confirm and verify
             with an OTP sent to your registered mobile number before the deletion takes effect - this
