@@ -123,33 +123,33 @@ const PUBLIC_BASE_URL = 'https://keyshops.in';
 // them. Paths must match PUBLIC_PATH_BY_PAGE in App.jsx.
 const PAGE_META = {
   home: {
-    title: 'Kee — Duplicate Key Shop Management Software for India',
-    description: 'Kee is the gold-standard workspace for Indian duplicate-key shops - manage customers, keys, store inventory and reports in one bold dashboard. Trusted by 500+ key shops across India.',
+    title: 'Key Shops — Duplicate Key Shop Management Software for India',
+    description: 'Key Shops is the gold-standard workspace for Indian duplicate-key shops - manage customers, keys, store inventory and reports in one bold dashboard. Trusted by 500+ key shops across India.',
     path: '/',
   },
   search: {
-    title: 'Find a Key Shop Near You | Kee',
-    description: 'Search Kee-powered duplicate-key shops by name, city/locality or category to find a trusted key specialist near you.',
+    title: 'Find a Key Shop Near You | Key Shops',
+    description: 'Search duplicate-key shops on Key Shops by name, city/locality or category to find a trusted key specialist near you.',
     path: '/search',
   },
   about: {
-    title: 'About Kee | Software Built for Key Specialists',
-    description: 'Kee started with one observation: duplicate-key shops deserved better than paper registers. Learn about our mission to modernize Indian key shops.',
+    title: 'About Key Shops | Software Built for Key Specialists',
+    description: 'Key Shops started with one observation: duplicate-key shops deserved better than paper registers. Learn about our mission to modernize Indian key shops.',
     path: '/about',
   },
   contact: {
-    title: 'Contact Kee | Get in Touch',
-    description: 'Questions about Kee, a demo request, or support for an existing shop - reach out by email, phone, WhatsApp or the form below.',
+    title: 'Contact Key Shops | Get in Touch',
+    description: 'Questions about Key Shops, a demo request, or support for an existing shop - reach out by email, phone, WhatsApp or the form below.',
     path: '/contact',
   },
   privacy: {
-    title: 'Privacy Policy | Kee',
-    description: 'How Kee collects, uses, stores and protects data for shop accounts, customer records and the Kee mobile app.',
+    title: 'Privacy Policy | Key Shops',
+    description: 'How Key Shops collects, uses, stores and protects data for shop accounts, customer records and the Key Shops mobile app.',
     path: '/privacy-policy',
   },
   deleteAccount: {
-    title: 'Delete Your Account | Kee',
-    description: 'How to request deletion of your Kee shop account and what happens to your data.',
+    title: 'Delete Your Account | Key Shops',
+    description: 'How to request deletion of your Key Shops account and what happens to your data.',
     path: '/delete-account-request',
   },
 };
