@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { useBackHandler } from '../utils/backHandler';
 import { getAssetUrl, downloadAsset, filenameForAsset } from '../apiConfig';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
-import { KEE_LANDING_PAGE_URL, primeStoragePermission } from '../utils/platform';
+import { primeStoragePermission } from '../utils/platform';
 import { resolveCurrentLocation, reverseGeocode } from '../utils/geolocation';
 import { useLocationFilter } from '../utils/locationFilter';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
@@ -11,8 +11,8 @@ import CustomSelect from '../components/CustomSelect';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 import {
   Key, Check, Plus, Settings, FileText, Search, MapPin, Camera, AlertTriangle,
-  RefreshCw, Layers, Edit, DollarSign, ChevronRight, CreditCard, QrCode, Lock,
-  ShieldCheck, Mail, Phone, Calendar, Store, User, Crosshair, Tag, Percent, Globe,
+  RefreshCw, Layers, Edit, DollarSign, ChevronRight, CreditCard, Lock,
+  Mail, Phone, Calendar, Store, User, Crosshair, Tag, Percent, Globe,
   X,
 } from 'lucide-react';
 
@@ -139,6 +139,22 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const [provisionShopPhoto, setProvisionShopPhoto] = useState('');
   const [provisionShopLicense, setProvisionShopLicense] = useState('');
   const [provisionOwnerAadhaar, setProvisionOwnerAadhaar] = useState('');
+  // Category dropdown - required, mirroring the self-registration wizard's
+  // own required category field (see App.jsx's regCategoryId/regCategories).
+  const [provisionCategoryId, setProvisionCategoryId] = useState('');
+  const [provisionCategories, setProvisionCategories] = useState([]);
+  const [provisionCategoriesLoading, setProvisionCategoriesLoading] = useState(false);
+  // Silently captured by "Current Location" alongside provisionLocation
+  // (the one visible address field) - same pattern as the self-registration
+  // wizard's captureShopLocation, which also has no separate visible
+  // city/state/pinCode inputs. town/district get their own Shop columns;
+  // state/pinCode fold into companyDetails (see handleCreateShopSubmit).
+  const [provisionTown, setProvisionTown] = useState('');
+  const [provisionDistrict, setProvisionDistrict] = useState('');
+  const [provisionState, setProvisionState] = useState('');
+  const [provisionPinCode, setProvisionPinCode] = useState('');
+  const [provisionLat, setProvisionLat] = useState(null);
+  const [provisionLng, setProvisionLng] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
 
   // Form States for Edit Shop Details (Super Admin capability)
@@ -154,21 +170,11 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const [editOwnerAadhaarName, setEditOwnerAadhaarName] = useState('');
 
   // Single yearly subscription price platform-wide, Super Admin-configurable
-  // (see SupportConfigView / PlatformConfig.subscriptionPrice).
+  // (see SupportConfigView / PlatformConfig.subscriptionPrice) - purely
+  // informational display here (e.g. "Yearly Plan • Rs. 999/yr"), since a
+  // Super-Admin-provisioned shop skips payment entirely (see
+  // handleCreateShopSubmit).
   const [subscriptionPrice, setSubscriptionPrice] = useState(999);
-
-  // Payment integration states for new shop provision
-  const [showPaymentProvisionModal, setShowPaymentProvisionModal] = useState(false);
-  useBackHandler(showPaymentProvisionModal, () => setShowPaymentProvisionModal(false));
-  const [provisionDto, setProvisionDto] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [paymentProcessing, setPaymentProcessing] = useState(false);
-  const [paymentSuccess, setPaymentSuccess] = useState(false);
-  const [processingLog, setProcessingLog] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardHolder, setCardHolder] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCvv, setCardCvv] = useState('');
 
   const fetchSubscriptionPrice = async () => {
     try {
@@ -182,6 +188,17 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   useEffect(() => {
     fetchSubscriptionPrice();
   }, []);
+
+  // Populate the Add Shop dialog's Category dropdown as soon as it opens -
+  // same pattern as the self-registration wizard's regCategories (App.jsx).
+  useEffect(() => {
+    if (!showAddModal) return;
+    setProvisionCategoriesLoading(true);
+    api.getShopCategories()
+      .then((cats) => setProvisionCategories(cats || []))
+      .catch((e) => console.error('Failed to load shop categories:', e))
+      .finally(() => setProvisionCategoriesLoading(false));
+  }, [showAddModal]);
 
   // Single yearly plan - end date is always exactly one year from today.
   useEffect(() => {
@@ -279,9 +296,12 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     }
   };
 
-  // "Current Location" for the Create Shop dialog's single Shop Address field -
-  // mirrors captureShopLocation in the public self-registration wizard, minus
-  // the city/state/pinCode side effects since this dialog has no such fields.
+  // "Current Location" for the Create Shop dialog's single visible Shop
+  // Address field - mirrors captureShopLocation in the public
+  // self-registration wizard exactly, including its side effects: town/
+  // state/pinCode/district/lat/lng are captured into hidden state (no
+  // separate visible inputs, same as that wizard) so the created shop gets
+  // the same location data a self-registered one would.
   const captureProvisionLocation = async () => {
     setProvisionLocError('');
     setProvisionLocLoading(true);
@@ -293,12 +313,23 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       setProvisionLocLoading(false);
       return;
     }
+    setProvisionLat(lat);
+    setProvisionLng(lng);
     const data = await reverseGeocode(lat, lng);
     const fullAddress = data?.displayName || [data?.street, data?.locality].filter(Boolean).join(', ');
     setProvisionLocation(fullAddress || `${lat.toFixed(5)}, ${lng.toFixed(5)}`);
+    if (data?.district) setProvisionDistrict(data.district);
+    if (data?.city) setProvisionTown(data.city);
+    if (data?.state) setProvisionState(data.state);
+    if (data?.postcode) setProvisionPinCode(data.postcode.replace(/\D/g, ''));
     setProvisionLocLoading(false);
   };
 
+  // Provisions a shop directly, no payment step - a Super Admin is setting
+  // this up on the platform's behalf, not paying for it themselves. Field
+  // requirements otherwise mirror the public self-registration wizard (see
+  // AuthService.registerShop / RegisterShopDto): phone, category, and
+  // address are all required there and required here too.
   const handleCreateShopSubmit = async (e) => {
     e.preventDefault();
     setErrorMsg('');
@@ -311,6 +342,10 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         alert(`WhatsApp number: ${PHONE_REGEX_MESSAGE}`);
         return;
       }
+      if (!provisionCategoryId) {
+        alert(t('selectShopCategoryPlaceholder'));
+        return;
+      }
 
       if (!provisionOwnerAadhaar) {
         alert(t('ownerAadhaarMandatory'));
@@ -320,9 +355,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       // Verification documents are NOT embedded in companyDetails anymore -
       // they're sent as separate top-level DTO fields and persisted by the
       // backend as real files + ShopDocument rows (see
-      // ShopService.createShop / persistShopDocuments).
+      // ShopService.createShop / persistShopDocuments). state/pinCode fold
+      // in here too, same as self-registration - see ShopService.createShop
+      // for why they have no dedicated Shop column of their own.
       const companyDetails = JSON.stringify({
         address: provisionLocation,
+        state: provisionState || undefined,
+        pinCode: provisionPinCode || undefined,
         gst: 'Pending',
         phone: provisionPhone,
         whatsappNumber: provisionWhatsapp,
@@ -334,6 +373,12 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         adminEmail,
         adminName,
         adminPassword,
+        adminPhone: provisionPhone,
+        categoryId: provisionCategoryId,
+        town: provisionTown || undefined,
+        district: provisionDistrict || undefined,
+        latitude: provisionLat ?? undefined,
+        longitude: provisionLng ?? undefined,
         companyDetails,
         themeColor: '#C89416',
         shopPhoto: provisionShopPhoto,
@@ -341,45 +386,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         ownerAadhaar: provisionOwnerAadhaar
       };
 
-      const price = subscriptionPrice ?? 0;
-      if (price > 0) {
-        setProvisionDto(dto);
-        setShowPaymentProvisionModal(true);
-        setPaymentSuccess(false);
-        setPaymentProcessing(false);
-        setProcessingLog('');
-      } else {
-        await executeShopCreation(dto);
-      }
+      await executeShopCreation(dto);
     } catch (err) {
-      setErrorMsg(err.message || t('failedInitCheckout'));
-    }
-  };
-
-  const executePaymentProvision = async (e) => {
-    e.preventDefault();
-    setPaymentProcessing(true);
-
-    const logs = [
-      t('logEstablishingTunnel'),
-      t('logVerifyingBalance'),
-      t('logAuthorizingEscrow'),
-      t('logEncryptingCard'),
-      t('logFulfillingProvisioning'),
-    ];
-
-    for (let i = 0; i < logs.length; i++) {
-      setProcessingLog(logs[i]);
-      await new Promise(r => setTimeout(r, 600));
-    }
-
-    try {
-      await executeShopCreation(provisionDto);
-      setPaymentProcessing(false);
-      setPaymentSuccess(true);
-    } catch (err) {
-      setPaymentProcessing(false);
-      alert(t('paymentFailedPrefix').replace('{message}', err.message));
+      setErrorMsg(err.message || t('failedToCreateShop'));
     }
   };
 
@@ -396,6 +405,13 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     setProvisionShopPhoto('');
     setProvisionShopLicense('');
     setProvisionOwnerAadhaar('');
+    setProvisionCategoryId('');
+    setProvisionTown('');
+    setProvisionDistrict('');
+    setProvisionState('');
+    setProvisionPinCode('');
+    setProvisionLat(null);
+    setProvisionLng(null);
     setErrorMsg('');
   };
 
@@ -763,6 +779,16 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                     />
                   </div>
                 </div>
+                <div className="reg-field" style={{ marginBottom: 0 }}>
+                  <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange, #f59e0b)' }}><Tag /></div><b>{t('fieldCategory')} <span className="req">*</span></b></div>
+                  <CustomSelect
+                    value={provisionCategoryId} onChange={setProvisionCategoryId}
+                    disabled={provisionCategoriesLoading}
+                    placeholder={provisionCategoriesLoading ? t('loadingCategoriesEllipsis') : t('selectShopCategoryPlaceholder')}
+                    emptyLabel={t('noShopCategoriesAvailableMsg')}
+                    options={provisionCategories.map((cat) => ({ value: cat.id, label: cat.name }))}
+                  />
+                </div>
               </div>
 
               <div className="reg-section">
@@ -1072,206 +1098,6 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 </button>
               </div>
             </form>
-          </div>
-        </div>,
-        document.body
-      )}
-
-      {showPaymentProvisionModal && provisionDto && createPortal(
-        <div className="fixed inset-0 z-50 overflow-y-auto flex justify-center p-4 md:p-10 animate-fade-in" style={{ background: 'rgba(5,4,3,0.9)' }}>
-          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 560, margin: 'auto', padding: 0, overflow: 'hidden' }}>
-            {/* Header */}
-            <div className="flex items-center justify-between" style={{ borderBottom: '1px solid var(--border)', padding: 20, background: 'var(--card-2)' }}>
-              <div className="flex items-center gap-2">
-                <div className="icon-badge green"><ShieldCheck /></div>
-                <div>
-                  <h2 style={{ fontSize: 14 }}>{t('planSubscriptionEscrowPay')}</h2>
-                  <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, marginTop: 2 }}>{t('workspaceTerminalProvisioningPayment')}</p>
-                </div>
-              </div>
-              {!paymentProcessing && !paymentSuccess && (
-                <button onClick={() => setShowPaymentProvisionModal(false)} className="icon-btn">
-                  <X className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-
-            {/* Success State */}
-            {paymentSuccess ? (
-              <div style={{ padding: 40, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-                <div className="icon-badge green animate-bounce" style={{ width: 64, height: 64, borderRadius: 999 }}>
-                  <Check style={{ width: 30, height: 30 }} />
-                </div>
-                <div>
-                  <h3 style={{ fontSize: 18 }}>{t('paymentAuthorizedTitle')}</h3>
-                  <p style={{ fontSize: 12.5, color: 'var(--text-3)', fontWeight: 600, maxWidth: 320, margin: '8px auto 0' }}>
-                    {t('paymentSettledDesc').split('{name}')[0]}<strong style={{ color: 'var(--text-1)' }}>{provisionDto.name}</strong>{t('paymentSettledDesc').split('{name}')[1]}
-                  </p>
-                </div>
-                <button
-                  onClick={() => {
-                    setShowPaymentProvisionModal(false);
-                  }}
-                  className="btn btn-primary btn-block"
-                >
-                  {t('closeAndProceedBtn')}
-                </button>
-              </div>
-            ) : paymentProcessing ? (
-              /* Processing State */
-              <div style={{ padding: 48, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-                <div className="relative w-12 h-12 flex items-center justify-center">
-                  <span className="absolute inset-0 rounded-full" style={{ border: '4px solid var(--gold-dim)' }}></span>
-                  <span className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid transparent', borderTopColor: 'var(--gold)' }}></span>
-                </div>
-                <div>
-                  <h3 style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: '.05em' }}>{t('processingTransactionTitle')}</h3>
-                  <p style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600, marginTop: 4 }}>{t('finalizingWorkspaceCreation')}</p>
-                </div>
-                <div style={{ width: '100%', background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 12, borderRadius: 13, fontSize: 10.5, color: 'var(--text-3)', fontFamily: 'monospace', textAlign: 'center', minHeight: 40, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ color: 'var(--gold)' }}>{processingLog}</span>
-                </div>
-              </div>
-            ) : (
-              /* Main Checkout Form */
-              <form onSubmit={executePaymentProvision} style={{ padding: 24 }}>
-                {/* Invoice Summary */}
-                <div className="flex justify-between items-center" style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 16, borderRadius: 16, marginBottom: 18 }}>
-                  <div>
-                    <span style={{ fontSize: 10, color: 'var(--text-3)', textTransform: 'uppercase', display: 'block', fontWeight: 700 }}>{t('workspaceProvisionInvoice')}</span>
-                    <span style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 600 }}>{t('planColonLabel')} <span style={{ fontWeight: 800, color: 'var(--gold)' }}>{t('yearlyPlan')}</span></span>
-                  </div>
-                  <span style={{ fontSize: 21, fontWeight: 800, color: 'var(--green)', fontFamily: 'var(--display)' }}>Rs. {subscriptionPrice}</span>
-                </div>
-
-                {/* Tab Selector */}
-                <div className="grid grid-cols-2 gap-2" style={{ marginBottom: 18 }}>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('card')}
-                    className={`store-tab ${paymentMethod === 'card' ? 'active' : ''}`}
-                    style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
-                  >
-                    <CreditCard className="h-4 w-4" />
-                    <span style={{ fontSize: 10 }}>{t('creditCardLabel')}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('upi')}
-                    className={`store-tab ${paymentMethod === 'upi' ? 'active' : ''}`}
-                    style={{ display: 'flex', flexDirection: 'column', gap: 6, padding: '12px 8px' }}
-                  >
-                    <QrCode className="h-4 w-4" />
-                    <span style={{ fontSize: 10 }}>{t('upiQrCodeLabel')}</span>
-                  </button>
-                </div>
-
-                {paymentMethod === 'card' ? (
-                  <div className="animate-fade-in">
-                    <div className="field">
-                      <label>{t('cardholderFullNameLabel')}</label>
-                      <div className="input-wrap">
-                        <User />
-                        <input
-                          type="text" required value={cardHolder} onChange={(e) => setCardHolder(e.target.value)}
-                          placeholder={t('cardholderNamePlaceholder')}
-                        />
-                      </div>
-                    </div>
-                    <div className="field">
-                      <label>{t('debitCreditCardNumberLabel')}</label>
-                      <div className="input-wrap">
-                        <CreditCard />
-                        <input
-                          type="text" required value={cardNumber}
-                          onChange={(e) => {
-                            let val = e.target.value.replace(/\D/g, '').substring(0, 16);
-                            const parts = val.match(/.{1,4}/g) || [];
-                            setCardNumber(parts.join(' '));
-                          }}
-                          placeholder="4111 2222 3333 4444"
-                          style={{ fontFamily: 'monospace' }}
-                        />
-                      </div>
-                    </div>
-                    <div className="form-grid">
-                      <div className="field" style={{ marginBottom: 0 }}>
-                        <label>{t('expiryDateLabel')}</label>
-                        <div className="input-wrap">
-                          <Calendar />
-                          <input
-                            type="text" required value={cardExpiry}
-                            onChange={(e) => {
-                              let val = e.target.value.replace(/\D/g, '');
-                              if (val.length > 2) {
-                                setCardExpiry(val.substring(0, 2) + '/' + val.substring(2, 4));
-                              } else {
-                                setCardExpiry(val);
-                              }
-                            }}
-                            placeholder="MM/YY"
-                            style={{ textAlign: 'center' }}
-                          />
-                        </div>
-                      </div>
-                      <div className="field" style={{ marginBottom: 0 }}>
-                        <label>{t('cvvCodeLabel')}</label>
-                        <div className="input-wrap">
-                          <Lock />
-                          <input
-                            type="password" required value={cardCvv} onChange={(e) => setCardCvv(e.target.value.substring(0, 3))}
-                            placeholder="•••"
-                            style={{ textAlign: 'center', fontFamily: 'monospace' }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="animate-fade-in" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 14, padding: '10px 0' }}>
-                    <div style={{ background: '#fff', padding: 12, borderRadius: 18, position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', width: 160, height: 160 }}>
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${KEE_LANDING_PAGE_URL}/subscribe?amount=${subscriptionPrice}`}
-                        alt="Pay QR code"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                    <div>
-                      <p style={{ fontSize: 12.5, color: 'var(--text-1)', fontWeight: 700 }}>{t('scanToAuthorizeInvoice')}</p>
-                      <p style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, maxWidth: 260, marginTop: 4 }}>
-                        {t('scanQrDesc')}
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Footer buttons */}
-                <div style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
-                  <div className="flex items-center gap-1.5 justify-center" style={{ fontSize: 10.5, color: 'var(--text-3)', fontWeight: 600, marginBottom: 14 }}>
-                    <Lock className="h-3 w-3" style={{ color: 'var(--green)' }} />
-                    <span>{t('secureGatewayPaymentPortal')}</span>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowPaymentProvisionModal(false)}
-                      className="btn btn-ghost"
-                      style={{ flex: 1 }}
-                    >
-                      {t('cancelSetupBtn')}
-                    </button>
-                    <button
-                      type="submit"
-                      className="btn btn-primary"
-                      style={{ flex: 2 }}
-                    >
-                      {t('payAndProvisionPrefix')} {subscriptionPrice} {t('payAndProvisionSuffix')}
-                    </button>
-                  </div>
-                </div>
-              </form>
-            )}
           </div>
         </div>,
         document.body

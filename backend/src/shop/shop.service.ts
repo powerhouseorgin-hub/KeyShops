@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { Role } from '@prisma/client';
 import { FileService } from '../customer/file.service';
 import { persistShopDocuments } from '../common/shop-document.util';
-import { normalizePhone } from '../common/validators/phone';
+import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 
 // Shared `include` clause for pulling a shop's active (non-soft-deleted) documents.
 // Nested `include`/`select` relations are NOT covered by TenantService's soft-delete
@@ -26,29 +26,64 @@ export class ShopService {
   ) {}
 
   // SUPER ADMIN: Create Shop
+  //
+  // Mirrors AuthService.registerShop (the public self-registration flow) for
+  // every field/setup step EXCEPT payment - there's no Razorpay order to
+  // verify here, and no RevenueRecord is logged, since a Super-Admin-
+  // provisioned shop hasn't actually paid anything. Previously this omitted
+  // phone entirely (a shop's phone number typed into the form only ended up
+  // inside companyDetails' free-text JSON, never on the User row) - meaning
+  // that phone could never actually be used to log in, only the email could.
   async createShop(dto: CreateShopDto) {
-    // Validate if user email is unique
-    const existingUser = await this.tenantService.prisma.user.findUnique({
-      where: { email: dto.adminEmail },
+    const normalizedPhone = normalizePhone(dto.adminPhone);
+    if (!normalizedPhone) {
+      throw new BadRequestException(PHONE_REGEX_MESSAGE);
+    }
+    dto.adminPhone = normalizedPhone;
+
+    // Email and phone both double as login identifiers (see AuthService.login),
+    // so both need their own uniqueness check - same pattern as registerShop.
+    const existingUser = await this.tenantService.prisma.user.findFirst({
+      where: { OR: [{ email: dto.adminEmail }, { phone: dto.adminPhone }] },
     });
     if (existingUser) {
-      throw new BadRequestException('Email address already registered to another user');
+      if (existingUser.email === dto.adminEmail) {
+        throw new BadRequestException('Email address already registered to another user');
+      }
+      throw new BadRequestException('This mobile number is already registered to another shop');
+    }
+
+    // Category must reference a real, still-active ShopCategory - same check
+    // as registerShop.
+    const category = await this.tenantService.prisma.shopCategory.findFirst({
+      where: { id: dto.categoryId, deletedAt: null },
+    });
+    if (!category) {
+      throw new BadRequestException('Please select a valid shop category');
     }
 
     // 10, not 12 - see the identical PASSWORD_HASH_COST comment in
     // AuthService for why (bcrypt cost 12 measured ~1.5-1.8s per hash on
     // this app's actual production host).
     const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(dto.adminPassword || 'shoppassword', salt);
+    const passwordHash = await bcrypt.hash(dto.adminPassword, salt);
 
     // Run in transaction to guarantee consistency
     return this.tenantService.prisma.$transaction(async (tx) => {
-      // 1. Create Shop
+      // 1. Create Shop, automatically active - same as self-registration,
+      // no manual approval step. referralCode is simply the shop's own
+      // phone number, same convention as registerShop/updateSettings.
       const shop = await tx.shop.create({
         data: {
           name: dto.name,
           companyDetails: dto.companyDetails,
           themeColor: dto.themeColor || '#9C27B0',
+          categoryId: dto.categoryId,
+          referralCode: dto.adminPhone,
+          town: dto.town ?? null,
+          district: dto.district ?? null,
+          latitude: dto.latitude ?? null,
+          longitude: dto.longitude ?? null,
         },
       });
 
@@ -60,14 +95,25 @@ export class ShopService {
         ownerAadhaar: dto.ownerAadhaar,
       });
 
-      // 2. Create Shop Admin User
-      await tx.user.create({
+      // 2. Create Shop Admin User - both email and phone stored as login
+      // identifiers, same as registerShop.
+      const user = await tx.user.create({
         data: {
           email: dto.adminEmail,
+          phone: dto.adminPhone,
           name: dto.adminName,
           passwordHash,
           role: Role.SHOP_ADMIN,
           shopId: shop.id,
+        },
+      });
+
+      await tx.activityLog.create({
+        data: {
+          userId: user.id,
+          shopId: shop.id,
+          action: 'SHOP_REGISTERED',
+          details: JSON.stringify({ message: `Shop "${dto.name}" provisioned by Super Admin`, shopName: dto.name }),
         },
       });
 
