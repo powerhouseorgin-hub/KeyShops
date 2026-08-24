@@ -312,9 +312,11 @@ function HomePage({ onNavigate, t }) {
               </div>
             </Reveal>
           </div>
-          <div className="public-hero-panel-visual">
-            <img src={keyShopLogo} alt="Key Shop" width={680} height={367} />
-          </div>
+          <Reveal delay={220} className="public-hero-panel-visual">
+            <div className="public-hero-visual-wrap">
+              <img src={keyShopLogo} alt="Key Shop" width={680} height={367} />
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -859,6 +861,15 @@ export default function PublicSite({ page, onNavigate, api }) {
     localStorage.setItem('kee_lang', code);
   };
 
+  // Keeps <html lang> in sync with the visitor's chosen language so the
+  // :lang(ta)/:lang(te)/:lang(kn)/:lang(ml) font-family overrides in
+  // index.css actually activate - without this every non-Latin script
+  // silently falls back to the browser's default system font instead of
+  // the matching Baloo/Noto Sans face.
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   // CSS-only-adjacent 3D tilt for feature/stat/step cards: one delegated
   // mousemove/mouseout listener (not one per card) computes rotateX/rotateY
   // from cursor position and writes it as an inline transform. No animation
@@ -892,6 +903,36 @@ export default function PublicSite({ page, onNavigate, api }) {
       document.removeEventListener('mouseout', onOut);
     };
   }, []);
+
+  // Hero-specific parallax: tracked across the whole hero panel (not just
+  // on hover of the logo itself), so the visual drifts gently as the
+  // cursor moves anywhere over the hero - a broader, slower effect than
+  // the card tilt above, sized to read as ambient depth rather than a
+  // toy. CSS transition on .public-hero-visual-wrap smooths every step.
+  useEffect(() => {
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!fine || reduced) return undefined;
+
+    const panel = document.querySelector('.public-hero-panel');
+    const wrap = document.querySelector('.public-hero-visual-wrap');
+    if (!panel || !wrap) return undefined;
+
+    const onMove = (e) => {
+      const rect = panel.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      wrap.style.transform = `translate(${(px * 18).toFixed(1)}px, ${(py * 14).toFixed(1)}px) rotateX(${(-py * 4).toFixed(1)}deg) rotateY(${(px * 5).toFixed(1)}deg)`;
+    };
+    const onLeave = () => { wrap.style.transform = ''; };
+
+    panel.addEventListener('mousemove', onMove);
+    panel.addEventListener('mouseleave', onLeave);
+    return () => {
+      panel.removeEventListener('mousemove', onMove);
+      panel.removeEventListener('mouseleave', onLeave);
+    };
+  }, [page]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
