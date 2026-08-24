@@ -657,3 +657,20 @@ model PlatformConfig {
 
   updatedAt DateTime @updatedAt
 }
+
+// A submission from the public marketing site's Contact Us form (anonymous,
+// no auth). No email-sending infrastructure exists in this app (see
+// ContactService) - so a submission is durably stored here AND surfaced
+// immediately via the existing Notification mechanism (audience:
+// SUPER_ADMIN), rather than attempted email delivery.
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  message   String
+  isRead    Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

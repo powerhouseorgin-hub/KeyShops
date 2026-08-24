@@ -88,6 +88,7 @@ const SupportContactView = lazy(() => import('./views/SupportContactView'));
 const StaticInfoView = lazy(() => import('./views/StaticInfoView'));
 const FeedbackView = lazy(() => import('./views/FeedbackView'));
 const ActivityLogView = lazy(() => import('./views/ActivityLogView'));
+const ContactMessagesView = lazy(() => import('./views/ContactMessagesView'));
 import {
   Key, Users, Radio, BarChart3, Database, LogOut, Check, X,
   Plus, Settings, FileText, Search, Filter, UserCheck, MapPin, Camera, AlertTriangle,
@@ -547,6 +548,7 @@ export default function App() {
     'support-contact': t('supportContactTitle'),
     settings: t('settings'),
     'activity-log': t('activityLogTitle'),
+    'contact-messages': t('contactMessagesTitle'),
   };
 
   // The header no longer shows the page title as text (replaced by the global
@@ -2129,6 +2131,13 @@ export default function App() {
                     <span className="nav-ico" style={{ background: 'var(--blue)' }}><History /></span>
                     <span>{t('activityLogTitle')}</span>
                   </button>
+                  <button
+                    onClick={() => setActiveTab('contact-messages')}
+                    className={`side-link ${activeTab === 'contact-messages' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--pink)' }}><Mail /></span>
+                    <span>{t('contactMessagesTitle')}</span>
+                  </button>
                 </>
               ) : (
                 <>
@@ -2466,6 +2475,11 @@ export default function App() {
             {activeTab === 'activity-log' && (
               <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
                 <ActivityLogView t={t} api={api} />
+              </Suspense>
+            )}
+            {activeTab === 'contact-messages' && (
+              <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
+                <ContactMessagesView t={t} api={api} />
               </Suspense>
             )}
             {activeTab === 'terms' && (

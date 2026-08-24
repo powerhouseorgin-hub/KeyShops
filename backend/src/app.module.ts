@@ -18,6 +18,7 @@ import { ShopCategoryModule } from './shop-category/shop-category.module';
 import { ProductTypeModule } from './product-type/product-type.module';
 import { KeyTypeModule } from './key-type/key-type.module';
 import { PaymentModule } from './payment/payment.module';
+import { ContactModule } from './contact/contact.module';
 import { TenantInterceptor } from './tenant/tenant.interceptor';
 import { RequestLoggingInterceptor } from './common/request-logging.interceptor';
 
@@ -44,6 +45,7 @@ import { RequestLoggingInterceptor } from './common/request-logging.interceptor'
     ProductTypeModule,
     KeyTypeModule,
     PaymentModule,
+    ContactModule,
   ],
   controllers: [AppController, GeoController],
   providers: [

@@ -691,6 +691,21 @@ export const AuthProvider = ({ children }) => {
     // getShopCategories is intentionally callable pre-login (no auth header
     // required by the backend) since it also powers the Category dropdown on
     // the public self-registration wizard, before a token exists.
+    // PUBLIC - the marketing site's Contact Us form (see ContactPage in
+    // PublicSite.jsx). No auth header needed; `request()` only attaches one
+    // when a token exists, so this works fine pre-login.
+    submitContactMessage: async (dto) => request('/api/contact', 'POST', dto),
+    // SUPER ADMIN - the reviewable log those submissions land in, alongside
+    // the instant notification-bell alert created at submission time.
+    getContactMessages: async ({ page, limit } = {}) => {
+      const params = new URLSearchParams();
+      if (page) params.set('page', page);
+      if (limit) params.set('limit', limit);
+      const qs = params.toString() ? `?${params.toString()}` : '';
+      return request(`/api/super/contact-messages${qs}`);
+    },
+    markContactMessageRead: async (id) => request(`/api/super/contact-messages/${id}/read`, 'PUT'),
+
     getShopCategories: async () => request('/api/shop-categories'),
     createShopCategory: async (name) => request('/api/super/shop-categories', 'POST', { name }),
     updateShopCategory: async (id, name) => request(`/api/super/shop-categories/${id}`, 'PUT', { name }),

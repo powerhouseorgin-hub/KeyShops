@@ -569,17 +569,29 @@ function AboutPage() {
   );
 }
 
-function ContactPage() {
+function ContactPage({ api }) {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
   const handleChange = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // No backend contact endpoint exists yet - this is a local acknowledgement
-    // only. Real follow-up happens via the email/phone listed alongside it.
-    setSubmitted(true);
+    setError('');
+    setSubmitting(true);
+    try {
+      // Stored server-side and surfaced immediately in the Super Admin's
+      // notification bell (see backend ContactService) - there's no email
+      // delivery involved, but the message does actually reach the business.
+      await api.submitContactMessage(form);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err.message || 'Could not send your message right now. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -622,33 +634,38 @@ function ContactPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
+            {error && (
+              <div style={{ color: 'var(--red)', fontWeight: 700, fontSize: 13.5, marginBottom: 16 }}>{error}</div>
+            )}
             <div className="field">
               <label>Your name</label>
               <div className="input-wrap">
                 <Users />
-                <input required type="text" value={form.name} onChange={handleChange('name')} placeholder="Full name" />
+                <input required type="text" value={form.name} onChange={handleChange('name')} placeholder="Full name" disabled={submitting} />
               </div>
             </div>
             <div className="field">
               <label>Email address</label>
               <div className="input-wrap">
                 <Mail />
-                <input required type="email" value={form.email} onChange={handleChange('email')} placeholder="you@example.com" />
+                <input required type="email" value={form.email} onChange={handleChange('email')} placeholder="you@example.com" disabled={submitting} />
               </div>
             </div>
             <div className="field">
               <label>Message</label>
               <textarea
                 required
+                minLength={10}
                 rows={4}
                 value={form.message}
                 onChange={handleChange('message')}
                 placeholder="Tell us a bit about your shop or question&hellip;"
                 className="public-contact-textarea"
+                disabled={submitting}
               />
             </div>
-            <button type="submit" className="btn btn-primary btn-block">
-              Send message <Send className="h-4 w-4" />
+            <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
+              {submitting ? 'Sending…' : 'Send message'} <Send className="h-4 w-4" />
             </button>
           </form>
         )}
@@ -889,7 +906,7 @@ export default function PublicSite({ page, onNavigate, api }) {
         ) : page === 'about' ? (
           <AboutPage />
         ) : page === 'contact' ? (
-          <ContactPage />
+          <ContactPage api={api} />
         ) : page === 'privacy' ? (
           <PrivacyPolicyPage />
         ) : page === 'deleteAccount' ? (
