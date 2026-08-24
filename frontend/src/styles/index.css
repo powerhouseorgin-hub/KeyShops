@@ -1406,7 +1406,7 @@ select.sel:focus { border-color: var(--gold); }
 .public-hero-ghost-btn:active:not(:disabled) { transform: translateY(0) scale(.98); }
 .public-hero-panel-visual { padding: 40px; display: flex; justify-content: center; position: relative; z-index: 1; }
 .public-hero-panel-visual img {
-  width: 340px; max-width: 100%; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .35));
+  width: 440px; max-width: 100%; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, .35));
   animation: heroFloat 6s ease-in-out infinite;
 }
 @keyframes heroFloat {
