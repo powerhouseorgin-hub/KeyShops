@@ -3,7 +3,7 @@ import {
   Key, ArrowRight, Search, MapPin, Phone, Mail, ShieldCheck, Users,
   Package, BarChart3, Building2, Sparkles, CheckCircle2, Menu, X,
   RefreshCw, Clock, Store, Star, Send, Download, Tag, MessageCircle, Globe,
-  Trash2,
+  Trash2, Languages,
 } from 'lucide-react';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 // Nav/footer only ever render this at .brand-logo's 44px CSS height (~81px
@@ -154,15 +154,15 @@ const PAGE_META = {
   },
 };
 
-const NAV_ITEMS = [
-  { key: 'home', label: 'Home' },
-  { key: 'search', label: 'Find a Shop' },
-  { key: 'about', label: 'About' },
-  { key: 'contact', label: 'Contact' },
-];
-
-function PublicNav({ page, onNavigate }) {
+function PublicNav({ page, onNavigate, t }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navItems = [
+    { key: 'home', label: t('navHome') },
+    { key: 'search', label: t('navFindShop') },
+    { key: 'about', label: t('navAbout') },
+    { key: 'contact', label: t('navContact') },
+  ];
 
   const go = (key) => {
     setMobileOpen(false);
@@ -177,7 +177,7 @@ function PublicNav({ page, onNavigate }) {
         </button>
 
         <div className="public-navtabs">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <button
               key={item.key}
               type="button"
@@ -191,16 +191,16 @@ function PublicNav({ page, onNavigate }) {
 
         <div className="public-nav-actions">
           <a href={APK_DOWNLOAD_URL} download={APK_DOWNLOAD_FILENAME} className="btn btn-outline btn-sm">
-            <Download className="h-4 w-4" /> Download App
+            <Download className="h-4 w-4" /> {t('navDownloadApp')}
           </a>
           <button type="button" className="btn btn-primary btn-sm" onClick={() => go('login')}>
-            Login <ArrowRight className="h-4 w-4" />
+            {t('navLogin')} <ArrowRight className="h-4 w-4" />
           </button>
           <button
             type="button"
             className="public-nav-burger"
             onClick={() => setMobileOpen((v) => !v)}
-            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-label={mobileOpen ? t('navCloseMenu') : t('navOpenMenu')}
             aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X /> : <Menu />}
@@ -210,16 +210,16 @@ function PublicNav({ page, onNavigate }) {
 
       {mobileOpen && (
         <div className="public-nav-mobile animate-fade-in">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <button key={item.key} type="button" className={page === item.key ? 'active' : ''} onClick={() => go(item.key)}>
               {item.label}
             </button>
           ))}
           <a href={APK_DOWNLOAD_URL} download={APK_DOWNLOAD_FILENAME} className="btn btn-outline btn-block">
-            <Download className="h-4 w-4" /> Download App
+            <Download className="h-4 w-4" /> {t('navDownloadApp')}
           </a>
           <button type="button" className="btn btn-primary btn-block" onClick={() => go('login')}>
-            Login <ArrowRight className="h-4 w-4" />
+            {t('navLogin')} <ArrowRight className="h-4 w-4" />
           </button>
         </div>
       )}
@@ -227,7 +227,7 @@ function PublicNav({ page, onNavigate }) {
   );
 }
 
-function PublicFooter({ onNavigate }) {
+function PublicFooter({ onNavigate, t }) {
   return (
     <footer className="public-footer">
       <div className="public-footer-inner">
@@ -236,51 +236,50 @@ function PublicFooter({ onNavigate }) {
             <img src={keyShopLogoSm} alt="Key Shop" className="brand-logo" width={170} height={92} />
           </div>
           <p style={{ color: 'var(--text-2)', fontSize: 13.5, fontWeight: 600, maxWidth: 320, lineHeight: 1.6 }}>
-            The bold, gold-standard workspace for Indian duplicate-key shops &mdash;
-            customers, keys, orders and reports in one place.
+            {t('footerTagline')}
           </p>
         </div>
         <div className="public-footer-link-cols">
           <div className="public-footer-links">
-            <span className="public-footer-heading">Explore</span>
-            <button type="button" onClick={() => onNavigate('home')}>Home</button>
-            <button type="button" onClick={() => onNavigate('search')}>Find a Shop</button>
-            <button type="button" onClick={() => onNavigate('about')}>About</button>
-            <button type="button" onClick={() => onNavigate('contact')}>Contact</button>
+            <span className="public-footer-heading">{t('footerExploreHeading')}</span>
+            <button type="button" onClick={() => onNavigate('home')}>{t('navHome')}</button>
+            <button type="button" onClick={() => onNavigate('search')}>{t('navFindShop')}</button>
+            <button type="button" onClick={() => onNavigate('about')}>{t('navAbout')}</button>
+            <button type="button" onClick={() => onNavigate('contact')}>{t('navContact')}</button>
           </div>
           <div className="public-footer-links">
-            <span className="public-footer-heading">Get in touch</span>
+            <span className="public-footer-heading">{t('footerGetInTouchHeading')}</span>
             <span className="public-footer-static"><Mail className="h-3.5 w-3.5" /> keyshops666@gmail.com</span>
             <span className="public-footer-static"><Phone className="h-3.5 w-3.5" /> +91 90250 88853</span>
-            <span className="public-footer-static"><MapPin className="h-3.5 w-3.5" /> Coimbatore, Tamil Nadu, India</span>
+            <span className="public-footer-static"><MapPin className="h-3.5 w-3.5" /> {t('footerAddress')}</span>
           </div>
         </div>
       </div>
       <div className="public-footer-bottom">
-        &copy; {new Date().getFullYear()} Key Shops. All rights reserved.
+        &copy; {new Date().getFullYear()} {t('footerRightsReserved')}
         {' '}&middot;{' '}
-        <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('privacy')}>Privacy Policy</button>
+        <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('privacy')}>{t('privacyPolicyLinkLabel')}</button>
         {' '}&middot;{' '}
-        <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('deleteAccount')}>Delete Account</button>
+        <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('deleteAccount')}>{t('deleteAccountLinkLabel')}</button>
       </div>
     </footer>
   );
 }
 
-function HomePage({ onNavigate }) {
+function HomePage({ onNavigate, t }) {
   const features = [
-    { icon: Users, title: 'Customer Management', desc: 'Capture ID proof, photo and key history for every walk-in, searchable in seconds.' },
-    { icon: Key, title: 'Key & Master Catalog', desc: 'Track every blank, master key and duplicate against a shop-wide catalog that never loses a key.' },
-    { icon: Package, title: 'Store & Inventory', desc: 'Sell hardware alongside key services and keep stock levels accurate automatically.' },
-    { icon: BarChart3, title: 'Reports & Analytics', desc: 'Daily, weekly and monthly rollups of revenue, footfall and top-selling items.' },
-    { icon: Building2, title: 'Multi-Branch Ready', desc: 'Run several outlets under one account with data kept cleanly separated per shop.' },
-    { icon: ShieldCheck, title: 'Secure & Encrypted', desc: 'Sensitive ID numbers are encrypted at rest; every record is tenant-isolated by design.' },
+    { icon: Users, title: t('feature1Title'), desc: t('feature1Desc') },
+    { icon: Key, title: t('feature2Title'), desc: t('feature2Desc') },
+    { icon: Package, title: t('feature3Title'), desc: t('feature3Desc') },
+    { icon: BarChart3, title: t('feature4Title'), desc: t('feature4Desc') },
+    { icon: Building2, title: t('feature5Title'), desc: t('feature5Desc') },
+    { icon: ShieldCheck, title: t('feature6Title'), desc: t('feature6Desc') },
   ];
 
   const steps = [
-    { n: '01', title: 'Register your shop', desc: 'Create your shop account in minutes with your basic business details.' },
-    { n: '02', title: 'Add your team & keys', desc: 'Bring your key catalog and staff on board, no spreadsheets required.' },
-    { n: '03', title: 'Serve customers faster', desc: 'Register customers, cut keys and track orders from one bold dashboard.' },
+    { n: '01', title: t('step1Title'), desc: t('step1Desc') },
+    { n: '02', title: t('step2Title'), desc: t('step2Desc') },
+    { n: '03', title: t('step3Title'), desc: t('step3Desc') },
   ];
 
   return (
@@ -288,31 +287,27 @@ function HomePage({ onNavigate }) {
       <section className="public-hero">
         <div className="public-hero-panel">
           <div className="public-hero-panel-text">
+            {/* No trust-badge here by design - removed per request; the
+                stats row below (onboarded shops/keys/cities) already carries
+                the same "trusted at scale" signal. */}
             <Reveal>
-              <span className="pill-badge">
-                <span className="dot"></span>
-                Trusted by 500+ key shops across India
-              </span>
-            </Reveal>
-            <Reveal delay={80}>
               <h1 className="public-hero-title">
-                Run your duplicate-key shop
-                <span className="gold-line"> the smart, gold-standard way.</span>
+                {t('heroTitleLine1')}
+                <span className="gold-line"> {t('heroTitleLine2')}</span>
               </h1>
             </Reveal>
-            <Reveal delay={160}>
+            <Reveal delay={80}>
               <p className="public-hero-lead">
-                Track duplicate keys, customers and store orders across every branch &mdash;
-                one bold dashboard built for Indian key specialists.
+                {t('heroLead')}
               </p>
             </Reveal>
-            <Reveal delay={240}>
+            <Reveal delay={160}>
               <div className="public-hero-ctas">
                 <button type="button" className="btn btn-primary" onClick={() => onNavigate('login')}>
-                  Login to your workspace <ArrowRight className="h-4 w-4" />
+                  {t('heroLoginBtn')} <ArrowRight className="h-4 w-4" />
                 </button>
                 <button type="button" className="btn public-hero-ghost-btn" onClick={() => onNavigate('search')}>
-                  <Search className="h-4 w-4" /> Find a shop near you
+                  <Search className="h-4 w-4" /> {t('heroFindShopBtn')}
                 </button>
               </div>
             </Reveal>
@@ -323,35 +318,35 @@ function HomePage({ onNavigate }) {
         </div>
       </section>
 
-      <Reveal delay={320} className="public-stats-row">
+      <Reveal delay={240} className="public-stats-row">
         <div className="public-stat-card">
           <div className="public-stat-icon"><Store /></div>
           <div>
             <div className="public-stat-num"><CountUp end={500} suffix="+" /></div>
-            <div className="public-stat-label">Shops onboarded</div>
+            <div className="public-stat-label">{t('statShopsLabel')}</div>
           </div>
         </div>
         <div className="public-stat-card">
           <div className="public-stat-icon"><Key /></div>
           <div>
             <div className="public-stat-num"><CountUp end={50} suffix="k+" /></div>
-            <div className="public-stat-label">Keys duplicated</div>
+            <div className="public-stat-label">{t('statKeysLabel')}</div>
           </div>
         </div>
         <div className="public-stat-card">
           <div className="public-stat-icon"><MapPin /></div>
           <div>
             <div className="public-stat-num"><CountUp end={100} suffix="+" /></div>
-            <div className="public-stat-label">Cities served</div>
+            <div className="public-stat-label">{t('statCitiesLabel')}</div>
           </div>
         </div>
       </Reveal>
 
       <section className="public-section">
         <Reveal className="public-section-head">
-          <span className="eyebrow"><Sparkles className="h-3.5 w-3.5" /> Why Key Shops</span>
-          <h2>Everything a modern key shop needs</h2>
-          <p>One workspace for the front counter, the back office and everything in between.</p>
+          <span className="eyebrow"><Sparkles className="h-3.5 w-3.5" /> {t('whyEyebrow')}</span>
+          <h2>{t('whyHeading')}</h2>
+          <p>{t('whySubheading')}</p>
         </Reveal>
 
         <div className="public-feature-grid">
@@ -367,8 +362,8 @@ function HomePage({ onNavigate }) {
 
       <section className="public-section public-steps-section">
         <Reveal className="public-section-head">
-          <span className="eyebrow"><CheckCircle2 className="h-3.5 w-3.5" /> Getting started</span>
-          <h2>Up and running in three steps</h2>
+          <span className="eyebrow"><CheckCircle2 className="h-3.5 w-3.5" /> {t('gettingStartedEyebrow')}</span>
+          <h2>{t('gettingStartedHeading')}</h2>
         </Reveal>
 
         <div className="public-steps">
@@ -385,15 +380,15 @@ function HomePage({ onNavigate }) {
       <section className="public-section">
         <Reveal className="public-cta-banner card">
           <div>
-            <h2>Ready to modernize your shop?</h2>
-            <p>Login if you already have an account, or find a Key Shops-powered shop near you.</p>
+            <h2>{t('homeCtaHeading')}</h2>
+            <p>{t('homeCtaSubtext')}</p>
           </div>
           <div className="public-hero-ctas">
             <button type="button" className="btn btn-primary" onClick={() => onNavigate('login')}>
-              Login <ArrowRight className="h-4 w-4" />
+              {t('navLogin')} <ArrowRight className="h-4 w-4" />
             </button>
             <button type="button" className="btn btn-outline" onClick={() => onNavigate('contact')}>
-              Contact us
+              {t('ctaContactBtn')}
             </button>
           </div>
         </Reveal>
@@ -402,7 +397,7 @@ function HomePage({ onNavigate }) {
   );
 }
 
-function ShopResultCard({ shop, index }) {
+function ShopResultCard({ shop, index, t }) {
   return (
     <Reveal delay={index * 50} className="card public-shop-card">
       <div className="public-shop-card-top">
@@ -410,7 +405,7 @@ function ShopResultCard({ shop, index }) {
         <div>
           <h3>{shop.name}</h3>
           <span className="pill-badge" style={{ animation: 'none', padding: '4px 10px 4px 8px', fontSize: 11 }}>
-            <Star className="h-3 w-3" /> Verified Key Shops partner
+            <Star className="h-3 w-3" /> {t('shopVerifiedBadge')}
           </span>
         </div>
       </div>
@@ -435,7 +430,7 @@ function ShopResultCard({ shop, index }) {
   );
 }
 
-function SearchPage({ api }) {
+function SearchPage({ api, t }) {
   const [query, setQuery] = useState('');
   const [shops, setShops] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -449,7 +444,7 @@ function SearchPage({ api }) {
       const results = await api.searchPublicShops({ query: q });
       setShops(Array.isArray(results) ? results : []);
     } catch (err) {
-      setError(err.message || 'Could not load shops right now.');
+      setError(err.message || t('searchErrorGeneric'));
     } finally {
       setLoading(false);
     }
@@ -475,9 +470,9 @@ function SearchPage({ api }) {
   return (
     <section className="public-section public-search-section">
       <Reveal className="public-section-head">
-        <span className="eyebrow"><Search className="h-3.5 w-3.5" /> Find a shop</span>
-        <h2>Search Key Shops by name, location or category</h2>
-        <p>Looking for a duplicate-key shop that runs on Key Shops? Search by shop name, city/locality, or shop category/type - results update as you type.</p>
+        <span className="eyebrow"><Search className="h-3.5 w-3.5" /> {t('findShopEyebrow')}</span>
+        <h2>{t('searchHeading')}</h2>
+        <p>{t('searchSubheading')}</p>
       </Reveal>
 
       <Reveal className="public-search-box-wrap">
@@ -485,12 +480,12 @@ function SearchPage({ api }) {
           <Search />
           <input
             type="text"
-            placeholder="Try a shop name, city, or category e.g. 'Dealers'"
+            placeholder={t('searchPlaceholder')}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
           <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
-            {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : 'Search'}
+            {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('searchBtn')}
           </button>
         </form>
       </Reveal>
@@ -502,21 +497,19 @@ function SearchPage({ api }) {
       {loading ? (
         <div className="public-search-loading">
           <RefreshCw className="h-5 w-5 animate-spin" style={{ color: 'var(--gold)' }} />
-          <span>Loading shops&hellip;</span>
+          <span>{t('searchLoadingText')}</span>
         </div>
       ) : shops.length === 0 ? (
         <div className="public-search-empty card">
           <Clock className="h-6 w-6" style={{ color: 'var(--text-3)' }} />
           <p>
-            {searched
-              ? 'No shops matched your search. Try a different name or location.'
-              : 'No shops are listed publicly yet. Check back soon.'}
+            {searched ? t('searchNoResultsSearched') : t('searchNoResultsEmpty')}
           </p>
         </div>
       ) : (
         <div className="public-shop-grid">
           {shops.map((shop, i) => (
-            <ShopResultCard key={shop.id} shop={shop} index={i} />
+            <ShopResultCard key={shop.id} shop={shop} index={i} t={t} />
           ))}
         </div>
       )}
@@ -524,23 +517,20 @@ function SearchPage({ api }) {
   );
 }
 
-function AboutPage() {
+function AboutPage({ t }) {
   const values = [
-    { icon: ShieldCheck, title: 'Trust & Security', desc: 'Sensitive customer data is encrypted and every shop\'s records stay strictly isolated.' },
-    { icon: Sparkles, title: 'Built for key specialists', desc: 'Every workflow mirrors how Indian key shops actually work at the counter.' },
-    { icon: Users, title: 'Customer first', desc: 'Faster registration, faster lookups, faster service for the people who walk in.' },
+    { icon: ShieldCheck, title: t('value1Title'), desc: t('value1Desc') },
+    { icon: Sparkles, title: t('value2Title'), desc: t('value2Desc') },
+    { icon: Users, title: t('value3Title'), desc: t('value3Desc') },
   ];
 
   return (
     <section className="public-section">
       <Reveal className="public-section-head">
-        <span className="eyebrow"><Building2 className="h-3.5 w-3.5" /> About Key Shops</span>
-        <h2>Software built with key specialists, for key specialists</h2>
+        <span className="eyebrow"><Building2 className="h-3.5 w-3.5" /> {t('aboutEyebrow')}</span>
+        <h2>{t('aboutHeading')}</h2>
         <p style={{ maxWidth: 640 }}>
-          Key Shops started with one simple observation: duplicate-key shops were running on paper
-          registers and loose memory, even while handling sensitive customer ID proofs and
-          high-value keys every single day. We set out to build a workspace that&rsquo;s as fast
-          as the counter it replaces &mdash; without compromising on security or record-keeping.
+          {t('aboutBody')}
         </p>
       </Reveal>
 
@@ -556,8 +546,8 @@ function AboutPage() {
 
       <Reveal className="public-cta-banner card" style={{ marginTop: 40 }}>
         <div>
-          <h2>Want Key Shops for your shop?</h2>
-          <p>Reach out and we&rsquo;ll help you get set up in one call.</p>
+          <h2>{t('aboutCtaHeading')}</h2>
+          <p>{t('aboutCtaSubtext')}</p>
         </div>
         <div className="public-hero-ctas">
           <a href="mailto:keyshops666@gmail.com" className="btn btn-primary">
@@ -569,7 +559,7 @@ function AboutPage() {
   );
 }
 
-function ContactPage({ api }) {
+function ContactPage({ api, t }) {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -588,7 +578,7 @@ function ContactPage({ api }) {
       await api.submitContactMessage(form);
       setSubmitted(true);
     } catch (err) {
-      setError(err.message || 'Could not send your message right now. Please try again.');
+      setError(err.message || t('contactErrorGeneric'));
     } finally {
       setSubmitting(false);
     }
@@ -597,31 +587,31 @@ function ContactPage({ api }) {
   return (
     <section className="public-section">
       <Reveal className="public-section-head">
-        <span className="eyebrow"><Mail className="h-3.5 w-3.5" /> Contact</span>
-        <h2>We&rsquo;d love to hear from you</h2>
-        <p>Questions about Key Shops, a demo request, or support for an existing shop &mdash; reach out any way that works for you.</p>
+        <span className="eyebrow"><Mail className="h-3.5 w-3.5" /> {t('contactEyebrow')}</span>
+        <h2>{t('contactHeading')}</h2>
+        <p>{t('contactSubheading')}</p>
       </Reveal>
 
       <div className="public-contact-grid">
         <Reveal className="card public-contact-card">
           <div className="icon-badge"><Mail /></div>
-          <h3>Email</h3>
+          <h3>{t('contactEmailLabel')}</h3>
           <p>keyshops666@gmail.com</p>
         </Reveal>
         <Reveal delay={70} className="card public-contact-card">
           <div className="icon-badge"><Phone /></div>
-          <h3>Customer Care</h3>
+          <h3>{t('contactCustomerCareLabel')}</h3>
           <p>+91 90250 88853</p>
         </Reveal>
         <Reveal delay={110} className="card public-contact-card">
           <div className="icon-badge"><MessageCircle /></div>
-          <h3>WhatsApp</h3>
+          <h3>{t('contactWhatsappLabel')}</h3>
           <p>+91 90250 88853</p>
         </Reveal>
         <Reveal delay={140} className="card public-contact-card">
           <div className="icon-badge"><MapPin /></div>
-          <h3>Office</h3>
-          <p>Coimbatore, Tamil Nadu, India</p>
+          <h3>{t('contactOfficeLabel')}</h3>
+          <p>{t('footerAddress')}</p>
         </Reveal>
       </div>
 
@@ -629,8 +619,8 @@ function ContactPage({ api }) {
         {submitted ? (
           <div className="public-contact-success">
             <CheckCircle2 className="h-8 w-8" style={{ color: 'var(--green)' }} />
-            <h3>Thanks, {form.name || 'there'}!</h3>
-            <p>Your message has been noted. We&rsquo;ll get back to you at {form.email || 'the email you provided'} shortly.</p>
+            <h3>{t('contactThanksTemplate').replace('{name}', form.name || t('contactThereFallback'))}</h3>
+            <p>{t('contactSuccessBodyTemplate').replace('{email}', form.email || t('contactEmailFallback'))}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
@@ -638,34 +628,34 @@ function ContactPage({ api }) {
               <div style={{ color: 'var(--red)', fontWeight: 700, fontSize: 13.5, marginBottom: 16 }}>{error}</div>
             )}
             <div className="field">
-              <label>Your name</label>
+              <label>{t('contactYourNameLabel')}</label>
               <div className="input-wrap">
                 <Users />
-                <input required type="text" value={form.name} onChange={handleChange('name')} placeholder="Full name" disabled={submitting} />
+                <input required type="text" value={form.name} onChange={handleChange('name')} placeholder={t('contactFullNamePlaceholder')} disabled={submitting} />
               </div>
             </div>
             <div className="field">
-              <label>Email address</label>
+              <label>{t('contactEmailAddressLabel')}</label>
               <div className="input-wrap">
                 <Mail />
-                <input required type="email" value={form.email} onChange={handleChange('email')} placeholder="you@example.com" disabled={submitting} />
+                <input required type="email" value={form.email} onChange={handleChange('email')} placeholder={t('contactEmailPlaceholder')} disabled={submitting} />
               </div>
             </div>
             <div className="field">
-              <label>Message</label>
+              <label>{t('contactMessageLabel')}</label>
               <textarea
                 required
                 minLength={10}
                 rows={4}
                 value={form.message}
                 onChange={handleChange('message')}
-                placeholder="Tell us a bit about your shop or question&hellip;"
+                placeholder={t('contactMessagePlaceholder')}
                 className="public-contact-textarea"
                 disabled={submitting}
               />
             </div>
             <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-              {submitting ? 'Sending…' : 'Send message'} <Send className="h-4 w-4" />
+              {submitting ? t('contactSendingBtn') : t('contactSendBtn')} <Send className="h-4 w-4" />
             </button>
           </form>
         )}
@@ -674,96 +664,27 @@ function ContactPage({ api }) {
   );
 }
 
-function PrivacyPolicyPage() {
+function PrivacyPolicyPage({ t }) {
   const sections = [
-    {
-      title: '1. Who this policy covers',
-      body: `Key Shops ("we", "us") operates the keyshops.in website and the Key Shops mobile app, used by duplicate-key
-      shop owners ("Shop Admins") to run their business, and by their walk-in customers whose records a
-      Shop Admin enters into the app. This policy explains what data we collect, why, and how it's protected
-      for both groups.`,
-    },
-    {
-      title: '2. Data we collect from Shop Admins',
-      list: [
-        'Account details: owner name, shop name, mobile number (required, used as your login and OTP identifier), email address (optional), password (stored as a bcrypt hash, never in plain text).',
-        'Business details: shop address, GPS coordinates captured via your device location, city/district/state/PIN code, shop category, optional Aadhaar number and shop documents (photo, license) - Aadhaar and other sensitive ID numbers are encrypted at rest.',
-        'Payment details: subscription payments are processed entirely by Razorpay. Key Shops never receives or stores your card, UPI or bank details - only Razorpay\'s order ID, payment ID and signature, used solely to verify a payment succeeded.',
-      ],
-    },
-    {
-      title: '3. Data Shop Admins enter about their customers',
-      body: `When a Shop Admin registers a walk-in customer, the app stores the details the Shop Admin enters
-      for that visit: customer name, phone number, address, optional ID proof type/number (encrypted at rest),
-      photo, vehicle number and key/service details. This data is entered and controlled by the Shop Admin as
-      the shop's own business record, not collected by Key Shops directly from the customer. Each shop's customer
-      records are strictly isolated and never visible to other shops.`,
-    },
-    {
-      title: '4. Location and camera',
-      body: `We request device location to auto-fill your shop's address during registration and to power
-      "find a shop near you" search - you can decline location access and enter your address manually. We
-      request camera access so a Shop Admin can capture ID/document photos directly in the app instead of
-      uploading files. Neither permission is used for background tracking.`,
-    },
-    {
-      title: '5. OTP verification',
-      body: `Login, password reset and registration are verified using a one-time code sent to your mobile
-      number via SMS (delivered through MSG91) or, in the native app, verified directly on-device via Firebase
-      Phone Authentication. We never ask for or store your OTP anywhere the API response could expose it.`,
-    },
-    {
-      title: '6. How we use data',
-      list: [
-        'To create and secure your shop account and let you log in.',
-        'To let you manage customers, keys, inventory and reports within your own shop.',
-        'To process subscription payments via Razorpay.',
-        'To send OTP codes for login, registration and password reset.',
-        'To generate and share the customer key-registration report PDF you request, via a private, expiring download link.',
-      ],
-    },
-    {
-      title: '7. Data storage and security',
-      body: `Data is stored in a managed PostgreSQL database and uploaded files (photos, documents, reports)
-      in Supabase Storage, accessed only via short-lived signed URLs - files are never made public by default.
-      Sensitive fields such as Aadhaar and ID proof numbers are encrypted at rest. Every shop's data is
-      tenant-isolated: one shop's records are never visible to another.`,
-    },
-    {
-      title: '8. Third-party services we use',
-      list: [
-        'Razorpay - subscription payment processing.',
-        'MSG91 - SMS delivery for OTP codes.',
-        'Firebase - phone number verification and app push notifications (native app).',
-        'Supabase Storage - encrypted file storage for photos, documents and reports.',
-        'Google Analytics - anonymized usage analytics on the public website, where enabled.',
-      ],
-    },
-    {
-      title: '9. Data retention and deletion',
-      body: `Shop and customer records are retained for as long as the shop account is active, as they form
-      part of the shop's own business records. A Shop Admin can delete their own account at any time from
-      Settings, OTP-verified before it takes effect - see our Delete Account page for the full process,
-      including how to request deletion without the app installed.`,
-    },
-    {
-      title: '10. Your rights',
-      body: `You can review or correct your shop account details at any time from Shop Settings. To request a
-      copy of your data, a correction, or deletion, email us at the address below and we'll respond within a
-      reasonable time.`,
-    },
-    {
-      title: '11. Contact us',
-      body: `Questions about this policy or your data: keyshops666@gmail.com or +91 90250 88853.`,
-    },
+    { title: t('privacySection1Title'), body: t('privacySection1Body') },
+    { title: t('privacySection2Title'), list: [t('privacySection2Item1'), t('privacySection2Item2'), t('privacySection2Item3')] },
+    { title: t('privacySection3Title'), body: t('privacySection3Body') },
+    { title: t('privacySection4Title'), body: t('privacySection4Body') },
+    { title: t('privacySection5Title'), body: t('privacySection5Body') },
+    { title: t('privacySection6Title'), list: [t('privacySection6Item1'), t('privacySection6Item2'), t('privacySection6Item3'), t('privacySection6Item4'), t('privacySection6Item5')] },
+    { title: t('privacySection7Title'), body: t('privacySection7Body') },
+    { title: t('privacySection8Title'), list: [t('privacySection8Item1'), t('privacySection8Item2'), t('privacySection8Item3'), t('privacySection8Item4'), t('privacySection8Item5')] },
+    { title: t('privacySection9Title'), body: t('privacySection9Body') },
+    { title: t('privacySection10Title'), body: t('privacySection10Body') },
+    { title: t('privacySection11Title'), body: t('privacySection11Body') },
   ];
 
   return (
     <section className="public-section">
       <Reveal className="public-section-head">
-        <span className="eyebrow"><ShieldCheck className="h-3.5 w-3.5" /> Privacy Policy</span>
-        <h2>Your data, handled carefully</h2>
-        <p style={{ maxWidth: 640 }}>Last updated: {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+        <span className="eyebrow"><ShieldCheck className="h-3.5 w-3.5" /> {t('privacyEyebrow')}</span>
+        <h2>{t('privacyHeading')}</h2>
+        <p style={{ maxWidth: 640 }}>{t('privacyLastUpdatedPrefix')} {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
       </Reveal>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 28, maxWidth: 760 }}>
@@ -783,63 +704,123 @@ function PrivacyPolicyPage() {
   );
 }
 
-function DeleteAccountRequestPage({ onNavigate }) {
+function DeleteAccountRequestPage({ onNavigate, t }) {
+  // Both templates carry a real interactive element (a mailto link / an
+  // in-app navigation button) mid-sentence - split on the {link} token
+  // (same convention as the referral share message template elsewhere in
+  // this codebase) so translation doesn't have to sacrifice the link.
+  const [emailBefore, emailAfter] = t('daSection2BodyTemplate').split('{link}');
+  const [retainBefore, retainAfter] = t('daSection4BodyTemplate').split('{link}');
+
   return (
     <section className="public-section">
       <Reveal className="public-section-head">
-        <span className="eyebrow"><Trash2 className="h-3.5 w-3.5" /> Delete Account</span>
-        <h2>Request deletion of your Key Shops account</h2>
+        <span className="eyebrow"><Trash2 className="h-3.5 w-3.5" /> {t('deleteAccountEyebrow')}</span>
+        <h2>{t('deleteAccountHeading')}</h2>
         <p style={{ maxWidth: 640 }}>
-          You can close your Key Shops account and delete your data at any time. This page covers how,
-          whether you still have the app installed or not.
+          {t('deleteAccountIntro')}
         </p>
       </Reveal>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 28, maxWidth: 760 }}>
         <Reveal className="card" style={{ padding: '20px 24px' }}>
-          <h3 style={{ marginBottom: 10 }}>If you still have the Key Shops app</h3>
+          <h3 style={{ marginBottom: 10 }}>{t('daSection1Title')}</h3>
           <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
-            Open the app and go to <b>Settings &rarr; Delete Account</b>. You&rsquo;ll be asked to confirm and verify
-            with an OTP sent to your registered mobile number before the deletion takes effect - this
-            confirms the request is really coming from the account owner.
+            {t('daSection1Body')}
           </p>
         </Reveal>
 
         <Reveal delay={70} className="card" style={{ padding: '20px 24px' }}>
-          <h3 style={{ marginBottom: 10 }}>If you no longer have the app</h3>
+          <h3 style={{ marginBottom: 10 }}>{t('daSection2Title')}</h3>
           <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
-            Email <a href="mailto:keyshops666@gmail.com">keyshops666@gmail.com</a> from the address on file (or
-            mention your registered shop name and mobile number) and ask us to delete your account. We&rsquo;ll
-            verify your identity and confirm once it&rsquo;s done.
+            {emailBefore}<a href="mailto:keyshops666@gmail.com">keyshops666@gmail.com</a>{emailAfter}
           </p>
         </Reveal>
 
         <Reveal delay={140} className="card" style={{ padding: '20px 24px' }}>
-          <h3 style={{ marginBottom: 10 }}>What gets deleted</h3>
+          <h3 style={{ marginBottom: 10 }}>{t('daSection3Title')}</h3>
           <ul style={{ color: 'var(--text-2)', lineHeight: 1.7, paddingLeft: 20, margin: 0 }}>
-            <li>Your shop account and login details (name, email, phone, password).</li>
-            <li>Your shop&rsquo;s business details, documents and uploaded photos.</li>
+            <li>{t('daSection3Item1')}</li>
+            <li>{t('daSection3Item2')}</li>
           </ul>
         </Reveal>
 
         <Reveal delay={210} className="card" style={{ padding: '20px 24px' }}>
-          <h3 style={{ marginBottom: 10 }}>What we retain, and why</h3>
+          <h3 style={{ marginBottom: 10 }}>{t('daSection4Title')}</h3>
           <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
-            Records tied to completed subscription payments (via Razorpay) are kept as required for financial
-            and tax record-keeping, even after account deletion - this is limited to payment/order records, not
-            your login credentials or customer data. See our <button type="button" onClick={() => onNavigate('privacy')} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--gold)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>Privacy Policy</button> for the full picture.
+            {retainBefore}<button type="button" onClick={() => onNavigate('privacy')} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--gold)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>{t('privacyPolicyLinkLabel')}</button>{retainAfter}
           </p>
         </Reveal>
 
         <Reveal delay={280} className="card" style={{ padding: '20px 24px' }}>
-          <h3 style={{ marginBottom: 10 }}>How long it takes</h3>
+          <h3 style={{ marginBottom: 10 }}>{t('daSection5Title')}</h3>
           <p style={{ color: 'var(--text-2)', lineHeight: 1.7 }}>
-            In-app deletion (Settings &rarr; Delete Account) takes effect immediately once OTP-verified. An
-            email request is processed within a few business days.
+            {t('daSection5Body')}
           </p>
         </Reveal>
       </div>
     </section>
+  );
+}
+
+const PUBLIC_LANG_OPTIONS = [
+  { code: 'en', label: 'English' },
+  { code: 'hi', label: 'हिन्दी' },
+  { code: 'ta', label: 'தமிழ்' },
+  { code: 'te', label: 'తెలుగు' },
+  { code: 'kn', label: 'ಕನ್ನಡ' },
+  { code: 'ml', label: 'മലയാളം' },
+];
+
+// Floating bottom-right switcher, always available regardless of which
+// public page is showing (unlike the authenticated dashboard's language
+// picker, which lives inside the sidebar). Click-outside-to-close mirrors
+// the exact pattern used for the dashboard's notification dropdown
+// (App.jsx's notifDropdownRef) - a shared ref around the button + panel, a
+// document-level mousedown listener that closes on anything outside it.
+function LanguageSwitcher({ lang, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleOutsideClick = (e) => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [open]);
+
+  const current = PUBLIC_LANG_OPTIONS.find((l) => l.code === lang) || PUBLIC_LANG_OPTIONS[0];
+
+  return (
+    <div ref={ref} className="public-lang-switcher">
+      {open && (
+        <div className="public-lang-switcher-panel">
+          {PUBLIC_LANG_OPTIONS.map((l) => (
+            <button
+              key={l.code}
+              type="button"
+              className={l.code === lang ? 'active' : ''}
+              onClick={() => { onChange(l.code); setOpen(false); }}
+            >
+              {l.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <button
+        type="button"
+        className="public-lang-switcher-btn"
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Change language"
+        title={current.label}
+      >
+        <Languages className="h-5 w-5" />
+      </button>
+    </div>
   );
 }
 
@@ -857,6 +838,23 @@ function setMetaTag(selector, create, attr, value) {
 }
 
 export default function PublicSite({ page, onNavigate, api }) {
+  // Separate, small dictionary from the dashboard's translations.js - see
+  // publicTranslations.js's own header comment for why. Lazily imported so
+  // the fetch fires in parallel with everything else rather than blocking
+  // first paint; every t() call below falls back to the raw key (matching
+  // the dashboard's own resolver) until it resolves, so nothing breaks
+  // during that brief window.
+  const [lang, setLang] = useState(localStorage.getItem('kee_lang') || 'en');
+  const [langData, setLangData] = useState(null);
+  useEffect(() => {
+    import('../i18n/publicTranslations').then((m) => setLangData(m.default));
+  }, []);
+  const t = (key) => langData?.[lang]?.[key] || langData?.en?.[key] || key;
+  const handleLangChange = (code) => {
+    setLang(code);
+    localStorage.setItem('kee_lang', code);
+  };
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -895,27 +893,30 @@ export default function PublicSite({ page, onNavigate, api }) {
 
   return (
     <div className="public-site">
-      <div className="public-topbar">The <b>Super Admin</b> web console &mdash; Shop Admins, get the app below.</div>
-      <PublicNav page={page} onNavigate={onNavigate} />
+      <div className="public-topbar">
+        {t('topbarBeforeBold')} <b>{t('topbarBold')}</b> {t('topbarAfterBold')}
+      </div>
+      <PublicNav page={page} onNavigate={onNavigate} t={t} />
       {/* Keyed on `page` so switching nav tabs remounts this wrapper and
           replays the fade-in, instead of the instant content swap this used
           to be. */}
       <main key={page} className="animate-fade-in">
         {page === 'search' ? (
-          <SearchPage api={api} />
+          <SearchPage api={api} t={t} />
         ) : page === 'about' ? (
-          <AboutPage />
+          <AboutPage t={t} />
         ) : page === 'contact' ? (
-          <ContactPage api={api} />
+          <ContactPage api={api} t={t} />
         ) : page === 'privacy' ? (
-          <PrivacyPolicyPage />
+          <PrivacyPolicyPage t={t} />
         ) : page === 'deleteAccount' ? (
-          <DeleteAccountRequestPage onNavigate={onNavigate} />
+          <DeleteAccountRequestPage onNavigate={onNavigate} t={t} />
         ) : (
-          <HomePage onNavigate={onNavigate} />
+          <HomePage onNavigate={onNavigate} t={t} />
         )}
       </main>
-      <PublicFooter onNavigate={onNavigate} />
+      <PublicFooter onNavigate={onNavigate} t={t} />
+      <LanguageSwitcher lang={lang} onChange={handleLangChange} />
     </div>
   );
 }
