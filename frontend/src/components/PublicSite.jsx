@@ -35,7 +35,7 @@ const APK_DOWNLOAD_FILENAME = 'KeyShop.apk';
 // Fades + slides a section in once it scrolls into view. Reusable wrapper so
 // every section on every public page gets the same scroll-reveal treatment
 // without repeating IntersectionObserver boilerplate.
-function Reveal({ children, className = '', delay = 0, as: Tag = 'div', style }) {
+function Reveal({ children, className = '', delay = 0, as: Tag = 'div', style, ...rest }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -60,6 +60,7 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div', style })
       ref={ref}
       className={`reveal ${visible ? 'reveal-visible' : ''} ${className}`}
       style={{ ...style, transitionDelay: `${delay}ms` }}
+      {...rest}
     >
       {children}
     </Tag>
@@ -249,18 +250,19 @@ function PublicFooter({ onNavigate, t }) {
           </div>
           <div className="public-footer-links">
             <span className="public-footer-heading">{t('footerGetInTouchHeading')}</span>
-            <span className="public-footer-static"><Mail className="h-3.5 w-3.5" /> keyshops666@gmail.com</span>
-            <span className="public-footer-static"><Phone className="h-3.5 w-3.5" /> +91 90250 88853</span>
+            <a className="public-footer-static-link" href="mailto:keyshops666@gmail.com"><Mail className="h-3.5 w-3.5" /> keyshops666@gmail.com</a>
+            <a className="public-footer-static-link" href="tel:+919025088853"><Phone className="h-3.5 w-3.5" /> +91 90250 88853</a>
             <span className="public-footer-static"><MapPin className="h-3.5 w-3.5" /> {t('footerAddress')}</span>
+          </div>
+          <div className="public-footer-links">
+            <span className="public-footer-heading">{t('footerLegalHeading')}</span>
+            <button type="button" onClick={() => onNavigate('privacy')}>{t('privacyPolicyLinkLabel')}</button>
+            <button type="button" onClick={() => onNavigate('deleteAccount')}>{t('deleteAccountLinkLabel')}</button>
           </div>
         </div>
       </div>
       <div className="public-footer-bottom">
         &copy; {new Date().getFullYear()} {t('footerRightsReserved')}
-        {' '}&middot;{' '}
-        <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('privacy')}>{t('privacyPolicyLinkLabel')}</button>
-        {' '}&middot;{' '}
-        <button type="button" className="public-footer-legal-link" onClick={() => onNavigate('deleteAccount')}>{t('deleteAccountLinkLabel')}</button>
       </div>
     </footer>
   );
@@ -561,17 +563,37 @@ function AboutPage({ t }) {
   );
 }
 
+const CONTACT_EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function ContactPage({ api, t }) {
   const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
 
-  const handleChange = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
+  const handleChange = (field) => (e) => {
+    const { value } = e.target;
+    setForm((f) => ({ ...f, [field]: value }));
+    setFieldErrors((prev) => (prev[field] ? { ...prev, [field]: '' } : prev));
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.name.trim()) errs.name = t('contactValidationNameRequired');
+    if (!CONTACT_EMAIL_RE.test(form.email.trim())) errs.email = t('contactValidationEmailInvalid');
+    if (form.message.trim().length < 10) errs.message = t('contactValidationMessageTooShort');
+    return errs;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    const errs = validate();
+    if (Object.keys(errs).length) {
+      setFieldErrors(errs);
+      return;
+    }
     setSubmitting(true);
     try {
       // Stored server-side and surfaced immediately in the Super Admin's
@@ -599,22 +621,22 @@ function ContactPage({ api, t }) {
       </Reveal>
 
       <div className="public-contact-grid">
-        <Reveal className="card public-contact-card">
+        <Reveal as="a" href="mailto:keyshops666@gmail.com" className="card public-contact-card">
           <div className="icon-badge"><Mail /></div>
           <h3>{t('contactEmailLabel')}</h3>
           <p>keyshops666@gmail.com</p>
         </Reveal>
-        <Reveal delay={70} className="card public-contact-card">
+        <Reveal as="a" href="tel:+919025088853" delay={70} className="card public-contact-card">
           <div className="icon-badge"><Phone /></div>
           <h3>{t('contactCustomerCareLabel')}</h3>
           <p>+91 90250 88853</p>
         </Reveal>
-        <Reveal delay={110} className="card public-contact-card">
+        <Reveal as="a" href="https://wa.me/919025088853" target="_blank" rel="noopener noreferrer" delay={110} className="card public-contact-card">
           <div className="icon-badge"><MessageCircle /></div>
           <h3>{t('contactWhatsappLabel')}</h3>
           <p>+91 90250 88853</p>
         </Reveal>
-        <Reveal delay={140} className="card public-contact-card">
+        <Reveal as="a" href="https://www.google.com/maps/search/?api=1&query=Coimbatore%2C+Tamil+Nadu%2C+India" target="_blank" rel="noopener noreferrer" delay={140} className="card public-contact-card">
           <div className="icon-badge"><MapPin /></div>
           <h3>{t('contactOfficeLabel')}</h3>
           <p>{t('footerAddress')}</p>
@@ -629,36 +651,37 @@ function ContactPage({ api, t }) {
             <p>{t('contactSuccessBodyTemplate').replace('{email}', form.email || t('contactEmailFallback'))}</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} noValidate>
             {error && (
-              <div style={{ color: 'var(--red)', fontWeight: 700, fontSize: 13.5, marginBottom: 16 }}>{error}</div>
+              <div className="public-contact-form-alert">{error}</div>
             )}
             <div className="field">
               <label>{t('contactYourNameLabel')}</label>
-              <div className="input-wrap">
+              <div className={`input-wrap ${fieldErrors.name ? 'has-error' : ''}`}>
                 <Users />
-                <input required type="text" value={form.name} onChange={handleChange('name')} placeholder={t('contactFullNamePlaceholder')} disabled={submitting} />
+                <input type="text" value={form.name} onChange={handleChange('name')} placeholder={t('contactFullNamePlaceholder')} disabled={submitting} />
               </div>
+              {fieldErrors.name && <p className="field-error-text">{fieldErrors.name}</p>}
             </div>
             <div className="field">
               <label>{t('contactEmailAddressLabel')}</label>
-              <div className="input-wrap">
+              <div className={`input-wrap ${fieldErrors.email ? 'has-error' : ''}`}>
                 <Mail />
-                <input required type="email" value={form.email} onChange={handleChange('email')} placeholder={t('contactEmailPlaceholder')} disabled={submitting} />
+                <input type="email" value={form.email} onChange={handleChange('email')} placeholder={t('contactEmailPlaceholder')} disabled={submitting} />
               </div>
+              {fieldErrors.email && <p className="field-error-text">{fieldErrors.email}</p>}
             </div>
             <div className="field">
               <label>{t('contactMessageLabel')}</label>
               <textarea
-                required
-                minLength={10}
                 rows={4}
                 value={form.message}
                 onChange={handleChange('message')}
                 placeholder={t('contactMessagePlaceholder')}
-                className="public-contact-textarea"
+                className={`public-contact-textarea ${fieldErrors.message ? 'has-error' : ''}`}
                 disabled={submitting}
               />
+              {fieldErrors.message && <p className="field-error-text">{fieldErrors.message}</p>}
             </div>
             <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
               {submitting ? t('contactSendingBtn') : t('contactSendBtn')} <Send className="h-4 w-4" />
@@ -881,7 +904,7 @@ export default function PublicSite({ page, onNavigate, api }) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!fine || reduced) return undefined;
 
-    const TILT_SELECTOR = '.public-feature-card, .public-stat-card, .public-step';
+    const TILT_SELECTOR = '.public-feature-card, .public-stat-card, .public-step, .public-contact-card';
     const onMove = (e) => {
       const card = e.target.closest(TILT_SELECTOR);
       if (!card) return;
