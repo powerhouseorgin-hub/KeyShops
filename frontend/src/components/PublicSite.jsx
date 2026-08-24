@@ -931,9 +931,6 @@ export default function PublicSite({ page, onNavigate, api }) {
 
   return (
     <div className="public-site">
-      <div className="public-topbar">
-        {t('topbarBeforeBold')} <b>{t('topbarBold')}</b> {t('topbarAfterBold')}
-      </div>
       <PublicNav page={page} onNavigate={onNavigate} t={t} />
       {/* Keyed on `page` so switching nav tabs remounts this wrapper and
           replays the fade-in, instead of the instant content swap this used

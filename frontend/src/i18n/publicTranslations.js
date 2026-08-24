@@ -18,9 +18,6 @@ const PUBLIC_LANGUAGES = {
     navLogin: 'Login',
     navOpenMenu: 'Open menu',
     navCloseMenu: 'Close menu',
-    topbarBeforeBold: 'The',
-    topbarBold: 'Super Admin',
-    topbarAfterBold: 'web console — Shop Admins, get the app below.',
 
     // Footer
     footerTagline: 'The bold, gold-standard workspace for Indian duplicate-key shops — customers, keys, orders and reports in one place.',
@@ -185,9 +182,6 @@ const PUBLIC_LANGUAGES = {
     navLogin: 'लॉगिन',
     navOpenMenu: 'मेनू खोलें',
     navCloseMenu: 'मेनू बंद करें',
-    topbarBeforeBold: 'यह',
-    topbarBold: 'सुपर एडमिन',
-    topbarAfterBold: 'वेब कंसोल है — शॉप एडमिन नीचे से ऐप प्राप्त करें।',
 
     footerTagline: 'भारतीय डुप्लीकेट-की दुकानों के लिए बोल्ड, गोल्ड-स्टैंडर्ड वर्कस्पेस — ग्राहक, चाबियां, ऑर्डर और रिपोर्ट सब एक ही जगह।',
     footerExploreHeading: 'एक्सप्लोर करें',
@@ -341,9 +335,6 @@ const PUBLIC_LANGUAGES = {
     navLogin: 'உள்நுழை',
     navOpenMenu: 'மெனுவைத் திற',
     navCloseMenu: 'மெனுவை மூடு',
-    topbarBeforeBold: 'இது',
-    topbarBold: 'சூப்பர் அட்மின்',
-    topbarAfterBold: 'இணைய கன்சோல் — கடை நிர்வாகிகள், கீழே உள்ள ஆப்பைப் பெறவும்.',
 
     footerTagline: 'இந்திய போலி-சாவி கடைகளுக்கான தைரியமான, தங்க-தர வேலைத்தளம் — வாடிக்கையாளர்கள், சாவிகள், ஆர்டர்கள் மற்றும் அறிக்கைகள் அனைத்தும் ஒரே இடத்தில்.',
     footerExploreHeading: 'ஆராயுங்கள்',
@@ -497,9 +488,6 @@ const PUBLIC_LANGUAGES = {
     navLogin: 'లాగిన్',
     navOpenMenu: 'మెనూ తెరవండి',
     navCloseMenu: 'మెనూ మూసివేయండి',
-    topbarBeforeBold: 'ఇది',
-    topbarBold: 'సూపర్ అడ్మిన్',
-    topbarAfterBold: 'వెబ్ కన్సోల్ — షాప్ అడ్మిన్‌లు, దిగువ నుండి యాప్ పొందండి.',
 
     footerTagline: 'భారతీయ డూప్లికేట్-కీ షాపుల కోసం బోల్డ్, గోల్డ్-స్టాండర్డ్ వర్క్‌స్పేస్ — కస్టమర్లు, కీలు, ఆర్డర్లు మరియు నివేదికలు అన్నీ ఒకే చోట.',
     footerExploreHeading: 'అన్వేషించండి',
@@ -653,9 +641,6 @@ const PUBLIC_LANGUAGES = {
     navLogin: 'ಲಾಗಿನ್',
     navOpenMenu: 'ಮೆನು ತೆರೆಯಿರಿ',
     navCloseMenu: 'ಮೆನು ಮುಚ್ಚಿ',
-    topbarBeforeBold: 'ಇದು',
-    topbarBold: 'ಸೂಪರ್ ಅಡ್ಮಿನ್',
-    topbarAfterBold: 'ವೆಬ್ ಕನ್ಸೋಲ್ — ಶಾಪ್ ಅಡ್ಮಿನ್‌ಗಳು, ಕೆಳಗಿನಿಂದ ಆ್ಯಪ್ ಪಡೆಯಿರಿ.',
 
     footerTagline: 'ಭಾರತೀಯ ನಕಲಿ-ಕೀ ಅಂಗಡಿಗಳಿಗಾಗಿ ಧೈರ್ಯಶಾಲಿ, ಚಿನ್ನದ-ಗುಣಮಟ್ಟದ ಕೆಲಸದ ಸ್ಥಳ — ಗ್ರಾಹಕರು, ಕೀಗಳು, ಆರ್ಡರ್‌ಗಳು ಮತ್ತು ವರದಿಗಳು ಎಲ್ಲವೂ ಒಂದೇ ಕಡೆ.',
     footerExploreHeading: 'ಅನ್ವೇಷಿಸಿ',
@@ -809,9 +794,6 @@ const PUBLIC_LANGUAGES = {
     navLogin: 'ലോഗിൻ',
     navOpenMenu: 'മെനു തുറക്കുക',
     navCloseMenu: 'മെനു അടയ്ക്കുക',
-    topbarBeforeBold: 'ഇത്',
-    topbarBold: 'സൂപ്പർ അഡ്മിൻ',
-    topbarAfterBold: 'വെബ് കൺസോൾ ആണ് — ഷോപ്പ് അഡ്മിൻമാർ, താഴെ നിന്ന് ആപ്പ് നേടുക.',
 
     footerTagline: 'ഇന്ത്യൻ ഡુപ്ലിക്കേറ്റ്-കീ ഷോപ്പുകൾക്കായുള്ള ധീരവും സ്വർണ്ണ-നിലവാരമുള്ളതുമായ വർക്ക്‌സ്പേസ് — ഉപഭോക്താക്കൾ, കീകൾ, ഓർഡറുകൾ, റിപ്പോർട്ടുകൾ എല്ലാം ഒരിടത്ത്.',
     footerExploreHeading: 'പര്യവേക്ഷണം ചെയ്യുക',
