@@ -123,8 +123,8 @@ const PUBLIC_BASE_URL = 'https://keyshops.in';
 // them. Paths must match PUBLIC_PATH_BY_PAGE in App.jsx.
 const PAGE_META = {
   home: {
-    title: 'Key Shops — Duplicate Key Shop Management Software for India',
-    description: 'Key Shops is the gold-standard workspace for Indian duplicate-key shops - manage customers, keys, store inventory and reports in one bold dashboard. Trusted by 500+ key shops across India.',
+    title: 'Key Shop - Duplicate Keys Near Me | Car, Bike & Home Keys',
+    description: 'KeyShops.in connects you with verified key shops for duplicate keys, key replacement & lost key services. Find car keys, bike keys, home keys near you across Tamil Nadu, Karnataka & Telangana.',
     path: '/',
   },
   search: {
