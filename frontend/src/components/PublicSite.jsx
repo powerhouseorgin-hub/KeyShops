@@ -401,9 +401,15 @@ function HomePage({ onNavigate, t }) {
   );
 }
 
-function ShopResultCard({ shop, index, t }) {
+function ShopResultCard({ shop, index, t, onOpen }) {
   return (
-    <Reveal delay={index * 50} className="card public-shop-card">
+    <Reveal
+      as="button"
+      type="button"
+      delay={Math.min(index, 8) * 50}
+      className="card public-shop-card"
+      onClick={() => onOpen(shop)}
+    >
       <div className="public-shop-card-top">
         <div className="icon-badge solid"><Store /></div>
         <div>
@@ -422,35 +428,124 @@ function ShopResultCard({ shop, index, t }) {
       {shop.phone && (
         <div className="public-shop-meta"><Phone className="h-3.5 w-3.5" /> {shop.phone}</div>
       )}
-      {shop.website && (
-        <div className="public-shop-meta">
-          <Globe className="h-3.5 w-3.5" />
-          <a href={shop.website.startsWith('http') ? shop.website : `https://${shop.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold)', textDecoration: 'none' }}>
-            {shop.website}
-          </a>
-        </div>
-      )}
+      <div className="public-shop-card-cta">
+        {t('searchViewDetailsBtn')} <ArrowRight className="h-3.5 w-3.5" />
+      </div>
     </Reveal>
   );
 }
 
+function ShopDetailField({ icon: Icon, children }) {
+  return <div className="shop-detail-field">{Icon && <Icon className="h-4 w-4" />} <span>{children}</span></div>;
+}
+
+function ShopDetailModal({ shopId, api, t, onClose }) {
+  const [shop, setShop] = useState(null);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setShop(null);
+    setError(false);
+    api.getPublicShopById(shopId)
+      .then((res) => { if (!cancelled) setShop(res); })
+      .catch(() => { if (!cancelled) setError(true); });
+    return () => { cancelled = true; };
+  }, [shopId, api]);
+
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <div className="shop-detail-backdrop" onClick={onClose}>
+      <div className="shop-detail-dialog card animate-fade-in" onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="shop-detail-close" onClick={onClose} aria-label={t('modalCloseLabel')}>
+          <X className="h-4 w-4" />
+        </button>
+        {error ? (
+          <div className="public-search-empty" style={{ padding: '40px 20px' }}>
+            <Clock className="h-6 w-6" style={{ color: 'var(--text-3)' }} />
+            <p>{t('shopDetailError')}</p>
+          </div>
+        ) : !shop ? (
+          <div className="public-search-loading" style={{ padding: '50px 20px' }}>
+            <RefreshCw className="h-5 w-5 animate-spin" style={{ color: 'var(--gold)' }} />
+            <span>{t('shopDetailLoading')}</span>
+          </div>
+        ) : (
+          <>
+            <div className="public-shop-card-top" style={{ marginBottom: 20 }}>
+              <div className="icon-badge solid" style={{ width: 52, height: 52 }}><Store /></div>
+              <div>
+                <h3 style={{ fontSize: 19 }}>{shop.name}</h3>
+                <span className="pill-badge" style={{ animation: 'none', padding: '4px 10px 4px 8px', fontSize: 11 }}>
+                  <Star className="h-3 w-3" /> {t('shopVerifiedBadge')}
+                </span>
+              </div>
+            </div>
+            <div className="shop-detail-fields">
+              {shop.category && <ShopDetailField icon={Tag}>{shop.category}</ShopDetailField>}
+              {shop.address && <ShopDetailField icon={MapPin}>{shop.address}</ShopDetailField>}
+              {shop.phone && <ShopDetailField icon={Phone}>{shop.phone}</ShopDetailField>}
+              {shop.website && (
+                <ShopDetailField icon={Globe}>
+                  <a href={shop.website.startsWith('http') ? shop.website : `https://${shop.website}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold)', textDecoration: 'none' }}>
+                    {shop.website}
+                  </a>
+                </ShopDetailField>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+const SEARCH_PAGE_SIZE = 12;
+
 function SearchPage({ api, t }) {
   const [query, setQuery] = useState('');
   const [shops, setShops] = useState([]);
+  const [nextCursor, setNextCursor] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
+  const [openShopId, setOpenShopId] = useState(null);
 
   const runSearch = async (q) => {
     setLoading(true);
     setError('');
     try {
-      const results = await api.searchPublicShops({ query: q });
-      setShops(Array.isArray(results) ? results : []);
+      const results = await api.searchPublicShops({ query: q, limit: SEARCH_PAGE_SIZE });
+      const items = Array.isArray(results) ? results : (results.items || []);
+      setShops(items);
+      setNextCursor(Array.isArray(results) ? null : results.nextCursor || null);
     } catch (err) {
       setError(err.message || t('searchErrorGeneric'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadMore = async () => {
+    if (!nextCursor || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const results = await api.searchPublicShops({ query: query.trim(), limit: SEARCH_PAGE_SIZE, cursor: nextCursor });
+      const items = Array.isArray(results) ? results : (results.items || []);
+      setShops((prev) => [...prev, ...items]);
+      setNextCursor(Array.isArray(results) ? null : results.nextCursor || null);
+    } catch {
+      // A failed "load more" leaves the existing results on screen untouched -
+      // no need for a dedicated error state for what's an additive action.
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -479,7 +574,7 @@ function SearchPage({ api, t }) {
         <p>{t('searchSubheading')}</p>
       </Reveal>
 
-      <Reveal className="public-search-box-wrap">
+      <Reveal delay={80} className="public-search-box-wrap">
         <form onSubmit={handleSubmit} className="search-box public-search-box">
           <Search />
           <input
@@ -488,14 +583,14 @@ function SearchPage({ api, t }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button type="submit" className="btn btn-primary btn-sm" disabled={loading}>
-            {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('searchBtn')}
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? <RefreshCw className="h-4 w-4 animate-spin" /> : <><Search className="h-4 w-4" /> <span>{t('searchBtn')}</span></>}
           </button>
         </form>
       </Reveal>
 
       {error && (
-        <div style={{ color: 'var(--red)', fontWeight: 700, fontSize: 13.5, marginBottom: 16 }}>{error}</div>
+        <div className="public-contact-form-alert" style={{ maxWidth: 640, margin: '0 auto 20px' }}>{error}</div>
       )}
 
       {loading ? (
@@ -511,11 +606,26 @@ function SearchPage({ api, t }) {
           </p>
         </div>
       ) : (
-        <div className="public-shop-grid">
-          {shops.map((shop, i) => (
-            <ShopResultCard key={shop.id} shop={shop} index={i} t={t} />
-          ))}
-        </div>
+        <>
+          <div className="public-shop-grid">
+            {shops.map((shop, i) => (
+              <ShopResultCard key={shop.id} shop={shop} index={i} t={t} onOpen={(s) => setOpenShopId(s.id)} />
+            ))}
+          </div>
+          {nextCursor && (
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: 32 }}>
+              <button type="button" className="btn btn-outline" onClick={loadMore} disabled={loadingMore}>
+                {loadingMore ? (
+                  <><RefreshCw className="h-4 w-4 animate-spin" /> {t('searchLoadingMoreText')}</>
+                ) : t('searchLoadMoreBtn')}
+              </button>
+            </div>
+          )}
+        </>
+      )}
+
+      {openShopId && (
+        <ShopDetailModal shopId={openShopId} api={api} t={t} onClose={() => setOpenShopId(null)} />
       )}
     </section>
   );
@@ -904,7 +1014,7 @@ export default function PublicSite({ page, onNavigate, api }) {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!fine || reduced) return undefined;
 
-    const TILT_SELECTOR = '.public-feature-card, .public-stat-card, .public-step, .public-contact-card';
+    const TILT_SELECTOR = '.public-feature-card, .public-stat-card, .public-step, .public-contact-card, .public-shop-card';
     const onMove = (e) => {
       const card = e.target.closest(TILT_SELECTOR);
       if (!card) return;

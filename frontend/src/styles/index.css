@@ -1291,6 +1291,17 @@ select.sel:focus { border-color: var(--gold); }
 }
 .login-shell .dropzone:hover { background: #FFFFFF; }
 
+/* Keyboard-focus rings for the public marketing site - buttons/nav items
+   otherwise have no visible focus state at all, which fails a keyboard
+   user trying to tab through Download App / Login / nav tabs. */
+.public-site .btn:focus-visible,
+.public-site .public-navtabs button:focus-visible,
+.public-site .public-nav-mobile button:focus-visible,
+.public-site .public-footer-links button:focus-visible,
+.public-site .public-nav-burger:focus-visible {
+  outline: 2px solid var(--gold); outline-offset: 2px;
+}
+
 .public-site { position: relative; overflow-x: clip; }
 
 /* scroll-reveal (paired with the <Reveal> wrapper in PublicSite.jsx) */
@@ -1576,25 +1587,74 @@ select.sel:focus { border-color: var(--gold); }
 .public-cta-banner .btn-outline:hover:not(:disabled) { background: #FFFFFF; }
 
 /* search page */
-.public-search-box-wrap { max-width: 640px; margin: 0 auto 36px; }
-.public-search-box { min-width: 0; width: 100%; padding: 8px 8px 8px 18px; gap: 10px; }
-.public-search-box input { font-size: 14px; }
+.public-search-box-wrap { max-width: 760px; margin: 0 auto 48px; }
+.public-search-box { min-width: 0; width: 100%; padding: 10px 10px 10px 22px; gap: 12px; border-radius: 999px; }
+.public-search-box input { font-size: 16px; }
+.public-search-box .btn { flex-shrink: 0; }
+@media (max-width: 480px) {
+  /* Below ~480px the pill can't fit an icon + input + full-width button on
+     one row without crushing the input - drop to icon-only so the row
+     still reads as one search bar instead of wrapping awkwardly. */
+  .public-search-box .btn span { display: none; }
+}
 .public-search-loading, .public-search-empty {
   display: flex; align-items: center; justify-content: center; gap: 10px;
-  color: var(--text-2); font-size: 13.5px; font-weight: 700; padding: 50px 20px; text-align: center;
+  color: var(--text-2); font-size: 13.5px; font-weight: 700; padding: 60px 20px; text-align: center;
 }
 .public-search-empty { flex-direction: column; }
-.public-shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-@media (max-width: 920px) { .public-shop-grid { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 620px) { .public-shop-grid { grid-template-columns: 1fr; } }
+.public-shop-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;
+  perspective: 1400px;
+}
+.public-shop-card {
+  text-align: left; display: block; width: 100%; border: 1px solid var(--border);
+  cursor: pointer; font-family: var(--sans);
+  transition: transform .25s cubic-bezier(.2,.7,.3,1), border-color .25s ease, box-shadow .25s ease;
+  transform-style: preserve-3d; will-change: transform;
+}
+.public-shop-card:hover { border-color: rgba(122, 18, 32, 0.3); box-shadow: 0 20px 36px -18px rgba(30, 27, 23, .32); }
+.public-shop-card:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+@media not all and (hover: hover) and (pointer: fine) {
+  .public-shop-card:hover { transform: translateY(-4px); }
+}
 .public-shop-card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.public-shop-card-top h3 { font-size: 15.5px; margin-bottom: 4px; }
+.public-shop-card-top h3 { font-size: 17px; margin-bottom: 5px; }
 .public-shop-logo { width: 44px; height: 44px; border-radius: 13px; object-fit: cover; flex-shrink: 0; }
 .public-shop-meta {
-  display: flex; align-items: center; gap: 7px;
-  color: var(--text-2); font-size: 12.5px; font-weight: 600; margin-top: 6px;
+  display: flex; align-items: center; gap: 8px;
+  color: var(--text-2); font-size: 13px; font-weight: 600; margin-top: 8px;
 }
 .public-shop-meta svg { color: var(--text-3); flex-shrink: 0; }
+.public-shop-card-cta {
+  display: flex; align-items: center; gap: 6px;
+  color: var(--gold); font-weight: 800; font-size: 12.5px;
+  margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border);
+}
+
+/* shop detail modal (Find a Shop page) */
+.shop-detail-backdrop {
+  position: fixed; inset: 0; z-index: 400;
+  background: rgba(30, 27, 23, .55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.shop-detail-dialog {
+  position: relative; width: 100%; max-width: 480px; max-height: 85vh; overflow-y: auto;
+  padding: 32px 28px;
+}
+.shop-detail-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--card-2); border: 1px solid var(--border-2); color: var(--text-2);
+  transition: background .18s ease, color .18s ease;
+}
+.shop-detail-close:hover { background: var(--gold-dim); color: var(--gold); }
+.shop-detail-fields { display: flex; flex-direction: column; gap: 14px; }
+.shop-detail-field {
+  display: flex; align-items: flex-start; gap: 10px;
+  color: var(--text-1); font-size: 14px; font-weight: 600; line-height: 1.5;
+}
+.shop-detail-field svg { color: var(--text-3); flex-shrink: 0; margin-top: 2px; }
 
 /* about / contact */
 .public-contact-grid {
@@ -1628,7 +1688,7 @@ select.sel:focus { border-color: var(--gold); }
   font-size: 15px; padding-top: 15px; padding-bottom: 15px;
 }
 .public-contact-form-card .btn { font-size: 15.5px; padding: 15px 26px; }
-.public-contact-form-card .public-contact-form-alert {
+.public-contact-form-alert {
   background: var(--red-dim); color: var(--red); border: 1px solid rgba(185, 28, 28, 0.25);
   border-radius: 12px; padding: 12px 16px; font-weight: 700; font-size: 13.5px; margin-bottom: 18px;
 }
