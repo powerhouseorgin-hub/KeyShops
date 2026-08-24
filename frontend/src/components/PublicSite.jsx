@@ -35,7 +35,7 @@ const APK_DOWNLOAD_FILENAME = 'KeyShop.apk';
 // Fades + slides a section in once it scrolls into view. Reusable wrapper so
 // every section on every public page gets the same scroll-reveal treatment
 // without repeating IntersectionObserver boilerplate.
-function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
+function Reveal({ children, className = '', delay = 0, as: Tag = 'div', style }) {
   const ref = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -59,7 +59,7 @@ function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
     <Tag
       ref={ref}
       className={`reveal ${visible ? 'reveal-visible' : ''} ${className}`}
-      style={{ transitionDelay: `${delay}ms` }}
+      style={{ ...style, transitionDelay: `${delay}ms` }}
     >
       {children}
     </Tag>
@@ -546,7 +546,7 @@ function AboutPage({ t }) {
         ))}
       </div>
 
-      <Reveal className="public-cta-banner card" style={{ marginTop: 40 }}>
+      <Reveal className="public-cta-banner card" style={{ marginTop: 72 }}>
         <div>
           <h2>{t('aboutCtaHeading')}</h2>
           <p>{t('aboutCtaSubtext')}</p>
