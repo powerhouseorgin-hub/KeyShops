@@ -235,7 +235,7 @@ function PublicFooter({ onNavigate, t }) {
           <div className="brand" style={{ marginBottom: 14 }}>
             <img src={keyShopLogoSm} alt="Key Shop" className="brand-logo" width={170} height={92} />
           </div>
-          <p style={{ color: 'var(--text-2)', fontSize: 13.5, fontWeight: 600, maxWidth: 320, lineHeight: 1.6 }}>
+          <p style={{ color: '#E9D9D9', fontSize: 13.5, fontWeight: 600, maxWidth: 320, lineHeight: 1.6 }}>
             {t('footerTagline')}
           </p>
         </div>
@@ -577,8 +577,12 @@ function ContactPage({ api, t }) {
       // delivery involved, but the message does actually reach the business.
       await api.submitContactMessage(form);
       setSubmitted(true);
-    } catch (err) {
-      setError(err.message || t('contactErrorGeneric'));
+    } catch {
+      // The shared API client's own error messages are never translated
+      // (they come from the backend or a hardcoded English fallback), so
+      // always show our own translated string here instead of leaking
+      // English text into a non-English UI.
+      setError(t('contactErrorGeneric'));
     } finally {
       setSubmitting(false);
     }
@@ -854,6 +858,40 @@ export default function PublicSite({ page, onNavigate, api }) {
     setLang(code);
     localStorage.setItem('kee_lang', code);
   };
+
+  // CSS-only-adjacent 3D tilt for feature/stat/step cards: one delegated
+  // mousemove/mouseout listener (not one per card) computes rotateX/rotateY
+  // from cursor position and writes it as an inline transform. No animation
+  // library involved - just a couple of transform writes, and it never
+  // attaches at all on touch devices or with reduced-motion requested, so
+  // it costs nothing there.
+  useEffect(() => {
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!fine || reduced) return undefined;
+
+    const TILT_SELECTOR = '.public-feature-card, .public-stat-card, .public-step';
+    const onMove = (e) => {
+      const card = e.target.closest(TILT_SELECTOR);
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `perspective(900px) rotateX(${(-py * 7).toFixed(2)}deg) rotateY(${(px * 9).toFixed(2)}deg) translateY(-4px)`;
+    };
+    const onOut = (e) => {
+      const card = e.target.closest(TILT_SELECTOR);
+      if (!card || card.contains(e.relatedTarget)) return;
+      card.style.transform = '';
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseout', onOut);
+    return () => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseout', onOut);
+    };
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
