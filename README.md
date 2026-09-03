@@ -17,7 +17,7 @@ The product ships as:
 
 **Live:**
 - Web app / marketing site: https://keyshops.in (Firebase Hosting)
-- Backend API: https://kee-dopg.onrender.com
+- Backend API: https://api.keyshops.in
 
 ## Table of contents
 
