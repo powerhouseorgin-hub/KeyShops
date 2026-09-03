@@ -77,7 +77,7 @@ function CustomerCareView({ t, api }) {
               return (
                 <div key={idx} className="product-card" style={{ borderRadius: 14 }}>
                   <div className="product-img" style={{ height: 92 }}>
-                    <img src={thumbnail} alt={vid.name} className="w-full h-full object-cover" style={{ position: 'absolute', inset: 0, opacity: .6 }} />
+                    <img src={thumbnail} alt={vid.name} loading="lazy" className="w-full h-full object-cover" style={{ position: 'absolute', inset: 0, opacity: .6 }} />
                     <a
                       href={vid.url}
                       target="_blank"

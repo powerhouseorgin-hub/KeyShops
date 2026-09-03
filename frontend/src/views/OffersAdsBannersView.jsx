@@ -87,7 +87,7 @@ function OffersAdsBannersView({ t, api }) {
                     onClick={() => setViewingAd(ad)}
                     style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${accents[i % accents.length]}`, background: 'var(--card-2)', cursor: 'pointer' }}
                   >
-                    <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} style={{ width: '100%', height: 150, objectFit: 'cover' }} />
+                    <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} loading="lazy" style={{ width: '100%', height: 150, objectFit: 'cover' }} />
                     <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
                       <span className="badge" style={{ alignSelf: 'flex-start', background: accents[i % accents.length], color: 'var(--bg-0, #0a0908)', fontSize: 10 }}>
                         {typeLabel[ad.type] || ad.type}
@@ -108,7 +108,7 @@ function OffersAdsBannersView({ t, api }) {
                   <div key={promo.id} className="product-card">
                     <div className="product-img" style={{ height: 150, aspectRatio: '1 / 1', maxHeight: 190 }}>
                       {promo.imageUrl ? (
-                        <img src={cleanGoogleImageUrl(promo.imageUrl)} alt={promo.title} className="w-full h-full object-cover" style={{ opacity: 0.9 }} />
+                        <img src={cleanGoogleImageUrl(promo.imageUrl)} alt={promo.title} loading="lazy" className="w-full h-full object-cover" style={{ opacity: 0.9 }} />
                       ) : (
                         <div className="icon-badge rose"><BadgePercent /></div>
                       )}

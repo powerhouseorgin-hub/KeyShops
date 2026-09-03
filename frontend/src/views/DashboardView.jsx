@@ -361,7 +361,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
                     key={ad.id}
                     style={{ borderRadius: 16, overflow: 'hidden', border: `1px solid ${accent}`, background: 'var(--card-2)', display: 'flex', flexDirection: 'column' }}
                   >
-                    <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} style={{ width: '100%', height: 160, objectFit: 'cover' }} />
+                    <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} loading="lazy" style={{ width: '100%', height: 160, objectFit: 'cover' }} />
                     <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
                       <span className="badge" style={{ alignSelf: 'flex-start', background: accent, color: 'var(--bg-0, #0a0908)', fontSize: 10 }}>
                         {ad.type === 'BANNER' ? t('banner') : ad.type === 'NOTICE' ? t('notice') : t('offer')}

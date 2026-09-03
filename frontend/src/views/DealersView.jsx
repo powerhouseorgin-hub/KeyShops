@@ -161,7 +161,7 @@ function DealersView({ t, api, defaultTown, locationReady }) {
             <div key={dealer.id} className="dealer-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                 <div className="dealer-logo">
-                  <img src={categoryImage(dealer.category)} alt={dealer.name} />
+                  <img src={categoryImage(dealer.category)} alt={dealer.name} loading="lazy" />
                 </div>
                 <div className="dealer-info">
                   <div className="dealer-name">{dealer.name}</div>

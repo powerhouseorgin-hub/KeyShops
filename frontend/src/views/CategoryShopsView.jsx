@@ -217,7 +217,7 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTo
             <div key={dealer.id} className="dealer-row">
               <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                 <div className="dealer-logo" style={{ background: 'var(--card-2)', padding: 4 }}>
-                  <img src={categoryImage(dealer.category)} alt={dealer.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                  <img src={categoryImage(dealer.category)} alt={dealer.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                 </div>
                 <div className="dealer-info">
                   <div className="dealer-name">{dealer.name}</div>

@@ -226,7 +226,16 @@ let gpsDefaultLocationAttempted = false;
 // is very likely already resolved by the time a real user reaches anything
 // that needs it (the login overlay, or an already-authenticated session's
 // dashboard).
-const translationsPromise = import('./i18n/translations');
+//
+// Only actually kicked off once App() knows it's needed (isAuthenticated, or
+// the login screen) - see the effect further down that calls this. A plain
+// module-scope `import()` here would fetch it unconditionally for every
+// visitor, including anonymous PublicSite/PublicMobileApp visitors who - per
+// the paragraph above - never call t() at all.
+let translationsPromise = null;
+function loadTranslations() {
+  return translationsPromise || (translationsPromise = import('./i18n/translations'));
+}
 
 // Shown in place of any t()-dependent UI (the login/OTP/registration
 // overlay, or the authenticated dashboard) for the brief window - typically
@@ -250,9 +259,6 @@ export default function App() {
   const { user, isAuthenticated, loading, login, logout, api } = useAuth();
   const [lang, setLang] = useState(localStorage.getItem('kee_lang') || 'en');
   const [langData, setLangData] = useState(null);
-  useEffect(() => {
-    translationsPromise.then((m) => setLangData(m.default));
-  }, []);
   const t = (key) => langData?.[lang]?.[key] || langData?.['en']?.[key] || key;
 
   // No-ops until VITE_GA_MEASUREMENT_ID is configured - see analytics.js.
@@ -568,6 +574,16 @@ export default function App() {
     if (IS_NATIVE_APP || typeof window === 'undefined') return 'home';
     return PUBLIC_PAGE_BY_PATH[window.location.pathname] || 'home';
   });
+  // Translations are only ever rendered for an authenticated dashboard or
+  // the login screen (see the render branches below) - anonymous visitors
+  // browsing PublicSite/PublicMobileApp never call t(), so this only kicks
+  // off the ~500KB fetch once one of those two cases is actually true,
+  // instead of unconditionally for every visitor.
+  useEffect(() => {
+    if (isAuthenticated || publicPage === 'login') {
+      loadTranslations().then((m) => setLangData(m.default));
+    }
+  }, [isAuthenticated, publicPage]);
   // Track special routes (blog posts and location pages)
   const [specialRoute, setSpecialRoute] = useState(() => {
     if (IS_NATIVE_APP || typeof window === 'undefined') return null;
