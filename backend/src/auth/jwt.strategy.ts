@@ -3,22 +3,15 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { TenantService } from '../tenant/tenant.service';
 import { getShopSubscriptionState, SUBSCRIPTION_EXPIRED_MESSAGE } from '../common/subscription-status';
+import { getRequiredSecret } from '../common/required-env';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly tenantService: TenantService) {
-    // Falls back to a hardcoded secret for development convenience if JWT_SECRET
-    // isn't set. If this fallback is ever actually in use in a real environment,
-    // anyone who knows a user's id (the JWT's `sub`) can forge a valid session for
-    // them using this publicly-visible string. Warn loudly rather than silently
-    // using it.
-    if (!process.env.JWT_SECRET) {
-      console.error('[SECURITY WARNING] JWT_SECRET is not set - falling back to a hardcoded, publicly-visible secret. Set JWT_SECRET in this environment immediately.');
-    }
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'kee-jwt-super-secret-key-2026-phase-1',
+      secretOrKey: getRequiredSecret('JWT_SECRET', 'kee-jwt-super-secret-key-2026-phase-1'),
     });
   }
 

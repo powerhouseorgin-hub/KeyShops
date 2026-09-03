@@ -6,12 +6,13 @@ import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { RolesGuard } from './roles.guard';
 import { PaymentModule } from '../payment/payment.module';
+import { getRequiredSecret } from '../common/required-env';
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'kee-jwt-super-secret-key-2026-phase-1',
+      secret: getRequiredSecret('JWT_SECRET', 'kee-jwt-super-secret-key-2026-phase-1'),
       signOptions: { expiresIn: '24h' },
     }),
     PaymentModule,
