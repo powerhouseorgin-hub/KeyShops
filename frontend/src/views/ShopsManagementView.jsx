@@ -9,6 +9,7 @@ import { useLocationFilter } from '../utils/locationFilter';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import CustomSelect from '../components/CustomSelect';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
+import { useSubmitting } from '../hooks/useSubmitting';
 import {
   Key, Check, Plus, Settings, FileText, Search, MapPin, Camera, AlertTriangle,
   RefreshCw, Layers, Edit, DollarSign, ChevronRight, CreditCard, Lock,
@@ -83,6 +84,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const [hasMore, setHasMore] = useState(shopsFirstPageCache ? shopsFirstPageCache.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
+  const { submitting: creatingShop, run: runCreateShop } = useSubmitting();
+  const { submitting: savingShopEdit, run: runSaveShopEdit } = useSubmitting();
+  const { submitting: updatingSubscription, run: runUpdateSubscription } = useSubmitting();
   const [showAddModal, setShowAddModal] = useState(false);
   // Search is now server-side (see fetchShops) so pagination stays correct
   // across pages - debounced before it reaches the server, since every
@@ -330,8 +334,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // requirements otherwise mirror the public self-registration wizard (see
   // AuthService.registerShop / RegisterShopDto): phone, category, and
   // address are all required there and required here too.
-  const handleCreateShopSubmit = async (e) => {
+  const handleCreateShopSubmit = (e) => {
     e.preventDefault();
+    runCreateShop(async () => {
     setErrorMsg('');
     try {
       if (!PHONE_REGEX.test(provisionPhone)) {
@@ -389,6 +394,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     } catch (err) {
       setErrorMsg(err.message || t('failedToCreateShop'));
     }
+    });
   };
 
   const resetAddForm = () => {
@@ -416,15 +422,17 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
 
   // Renews the shop's subscription for a fresh one-year YEARLY window,
   // starting now (see ShopService.updateSubscription).
-  const handleUpdateSubscriptionSubmit = async (e) => {
+  const handleUpdateSubscriptionSubmit = (e) => {
     e.preventDefault();
-    try {
-      await api.updateSubscription(selectedShop.id, { status: 'ACTIVE' });
-      setShowSubModal(false);
-      fetchShops();
-    } catch (e) {
-      alert(e.message);
-    }
+    runUpdateSubscription(async () => {
+      try {
+        await api.updateSubscription(selectedShop.id, { status: 'ACTIVE' });
+        setShowSubModal(false);
+        fetchShops();
+      } catch (e) {
+        alert(e.message);
+      }
+    });
   };
 
   const handleEditShopClick = (shop) => {
@@ -465,31 +473,33 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
     setShowEditModal(true);
   };
 
-  const handleEditShopSubmit = async (e) => {
+  const handleEditShopSubmit = (e) => {
     e.preventDefault();
     if (!PHONE_REGEX.test(editPhone)) {
       alert(PHONE_REGEX_MESSAGE);
       return;
     }
-    try {
-      // Verification documents are managed separately (relational
-      // ShopDocument table) and aren't editable from this form - only
-      // address/phone metadata is persisted here.
-      const companyDetails = JSON.stringify({
-        address: editAddress,
-        gst: editGst,
-        phone: editPhone,
-      });
+    runSaveShopEdit(async () => {
+      try {
+        // Verification documents are managed separately (relational
+        // ShopDocument table) and aren't editable from this form - only
+        // address/phone metadata is persisted here.
+        const companyDetails = JSON.stringify({
+          address: editAddress,
+          gst: editGst,
+          phone: editPhone,
+        });
 
-      await api.updateShop(selectedShop.id, {
-        name: editName,
-        companyDetails
-      });
-      setShowEditModal(false);
-      fetchShops();
-    } catch (err) {
-      alert(err.message || t('updateFailedMsg'));
-    }
+        await api.updateShop(selectedShop.id, {
+          name: editName,
+          companyDetails
+        });
+        setShowEditModal(false);
+        fetchShops();
+      } catch (err) {
+        alert(err.message || t('updateFailedMsg'));
+      }
+    });
   };
 
   return (
@@ -587,7 +597,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                   <div key={s.id} className="dealer-row" onClick={() => setFullSettingsShopId(s.id)}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 14, minWidth: 0, flex: 1 }}>
                       <div className="dealer-logo">
-                        <img src={s.shopPhoto || keyShopLogo} alt={s.name} />
+                        <img src={s.shopPhoto || keyShopLogo} alt={s.name} loading="lazy" />
                       </div>
                       <div className="dealer-info">
                         <div className="dealer-name" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
@@ -869,6 +879,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="flex justify-end gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                 <button
                   type="button" onClick={() => { resetAddForm(); setShowAddModal(false); }}
+                  disabled={creatingShop}
                   className="btn btn-ghost"
                 >
                   {t('btnCancel')}
@@ -876,7 +887,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 <button
                   type="submit"
                   className="btn btn-primary"
+                  disabled={creatingShop}
                 >
+                  {creatingShop && <RefreshCw className="h-4 w-4 animate-spin" />}
                   {t('provisionAccountBtn')}
                 </button>
               </div>
@@ -1027,6 +1040,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="flex justify-end gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                 <button
                   type="button" onClick={() => setShowEditModal(false)}
+                  disabled={savingShopEdit}
                   className="btn btn-ghost"
                 >
                   {t('btnCancel')}
@@ -1034,7 +1048,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 <button
                   type="submit"
                   className="btn btn-primary"
+                  disabled={savingShopEdit}
                 >
+                  {savingShopEdit && <RefreshCw className="h-4 w-4 animate-spin" />}
                   {t('saveSettings')}
                 </button>
               </div>
@@ -1085,6 +1101,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
               <div className="flex justify-end gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                 <button
                   type="button" onClick={() => setShowSubModal(false)}
+                  disabled={updatingSubscription}
                   className="btn btn-ghost"
                 >
                   {t('btnCancel')}
@@ -1092,7 +1109,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                 <button
                   type="submit"
                   className="btn btn-primary"
+                  disabled={updatingSubscription}
                 >
+                  {updatingSubscription && <RefreshCw className="h-4 w-4 animate-spin" />}
                   {t('updatePlanBtn')}
                 </button>
               </div>

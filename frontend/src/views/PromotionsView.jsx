@@ -4,6 +4,7 @@ import { useBackHandler } from '../utils/backHandler';
 import { cleanGoogleImageUrl, resizeImageFileToBlob } from '../utils/imageUtils';
 import { primeStoragePermission } from '../utils/platform';
 import { useLocationFilter } from '../utils/locationFilter';
+import { useSubmitting } from '../hooks/useSubmitting';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import CustomSelect from '../components/CustomSelect';
 import PriceTag from '../components/PriceTag';
@@ -89,6 +90,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   useBackHandler(showAddModal, () => setShowAddModal(false));
   const [editingId, setEditingId] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const { submitting, run } = useSubmitting();
 
   // Product Details navigation stack - tapping a product card pushes it;
   // tapping a Related Product on the details page pushes another level
@@ -350,43 +352,45 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
     setShowAddModal(true);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorMsg('');
-    try {
-      const dto = {
-        // The Listing Type picker (Inventory Product / Advertisement /
-        // Offer-Discount) has been removed from the UI - every new listing
-        // is always a plain PRODUCT. `type` is only ever something other
-        // than 'PRODUCT' here when editing a pre-existing legacy AD/OFFER
-        // listing (handleEditClick loads its original type), so this line
-        // preserves that legacy record's type instead of silently
-        // converting it.
-        type,
-        title,
-        description: description || undefined,
-        // Always sent as a real array (even []) rather than undefined-when-
-        // empty, so removing every photo on an edit actually clears them
-        // server-side instead of being read as "leave unchanged".
-        imageUrls,
-        price: price === '' ? undefined : Number(price),
-        productType: productType || undefined,
-        phone: phone || undefined,
-        discountPercentage: discountPercentage !== '' ? Number(discountPercentage) : undefined,
-        validUntil: (type === 'OFFER' || type === 'PRODUCT') && validUntil ? new Date(validUntil).toISOString() : undefined,
-        linkedPromotionId: type === 'OFFER' && linkedPromotionId ? linkedPromotionId : undefined,
-      };
-      if (editingId) {
-        await api.updatePromotion(editingId, dto);
-      } else {
-        await api.createPromotion(dto);
+    run(async () => {
+      setErrorMsg('');
+      try {
+        const dto = {
+          // The Listing Type picker (Inventory Product / Advertisement /
+          // Offer-Discount) has been removed from the UI - every new listing
+          // is always a plain PRODUCT. `type` is only ever something other
+          // than 'PRODUCT' here when editing a pre-existing legacy AD/OFFER
+          // listing (handleEditClick loads its original type), so this line
+          // preserves that legacy record's type instead of silently
+          // converting it.
+          type,
+          title,
+          description: description || undefined,
+          // Always sent as a real array (even []) rather than undefined-when-
+          // empty, so removing every photo on an edit actually clears them
+          // server-side instead of being read as "leave unchanged".
+          imageUrls,
+          price: price === '' ? undefined : Number(price),
+          productType: productType || undefined,
+          phone: phone || undefined,
+          discountPercentage: discountPercentage !== '' ? Number(discountPercentage) : undefined,
+          validUntil: (type === 'OFFER' || type === 'PRODUCT') && validUntil ? new Date(validUntil).toISOString() : undefined,
+          linkedPromotionId: type === 'OFFER' && linkedPromotionId ? linkedPromotionId : undefined,
+        };
+        if (editingId) {
+          await api.updatePromotion(editingId, dto);
+        } else {
+          await api.createPromotion(dto);
+        }
+        setShowAddModal(false);
+        resetForm();
+        fetchPromotions();
+      } catch (err) {
+        setErrorMsg(err.message || (editingId ? t('failedUpdateListing') : t('failedPublishListing')));
       }
-      setShowAddModal(false);
-      resetForm();
-      fetchPromotions();
-    } catch (err) {
-      setErrorMsg(err.message || (editingId ? t('failedUpdateListing') : t('failedPublishListing')));
-    }
+    });
   };
 
   const handleDelete = async (id) => {
@@ -907,8 +911,9 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={imageUploading}
+                  disabled={imageUploading || submitting}
                 >
+                  {submitting && <RefreshCw className="h-4 w-4 animate-spin" />}
                   {editingId ? t('saveChangesBtn') : t('publishListingBtn')}
                 </button>
               </div>

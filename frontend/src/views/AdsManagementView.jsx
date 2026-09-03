@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useBackHandler } from '../utils/backHandler';
+import { useSubmitting } from '../hooks/useSubmitting';
 import { cleanGoogleImageUrl, resizeImageFileToBlob } from '../utils/imageUtils';
 import { primeStoragePermission } from '../utils/platform';
 import CustomSelect from '../components/CustomSelect';
@@ -29,6 +30,7 @@ function AdsManagementView({ t, api }) {
   const [showAddModal, setShowAddModal] = useState(false);
   useBackHandler(showAddModal, () => setShowAddModal(false));
   const [editingAdId, setEditingAdId] = useState(null);
+  const { submitting, run } = useSubmitting();
 
   // Form states
   const [title, setTitle] = useState('');
@@ -97,29 +99,31 @@ function AdsManagementView({ t, api }) {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorMsg('');
-    try {
-      const dto = {
-        title, imageUrl, type,
-        startDate: new Date(startDate).toISOString(),
-        endDate: new Date(endDate).toISOString(),
-        priority: Number(priority),
-        targetAll,
-        targetShops
-      };
-      if (editingAdId) {
-        await api.updateAdvertisement(editingAdId, dto);
-      } else {
-        await api.createAdvertisement(dto);
+    run(async () => {
+      setErrorMsg('');
+      try {
+        const dto = {
+          title, imageUrl, type,
+          startDate: new Date(startDate).toISOString(),
+          endDate: new Date(endDate).toISOString(),
+          priority: Number(priority),
+          targetAll,
+          targetShops
+        };
+        if (editingAdId) {
+          await api.updateAdvertisement(editingAdId, dto);
+        } else {
+          await api.createAdvertisement(dto);
+        }
+        setShowAddModal(false);
+        resetForm();
+        fetchAds();
+      } catch (err) {
+        setErrorMsg(err.message || (editingAdId ? t('failedUpdateCampaign') : t('failedScheduleCampaign')));
       }
-      setShowAddModal(false);
-      resetForm();
-      fetchAds();
-    } catch (err) {
-      setErrorMsg(err.message || (editingAdId ? t('failedUpdateCampaign') : t('failedScheduleCampaign')));
-    }
+    });
   };
 
   const resetForm = () => {
@@ -225,7 +229,7 @@ function AdsManagementView({ t, api }) {
               <div key={ad.id} className="product-card">
                 <div className="product-img" style={{ height: 160 }}>
                   {ad.imageUrl ? (
-                    <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} className="w-full h-full object-cover" style={{ opacity: 0.9 }} />
+                    <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title} loading="lazy" className="w-full h-full object-cover" style={{ opacity: 0.9 }} />
                   ) : (
                     <Icon />
                   )}
@@ -428,8 +432,9 @@ function AdsManagementView({ t, api }) {
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={imageUploading}
+                  disabled={imageUploading || submitting}
                 >
+                  {submitting && <RefreshCw className="h-4 w-4 animate-spin" />}
                   {editingAdId ? t('saveChangesBtn') : t('scheduleCampaignBtn')}
                 </button>
               </div>

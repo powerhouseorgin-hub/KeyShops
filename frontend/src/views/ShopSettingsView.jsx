@@ -5,6 +5,7 @@ import { useBackHandler } from '../utils/backHandler';
 import { getAssetUrl, downloadAsset, filenameForAsset } from '../apiConfig';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../utils/platform';
+import { useSubmitting } from '../hooks/useSubmitting';
 import {
   AlertTriangle, Award, BadgePercent, Ban, Calendar, Camera, Check, CheckCircle2, Copy,
   Download, Edit, Eye, EyeOff, FileCheck, FileText,
@@ -48,6 +49,7 @@ function ShopSettingsView({ t, api, shopId }) {
   // against an accidental keystroke/paste silently changing the shop's
   // name/phone/address while just viewing this screen.
   const [editMode, setEditMode] = useState(false);
+  const { submitting: savingWorkspace, run: runSaveWorkspace } = useSubmitting();
   // Only meaningful (and only rendered) when a Super Admin is managing
   // another shop's settings (shopId is set) - a Shop Admin viewing their own
   // settings has no use for suspending themselves.
@@ -167,19 +169,21 @@ function ShopSettingsView({ t, api, shopId }) {
     await api.updateSettings({ name: shopName, companyDetails }, shopId);
   };
 
-  const handleUpdate = async (e) => {
+  const handleUpdate = (e) => {
     e.preventDefault();
     if (!PHONE_REGEX.test(phone)) {
       alert(PHONE_REGEX_MESSAGE);
       return;
     }
-    try {
-      await persistCompanyDetails();
-      alert(t('shopWorkspaceSettingsSavedMsg'));
-      setEditMode(false);
-    } catch (e) {
-      alert(e.message);
-    }
+    runSaveWorkspace(async () => {
+      try {
+        await persistCompanyDetails();
+        alert(t('shopWorkspaceSettingsSavedMsg'));
+        setEditMode(false);
+      } catch (e) {
+        alert(e.message);
+      }
+    });
   };
 
   // Discards any unsaved edits by re-fetching the last-saved values from the
@@ -670,11 +674,11 @@ function ShopSettingsView({ t, api, shopId }) {
 
               {editMode && (
                 <div className="form-action-bar flex justify-end" style={{ borderTop: '1px solid var(--border)', paddingTop: 20, marginTop: 20, gap: 10 }}>
-                  <button type="button" onClick={handleCancelEdit} className="btn btn-ghost">
+                  <button type="button" onClick={handleCancelEdit} disabled={savingWorkspace} className="btn btn-ghost">
                     <span>{t('btnCancel')}</span>
                   </button>
-                  <button type="submit" className="btn btn-primary">
-                    <Check />
+                  <button type="submit" className="btn btn-primary" disabled={savingWorkspace}>
+                    {savingWorkspace ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Check />}
                     <span>{t('saveWorkspaceDetailsBtn')}</span>
                   </button>
                 </div>

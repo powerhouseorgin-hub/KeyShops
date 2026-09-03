@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CustomSelect from '../components/CustomSelect';
 import CountUp from '../components/CountUp';
+import { useSubmitting } from '../hooks/useSubmitting';
 import {
   Banknote, Calendar, CalendarRange, Check, FileText, IndianRupee, Receipt, RefreshCw, TrendingUp,
 } from 'lucide-react';
@@ -14,6 +15,7 @@ let revenueRecordsCache = null;
 function RevenueManagementView({ t, api }) {
   const [records, setRecords] = useState(revenueRecordsCache || []);
   const [loading, setLoading] = useState(!revenueRecordsCache);
+  const { submitting, run } = useSubmitting();
 
   // Form states
   const [month, setMonth] = useState(new Date().getMonth() + 1);
@@ -38,7 +40,7 @@ function RevenueManagementView({ t, api }) {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     // `amount` comes straight off a text input's e.target.value, so it's a
     // string here (e.g. "25000") - Prisma's RevenueRecord.amount column is a
@@ -49,14 +51,16 @@ function RevenueManagementView({ t, api }) {
       alert(t('enterValidAmountMsg'));
       return;
     }
-    try {
-      await api.logRevenue(Number(month), Number(year), numericAmount, notes);
-      setAmount('');
-      setNotes('');
-      fetchRevenue();
-    } catch (e) {
-      alert(e.message);
-    }
+    run(async () => {
+      try {
+        await api.logRevenue(Number(month), Number(year), numericAmount, notes);
+        setAmount('');
+        setNotes('');
+        fetchRevenue();
+      } catch (e) {
+        alert(e.message);
+      }
+    });
   };
 
   const totalCollected = records.reduce((acc, r) => acc + Number(r.amount), 0);
@@ -191,8 +195,9 @@ function RevenueManagementView({ t, api }) {
             <button
               type="submit"
               className="btn btn-primary btn-block"
+              disabled={submitting}
             >
-              <Check />
+              {submitting ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Check />}
               <span>{t('logRevenuePayoutBtn')}</span>
             </button>
           </form>

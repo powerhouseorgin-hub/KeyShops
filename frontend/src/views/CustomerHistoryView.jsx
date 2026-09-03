@@ -7,6 +7,7 @@ import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import { primeStoragePermission } from '../utils/platform';
 import CustomSelect from '../components/CustomSelect';
+import { useSubmitting } from '../hooks/useSubmitting';
 import {
   Key, FileText, Search, MapPin, Camera, RefreshCw, Edit, ExternalLink,
   DollarSign, Eye, CheckCircle2, Lock, ShieldCheck, Phone, Calendar, User,
@@ -221,38 +222,42 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     return () => observer.disconnect();
   }, [hasMore, nextCursor, loadingMore, debouncedSearch, town]);
 
-  const handleSaveChanges = async (e) => {
+  const { submitting: savingCustomerEdit, run: runSaveCustomerEdit } = useSubmitting();
+
+  const handleSaveChanges = (e) => {
     e.preventDefault();
     if (!editPhoneVal || !PHONE_REGEX.test(editPhoneVal)) {
       alert(PHONE_REGEX_MESSAGE);
       return;
     }
-    try {
-      const finalAddress = `${editAddressLine}, ${editDistrict}, ${editStateVal}, India`;
-      await api.updateCustomer(selectedCust.id, {
-        name: editName,
-        phone: editPhoneVal,
-        address: finalAddress,
-        idProofType: editIdProofType,
-        idProofNumber: editIdProofNumber,
-        reason: editReason,
-        keyNumber: editKeyNumber,
-        vehicleNumber: editVehicleNumber,
-        capturedAddress: finalAddress
-      });
+    runSaveCustomerEdit(async () => {
+      try {
+        const finalAddress = `${editAddressLine}, ${editDistrict}, ${editStateVal}, India`;
+        await api.updateCustomer(selectedCust.id, {
+          name: editName,
+          phone: editPhoneVal,
+          address: finalAddress,
+          idProofType: editIdProofType,
+          idProofNumber: editIdProofNumber,
+          reason: editReason,
+          keyNumber: editKeyNumber,
+          vehicleNumber: editVehicleNumber,
+          capturedAddress: finalAddress
+        });
 
-      if (editUploadFile) {
-        await api.uploadDocument(selectedCust.id, `${editIdProofType} Copy`, editUploadFile);
+        if (editUploadFile) {
+          await api.uploadDocument(selectedCust.id, `${editIdProofType} Copy`, editUploadFile);
+        }
+
+        alert(t('customerComplianceRecordUpdatedMsg'));
+        setIsEditing(false);
+        setEditUploadFile(null);
+        setSelectedCust(null);
+        fetchHistory();
+      } catch (err) {
+        alert(err.message || t('failedSaveCustomerEditsMsg'));
       }
-
-      alert(t('customerComplianceRecordUpdatedMsg'));
-      setIsEditing(false);
-      setEditUploadFile(null);
-      setSelectedCust(null);
-      fetchHistory();
-    } catch (err) {
-      alert(err.message || t('failedSaveCustomerEditsMsg'));
-    }
+    });
   };
 
   return (
@@ -671,11 +676,13 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                       setIsEditing(false);
                       setEditUploadFile(null);
                     }}
+                    disabled={savingCustomerEdit}
                     className="btn btn-ghost"
                   >
                     {t('btnCancel')}
                   </button>
-                  <button type="submit" className="btn btn-primary">
+                  <button type="submit" className="btn btn-primary" disabled={savingCustomerEdit}>
+                    {savingCustomerEdit && <RefreshCw className="h-4 w-4 animate-spin" />}
                     {t('saveChangesBtn')}
                   </button>
                 </div>
