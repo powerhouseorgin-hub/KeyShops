@@ -62,15 +62,23 @@ function SuperCustomersView({ t, api, searchDispatch }) {
   useBackHandler(showCreateWizard, () => setShowCreateWizard(false));
   useBackHandler(!!fullEditCust, () => setFullEditCust(null));
 
+  // fetchCustomers() is called from the search effect and from the edit
+  // wizard's onDone success handler - see ShopsManagementView.jsx's
+  // identical fetchShopsSeq for why a sequence guard is needed so a fast
+  // search doesn't get overwritten by an older, slower-resolving one.
+  const fetchCustomersSeq = useRef(0);
+
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchCustomers = async () => {
+    const seq = ++fetchCustomersSeq.current;
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
     if (debouncedSearch || customers.length === 0) setLoading(true);
     try {
       const res = await api.getSuperCustomersPage({ search: debouncedSearch, limit: CUSTOMER_REGISTRY_PAGE_SIZE });
+      if (seq !== fetchCustomersSeq.current) return; // a newer fetchCustomers() has since started - discard this stale response
       setCustomers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -78,9 +86,10 @@ function SuperCustomersView({ t, api, searchDispatch }) {
         customersFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
       }
     } catch (e) {
+      if (seq !== fetchCustomersSeq.current) return;
       console.error(e);
     } finally {
-      setLoading(false);
+      if (seq === fetchCustomersSeq.current) setLoading(false);
     }
   };
 

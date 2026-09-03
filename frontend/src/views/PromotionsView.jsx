@@ -222,7 +222,15 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   // Loads the first page for the current filters (category chip / search /
   // onlyOffers) - called on mount and whenever any of those filters change,
   // replacing whatever was loaded before rather than appending to it.
+  // fetchPromotions() is called from the search/category/town filter effect
+  // and from the create/update-listing success handler - see
+  // ShopsManagementView.jsx's identical fetchShopsSeq for why a sequence
+  // guard is needed so a fast filter change can't be overwritten by an
+  // older, slower-resolving request.
+  const fetchPromotionsSeq = useRef(0);
+
   const fetchPromotions = async () => {
+    const seq = ++fetchPromotionsSeq.current;
     setLoading(true);
     try {
       const res = await api.getPromotions({
@@ -236,13 +244,15 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         search: debouncedQuery || undefined,
         town: town || undefined,
       });
+      if (seq !== fetchPromotionsSeq.current) return; // a newer fetchPromotions() has since started - discard this stale response
       setPromotions(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
     } catch (e) {
+      if (seq !== fetchPromotionsSeq.current) return;
       console.error(e);
     } finally {
-      setLoading(false);
+      if (seq === fetchPromotionsSeq.current) setLoading(false);
     }
   };
 

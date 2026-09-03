@@ -84,6 +84,15 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   const [hasMore, setHasMore] = useState(shopsFirstPageCache ? shopsFirstPageCache.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
+  // fetchShops() is called from several places (the search/filter effect,
+  // create/edit/subscription success handlers, the settings-modal close
+  // handler) - a fast search-then-search or search-during-save can start a
+  // second call before the first's response lands. Without this, whichever
+  // response resolves LAST wins regardless of which one was actually most
+  // recent, silently showing stale results for the current query. Bumped at
+  // the start of every call; a response is only applied if it's still the
+  // most recent call by the time it resolves.
+  const fetchShopsSeq = useRef(0);
   const { submitting: creatingShop, run: runCreateShop } = useSubmitting();
   const { submitting: savingShopEdit, run: runSaveShopEdit } = useSubmitting();
   const { submitting: updatingSubscription, run: runUpdateSubscription } = useSubmitting();
@@ -217,12 +226,14 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchShops = async () => {
+    const seq = ++fetchShopsSeq.current;
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
     if (debouncedShopSearchQuery || town || shops.length === 0) setLoading(true);
     try {
       const res = await api.getShopsPage({ search: debouncedShopSearchQuery, town, limit: SHOP_MANAGEMENT_PAGE_SIZE });
+      if (seq !== fetchShopsSeq.current) return; // a newer fetchShops() has since started - discard this stale response
       setShops(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -237,9 +248,10 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
         shopsFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
       }
     } catch (e) {
+      if (seq !== fetchShopsSeq.current) return;
       console.error(e);
     } finally {
-      setLoading(false);
+      if (seq === fetchShopsSeq.current) setLoading(false);
     }
   };
 

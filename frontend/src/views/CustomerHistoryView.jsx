@@ -44,6 +44,12 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
   const [hasMore, setHasMore] = useState(cachedHistoryPage ? cachedHistoryPage.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
+  // See ShopsManagementView.jsx's identical fetchShopsSeq for why this
+  // exists: fetchHistory() is called from the search/filter effect plus
+  // the save-customer-edit success handler, so a fast search-then-search
+  // (or a search racing a save) can otherwise apply whichever response
+  // resolves last instead of whichever was requested last.
+  const fetchHistorySeq = useRef(0);
   const [search, setSearch] = useState('');
   const [town, setTown] = useState('');
   // Debounced before it reaches the server - see PromotionsFeed's identical
@@ -169,12 +175,14 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchHistory = async () => {
+    const seq = ++fetchHistorySeq.current;
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
     if (debouncedSearch || town || customers.length === 0) setLoading(true);
     try {
       const res = await api.getCustomersPage({ search: debouncedSearch, town, limit: CUSTOMER_HISTORY_PAGE_SIZE });
+      if (seq !== fetchHistorySeq.current) return; // a newer fetchHistory() has since started - discard this stale response
       setCustomers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -182,9 +190,10 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
         customerHistoryFirstPageCache = { shopId: user.shopId, items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
       }
     } catch (e) {
+      if (seq !== fetchHistorySeq.current) return;
       console.error(e);
     } finally {
-      setLoading(false);
+      if (seq === fetchHistorySeq.current) setLoading(false);
     }
   };
 
