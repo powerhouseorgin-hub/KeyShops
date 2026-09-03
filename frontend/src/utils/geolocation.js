@@ -47,7 +47,17 @@ function classifyLocationError(e) {
   return err;
 }
 
-export async function resolveCurrentLocation() {
+// `timeoutMs` defaults to the full ~9s window, appropriate for an explicit
+// "use my current location" button a user just clicked and is actively
+// waiting on (Shop/Customer registration wizards). App.jsx's own silent,
+// automatic default-location resolution - which runs on every page load and
+// blocks every location-filtered screen's first render before the user did
+// anything - passes a much shorter timeout on web, since a desktop browser
+// has no real GPS chip and will essentially always burn the entire window
+// waiting for an accuracy that never arrives (native devices actually do
+// often get a good fix within a couple of seconds, so that background call
+// keeps the long timeout on native).
+export async function resolveCurrentLocation({ timeoutMs = 9000 } = {}) {
   const { Geolocation } = await import('@capacitor/geolocation');
 
   if (IS_NATIVE_APP) {
@@ -93,7 +103,7 @@ export async function resolveCurrentLocation() {
       }
     };
 
-    const timer = setTimeout(finish, 9000);
+    const timer = setTimeout(finish, timeoutMs);
 
     Geolocation.watchPosition({ enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }, (pos, err) => {
       if (err) {

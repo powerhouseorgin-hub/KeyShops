@@ -353,7 +353,13 @@ export default function App() {
     gpsDefaultLocationAttempted = true;
     (async () => {
       try {
-        const { lat, lng } = await resolveCurrentLocation();
+        // Short timeout on web: this is a silent background default, not
+        // something the user asked for, and a desktop browser has no real
+        // GPS chip - waiting the full ~9s here only delays the first render
+        // of every Shops/Products/Dealers screen for an accuracy fix that
+        // was never going to arrive. Native keeps the long window since a
+        // phone's GPS often does get a real fix within a couple of seconds.
+        const { lat, lng } = await resolveCurrentLocation({ timeoutMs: IS_NATIVE_APP ? 9000 : 3000 });
         const geo = await reverseGeocode(lat, lng);
         if (!geo) return;
         // `city` is the finer town-level granularity, `district` the
