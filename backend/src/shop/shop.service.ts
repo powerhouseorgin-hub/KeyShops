@@ -6,6 +6,7 @@ import { Role } from '@prisma/client';
 import { FileService } from '../customer/file.service';
 import { persistShopDocuments } from '../common/shop-document.util';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
+import { forwardGeocodeAddress } from '../common/geocode.util';
 
 // Shared `include` clause for pulling a shop's active (non-soft-deleted) documents.
 // Nested `include`/`select` relations are NOT covered by TenantService's soft-delete
@@ -17,6 +18,20 @@ const ACTIVE_DOCUMENTS_INCLUDE = {
     orderBy: { createdAt: 'desc' as const },
   },
 };
+
+// Pulls the free-text `address` field back out of a Shop.companyDetails JSON
+// blob, for forward-geocoding fallback when a shop has no GPS-derived
+// town/district. Never throws - companyDetails is a free-form nullable
+// string column, not a validated shape.
+function extractAddressText(companyDetails: string | null | undefined): string | null {
+  if (!companyDetails) return null;
+  try {
+    const parsed = JSON.parse(companyDetails);
+    return typeof parsed?.address === 'string' ? parsed.address : null;
+  } catch {
+    return null;
+  }
+}
 
 @Injectable()
 export class ShopService {
@@ -68,6 +83,28 @@ export class ShopService {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(dto.adminPassword, salt);
 
+    // This form has no GPS step (a Super Admin provisioning a shop remotely
+    // isn't standing at it), so town/district almost always arrive null -
+    // silently making the shop invisible to every location filter in the
+    // app. Fall back to forward-geocoding the typed address text before the
+    // DB write; best-effort (see forwardGeocodeAddress's own doc comment),
+    // so a geocoding hiccup never blocks shop creation. Done outside the
+    // transaction below since it's an external network call.
+    let resolvedTown = dto.town ?? null;
+    let resolvedDistrict = dto.district ?? null;
+    let resolvedLat = dto.latitude ?? null;
+    let resolvedLng = dto.longitude ?? null;
+    if (!resolvedTown && !resolvedDistrict) {
+      const addressText = extractAddressText(dto.companyDetails);
+      const geocoded = await forwardGeocodeAddress(addressText);
+      if (geocoded) {
+        resolvedTown = geocoded.town || null;
+        resolvedDistrict = geocoded.district || null;
+        resolvedLat = resolvedLat ?? geocoded.latitude;
+        resolvedLng = resolvedLng ?? geocoded.longitude;
+      }
+    }
+
     // Run in transaction to guarantee consistency
     return this.tenantService.prisma.$transaction(async (tx) => {
       // 1. Create Shop, automatically active - same as self-registration,
@@ -80,10 +117,10 @@ export class ShopService {
           themeColor: dto.themeColor || '#9C27B0',
           categoryId: dto.categoryId,
           referralCode: dto.adminPhone,
-          town: dto.town ?? null,
-          district: dto.district ?? null,
-          latitude: dto.latitude ?? null,
-          longitude: dto.longitude ?? null,
+          town: resolvedTown,
+          district: resolvedDistrict,
+          latitude: resolvedLat,
+          longitude: resolvedLng,
         },
       });
 

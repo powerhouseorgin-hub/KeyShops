@@ -460,10 +460,14 @@ export class CustomerService {
         { keyNumber: { contains: query, mode: 'insensitive' } },
       ];
     }
+    // masterKey is deliberately NOT included here - neither of this method's
+    // two frontend consumers (SuperCustomersView, KeysCatalogView) reads it,
+    // and each extra relation on a cross-region DB (see TtlCache's doc
+    // comment on why that round-trip cost matters) is a real, measured cost
+    // for zero benefit.
     const include = {
       documents: { where: { deletedAt: null }, orderBy: { createdAt: 'desc' as const } },
       shop: { select: { name: true } },
-      masterKey: { select: { category: true } },
     };
 
     if (!limit) {

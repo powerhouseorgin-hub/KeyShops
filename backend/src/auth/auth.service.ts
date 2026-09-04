@@ -10,6 +10,7 @@ import { PaymentService } from '../payment/payment.service';
 import { getFirebaseAdminApp } from './firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getShopSubscriptionState, SubscriptionState, SUBSCRIPTION_EXPIRED_MESSAGE } from '../common/subscription-status';
+import { forwardGeocodeAddress } from '../common/geocode.util';
 
 // bcrypt's cost factor is exponential (each +1 roughly doubles the CPU time
 // spent per hash/compare) - 12 was fine on typical hardware (~200-300ms) but
@@ -671,6 +672,27 @@ export class AuthService implements OnModuleInit {
     // equivalent fallback on shops created before this existed).
     const newShopReferralCode = dto.phone;
 
+    // The wizard's GPS ("Current Location") step is skippable, in which case
+    // dto.town/dto.city (district) arrive null and this shop becomes
+    // invisible to every town/district location filter in the app. Fall
+    // back to forward-geocoding the typed address text before the DB write;
+    // best-effort (see forwardGeocodeAddress's own doc comment), so a
+    // geocoding hiccup never blocks registration. Done outside the
+    // transaction below since it's an external network call.
+    let resolvedTown = dto.town ?? null;
+    let resolvedDistrict = dto.city ?? null;
+    let resolvedLat = dto.latitude ?? null;
+    let resolvedLng = dto.longitude ?? null;
+    if (!resolvedTown && !resolvedDistrict) {
+      const geocoded = await forwardGeocodeAddress(dto.location);
+      if (geocoded) {
+        resolvedTown = geocoded.town || null;
+        resolvedDistrict = geocoded.district || null;
+        resolvedLat = resolvedLat ?? geocoded.latitude;
+        resolvedLng = resolvedLng ?? geocoded.longitude;
+      }
+    }
+
     return this.tenantService.prisma.$transaction(async (tx) => {
       // 1. Create Shop, automatically active - no manual Super Admin approval
       // step is required before a shop can log in and start using the platform.
@@ -693,20 +715,22 @@ export class AuthService implements OnModuleInit {
           // idProofNumber for the same pattern.
           aadhaarNumber: dto.aadhaarNumber ? this.cryptoService.encrypt(dto.aadhaarNumber) : null,
           // GPS coordinates from the wizard's "Current Location" button, when
-          // the shop owner granted location permission (see RegisterShopDto).
-          latitude: dto.latitude ?? null,
-          longitude: dto.longitude ?? null,
+          // the shop owner granted location permission (see RegisterShopDto) -
+          // or, failing that, forward-geocoded from the typed address above.
+          latitude: resolvedLat,
+          longitude: resolvedLng,
           // Town/city-level locality auto-filled from reverse-geocoding (see
           // RegisterShopDto.town) - powers the public Shops/Machines town
-          // filter. Null when GPS wasn't used/available, same as lat/lng.
-          town: dto.town ?? null,
+          // filter. Falls back to forward-geocoding the typed address when
+          // GPS wasn't used/available, same as lat/lng above.
+          town: resolvedTown,
           // District-level locality - dto.city is, despite its name,
           // already the geocoded district value (Nominatim's state_district,
           // see captureShopLocation in App.jsx), previously only stored
           // inside companyDetails' JSON blob. Persisted here too now that
           // the location filter needs a real district column to match
           // against (see ShopService.searchPublicShops).
-          district: dto.city ?? null,
+          district: resolvedDistrict,
           // Type of shop being registered, picked from the Super-Admin-curated
           // dropdown (see ShopCategoryService).
           categoryId: dto.categoryId,
