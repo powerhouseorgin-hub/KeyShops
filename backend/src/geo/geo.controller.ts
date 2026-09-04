@@ -1,4 +1,17 @@
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
+import { TtlCache } from '../common/ttl-cache';
+
+// Keyed to ~11m precision (4 decimal places) - a "Current Location" click a
+// few meters from where someone else already resolved reverse-geocodes to
+// the same address anyway, and the underlying map data a physical
+// coordinate resolves to essentially never changes, so a long TTL is safe.
+// Capped at 2,000 entries (bounded/LRU - see TtlCache) since, unlike this
+// app's other TtlCache uses (a handful of shop categories), distinct
+// coordinates are a high-cardinality key space that would otherwise grow
+// for as long as the process stays up.
+const REVERSE_GEOCODE_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const reverseGeocodeCache = new TtlCache<any>(2000);
+const coordKey = (lat: number, lng: number) => `${lat.toFixed(4)}_${lng.toFixed(4)}`;
 
 // Server-side reverse-geocoding proxy.
 //
@@ -30,6 +43,10 @@ export class GeoController {
       throw new BadRequestException('lat and lng query params are required numbers.');
     }
 
+    const cacheKey = coordKey(latitude, longitude);
+    const cached = reverseGeocodeCache.get(cacheKey);
+    if (cached) return cached;
+
     const apiKey = process.env.LOCATIONIQ_API_KEY || '';
 
     // zoom=18 (house/building level) is the right level of detail for a
@@ -54,7 +71,7 @@ export class GeoController {
     // house_number/road entirely) - each field below is best-effort.
     const streetParts = [addr.house_number, addr.road].filter(Boolean);
 
-    return {
+    const result = {
       street: streetParts.join(' '),
       locality: addr.suburb || addr.neighbourhood || addr.village || '',
       city: addr.city || addr.town || addr.county || '',
@@ -72,6 +89,8 @@ export class GeoController {
       country: addr.country || '',
       displayName: addr.__displayName || '',
     };
+    reverseGeocodeCache.set(cacheKey, result, REVERSE_GEOCODE_CACHE_TTL_MS);
+    return result;
   }
 }
 

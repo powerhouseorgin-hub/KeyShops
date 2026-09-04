@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
+import { Controller, Get, Header, NotFoundException, Param, Query } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { PromotionService } from './promotion.service';
 
@@ -11,7 +11,13 @@ import { PromotionService } from './promotion.service';
 export class PublicPromotionController {
   constructor(private readonly promotionService: PromotionService) {}
 
+  // HTTP-cacheable at any query-string combination - see
+  // PublicShopController.search's identical comment for why a free-text
+  // `search` value is fine to cache too (the browser keys by full URL).
+  // Matches PromotionService.getPublicPromotions's own TTL for its cached
+  // (non-search) branch.
   @Get()
+  @Header('Cache-Control', 'public, max-age=60')
   async list(
     @Query('category') category?: string,
     @Query('search') search?: string,

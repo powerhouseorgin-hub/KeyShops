@@ -8,6 +8,25 @@ import { persistShopDocuments } from '../common/shop-document.util';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 import { forwardGeocodeAddress } from '../common/geocode.util';
 import { invalidateAuthCache } from '../auth/auth-cache';
+import { TtlCache } from '../common/ttl-cache';
+
+// searchPublicShops is called with the exact same (category, town) pair by
+// every anonymous visitor browsing a given category/location combination
+// (Dealers, the Key Shops/ECM/Meter/Scanning tabs, the public marketing
+// site's directory) - unlike a free-text `query` search, that's a small,
+// bounded key space with real overlap across different visitors, so it's
+// cached here. Free-text search and any page past the first are NOT cached
+// (see the `!query && !cursor` gate below) - a search box's input space is
+// too varied to cache well, and only the first page is what a fresh visit
+// actually needs instantly. No explicit invalidation on shop
+// create/update/status changes - a public shop directory reflecting a new
+// registration or edit within this TTL is an acceptable trade for not
+// having to wire invalidation into every mutation in this large service,
+// the same trade already made for the pre-login ad carousel's cache.
+const PUBLIC_SHOP_SEARCH_TTL_MS = 60 * 1000;
+const publicShopSearchCache = new TtlCache<any>(500);
+const publicShopSearchCacheKey = (category?: string, town?: string, limit?: number) =>
+  `${category || ''}|${town || ''}|${limit || ''}`;
 
 // Shared `include` clause for pulling a shop's active (non-soft-deleted) documents.
 // Nested `include`/`select` relations are NOT covered by TenantService's soft-delete
@@ -426,6 +445,15 @@ export class ShopService {
   // `{ items, nextCursor }` instead.
   async searchPublicShops(opts: { query?: string; category?: string; town?: string; cursor?: string; limit?: number } = {}) {
     const { query, category, town, cursor, limit } = opts;
+
+    // See publicShopSearchCache's doc comment above for what's cached and why.
+    const cacheable = !query && !cursor;
+    const cacheKey = cacheable ? publicShopSearchCacheKey(category, town, limit) : null;
+    if (cacheKey) {
+      const cached = publicShopSearchCache.get(cacheKey);
+      if (cached) return cached;
+    }
+
     const whereClause: any = { isActive: true };
 
     // Exact match against EITHER Shop.town or Shop.district - the dropdown
@@ -505,7 +533,9 @@ export class ShopService {
         orderBy: { createdAt: 'desc' },
         take: 50,
       });
-      return shops.map((shop) => this.mapPublicShop(shop));
+      const result = shops.map((shop) => this.mapPublicShop(shop));
+      if (cacheKey) publicShopSearchCache.set(cacheKey, result, PUBLIC_SHOP_SEARCH_TTL_MS);
+      return result;
     }
 
     // Fetch one extra row to know whether there's a next page, same approach
@@ -521,7 +551,9 @@ export class ShopService {
     });
     const hasMore = rows.length > limit;
     const page = hasMore ? rows.slice(0, limit) : rows;
-    return { items: page.map((shop) => this.mapPublicShop(shop)), nextCursor: hasMore ? page[page.length - 1].id : null };
+    const result = { items: page.map((shop) => this.mapPublicShop(shop)), nextCursor: hasMore ? page[page.length - 1].id : null };
+    if (cacheKey) publicShopSearchCache.set(cacheKey, result, PUBLIC_SHOP_SEARCH_TTL_MS);
+    return result;
   }
 
   // PUBLIC: Single shop's details for the public mobile app's shop-details

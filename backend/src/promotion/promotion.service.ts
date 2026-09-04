@@ -3,6 +3,19 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { TenantService } from '../tenant/tenant.service';
 import { CreatePromotionDto, UpdatePromotionDto, PROMOTION_MAX_PHOTOS } from './dto/promotion.dto';
 import { FileService } from '../customer/file.service';
+import { TtlCache } from '../common/ttl-cache';
+
+// Same rationale as ShopService's publicShopSearchCache: (category, town,
+// shopId) is a small, bounded key space every anonymous visitor browsing a
+// given Machines/Products filter shares, unlike free-text `search` which
+// isn't cached here at all (see the `!search && !cursor` gate below). No
+// explicit invalidation on listing create/update/delete - a public feed
+// reflecting a new/edited listing within this TTL is an acceptable trade,
+// same one already made for the pre-login ad carousel.
+const PUBLIC_PROMOTIONS_TTL_MS = 60 * 1000;
+const publicPromotionsCache = new TtlCache<any>(500);
+const publicPromotionsCacheKey = (category?: string, town?: string, shopId?: string, limit?: number) =>
+  `${category || ''}|${town || ''}|${shopId || ''}|${limit || ''}`;
 
 // A Machine/Product listing may never outlive this many days from the
 // moment it's created - the create/update form lets the shop pick an
@@ -217,15 +230,26 @@ export class PromotionService {
   // anonymous caller.
   async getPublicPromotions(opts: { category?: string; search?: string; town?: string; cursor?: string; limit?: number; shopId?: string } = {}) {
     const { cursor, limit, ...rest } = opts;
+
+    // See publicPromotionsCache's doc comment above for what's cached and why.
+    const cacheable = !rest.search && !cursor;
+    const cacheKey = cacheable ? publicPromotionsCacheKey(rest.category, rest.town, rest.shopId, limit) : null;
+    if (cacheKey) {
+      const cached = publicPromotionsCache.get(cacheKey);
+      if (cached) return cached;
+    }
+
     const where = this.buildPromotionWhere({ ...rest, type: 'PRODUCT' });
 
     if (!limit) {
-      return this.tenantService.prisma.promotion.findMany({
+      const result = await this.tenantService.prisma.promotion.findMany({
         where,
         select: PUBLIC_PROMOTION_SELECT,
         orderBy: { createdAt: 'desc' },
         take: 50,
       });
+      if (cacheKey) publicPromotionsCache.set(cacheKey, result, PUBLIC_PROMOTIONS_TTL_MS);
+      return result;
     }
 
     const rows = await this.tenantService.prisma.promotion.findMany({
@@ -237,7 +261,9 @@ export class PromotionService {
     });
     const hasMore = rows.length > limit;
     const items = hasMore ? rows.slice(0, limit) : rows;
-    return { items, nextCursor: hasMore ? items[items.length - 1].id : null };
+    const result = { items, nextCursor: hasMore ? items[items.length - 1].id : null };
+    if (cacheKey) publicPromotionsCache.set(cacheKey, result, PUBLIC_PROMOTIONS_TTL_MS);
+    return result;
   }
 
   // PUBLIC: single listing for the machine/product details screen. Same

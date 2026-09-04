@@ -1,4 +1,4 @@
-import { Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
+import { Controller, Get, Header, NotFoundException, Param, Query } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { ShopService } from './shop.service';
 import { PromotionService } from '../promotion/promotion.service';
@@ -27,7 +27,15 @@ export class PublicShopController {
   // for callers not yet converted to paginate (the public marketing site's
   // "Find a Shop" search, and the ECM/Meter/Scanning/Key Shops category
   // screens); the Dealers directory passes `limit` to page through everything.
+  // HTTP-cacheable at any query-string combination since the browser keys
+  // its cache by the full URL - a free-text `query` search just gets its
+  // own (short-lived, low-hit-rate) cache entry rather than being excluded.
+  // Matches ShopService.searchPublicShops's own TTL for its cached
+  // (non-search) branch, so a repeat request within the window skips the
+  // network entirely instead of still round-tripping to a cache that
+  // would've said the same thing.
   @Get()
+  @Header('Cache-Control', 'public, max-age=60')
   async search(
     @Query('query') query?: string,
     @Query('category') category?: string,
