@@ -123,7 +123,16 @@ export class RequestLoggingInterceptor implements NestInterceptor {
       tap((responseBody) => {
         const ms = Date.now() - start;
         const response = context.switchToHttp().getResponse();
-        console.log(`<-- ${method} ${originalUrl} ${response.statusCode} (${ms}ms) body=${safeStringify(responseBody)}`);
+        // Redacting/stringifying the response body is real, if bounded (see
+        // the caps above), synchronous CPU work on every single request.
+        // In production, a successful response's body is rarely what a "why
+        // did this go wrong" investigation needs - the method/URL/status/
+        // timing already logged above covers that - so it's skipped on the
+        // 2xx path there and reserved for local dev and for actual errors
+        // (see the catchError branch below, unaffected by this check).
+        const skipBody = process.env.NODE_ENV === 'production' && response.statusCode < 400;
+        const bodyLog = skipBody ? '' : ` body=${safeStringify(responseBody)}`;
+        console.log(`<-- ${method} ${originalUrl} ${response.statusCode} (${ms}ms)${bodyLog}`);
       }),
       catchError((err) => {
         const ms = Date.now() - start;

@@ -149,7 +149,7 @@ export class ReportService {
       recentCustomers,
       popularKeysRaw,
       subscription,
-      customersForGraph,
+      monthlyRaw,
     ] = await Promise.all([
       this.tenantService.prisma.customer.count({
         where: { shopId, createdAt: { gte: todayStart, lte: todayEnd } },
@@ -171,10 +171,19 @@ export class ReportService {
         where: { shopId, status: 'ACTIVE' },
         orderBy: { createdAt: 'desc' },
       }),
-      this.tenantService.prisma.customer.findMany({
-        where: { shopId, createdAt: { gte: sixMonthsAgo } },
-        select: { createdAt: true },
-      }),
+      // Aggregated in SQL rather than fetching every matching row over the
+      // network just to bucket it in JS - a growing shop's registration
+      // history over 6 months would otherwise mean an ever-larger row-set
+      // pulled across a cross-region connection on every dashboard load,
+      // just to compute at most 6 numbers. $queryRaw bypasses
+      // TenantService's auto soft-delete filter (it only hooks Prisma's own
+      // query methods, not raw SQL), so "deletedAt" IS NULL is explicit here.
+      this.tenantService.prisma.$queryRaw<{ year: number; month: number; count: bigint }[]>`
+        SELECT EXTRACT(YEAR FROM "createdAt")::int AS year, EXTRACT(MONTH FROM "createdAt")::int AS month, COUNT(*)::int AS count
+        FROM "Customer"
+        WHERE "shopId" = ${shopId} AND "createdAt" >= ${sixMonthsAgo} AND "deletedAt" IS NULL
+        GROUP BY EXTRACT(YEAR FROM "createdAt"), EXTRACT(MONTH FROM "createdAt")
+      `,
     ]);
 
     const popularKeys = popularKeysRaw.map(item => ({
@@ -196,10 +205,10 @@ export class ReportService {
       monthlyCounts[mName] = 0;
     }
 
-    customersForGraph.forEach(c => {
-      const mName = c.createdAt.toLocaleString('en-US', { month: 'short', year: 'numeric' });
+    monthlyRaw.forEach((row) => {
+      const mName = new Date(row.year, row.month - 1, 1).toLocaleString('en-US', { month: 'short', year: 'numeric' });
       if (monthlyCounts[mName] !== undefined) {
-        monthlyCounts[mName]++;
+        monthlyCounts[mName] += Number(row.count);
       }
     });
 

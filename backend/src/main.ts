@@ -80,16 +80,26 @@ async function bootstrap() {
   // Global prefix for API
   app.setGlobalPrefix('api');
 
-  // Serve static files. Content-Disposition: attachment forces mobile/desktop
-  // browsers to actually save the file to the device instead of navigating
-  // to/previewing it in a tab (the HTML `download` attribute alone is only
-  // honored for same-origin links and isn't reliable on mobile even then).
+  // Serve static files - the local-disk fallback path used only when Supabase
+  // Storage isn't configured (see FileService.onModuleInit); production
+  // always has Supabase configured and serves files via signed Storage URLs
+  // instead, never through this route.
+  //
+  // Content-Disposition: attachment forces mobile/desktop browsers to
+  // actually save a file to the device instead of navigating to/previewing
+  // it in a tab (the HTML `download` attribute alone is only honored for
+  // same-origin links and isn't reliable on mobile even then) - the right
+  // behavior for a document (Aadhaar, shop license) someone wants to save,
+  // but wrong for an image (shop logo/photo) meant to render inline in an
+  // `<img>` tag, which this used to force into a download dialog too.
+  const INLINE_IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
   app.use(
     '/api/uploads',
     express.static(path.join(process.cwd(), 'public', 'uploads'), {
       setHeaders: (res, filePath) => {
         const filename = path.basename(filePath).replace(/[^a-zA-Z0-9._-]/g, '_');
-        res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+        const disposition = INLINE_IMAGE_EXTENSIONS.has(path.extname(filePath).toLowerCase()) ? 'inline' : 'attachment';
+        res.setHeader('Content-Disposition', `${disposition}; filename="${filename}"`);
       },
     }),
   );

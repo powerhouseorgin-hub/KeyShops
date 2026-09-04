@@ -194,6 +194,14 @@ model Shop {
   // Same rationale as the town index above, for the district-level half of
   // the OR-matched location filter.
   @@index([isActive, district])
+  // name/companyDetails also have GIN trigram indexes (idx_shop_name_trgm,
+  // idx_shop_companydetails_trgm) backing the `contains`/insensitive search
+  // in ShopService - applied via a raw migration
+  // (20260904073313_add_search_trigram_indexes), not modeled here as
+  // `@@index`, since gin_trgm_ops needs either the `postgresqlExtensions`
+  // preview feature or Prisma's `Unsupported` type. `prisma migrate dev`
+  // won't see these as schema drift - they're real indexes in a real
+  // migration, just invisible to `prisma db pull`/diffing.
 }
 
 // Append-only ledger recording each successful referral: one row per
@@ -321,6 +329,8 @@ model MasterKey {
   // pagination (WHERE deletedAt IS NULL ORDER BY keyNumber ASC) - see
   // KeyService.getKeys.
   @@index([deletedAt, keyNumber])
+  // keyNumber/category also have GIN trigram indexes - see the identical
+  // note on Shop's closing brace above.
 }
 
 model Customer {
@@ -385,6 +395,8 @@ model Customer {
   // (WHERE shopId = X AND deletedAt IS NULL ORDER BY createdAt DESC) - see
   // CustomerService.getCustomers.
   @@index([shopId, deletedAt, createdAt])
+  // name/phone/keyNumber/vehicleNumber/capturedAddress/address also have GIN
+  // trigram indexes - see the identical note on Shop's closing brace above.
 }
 
 model CustomerDocument {
