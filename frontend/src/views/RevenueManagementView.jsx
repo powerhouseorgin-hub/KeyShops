@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CustomSelect from '../components/CustomSelect';
 import CountUp from '../components/CountUp';
 import { useSubmitting } from '../hooks/useSubmitting';
+import { getFresh, setCache } from '../utils/fetchCache';
 import {
   Banknote, Calendar, CalendarRange, Check, FileText, IndianRupee, Receipt, RefreshCw, TrendingUp,
 } from 'lucide-react';
@@ -11,6 +12,11 @@ import {
 // ============================================================================
 // In-memory cache (module scope) - same rationale as dashboardCache above.
 let revenueRecordsCache = null;
+// Within this many ms of the last fetch, a revisit skips the network/DB
+// round-trip entirely (see fetchCache.js) instead of just avoiding the
+// blank-spinner flash revenueRecordsCache above already handled.
+const REVENUE_TTL_MS = 30 * 1000;
+const REVENUE_CACHE_KEY = 'revenue:default';
 
 function RevenueManagementView({ t, api }) {
   const [records, setRecords] = useState(revenueRecordsCache || []);
@@ -28,11 +34,20 @@ function RevenueManagementView({ t, api }) {
   }, []);
 
   const fetchRevenue = async () => {
+    // A fresh-enough cache skips the network/DB round-trip entirely, not
+    // just the loading spinner (see REVENUE_TTL_MS).
+    const fresh = getFresh(REVENUE_CACHE_KEY, REVENUE_TTL_MS);
+    if (fresh) {
+      setRecords(fresh);
+      setLoading(false);
+      return;
+    }
     if (records.length === 0) setLoading(true);
     try {
       const res = await api.getRevenue();
       setRecords(res);
       revenueRecordsCache = res;
+      setCache(REVENUE_CACHE_KEY, res);
     } catch (e) {
       console.error(e);
     } finally {

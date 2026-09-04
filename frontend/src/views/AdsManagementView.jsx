@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useBackHandler } from '../utils/backHandler';
+import { getFresh, setCache } from '../utils/fetchCache';
 import { useSubmitting } from '../hooks/useSubmitting';
 import { cleanGoogleImageUrl, resizeImageFileToBlob } from '../utils/imageUtils';
 import { primeStoragePermission } from '../utils/platform';
@@ -22,6 +23,12 @@ import {
 // fetched.
 let adsListCache = null;
 let platformShopsCache = null;
+// Within this many ms of the last fetch, a revisit skips the network/DB
+// round-trip entirely (see fetchCache.js) instead of just avoiding the
+// blank-spinner flash the caches above already handled.
+const ADS_TTL_MS = 30 * 1000;
+const ADS_LIST_CACHE_KEY = 'super-ads:default';
+const PLATFORM_SHOPS_CACHE_KEY = 'platform-shops:default';
 
 function AdsManagementView({ t, api }) {
   const [ads, setAds] = useState(adsListCache || []);
@@ -75,6 +82,14 @@ function AdsManagementView({ t, api }) {
   }, []);
 
   const fetchAds = async () => {
+    // A fresh-enough cache skips the network/DB round-trip entirely, not
+    // just the loading spinner (see ADS_TTL_MS).
+    const freshAds = getFresh(ADS_LIST_CACHE_KEY, ADS_TTL_MS);
+    if (freshAds) {
+      setAds(freshAds);
+      setLoading(false);
+      return;
+    }
     // Only blank to a spinner when there's nothing on screen yet - a
     // revisit renders the cached list instantly and refreshes silently.
     if (ads.length === 0) setLoading(true);
@@ -82,6 +97,7 @@ function AdsManagementView({ t, api }) {
       const res = await api.getAdvertisements();
       setAds(res);
       adsListCache = res;
+      setCache(ADS_LIST_CACHE_KEY, res);
     } catch (e) {
       console.error(e);
     } finally {
@@ -90,10 +106,16 @@ function AdsManagementView({ t, api }) {
   };
 
   const fetchShops = async () => {
+    const fresh = getFresh(PLATFORM_SHOPS_CACHE_KEY, ADS_TTL_MS);
+    if (fresh) {
+      setShops(fresh);
+      return;
+    }
     try {
       const res = await api.getShops();
       setShops(res);
       platformShopsCache = res;
+      setCache(PLATFORM_SHOPS_CACHE_KEY, res);
     } catch (e) {
       console.error(e);
     }

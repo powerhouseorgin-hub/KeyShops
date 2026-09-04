@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAssetUrl, downloadAsset } from '../apiConfig';
 import { downloadPdf } from '../utils/pdfDelivery';
+import { getFresh, setCache } from '../utils/fetchCache';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import { primeStoragePermission } from '../utils/platform';
@@ -30,6 +31,11 @@ const CUSTOMER_HISTORY_PAGE_SIZE = 20;
 // Super Admin can view multiple shops' histories via this same component
 // (see CustomerHistoryView's shopId usage below).
 let customerHistoryFirstPageCache = null;
+// Within this many ms of the last fetch, a revisit skips the network/DB
+// round-trip entirely (see fetchCache.js) instead of just avoiding the
+// blank-spinner flash customerHistoryFirstPageCache above already handled.
+const CUSTOMER_HISTORY_TTL_MS = 30 * 1000;
+const customerHistoryCacheKey = (shopId) => `customer-history:${shopId}`;
 
 function CustomerHistoryView({ t, api, searchDispatch }) {
   const { user } = useAuth();
@@ -175,6 +181,19 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchHistory = async () => {
+    const isDefaultView = !debouncedSearch && !town;
+    // A fresh-enough default-view cache skips the network/DB round-trip
+    // entirely, not just the loading spinner (see CUSTOMER_HISTORY_TTL_MS).
+    if (isDefaultView) {
+      const fresh = getFresh(customerHistoryCacheKey(user.shopId), CUSTOMER_HISTORY_TTL_MS);
+      if (fresh) {
+        setCustomers(fresh.items);
+        setNextCursor(fresh.nextCursor);
+        setHasMore(fresh.hasMore);
+        setLoading(false);
+        return;
+      }
+    }
     const seq = ++fetchHistorySeq.current;
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
@@ -186,8 +205,10 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
       setCustomers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
-      if (!debouncedSearch && !town) {
-        customerHistoryFirstPageCache = { shopId: user.shopId, items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+      if (isDefaultView) {
+        const page = { shopId: user.shopId, items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        customerHistoryFirstPageCache = page;
+        setCache(customerHistoryCacheKey(user.shopId), page);
       }
     } catch (e) {
       if (seq !== fetchHistorySeq.current) return;

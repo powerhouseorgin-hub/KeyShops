@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBackHandler } from '../utils/backHandler';
+import { getFresh, setCache } from '../utils/fetchCache';
 import { getAssetUrl, downloadAsset } from '../apiConfig';
 import { downloadPdf } from '../utils/pdfDelivery';
 import {
@@ -23,6 +24,11 @@ const CUSTOMER_REGISTRY_PAGE_SIZE = 20;
 // Caches only the first page of the default (no-search) list - module
 // scope, same rationale as shopsFirstPageCache above.
 let customersFirstPageCache = null;
+// Within this many ms of the last fetch, a revisit skips the network/DB
+// round-trip entirely (see fetchCache.js) instead of just avoiding the
+// blank-spinner flash customersFirstPageCache above already handled.
+const CUSTOMERS_TTL_MS = 30 * 1000;
+const CUSTOMERS_CACHE_KEY = 'super-customers:default';
 
 function SuperCustomersView({ t, api, searchDispatch }) {
   const { user } = useAuth();
@@ -71,6 +77,18 @@ function SuperCustomersView({ t, api, searchDispatch }) {
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchCustomers = async () => {
+    // A fresh-enough default-view cache skips the network/DB round-trip
+    // entirely, not just the loading spinner (see CUSTOMERS_TTL_MS).
+    if (!debouncedSearch) {
+      const fresh = getFresh(CUSTOMERS_CACHE_KEY, CUSTOMERS_TTL_MS);
+      if (fresh) {
+        setCustomers(fresh.items);
+        setNextCursor(fresh.nextCursor);
+        setHasMore(fresh.hasMore);
+        setLoading(false);
+        return;
+      }
+    }
     const seq = ++fetchCustomersSeq.current;
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
@@ -83,7 +101,9 @@ function SuperCustomersView({ t, api, searchDispatch }) {
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
       if (!debouncedSearch) {
-        customersFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        const page = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        customersFirstPageCache = page;
+        setCache(CUSTOMERS_CACHE_KEY, page);
       }
     } catch (e) {
       if (seq !== fetchCustomersSeq.current) return;

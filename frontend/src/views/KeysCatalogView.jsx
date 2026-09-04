@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getFresh, setCache } from '../utils/fetchCache';
 import { keyTypeDisplayLabel } from '../utils/keyType';
 import {
   Key, KeyRound, RefreshCw, Search, Store,
@@ -15,6 +16,11 @@ const KEY_CATALOGUE_PAGE_SIZE = 20;
 // Caches only the first page of the default (no-search) list - module
 // scope, same rationale as shopsFirstPageCache above.
 let keysFirstPageCache = null;
+// Within this many ms of the last fetch, a revisit skips the network/DB
+// round-trip entirely (see fetchCache.js) instead of just avoiding the
+// blank-spinner flash keysFirstPageCache above already handled.
+const KEYS_TTL_MS = 30 * 1000;
+const KEYS_CACHE_KEY = 'keys-catalogue:default';
 
 function KeysCatalogView({ t, api, searchDispatch }) {
   const [keys, setKeys] = useState(keysFirstPageCache ? keysFirstPageCache.items : []);
@@ -45,6 +51,18 @@ function KeysCatalogView({ t, api, searchDispatch }) {
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchKeys = async () => {
+    // A fresh-enough default-view cache skips the network/DB round-trip
+    // entirely, not just the loading spinner (see KEYS_TTL_MS).
+    if (!debouncedSearchQuery) {
+      const fresh = getFresh(KEYS_CACHE_KEY, KEYS_TTL_MS);
+      if (fresh) {
+        setKeys(fresh.items);
+        setNextCursor(fresh.nextCursor);
+        setHasMore(fresh.hasMore);
+        setLoading(false);
+        return;
+      }
+    }
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
@@ -55,7 +73,9 @@ function KeysCatalogView({ t, api, searchDispatch }) {
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
       if (!debouncedSearchQuery) {
-        keysFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        const page = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        keysFirstPageCache = page;
+        setCache(KEYS_CACHE_KEY, page);
       }
     } catch (e) {
       console.error(e);
