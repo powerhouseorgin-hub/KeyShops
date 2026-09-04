@@ -35,14 +35,21 @@ export const AuthProvider = ({ children }) => {
   // fresh login) so the dashboard alert reflects the current day's count.
   const [subscription, setSubscription] = useState(null);
 
-  // Load auth state from LocalStorage on mount
+  // Load auth state from LocalStorage on mount. Native always has both
+  // savedUser and savedToken together (see login() above). Web only ever
+  // has savedUser - its token lives in the httpOnly cookie instead, which
+  // this can't read (the whole point), so `token` stays null after a
+  // reload; request() below still authenticates fine since the cookie goes
+  // out with every fetch regardless. If that cookie's actually expired or
+  // been revoked, the first real request 401s and request()'s existing
+  // handler calls logout() - same self-heal native already relied on.
   useEffect(() => {
     const savedUser = localStorage.getItem('kee_auth_user');
     const savedToken = localStorage.getItem('kee_auth_token');
 
-    if (savedUser && savedToken) {
+    if (savedUser) {
       setUser(JSON.parse(savedUser));
-      setToken(savedToken);
+      if (savedToken) setToken(savedToken);
     }
     setLoading(false);
 
@@ -67,12 +74,21 @@ export const AuthProvider = ({ children }) => {
       } catch (err) {}
 
       // Tell the backend whether this is the native app or a browser, so it
-      // can enforce that Shop Admin accounts only sign in from the app.
-      const platform = Capacitor.isNativePlatform() ? 'native' : 'web';
+      // can enforce that Shop Admin accounts only sign in from the app, and
+      // so it knows whether to also set the web-only session cookie below.
+      const isNative = Capacitor.isNativePlatform();
+      const platform = isNative ? 'native' : 'web';
 
+      // `credentials: 'include'` is what lets the browser both accept the
+      // Set-Cookie the login response carries for web (see
+      // AuthController.login/session-cookie.ts) and send that cookie back
+      // on every later request - keyshops.in and api.keyshops.in are
+      // different subdomains, so without this the cookie is silently
+      // dropped even though the response includes it.
       const response = await fetch(`${API_BASE}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password, platform }),
       });
 
@@ -86,7 +102,17 @@ export const AuthProvider = ({ children }) => {
       setToken(res.accessToken);
       setSubscription(res.subscription || null);
       localStorage.setItem('kee_auth_user', JSON.stringify(res.user));
-      localStorage.setItem('kee_auth_token', res.accessToken);
+      // Web relies on the httpOnly cookie the backend just set instead - the
+      // whole point is that a token an XSS bug can actually read out of
+      // localStorage no longer sits there for as long as the session lasts.
+      // `token` above still holds it for this tab's remaining lifetime
+      // (attached as an Authorization header too - see request() below,
+      // redundant with the cookie but harmless), it just isn't written
+      // anywhere JS can read it back after a reload. Native, which never
+      // gets this cookie, keeps behaving exactly as before.
+      if (isNative) {
+        localStorage.setItem('kee_auth_token', res.accessToken);
+      }
       return res.user;
     } finally {
       setLoading(false);
@@ -99,6 +125,12 @@ export const AuthProvider = ({ children }) => {
     setSubscription(null);
     localStorage.removeItem('kee_auth_user');
     localStorage.removeItem('kee_auth_token');
+    // Clears the httpOnly web cookie server-side - client-side JS can't
+    // remove it itself. A no-op for native (which never had it set), so
+    // this is called unconditionally rather than branching on platform.
+    // Fire-and-forget: a failed logout call shouldn't block the user from
+    // leaving the dashboard, which the state clears above already do.
+    fetch(`${API_BASE}/api/auth/logout`, { method: 'POST', credentials: 'include' }).catch(() => {});
   };
 
   // HTTP request helper
@@ -114,6 +146,10 @@ export const AuthProvider = ({ children }) => {
     const config = {
       method,
       headers,
+      // Sends the web session cookie (see session-cookie.ts) on every
+      // request - a no-op for native, which authenticates via the
+      // Authorization header above and never has this cookie set.
+      credentials: 'include',
     };
 
     if (body) {
