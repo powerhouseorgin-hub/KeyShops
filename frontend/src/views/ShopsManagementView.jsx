@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { createPortal } from 'react-dom';
 import { useBackHandler } from '../utils/backHandler';
+import { getFresh, setCache } from '../utils/fetchCache';
 import { getAssetUrl, downloadAsset, filenameForAsset } from '../apiConfig';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { primeStoragePermission } from '../utils/platform';
@@ -74,6 +75,11 @@ const SHOP_MANAGEMENT_PAGE_SIZE = 20;
 // every revisit blanked to a spinner and re-fetched page 1 from scratch
 // even with an empty search box.
 let shopsFirstPageCache = null;
+// Within this many ms of the last fetch, a revisit skips the network/DB
+// round-trip entirely (see fetchCache.js) instead of just avoiding the
+// blank-spinner flash shopsFirstPageCache above already handled.
+const SHOPS_TTL_MS = 30 * 1000;
+const SHOPS_CACHE_KEY = 'shops:default';
 
 function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOpen, searchDispatch, defaultTown, locationReady }) {
   const [shops, setShops] = useState(shopsFirstPageCache ? shopsFirstPageCache.items : []);
@@ -226,6 +232,23 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   // Loads the first page for the current search, replacing whatever was
   // loaded before.
   const fetchShops = async () => {
+    // "Default view" now means "town is either empty or whatever GPS
+    // resolved as the default" - not just empty - since locationReady
+    // gating (see App()'s locationReady) means the very first fetch may
+    // already carry a GPS-resolved town instead of ''.
+    const isDefaultView = !debouncedShopSearchQuery && (!town || town === defaultTown);
+    // A fresh-enough default-view cache skips the network/DB round-trip
+    // entirely, not just the loading spinner (see SHOPS_TTL_MS).
+    if (isDefaultView) {
+      const fresh = getFresh(SHOPS_CACHE_KEY, SHOPS_TTL_MS);
+      if (fresh) {
+        setShops(fresh.items);
+        setNextCursor(fresh.nextCursor);
+        setHasMore(fresh.hasMore);
+        setLoading(false);
+        return;
+      }
+    }
     const seq = ++fetchShopsSeq.current;
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
@@ -237,15 +260,10 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       setShops(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
-      // "Default view" now means "town is either empty or whatever GPS
-      // resolved as the default" - not just empty - since locationReady
-      // gating (see App()'s locationReady) means the very first fetch may
-      // already carry a GPS-resolved town instead of ''. Comparing against
-      // '' only would mean this cache (and the instant-render-on-revisit it
-      // powers) never populates at all for any user with a resolved
-      // location.
-      if (!debouncedShopSearchQuery && (!town || town === defaultTown)) {
-        shopsFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+      if (isDefaultView) {
+        const page = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        shopsFirstPageCache = page;
+        setCache(SHOPS_CACHE_KEY, page);
       }
     } catch (e) {
       if (seq !== fetchShopsSeq.current) return;

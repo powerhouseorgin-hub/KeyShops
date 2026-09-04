@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { createPortal } from 'react-dom';
 import { cleanGoogleImageUrl } from '../utils/imageUtils';
+import { getFresh, setCache } from '../utils/fetchCache';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 import usedMachinesImg from '../assets/dashboard-icons/used-machines.png';
 import ecmServiceImg from '../assets/dashboard-icons/ecm-service.png';
@@ -93,11 +94,15 @@ function DashCardGrid({ items }) {
 // back to the Dashboard after visiting another tab shows the last-fetched
 // data instantly instead of blanking to a loading spinner every time -
 // DashboardView unmounts/remounts on every tab switch (see the
-// `activeTab === 'dashboard' &&` gate around its render site), so without
-// this every single revisit paid a full network round-trip before showing
-// anything. Keyed by user.id so switching accounts (logout -> a different
-// login, same page session) can't leak stale data across users.
-let dashboardCache = null;
+// `activeTab === 'dashboard' &&` gate around its render site) - keyed by
+// user.id so switching accounts (logout -> a different login, same page
+// session) can't leak stale data across users. DASHBOARD_TTL_MS bounds how
+// stale a revisit within the window can be (a new registration elsewhere
+// won't show up until it lapses) in exchange for skipping the network/DB
+// round-trip entirely on a quick back-and-forth between screens - see
+// fetchCache.js's doc comment for why that round-trip, not just the loading
+// flash, was the actual complaint.
+const DASHBOARD_TTL_MS = 30 * 1000;
 
 // Shared by both the Shop Admin and Super Admin Dashboard greetings.
 function getTimeBasedGreeting() {
@@ -109,7 +114,8 @@ function getTimeBasedGreeting() {
 
 function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal }) {
   const { user, api, subscription } = useAuth();
-  const cachedData = dashboardCache && dashboardCache.userId === user.id ? dashboardCache.data : null;
+  const dashboardCacheKey = `dashboard:${user.id}`;
+  const cachedData = getFresh(dashboardCacheKey, DASHBOARD_TTL_MS) || null;
   const [data, setData] = useState(cachedData);
   const [loading, setLoading] = useState(!cachedData);
   const [popupAds, setPopupAds] = useState([]);
@@ -194,14 +200,23 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
   };
 
   const fetchDashboardData = async () => {
+    // A fresh-enough cache skips the network/DB round-trip entirely, not
+    // just the loading spinner - this is the actual "revisiting a screen
+    // reloads everything again" fix (see DASHBOARD_TTL_MS's doc comment).
+    const fresh = getFresh(dashboardCacheKey, DASHBOARD_TTL_MS);
+    if (fresh) {
+      setData(fresh);
+      setLoading(false);
+      return;
+    }
     // Only show the spinner on a genuinely first load for this user - if
-    // we're rendering from cache already, refresh silently in the
+    // we're rendering from a stale cache already, refresh silently in the
     // background instead of blanking the screen the visitor just saw.
     if (!data) setLoading(true);
     try {
       const res = await api.getDashboard();
       setData(res);
-      dashboardCache = { userId: user.id, data: res };
+      setCache(dashboardCacheKey, res);
     } catch (e) {
       console.error(e);
     } finally {

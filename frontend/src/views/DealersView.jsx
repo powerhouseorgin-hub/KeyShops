@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getFresh, setCache } from '../utils/fetchCache';
 import { useLocationFilter } from '../utils/locationFilter';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import { categoryImage } from '../utils/categoryIcon';
@@ -20,6 +21,11 @@ const DEALERS_PAGE_SIZE = 20;
 // Caches only the first page of the default (no search, "ALL" category)
 // list - module scope, same rationale as shopsFirstPageCache above.
 let dealersFirstPageCache = null;
+// Within this many ms of the last fetch, a revisit skips the network/DB
+// round-trip entirely (see fetchCache.js) instead of just avoiding the
+// blank-spinner flash dealersFirstPageCache above already handled.
+const DEALERS_TTL_MS = 30 * 1000;
+const DEALERS_CACHE_KEY = 'dealers:default';
 
 function DealersView({ t, api, defaultTown, locationReady }) {
   const [dealers, setDealers] = useState(dealersFirstPageCache ? dealersFirstPageCache.items : []);
@@ -50,6 +56,18 @@ function DealersView({ t, api, defaultTown, locationReady }) {
     // comment for why: locationReady gating means the very first fetch may
     // already carry a GPS-resolved town.
     const isDefaultView = !debouncedQuery && (!town || town === defaultTown);
+    // A fresh-enough default-view cache skips the network/DB round-trip
+    // entirely, not just the loading spinner (see DEALERS_TTL_MS).
+    if (isDefaultView) {
+      const fresh = getFresh(DEALERS_CACHE_KEY, DEALERS_TTL_MS);
+      if (fresh) {
+        setDealers(fresh.items);
+        setNextCursor(fresh.nextCursor);
+        setHasMore(fresh.hasMore);
+        setLoading(false);
+        return;
+      }
+    }
     // Only blank to a spinner for a real search or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
@@ -60,7 +78,9 @@ function DealersView({ t, api, defaultTown, locationReady }) {
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
       if (isDefaultView) {
-        dealersFirstPageCache = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        const page = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        dealersFirstPageCache = page;
+        setCache(DEALERS_CACHE_KEY, page);
       }
     } catch (e) {
       console.error('Failed to fetch dealers', e);

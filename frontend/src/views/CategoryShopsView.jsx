@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getFresh, setCache } from '../utils/fetchCache';
 import { useLocationFilter } from '../utils/locationFilter';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import { categoryImage } from '../utils/categoryIcon';
@@ -22,6 +23,11 @@ import {
 // `{items, nextCursor, hasMore}` page, not a flat array) now that this view
 // paginates too.
 const categoryShopsCache = {};
+// Within this many ms of the last fetch, a revisit skips the network/DB
+// round-trip entirely (see fetchCache.js) instead of just avoiding the
+// blank-spinner flash the cache above already handled.
+const CATEGORY_SHOPS_TTL_MS = 30 * 1000;
+const categoryShopsCacheKey = (categoryKey) => `category-shops:${categoryKey}`;
 // Page size for this view's cursor pagination - see DEALERS_PAGE_SIZE below
 // (same value, same rationale) and ShopService.searchPublicShops. This view
 // previously fetched every shop in a category with no `limit` at all - the
@@ -64,6 +70,18 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTo
     // GPS-resolved town, so comparing against '' only would mean this cache
     // never populates for any user with a resolved location.
     const isDefaultView = !debouncedQuery && (!town || town === defaultTown);
+    // A fresh-enough default-view cache skips the network/DB round-trip
+    // entirely, not just the loading spinner (see CATEGORY_SHOPS_TTL_MS).
+    if (isDefaultView) {
+      const fresh = getFresh(categoryShopsCacheKey(categoryKey), CATEGORY_SHOPS_TTL_MS);
+      if (fresh) {
+        setDealers(fresh.items);
+        setNextCursor(fresh.nextCursor);
+        setHasMore(fresh.hasMore);
+        setLoading(false);
+        return;
+      }
+    }
     // Only blank to a spinner for a real search/filter or a genuinely empty
     // screen - a bare revisit renders the cached first page instantly and
     // refreshes silently in the background.
@@ -74,7 +92,9 @@ function CategoryShopsView({ categoryKey, icon: IconComponent, t, api, defaultTo
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
       if (isDefaultView) {
-        categoryShopsCache[categoryKey] = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        const page = { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor };
+        categoryShopsCache[categoryKey] = page;
+        setCache(categoryShopsCacheKey(categoryKey), page);
       }
     } catch (e) {
       console.error('Failed to fetch category dealers', e);

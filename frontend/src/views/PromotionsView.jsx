@@ -5,6 +5,7 @@ import { cleanGoogleImageUrl, resizeImageFileToBlob } from '../utils/imageUtils'
 import { primeStoragePermission } from '../utils/platform';
 import { useLocationFilter } from '../utils/locationFilter';
 import { useSubmitting } from '../hooks/useSubmitting';
+import { getFresh, setCache } from '../utils/fetchCache';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import CustomSelect from '../components/CustomSelect';
 import PriceTag from '../components/PriceTag';
@@ -33,6 +34,17 @@ import {
 // Product / Advertisement / Offer/Discount) picker has been removed from the
 // create/edit form; every new listing is created as a plain PRODUCT and
 // categorized purely via this list.
+
+// This feed unmounts/remounts on every tab switch (Machines/Used Machines
+// and, separately, Offer Management each mount their own PromotionsFeed
+// instance - see onlyOffers below) with no per-view cache at all until now,
+// so it always paid a full network/DB round-trip and a blank spinner on
+// every single revisit - same root cause fixed elsewhere via fetchCache.js.
+// Only the true default view (no search/category filter, town at its
+// GPS-resolved default) is cached, same scoping as
+// DealersView/CategoryShopsView/ShopsManagementView.
+const PROMOTIONS_TTL_MS = 30 * 1000;
+const promotionsCacheKey = (onlyOffers) => `promotions:${onlyOffers ? 'offers' : 'feed'}`;
 
 function PromotionsView({ t, api, user, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, defaultTown, locationReady }) {
   const isSuperAdmin = user.role === 'SUPER_ADMIN';
@@ -77,13 +89,14 @@ const PRODUCT_MAX_VALIDITY_DAYS = 30;
 const PRODUCT_MAX_PHOTOS = 4;
 
 function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch, initiallyOpenAddModal, onCloseInitiallyOpen, defaultTown, locationReady }) {
-  const [promotions, setPromotions] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const cachedFeed = getFresh(promotionsCacheKey(onlyOffers), PROMOTIONS_TTL_MS) || null;
+  const [promotions, setPromotions] = useState(cachedFeed ? cachedFeed.items : []);
+  const [loading, setLoading] = useState(!cachedFeed);
   // Infinite-scroll pagination state - `promotions` above only ever holds
   // the pages loaded so far, never the whole table (see fetchPromotions/
   // fetchMorePromotions below).
-  const [nextCursor, setNextCursor] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
+  const [nextCursor, setNextCursor] = useState(cachedFeed ? cachedFeed.nextCursor : null);
+  const [hasMore, setHasMore] = useState(cachedFeed ? cachedFeed.hasMore : false);
   const [loadingMore, setLoadingMore] = useState(false);
   const loadMoreSentinelRef = useRef(null);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -230,8 +243,25 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
   const fetchPromotionsSeq = useRef(0);
 
   const fetchPromotions = async () => {
+    const isDefaultView = categoryFilter === 'ALL' && !debouncedQuery && (!town || town === defaultTown);
+    // A fresh-enough default-view cache skips the network/DB round-trip
+    // entirely, not just the loading spinner (see PROMOTIONS_TTL_MS).
+    if (isDefaultView) {
+      const fresh = getFresh(promotionsCacheKey(onlyOffers), PROMOTIONS_TTL_MS);
+      if (fresh) {
+        setPromotions(fresh.items);
+        setNextCursor(fresh.nextCursor);
+        setHasMore(fresh.hasMore);
+        setLoading(false);
+        return;
+      }
+    }
     const seq = ++fetchPromotionsSeq.current;
-    setLoading(true);
+    // Only blank to a spinner for a real search/filter or a genuinely empty
+    // screen - a bare revisit renders the cached feed instantly and
+    // refreshes silently in the background, same pattern as the other
+    // fetchCache.js-backed views.
+    if (!isDefaultView || promotions.length === 0) setLoading(true);
     try {
       const res = await api.getPromotions({
         // Offer Management (Super Admin) needs every offer regardless of
@@ -248,6 +278,9 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
       setPromotions(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
+      if (isDefaultView) {
+        setCache(promotionsCacheKey(onlyOffers), { items: res.items, nextCursor: res.nextCursor, hasMore: !!res.nextCursor });
+      }
     } catch (e) {
       if (seq !== fetchPromotionsSeq.current) return;
       console.error(e);

@@ -14,6 +14,7 @@ import { cleanGoogleImageUrl } from '../utils/imageUtils';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 import ImageCarousel from './ImageCarousel';
 import { useLocationFilter } from '../utils/locationFilter';
+import { getFresh, setCache } from '../utils/fetchCache';
 
 // Mirrors App.jsx's TERMS_AND_CONDITIONS_TITLE/BODY - duplicated rather than
 // imported since App.jsx isn't a module other components import from
@@ -60,8 +61,20 @@ function waLink(phone) {
   return `https://wa.me/${digits.length === 10 ? `91${digits}` : digits}`;
 }
 
+// PublicHomeTab (and this carousel with it) unmounts/remounts every time the
+// pre-login app's bottom nav switches away from Home and back (see
+// PublicMobileApp's single-active-tab `body` assignment above) - without
+// this, that meant re-fetching the ad banners from scratch on every single
+// revisit. The backend itself already caches this endpoint (2 min, see
+// AdService.getPublicAds), so a cache miss here is already fast - this
+// still skips the round-trip and the brief blank gap before the images
+// pop in, matching the fetchCache.js fix already applied to the
+// authenticated dashboard's equivalent screens.
+const AD_CAROUSEL_TTL_MS = 30 * 1000;
+const AD_CAROUSEL_CACHE_KEY = 'public-ads:carousel';
+
 function AdCarousel({ api }) {
-  const [ads, setAds] = useState([]);
+  const [ads, setAds] = useState(() => getFresh(AD_CAROUSEL_CACHE_KEY, AD_CAROUSEL_TTL_MS) || []);
   // `pos` indexes into `slides` below, which has one extra clone slide
   // appended after the real last one - the standard trick for a genuinely
   // continuous infinite carousel (Ad1 -> Ad2 -> Ad3 -> Ad1 -> ...) with CSS
@@ -73,8 +86,13 @@ function AdCarousel({ api }) {
   const touchStartX = useRef(null);
 
   useEffect(() => {
+    if (getFresh(AD_CAROUSEL_CACHE_KEY, AD_CAROUSEL_TTL_MS)) return;
     let cancelled = false;
-    api.getPublicAds().then((res) => { if (!cancelled) setAds(res || []); }).catch(() => {});
+    api.getPublicAds().then((res) => {
+      if (cancelled) return;
+      setAds(res || []);
+      setCache(AD_CAROUSEL_CACHE_KEY, res || []);
+    }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
 
@@ -129,7 +147,7 @@ function AdCarousel({ api }) {
         >
           {slides.map((ad, i) => (
             <div className="ad-carousel-slide" key={`${ad.id}-${i}`}>
-              <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title || ''} />
+              <img src={cleanGoogleImageUrl(ad.imageUrl)} alt={ad.title || ''} loading={i === 0 ? 'eager' : 'lazy'} />
             </div>
           ))}
         </div>
@@ -269,14 +287,33 @@ function ShowMoreCard({ onClick }) {
   );
 }
 
+// Same unmount/remount-on-every-tab-switch issue as AdCarousel above - these
+// two strips re-fetched from scratch on every revisit to Home with no cache
+// at all.
+const HOME_STRIPS_TTL_MS = 30 * 1000;
+const HOME_SHOPS_CACHE_KEY = 'public-home:shops';
+const HOME_MACHINES_CACHE_KEY = 'public-home:machines';
+
 function PublicHomeTab({ api, onOpenShop, onOpenMachine, onGoTab }) {
-  const [shops, setShops] = useState(null);
-  const [machines, setMachines] = useState(null);
+  const [shops, setShops] = useState(() => getFresh(HOME_SHOPS_CACHE_KEY, HOME_STRIPS_TTL_MS) ?? null);
+  const [machines, setMachines] = useState(() => getFresh(HOME_MACHINES_CACHE_KEY, HOME_STRIPS_TTL_MS) ?? null);
 
   useEffect(() => {
     let cancelled = false;
-    api.searchPublicShops({ limit: HOME_STRIP_LIMIT + 1 }).then((res) => { if (!cancelled) setShops(res.items); }).catch(() => setShops([]));
-    api.getPublicMachines({ limit: HOME_STRIP_LIMIT + 1 }).then((res) => { if (!cancelled) setMachines(res.items); }).catch(() => setMachines([]));
+    if (!getFresh(HOME_SHOPS_CACHE_KEY, HOME_STRIPS_TTL_MS)) {
+      api.searchPublicShops({ limit: HOME_STRIP_LIMIT + 1 }).then((res) => {
+        if (cancelled) return;
+        setShops(res.items);
+        setCache(HOME_SHOPS_CACHE_KEY, res.items);
+      }).catch(() => setShops([]));
+    }
+    if (!getFresh(HOME_MACHINES_CACHE_KEY, HOME_STRIPS_TTL_MS)) {
+      api.getPublicMachines({ limit: HOME_STRIP_LIMIT + 1 }).then((res) => {
+        if (cancelled) return;
+        setMachines(res.items);
+        setCache(HOME_MACHINES_CACHE_KEY, res.items);
+      }).catch(() => setMachines([]));
+    }
     return () => { cancelled = true; };
   }, []);
 
