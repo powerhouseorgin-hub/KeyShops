@@ -1,16 +1,34 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Request } from 'express';
 import { TenantService } from '../tenant/tenant.service';
 import { getShopSubscriptionState, SUBSCRIPTION_EXPIRED_MESSAGE } from '../common/subscription-status';
 import { getRequiredSecret } from '../common/required-env';
 import { getCachedAuthCheck, setCachedAuthCheck } from './auth-cache';
+import { SESSION_COOKIE_NAME } from '../common/session-cookie';
+
+// The web dashboard now sends its JWT via an httpOnly cookie instead of the
+// Authorization header (see session-cookie.ts/AuthController.login) - native
+// still sends the header exactly as before, so the header is checked first
+// and this cookie fallback only ever fires for a web request. No
+// cookie-parser middleware needed for one fixed cookie name - just enough
+// parsing to pull it out of the raw Cookie header.
+function cookieExtractor(req: Request): string | null {
+  const raw = req?.headers?.cookie;
+  if (!raw) return null;
+  const match = raw.match(new RegExp(`(?:^|;\\s*)${SESSION_COOKIE_NAME}=([^;]+)`));
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly tenantService: TenantService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+        cookieExtractor,
+      ]),
       ignoreExpiration: false,
       secretOrKey: getRequiredSecret('JWT_SECRET', 'kee-jwt-super-secret-key-2026-phase-1'),
     });

@@ -1,8 +1,10 @@
-import { Controller, Post, Body, Get, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Body, Get, Delete, UseGuards, Request, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { LoginDto, ChangePasswordDto, ResetPasswordPublicDto, RegisterShopDto, SendOtpDto, VerifyOtpDto, VerifyFirebasePhoneDto, UpdateLoginCredentialsDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { SESSION_COOKIE_NAME, sessionCookieOptions, clearedSessionCookieOptions } from '../common/session-cookie';
 
 @Controller('auth')
 export class AuthController {
@@ -10,8 +12,26 @@ export class AuthController {
 
   @Throttle({ default: { limit: 10, ttl: 600000 } })
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
+    const result = await this.authService.login(loginDto);
+    // Web only (see session-cookie.ts) - the response body still carries the
+    // same accessToken it always has, unchanged, so nothing that reads it
+    // today breaks; the cookie is additive.
+    if (loginDto.platform !== 'native') {
+      res.cookie(SESSION_COOKIE_NAME, result.accessToken, sessionCookieOptions());
+    }
+    return result;
+  }
+
+  // Stateless JWTs need no server-side session to invalidate - this exists
+  // purely to clear the httpOnly web cookie above, which client-side JS
+  // can't remove itself. Harmless (and a no-op) for native, which never had
+  // this cookie set in the first place - called unconditionally from
+  // AuthContext.jsx's logout() rather than branching on platform there.
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie(SESSION_COOKIE_NAME, clearedSessionCookieOptions());
+    return { success: true };
   }
 
   // Tighter than the app-wide default (120/min) - a 4-digit OTP has only

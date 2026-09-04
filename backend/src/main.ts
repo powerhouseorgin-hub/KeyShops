@@ -42,13 +42,15 @@ async function bootstrap() {
   app.use(express.json({ limit: '15mb' }));
   app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
-  // Enable CORS. Auth here is Bearer-token-only (the JWT is attached
-  // manually via the Authorization header, never a cookie - see
-  // AuthContext.jsx), so `credentials: true` was never actually needed and
-  // combining it with a wildcard origin isn't even valid per the CORS spec
-  // (browsers reject that pairing). An explicit allowlist instead of '*'
-  // also means a browser can no longer be tricked into sending an
-  // authenticated request to this API from an arbitrary third-party page.
+  // Enable CORS. The web dashboard now also authenticates via an httpOnly
+  // cookie (see session-cookie.ts) alongside the original Authorization
+  // header, so `credentials: true` is required for the browser to both
+  // accept that cookie on the login response and send it back on later
+  // requests - and per the CORS spec, `credentials: true` can only be
+  // combined with an explicit origin, never a wildcard, which this
+  // allowlist already was for its own reason (a browser can't be tricked
+  // into sending an authenticated request to this API from an arbitrary
+  // third-party page).
   const PROD_ALLOWED_ORIGINS = [
     'https://keyshops.in',
     'https://www.keyshops.in',
@@ -75,6 +77,7 @@ async function bootstrap() {
       callback(null, false);
     },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
   });
 
   // Global prefix for API
