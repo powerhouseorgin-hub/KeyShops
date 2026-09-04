@@ -1,9 +1,15 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { TenantService } from '../tenant/tenant.service';
 import { UpdateSupportConfigDto } from './dto/update-support-config.dto';
+import { TtlCache } from '../common/ttl-cache';
+
+const SUPPORT_CONFIG_CACHE_KEY = 'default';
+const SUPPORT_CONFIG_CACHE_TTL_MS = 5 * 60 * 1000; // 5 min safety-net TTL; updateSupportConfig invalidates immediately
 
 @Injectable()
 export class ReportService {
+  private supportConfigCache = new TtlCache();
+
   constructor(private readonly tenantService: TenantService) {}
 
   // ==========================================
@@ -225,21 +231,29 @@ export class ReportService {
     };
   }
 
+  // Hit on nearly every pre-login and dashboard screen load (WhatsApp
+  // support number, subscription price) and rarely changes, so it's cached
+  // in-process (see TtlCache's doc comment for why not Redis) -
+  // updateSupportConfig invalidates it immediately below.
   async getSupportConfig() {
+    const cached = this.supportConfigCache.get(SUPPORT_CONFIG_CACHE_KEY);
+    if (cached) return cached;
+
     const config = await this.tenantService.prisma.platformConfig.findUnique({
       where: { id: 'default' },
     });
-    if (!config) {
-      return { whatsapp: '+91 98765 43210', videos: [], email: null, customerCareNumber: null, subscriptionPrice: 999, gstPercent: 18 };
-    }
-    return {
-      whatsapp: config.whatsapp,
-      videos: config.videos,
-      email: config.email,
-      customerCareNumber: config.customerCareNumber,
-      subscriptionPrice: config.subscriptionPrice,
-      gstPercent: config.gstPercent,
-    };
+    const result = !config
+      ? { whatsapp: '+91 98765 43210', videos: [], email: null, customerCareNumber: null, subscriptionPrice: 999, gstPercent: 18 }
+      : {
+        whatsapp: config.whatsapp,
+        videos: config.videos,
+        email: config.email,
+        customerCareNumber: config.customerCareNumber,
+        subscriptionPrice: config.subscriptionPrice,
+        gstPercent: config.gstPercent,
+      };
+    this.supportConfigCache.set(SUPPORT_CONFIG_CACHE_KEY, result, SUPPORT_CONFIG_CACHE_TTL_MS);
+    return result;
   }
 
   async updateSupportConfig(dto: UpdateSupportConfigDto) {
@@ -256,6 +270,7 @@ export class ReportService {
       create: { id: 'default', ...data },
       update: data,
     });
+    this.supportConfigCache.invalidate(SUPPORT_CONFIG_CACHE_KEY);
     return {
       whatsapp: updated.whatsapp,
       videos: updated.videos,

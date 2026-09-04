@@ -1,9 +1,15 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { TenantService } from '../tenant/tenant.service';
 import { CreateShopCategoryDto, UpdateShopCategoryDto } from './dto/shop-category.dto';
+import { TtlCache } from '../common/ttl-cache';
+
+const CACHE_KEY = 'all';
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 min safety-net TTL; every mutation below invalidates immediately
 
 @Injectable()
 export class ShopCategoryService {
+  private cache = new TtlCache();
+
   constructor(private readonly tenantService: TenantService) {}
 
   // PUBLIC: List active categories - used both to populate the Category
@@ -12,11 +18,20 @@ export class ShopCategoryService {
   // Admin-controlled sortOrder (see reorderCategories) rather than name, so
   // dragging categories in the management screen actually changes what
   // shop owners see in the dropdown.
+  //
+  // Hit on nearly every registration/shop-management screen load and rarely
+  // changes, so it's cached in-process (see TtlCache's doc comment for why
+  // not Redis) - every mutation method below invalidates it immediately.
   async getAllCategories() {
-    return this.tenantService.prisma.shopCategory.findMany({
+    const cached = this.cache.get(CACHE_KEY);
+    if (cached) return cached;
+
+    const categories = await this.tenantService.prisma.shopCategory.findMany({
       where: { deletedAt: null },
       orderBy: [{ sortOrder: 'asc' }, { name: 'asc' }],
     });
+    this.cache.set(CACHE_KEY, categories, CACHE_TTL_MS);
+    return categories;
   }
 
   // SUPER ADMIN: Create a category. If a category with this name was
@@ -41,6 +56,8 @@ export class ShopCategoryService {
     // sort - matches how a newly-added item is expected to behave.
     const highest = await this.tenantService.prisma.shopCategory.aggregate({ _max: { sortOrder: true } });
     const nextSortOrder = (highest._max.sortOrder ?? -1) + 1;
+
+    this.cache.invalidate(CACHE_KEY);
 
     if (existing) {
       return this.tenantService.prisma.shopCategory.update({
@@ -72,6 +89,7 @@ export class ShopCategoryService {
       ),
     );
 
+    this.cache.invalidate(CACHE_KEY);
     return this.getAllCategories();
   }
 
@@ -87,6 +105,7 @@ export class ShopCategoryService {
       throw new ConflictException('A shop category with this name already exists');
     }
 
+    this.cache.invalidate(CACHE_KEY);
     return this.tenantService.prisma.shopCategory.update({
       where: { id },
       data: { name: dto.name.trim() },
@@ -100,6 +119,7 @@ export class ShopCategoryService {
     const existing = await this.tenantService.prisma.shopCategory.findFirst({ where: { id, deletedAt: null } });
     if (!existing) throw new NotFoundException('Shop category not found');
 
+    this.cache.invalidate(CACHE_KEY);
     return this.tenantService.prisma.shopCategory.update({
       where: { id },
       data: { deletedAt: new Date() },

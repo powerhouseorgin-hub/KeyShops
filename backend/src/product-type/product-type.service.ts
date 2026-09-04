@@ -1,19 +1,34 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { TenantService } from '../tenant/tenant.service';
 import { CreateProductTypeDto, UpdateProductTypeDto } from './dto/product-type.dto';
+import { TtlCache } from '../common/ttl-cache';
+
+const CACHE_KEY = 'all';
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 min safety-net TTL; every mutation below invalidates immediately
 
 @Injectable()
 export class ProductTypeService {
+  private cache = new TtlCache();
+
   constructor(private readonly tenantService: TenantService) {}
 
   // PUBLIC: List active product types - powers the Product Type dropdown on
   // the Inventory Product Creation form as well as the Super Admin's
   // Product Types management screen.
+  //
+  // Hit on nearly every product-creation screen load and rarely changes, so
+  // it's cached in-process (see TtlCache's doc comment for why not Redis) -
+  // every mutation method below invalidates it immediately.
   async getAllProductTypes() {
-    return this.tenantService.prisma.productType.findMany({
+    const cached = this.cache.get(CACHE_KEY);
+    if (cached) return cached;
+
+    const productTypes = await this.tenantService.prisma.productType.findMany({
       where: { deletedAt: null },
       orderBy: { name: 'asc' },
     });
+    this.cache.set(CACHE_KEY, productTypes, CACHE_TTL_MS);
+    return productTypes;
   }
 
   // SUPER ADMIN: Create a product type. If a product type with this name was
@@ -31,6 +46,8 @@ export class ProductTypeService {
     if (existing && !existing.deletedAt) {
       throw new ConflictException('A product type with this name already exists');
     }
+
+    this.cache.invalidate(CACHE_KEY);
 
     if (existing) {
       return this.tenantService.prisma.productType.update({
@@ -56,6 +73,7 @@ export class ProductTypeService {
       throw new ConflictException('A product type with this name already exists');
     }
 
+    this.cache.invalidate(CACHE_KEY);
     return this.tenantService.prisma.productType.update({
       where: { id },
       data: { name: dto.name.trim() },
@@ -69,6 +87,7 @@ export class ProductTypeService {
     const existing = await this.tenantService.prisma.productType.findFirst({ where: { id, deletedAt: null } });
     if (!existing) throw new NotFoundException('Product type not found');
 
+    this.cache.invalidate(CACHE_KEY);
     return this.tenantService.prisma.productType.update({
       where: { id },
       data: { deletedAt: new Date() },
