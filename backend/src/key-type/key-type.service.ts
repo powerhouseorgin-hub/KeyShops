@@ -1,19 +1,34 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { TenantService } from '../tenant/tenant.service';
 import { CreateKeyTypeDto, UpdateKeyTypeDto } from './dto/key-type.dto';
+import { TtlCache } from '../common/ttl-cache';
+
+const CACHE_KEY = 'all';
+const CACHE_TTL_MS = 5 * 60 * 1000; // 5 min safety-net TTL; every mutation below invalidates immediately
 
 @Injectable()
 export class KeyTypeService {
+  private cache = new TtlCache();
+
   constructor(private readonly tenantService: TenantService) {}
 
   // PUBLIC: List active key types - powers the Key Type dropdown on the
   // Customer Registration form as well as the Super Admin's Key Types
   // management screen.
+  //
+  // Hit on nearly every customer-registration screen load and rarely
+  // changes, so it's cached in-process (see TtlCache's doc comment for why
+  // not Redis) - every mutation method below invalidates it immediately.
   async getAllKeyTypes() {
-    return this.tenantService.prisma.keyType.findMany({
+    const cached = this.cache.get(CACHE_KEY);
+    if (cached) return cached;
+
+    const keyTypes = await this.tenantService.prisma.keyType.findMany({
       where: { deletedAt: null },
       orderBy: { name: 'asc' },
     });
+    this.cache.set(CACHE_KEY, keyTypes, CACHE_TTL_MS);
+    return keyTypes;
   }
 
   // SUPER ADMIN: Create a key type. If a key type with this name was
@@ -31,6 +46,8 @@ export class KeyTypeService {
     if (existing && !existing.deletedAt) {
       throw new ConflictException('A key type with this name already exists');
     }
+
+    this.cache.invalidate(CACHE_KEY);
 
     if (existing) {
       return this.tenantService.prisma.keyType.update({
@@ -56,6 +73,7 @@ export class KeyTypeService {
       throw new ConflictException('A key type with this name already exists');
     }
 
+    this.cache.invalidate(CACHE_KEY);
     return this.tenantService.prisma.keyType.update({
       where: { id },
       data: { name: dto.name.trim() },
@@ -69,6 +87,7 @@ export class KeyTypeService {
     const existing = await this.tenantService.prisma.keyType.findFirst({ where: { id, deletedAt: null } });
     if (!existing) throw new NotFoundException('Key type not found');
 
+    this.cache.invalidate(CACHE_KEY);
     return this.tenantService.prisma.keyType.update({
       where: { id },
       data: { deletedAt: new Date() },

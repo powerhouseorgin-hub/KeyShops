@@ -11,6 +11,7 @@ import { getFirebaseAdminApp } from './firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getShopSubscriptionState, SubscriptionState, SUBSCRIPTION_EXPIRED_MESSAGE } from '../common/subscription-status';
 import { forwardGeocodeAddress } from '../common/geocode.util';
+import { invalidateAuthCache } from './auth-cache';
 
 // bcrypt's cost factor is exponential (each +1 roughly doubles the CPU time
 // spent per hash/compare) - 12 was fine on typical hardware (~200-300ms) but
@@ -481,6 +482,10 @@ export class AuthService implements OnModuleInit {
     }
 
     await this.tenantService.prisma.user.update({ where: { id: userId }, data });
+    // The cached auth-check (see auth-cache.ts) holds this user's phone -
+    // without this, a just-changed phone number would keep resolving to the
+    // old one for up to TTL_MS on every request that hits the cache.
+    invalidateAuthCache(userId);
 
     // Log that a change happened and which fields, but never the actual new
     // value(s) - login identifiers are sensitive enough to keep out of the

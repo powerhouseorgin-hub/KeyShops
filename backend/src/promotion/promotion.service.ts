@@ -38,6 +38,25 @@ const PUBLIC_PROMOTION_SELECT = {
   shop: { select: { id: true, name: true, town: true, district: true } },
 };
 
+// FileService.deleteFile takes a raw storage object key, but Promotion only
+// ever stores the full URL returned at upload time (see
+// FileService.uploadFile) - a Supabase signed URL
+// (".../object/sign/<bucket>/<fileKey>?token=...") or, on the local-disk
+// fallback, "/api/uploads/<fileKey>". Either way the key is the last path
+// segment before any query string, since uploadFile never nests uploads in
+// subdirectories. Returns null (never throws) for a URL shaped so
+// differently that deleting it wouldn't make sense - a missing/malformed
+// entry shouldn't stop the rest of a cleanup batch.
+function extractFileKeyFromUrl(url: string): string | null {
+  try {
+    const { pathname } = new URL(url, 'http://internal');
+    const segments = pathname.split('/').filter(Boolean);
+    return segments.length > 0 ? segments[segments.length - 1] : null;
+  } catch {
+    return null;
+  }
+}
+
 @Injectable()
 export class PromotionService {
   private readonly logger = new Logger(PromotionService.name);
@@ -356,11 +375,37 @@ export class PromotionService {
   // expiry is a separate, pre-existing concept (hide, never auto-delete).
   @Cron(CronExpression.EVERY_HOUR)
   async deleteExpiredProducts() {
-    const { count } = await this.tenantService.prisma.promotion.deleteMany({
+    // Fetch the rows (and their photo URLs) before deleting them - deleteMany
+    // only ever removed the DB rows, leaving every listing's photos (up to 4
+    // each, see imageUrls) permanently orphaned in Supabase Storage with
+    // nothing left to ever clean them up. File deletion is deliberately
+    // best-effort per file (a bad/already-missing key logs and moves on,
+    // same as FileService.deleteFile's own Supabase-side behavior) so one
+    // broken URL can't stop the DB purge that's this job's main guarantee.
+    const expired = await this.tenantService.prisma.promotion.findMany({
       where: { type: 'PRODUCT', validUntil: { lt: new Date() } },
+      select: { id: true, imageUrl: true, imageUrls: true },
+    });
+    if (expired.length === 0) return;
+
+    for (const promo of expired) {
+      const urls = new Set([...(promo.imageUrls || []), ...(promo.imageUrl ? [promo.imageUrl] : [])]);
+      for (const url of urls) {
+        const fileKey = extractFileKeyFromUrl(url);
+        if (!fileKey) continue;
+        try {
+          await this.fileService.deleteFile(fileKey);
+        } catch (err: any) {
+          this.logger.warn(`Failed to delete storage file "${fileKey}" for expired promotion ${promo.id}: ${err?.message}`);
+        }
+      }
+    }
+
+    const { count } = await this.tenantService.prisma.promotion.deleteMany({
+      where: { id: { in: expired.map((p) => p.id) } },
     });
     if (count > 0) {
-      this.logger.log(`Auto-deleted ${count} expired machine/product listing(s)`);
+      this.logger.log(`Auto-deleted ${count} expired machine/product listing(s) and their storage files`);
     }
   }
 }

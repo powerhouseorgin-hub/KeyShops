@@ -7,6 +7,7 @@ import { FileService } from '../customer/file.service';
 import { persistShopDocuments } from '../common/shop-document.util';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 import { forwardGeocodeAddress } from '../common/geocode.util';
+import { invalidateAuthCache } from '../auth/auth-cache';
 
 // Shared `include` clause for pulling a shop's active (non-soft-deleted) documents.
 // Nested `include`/`select` relations are NOT covered by TenantService's soft-delete
@@ -287,6 +288,16 @@ export class ShopService {
     return updated;
   }
 
+  // Invalidates the JwtStrategy auth-check cache (see auth-cache.ts) for
+  // every user of a shop, so a status/subscription change a Super Admin
+  // just made takes effect on that shop's very next request instead of
+  // waiting out the cache's TTL - called from setShopStatus and
+  // updateSubscription below, the two mutations the cached check covers.
+  private async invalidateShopAuthCache(shopId: string) {
+    const users = await this.tenantService.prisma.user.findMany({ where: { shopId }, select: { id: true } });
+    users.forEach((u) => invalidateAuthCache(u.id));
+  }
+
   // SUPER ADMIN: Toggle Shop Active/Suspend
   async setShopStatus(id: string, isActive: boolean, actorUserId: string) {
     const shop = await this.tenantService.prisma.shop.findUnique({ where: { id } });
@@ -296,6 +307,7 @@ export class ShopService {
       where: { id },
       data: { isActive },
     });
+    await this.invalidateShopAuthCache(id);
 
     await this.tenantService.prisma.activityLog
       .create({
@@ -342,6 +354,7 @@ export class ShopService {
         },
       });
     });
+    await this.invalidateShopAuthCache(shopId);
 
     await this.tenantService.prisma.activityLog
       .create({
