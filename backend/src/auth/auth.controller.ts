@@ -29,11 +29,16 @@ export class AuthController {
     return this.authService.verifyOtp(dto);
   }
 
+  @Throttle({ default: { limit: 15, ttl: 600000 } })
   @Post('verify-firebase-phone')
   async verifyFirebasePhone(@Body() dto: VerifyFirebasePhoneDto) {
     return this.authService.verifyFirebasePhoneToken(dto);
   }
 
+  // Tighter than the app-wide default - this creates real User/Shop rows
+  // and, unlike login/OTP, was relying only on the 120/min blanket limit
+  // shared with every other unauthenticated route.
+  @Throttle({ default: { limit: 5, ttl: 600000 } })
   @Post('register-shop')
   async registerShop(@Body() dto: RegisterShopDto) {
     return this.authService.registerShop(dto);

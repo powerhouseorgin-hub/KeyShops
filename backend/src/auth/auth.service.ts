@@ -20,6 +20,16 @@ import { getShopSubscriptionState, SubscriptionState, SUBSCRIPTION_EXPIRED_MESSA
 // for how existing users' already-cost-12 hashes get migrated transparently.
 const PASSWORD_HASH_COST = 10;
 
+// A 4-digit OTP has only 9000 possible values. The route-level @Throttle on
+// POST /auth/verify-otp only limits requests per source IP, so a distributed
+// attacker (many IPs) could otherwise try unlimited codes against one
+// victim's still-valid OTP within its 5-minute window. This caps genuine
+// wrong-code attempts against a single OTP record regardless of which IP
+// they came from - once exceeded, that code is locked out and the caller
+// must request a fresh one (a new sendOtp() call always creates a new row
+// with failedAttempts back at 0).
+const MAX_OTP_ATTEMPTS = 5;
+
 @Injectable()
 export class AuthService implements OnModuleInit {
   constructor(
@@ -186,9 +196,18 @@ export class AuthService implements OnModuleInit {
     if (record.expiresAt < new Date()) {
       throw new BadRequestException('OTP code has expired. Please request a new code.');
     }
+    // Locked regardless of source IP - see MAX_OTP_ATTEMPTS above for why
+    // the route-level @Throttle alone isn't enough here.
+    if (record.failedAttempts >= MAX_OTP_ATTEMPTS) {
+      throw new BadRequestException('Too many incorrect attempts. Please request a new code.');
+    }
 
     const isMatch = await bcrypt.compare(dto.code, record.codeHash);
     if (!isMatch) {
+      await this.tenantService.prisma.otpCode.update({
+        where: { id: record.id },
+        data: { failedAttempts: { increment: 1 } },
+      });
       throw new BadRequestException('Incorrect OTP code. Please try again.');
     }
 

@@ -1,4 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ShopService } from './shop.service';
 import { PromotionService } from '../promotion/promotion.service';
 
@@ -8,6 +9,7 @@ import { PromotionService } from '../promotion/promotion.service';
 // only safe, non-sensitive fields - and deliberately never touches
 // CustomerService, since Customer records must never be reachable from any
 // public endpoint.
+@Throttle({ default: { limit: 60, ttl: 60000 } })
 @Controller('public/search')
 export class PublicSearchController {
   constructor(

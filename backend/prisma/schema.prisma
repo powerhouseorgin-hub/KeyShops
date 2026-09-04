@@ -461,6 +461,13 @@ model OtpCode {
   codeHash   String
   consumed   Boolean  @default(false)
   expiresAt  DateTime
+  // Counts wrong verifyOtp() attempts against THIS code specifically, so the
+  // lockout can't be bypassed by rotating source IPs past the route-level
+  // @Throttle (which only limits per-IP request rate, not attempts against
+  // one victim's code). A fresh sendOtp() call always creates a new row, so
+  // this naturally resets to 0 without any extra logic - see
+  // AuthService.verifyOtp for the MAX_OTP_ATTEMPTS check.
+  failedAttempts Int @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

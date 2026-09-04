@@ -1,4 +1,5 @@
 import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { Response } from 'express';
 import { CustomerService } from './customer.service';
 
@@ -11,6 +12,7 @@ import { CustomerService } from './customer.service';
 // to) so the recipient's browser only ever sees our own domain - a redirect
 // would show the storage bucket name, internal file path, and signature
 // token in their address bar once followed.
+@Throttle({ default: { limit: 20, ttl: 60000 } })
 @Controller('public/reports')
 export class PublicReportController {
   constructor(private readonly customerService: CustomerService) {}

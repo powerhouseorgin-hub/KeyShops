@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ReportService } from './report.service';
 
 // PUBLIC (no auth) - split out of ReportController because that controller
@@ -8,6 +9,7 @@ import { ReportService } from './report.service';
 // module's order-creation amount) via PlatformConfig.subscriptionPrice, so
 // it must be reachable before the shop owner has an account - mirrors
 // ShopCategoryController's split public/guarded-route pattern.
+@Throttle({ default: { limit: 30, ttl: 60000 } })
 @Controller()
 export class PublicSupportConfigController {
   constructor(private readonly reportService: ReportService) {}

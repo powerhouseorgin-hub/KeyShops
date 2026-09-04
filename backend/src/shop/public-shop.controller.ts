@@ -1,4 +1,5 @@
 import { Controller, Get, NotFoundException, Param, Query } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { ShopService } from './shop.service';
 import { PromotionService } from '../promotion/promotion.service';
 
@@ -8,6 +9,12 @@ import { PromotionService } from '../promotion/promotion.service';
 // ShopService.searchPublicShops()/getPublicShopById() and
 // PromotionService.getPublicPromotions() may be called from here, since
 // those are the methods vetted to return safe, non-sensitive fields only.
+//
+// Class-level throttle tighter than the app-wide 120/min default - these
+// are unauthenticated, unbounded-query endpoints (the `query`/`town` search
+// filters use a Prisma `contains` scan), so worth capping per-IP scraping
+// load even though nothing here is sensitive on its own.
+@Throttle({ default: { limit: 60, ttl: 60000 } })
 @Controller('public/shops')
 export class PublicShopController {
   constructor(
