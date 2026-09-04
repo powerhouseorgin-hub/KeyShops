@@ -6,9 +6,19 @@ import { TtlCache } from '../common/ttl-cache';
 const SUPPORT_CONFIG_CACHE_KEY = 'default';
 const SUPPORT_CONFIG_CACHE_TTL_MS = 5 * 60 * 1000; // 5 min safety-net TTL; updateSupportConfig invalidates immediately
 
+const DASHBOARD_CACHE_KEY = 'default';
+// No mutation anywhere invalidates this - the dashboard aggregates 10
+// platform-wide counts/sums that change from dozens of unrelated mutations
+// (new shop, new customer, revenue log, subscription change, etc.), so
+// wiring explicit invalidation into all of them isn't worth it. A short TTL
+// bounds staleness instead - same trade-off as the public ad carousel/shop
+// directory caches (see AdService/ShopService).
+const DASHBOARD_CACHE_TTL_MS = 30 * 1000;
+
 @Injectable()
 export class ReportService {
   private supportConfigCache = new TtlCache();
+  private dashboardCache = new TtlCache();
 
   constructor(private readonly tenantService: TenantService) {}
 
@@ -16,6 +26,9 @@ export class ReportService {
   // SUPER ADMIN DASHBOARD
   // ==========================================
   async getSuperDashboard() {
+    const cached = this.dashboardCache.get(DASHBOARD_CACHE_KEY);
+    if (cached) return cached;
+
     const now = new Date();
     const in10Days = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
 
@@ -73,7 +86,7 @@ export class ReportService {
     const subscriptionPrice = platformConfig?.subscriptionPrice ?? 999;
     const subscriptionTotal = subscriptionCount * subscriptionPrice;
 
-    return {
+    const result = {
       shops: {
         total: totalShops,
         active: activeShops,
@@ -95,6 +108,8 @@ export class ReportService {
       revenue: recentRevenue,
       subscriptionRevenue: subscriptionTotal,
     };
+    this.dashboardCache.set(DASHBOARD_CACHE_KEY, result, DASHBOARD_CACHE_TTL_MS);
+    return result;
   }
 
   // Log manual revenue record
