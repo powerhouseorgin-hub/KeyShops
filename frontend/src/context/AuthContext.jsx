@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { API_BASE } from '../apiConfig';
 
@@ -147,8 +147,17 @@ export const AuthProvider = ({ children }) => {
       .catch(() => {});
   }, [token]);
 
-  // Unified API Methods, backed entirely by the live NestJS backend
-  const api = {
+  // Unified API Methods, backed entirely by the live NestJS backend.
+  // Memoized so this object keeps one identity across renders instead of a
+  // brand-new one every time - AuthProvider wraps the entire app (see
+  // main.jsx), so every unmemoized render here previously gave every
+  // useAuth() consumer a new `api` reference, and any effect depending on it
+  // (directly, or via a value derived from it) re-ran on every app-wide
+  // render, not just when auth state actually changed. Only token and role
+  // are real dependencies - every method below reads `user.role` (never
+  // any other field) to pick a Super Admin vs. Shop Admin endpoint, and
+  // `request` (used by all of them) closes over `token` alone.
+  const api = useMemo(() => ({
     changePassword: async (oldPassword, newPassword) => {
       return request('/api/auth/change-password', 'POST', { oldPassword, newPassword });
     },
@@ -730,7 +739,7 @@ export const AuthProvider = ({ children }) => {
     updateKeyType: async (id, name) => request(`/api/super/key-types/${id}`, 'PUT', { name }),
     deleteKeyType: async (id) => request(`/api/super/key-types/${id}`, 'DELETE'),
 
-  };
+  }), [token, user?.role]);
 
   return (
     <AuthContext.Provider value={{ user, token, isAuthenticated: !!user, loading, login, logout, api, subscription }}>
