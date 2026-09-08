@@ -595,13 +595,20 @@ export class AuthService implements OnModuleInit {
     // that exact amount was actually captured by Razorpay against this
     // order - not just that the client claims it was. Checked before any
     // other validation/DB write so an unpaid request never reaches them.
-    const paymentValid = this.paymentService.verifyPaymentSignature(
-      dto.razorpayOrderId,
-      dto.razorpayPaymentId,
-      dto.razorpaySignature,
-    );
-    if (!paymentValid) {
-      throw new BadRequestException('Payment verification failed. Please try again.');
+    // Skipped entirely for a free-trial signup (dto.startTrial) - see the
+    // Subscription creation below, which branches to Plan.TRIAL instead.
+    if (!dto.startTrial) {
+      if (!dto.razorpayOrderId || !dto.razorpayPaymentId || !dto.razorpaySignature) {
+        throw new BadRequestException('Payment details are required to complete registration.');
+      }
+      const paymentValid = this.paymentService.verifyPaymentSignature(
+        dto.razorpayOrderId,
+        dto.razorpayPaymentId,
+        dto.razorpaySignature,
+      );
+      if (!paymentValid) {
+        throw new BadRequestException('Payment verification failed. Please try again.');
+      }
     }
 
     // Referral code is optional, but if the owner entered one it must match
@@ -766,15 +773,24 @@ export class AuthService implements OnModuleInit {
         },
       });
 
-      // 3. Create Subscription - single YEARLY plan platform-wide.
+      // 3. Create Subscription - either a free trial (Plan.TRIAL, length set
+      // by Super Admin via PlatformConfig.trialDays) or the single YEARLY
+      // paid plan platform-wide, depending on dto.startTrial - see the
+      // payment gate above, which only ran for the paid path.
+      const platformConfig = await tx.platformConfig.findUnique({ where: { id: 'default' } });
       const subStartDate = new Date();
       const subEndDate = new Date(subStartDate);
-      subEndDate.setFullYear(subEndDate.getFullYear() + 1);
+      if (dto.startTrial) {
+        const trialDays = platformConfig?.trialDays ?? 14;
+        subEndDate.setDate(subEndDate.getDate() + trialDays);
+      } else {
+        subEndDate.setFullYear(subEndDate.getFullYear() + 1);
+      }
 
       await tx.subscription.create({
         data: {
           shopId: shop.id,
-          plan: 'YEARLY',
+          plan: dto.startTrial ? 'TRIAL' : 'YEARLY',
           status: 'ACTIVE',
           startDate: subStartDate,
           endDate: subEndDate,
@@ -793,17 +809,19 @@ export class AuthService implements OnModuleInit {
       // account (the email/phone uniqueness check above rejects
       // re-registration), and nothing else in the app creates a
       // RevenueRecord tied to a shop, so later edits/updates to the shop can
-      // never duplicate or touch this entry.
-      const platformConfig = await tx.platformConfig.findUnique({ where: { id: 'default' } });
-      const subscriptionPrice = platformConfig?.subscriptionPrice ?? 999;
-      await tx.revenueRecord.create({
-        data: {
-          month: subStartDate.getMonth() + 1,
-          year: subStartDate.getFullYear(),
-          amount: subscriptionPrice,
-          notes: `Revenue generated from a new Shop Account subscription — ${dto.shopName}.`,
-        },
-      });
+      // never duplicate or touch this entry. Skipped for a free trial - no
+      // payment was collected, so nothing should land in the revenue report.
+      if (!dto.startTrial) {
+        const subscriptionPrice = platformConfig?.subscriptionPrice ?? 999;
+        await tx.revenueRecord.create({
+          data: {
+            month: subStartDate.getMonth() + 1,
+            year: subStartDate.getFullYear(),
+            amount: subscriptionPrice,
+            notes: `Revenue generated from a new Shop Account subscription — ${dto.shopName}.`,
+          },
+        });
+      }
 
       // 4. Credit the referring shop, only after this shop's account creation
       // and (simulated) payment above have both succeeded. The Referral row's

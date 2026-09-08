@@ -267,7 +267,7 @@ export class ReportService {
       where: { id: 'default' },
     });
     const result = !config
-      ? { whatsapp: '+91 98765 43210', videos: [], email: null, customerCareNumber: null, subscriptionPrice: 999, gstPercent: 18 }
+      ? { whatsapp: '+91 98765 43210', videos: [], email: null, customerCareNumber: null, subscriptionPrice: 999, gstPercent: 18, trialDays: 14 }
       : {
         whatsapp: config.whatsapp,
         videos: config.videos,
@@ -275,6 +275,7 @@ export class ReportService {
         customerCareNumber: config.customerCareNumber,
         subscriptionPrice: config.subscriptionPrice,
         gstPercent: config.gstPercent,
+        trialDays: config.trialDays,
       };
     this.supportConfigCache.set(SUPPORT_CONFIG_CACHE_KEY, result, SUPPORT_CONFIG_CACHE_TTL_MS);
     return result;
@@ -288,6 +289,7 @@ export class ReportService {
       customerCareNumber: dto.customerCareNumber ?? null,
       ...(dto.subscriptionPrice !== undefined ? { subscriptionPrice: dto.subscriptionPrice } : {}),
       ...(dto.gstPercent !== undefined ? { gstPercent: dto.gstPercent } : {}),
+      ...(dto.trialDays !== undefined ? { trialDays: dto.trialDays } : {}),
     };
     const updated = await this.tenantService.prisma.platformConfig.upsert({
       where: { id: 'default' },
@@ -302,6 +304,7 @@ export class ReportService {
       customerCareNumber: updated.customerCareNumber,
       subscriptionPrice: updated.subscriptionPrice,
       gstPercent: updated.gstPercent,
+      trialDays: updated.trialDays,
     };
   }
 

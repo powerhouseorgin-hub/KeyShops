@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString, IsOptional, MinLength, Matches, IsNumber, IsUrl, IsIn } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsString, IsOptional, MinLength, Matches, IsNumber, IsUrl, IsIn, IsBoolean } from 'class-validator';
 
 export class LoginDto {
   // Accepts either the account's email address OR its mobile number - both
@@ -229,19 +229,35 @@ export class RegisterShopDto {
   @IsUrl({}, { message: 'Please enter a valid website URL' })
   website?: string;
 
+  // When true, skips payment entirely and creates a Plan.TRIAL subscription
+  // instead (see AuthService.registerShop) - the free-trial alternative to
+  // the Razorpay checkout path below. Mutually exclusive with the
+  // razorpay* fields; AuthService enforces that at least one path's
+  // required data is present, since that can't be expressed with static
+  // decorators alone.
+  @IsOptional()
+  @IsBoolean()
+  startTrial?: boolean;
+
   // Razorpay Checkout's success-handler response for the subscription order
   // created via PaymentService.createSubscriptionOrder just before this
   // form was submitted - verified server-side in AuthService.registerShop
   // before the shop account is created (see PaymentService.verifyPaymentSignature).
+  // Optional at the DTO level only because a startTrial submission omits
+  // them entirely - AuthService.registerShop still requires all three
+  // whenever startTrial isn't set, exactly as before.
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  razorpayOrderId: string;
+  razorpayOrderId?: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  razorpayPaymentId: string;
+  razorpayPaymentId?: string;
 
+  @IsOptional()
   @IsString()
   @IsNotEmpty()
-  razorpaySignature: string;
+  razorpaySignature?: string;
 }

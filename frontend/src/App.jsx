@@ -940,6 +940,12 @@ export default function App() {
   // (see SupportConfigView / PlatformConfig.subscriptionPrice).
   const [regSubscriptionPrice, setRegSubscriptionPrice] = useState(999);
   const [regGstPercent, setRegGstPercent] = useState(18);
+  // Free-trial length, Super Admin-configurable (see SupportConfigView /
+  // PlatformConfig.trialDays) - 0 means trials are off, which hides the
+  // "Start Free Trial" option below entirely and leaves Step 2 exactly as
+  // it was before this feature existed.
+  const [regTrialDays, setRegTrialDays] = useState(0);
+  const [regTrialProcessing, setRegTrialProcessing] = useState(false);
   const [regError, setRegError] = useState('');
   const [regSuccessMessage, setRegSuccessMessage] = useState('');
   // Login email returned by the backend (echoes dto.email - see
@@ -997,6 +1003,7 @@ export default function App() {
       .then((cfg) => {
         setRegSubscriptionPrice(cfg.subscriptionPrice ?? 999);
         setRegGstPercent(cfg.gstPercent ?? 18);
+        setRegTrialDays(cfg.trialDays ?? 0);
       })
       .catch((e) => console.error('Failed to load subscription price:', e));
   }, [showRegisterShop]);
@@ -1127,6 +1134,28 @@ export default function App() {
     setRegLocLoading(false);
   };
 
+  // Shared by both Step 2 submit paths (paid checkout below and the
+  // free-trial handler further down) - every Step 1 field is identical
+  // regardless of which path the owner takes.
+  const buildRegisterShopPayload = () => ({
+    shopName: regShopName,
+    ownerName: regOwnerName,
+    categoryId: regCategoryId,
+    email: regEmailEnabled && regEmail ? regEmail.trim() : undefined,
+    phone: regPhone,
+    location: regLocation,
+    city: regCity,
+    town: regTown,
+    state: regState,
+    pinCode: regPinCode,
+    aadhaarNumber: regAadhaarNumber || undefined,
+    website: regWebsiteUrlEnabled && regWebsiteUrl ? regWebsiteUrl.trim() : undefined,
+    referralCode: regReferralCode || undefined,
+    password: regPassword,
+    latitude: regLat ?? undefined,
+    longitude: regLng ?? undefined,
+  });
+
   const handleRegCheckout = async (e) => {
     e.preventDefault();
     setRegError('');
@@ -1160,22 +1189,7 @@ export default function App() {
         setRegPayProcessing(true);
         try {
           const res = await api.registerShop({
-            shopName: regShopName,
-            ownerName: regOwnerName,
-            categoryId: regCategoryId,
-            email: regEmailEnabled && regEmail ? regEmail.trim() : undefined,
-            phone: regPhone,
-            location: regLocation,
-            city: regCity,
-            town: regTown,
-            state: regState,
-            pinCode: regPinCode,
-            aadhaarNumber: regAadhaarNumber || undefined,
-            website: regWebsiteUrlEnabled && regWebsiteUrl ? regWebsiteUrl.trim() : undefined,
-            referralCode: regReferralCode || undefined,
-            password: regPassword,
-            latitude: regLat ?? undefined,
-            longitude: regLng ?? undefined,
+            ...buildRegisterShopPayload(),
             // Verified server-side (HMAC against the key secret) before the
             // shop account is created - see AuthService.registerShop.
             razorpayOrderId: response.razorpay_order_id,
@@ -1199,6 +1213,25 @@ export default function App() {
         setRegError(err.message);
       },
     });
+  };
+
+  // Free-trial alternative to handleRegCheckout above - same Step 1 fields,
+  // no Razorpay hop, and dto.startTrial tells AuthService.registerShop to
+  // create a Plan.TRIAL subscription instead of requiring payment. Only
+  // reachable when regTrialDays > 0 (Super Admin has trials enabled - see
+  // the Step 2 JSX below).
+  const handleStartTrial = async () => {
+    setRegError('');
+    setRegTrialProcessing(true);
+    try {
+      const res = await api.registerShop({ ...buildRegisterShopPayload(), startTrial: true });
+      setRegLoginEmail(res.loginEmail || '');
+      setRegSuccessMessage(res.message || t('registrationSuccessfulShopActiveMsg'));
+    } catch (err) {
+      setRegError(err.message || t('selfRegistrationFailedMsg'));
+    } finally {
+      setRegTrialProcessing(false);
+    }
   };
 
   // Shared by both close and (re)open - the dialog's own useState lives in
@@ -1976,14 +2009,35 @@ export default function App() {
                 without an extra "Continue to payment" click/screen. */}
                       {regStep === 2 && (
                         <form onSubmit={handleRegCheckout} className="animate-fade-in relative overflow-hidden">
-                          {regPayProcessing && (
+                          {(regPayProcessing || regTrialProcessing) && (
                             <div className="absolute inset-0 flex flex-col items-center justify-center gap-4" style={{ background: 'rgba(10,9,8,0.92)', zIndex: 20 }}>
                               <div className="relative w-12 h-12 flex items-center justify-center">
                                 <span className="absolute inset-0 rounded-full" style={{ border: '4px solid var(--gold-dim)' }}></span>
                                 <span className="absolute inset-0 rounded-full animate-spin" style={{ border: '4px solid transparent', borderTopColor: 'var(--gold)' }}></span>
                               </div>
-                              <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.06em' }}>{t('settlingPaymentEllipsis')}</h3>
+                              <h3 style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: '.06em' }}>{regTrialProcessing ? t('startingTrialEllipsis') : t('settlingPaymentEllipsis')}</h3>
                             </div>
+                          )}
+
+                          {/* Free-trial alternative to paying now - only shown when the
+                              Super Admin has set a Trial Period > 0 days (SupportConfigView /
+                              PlatformConfig.trialDays). Hidden entirely otherwise, leaving
+                              this screen exactly as it was before this feature existed. */}
+                          {regTrialDays > 0 && (
+                            <>
+                              <div style={{ background: 'var(--card-2)', border: '1px solid var(--border-2)', padding: 16, borderRadius: 14, marginBottom: 14, textAlign: 'center' }}>
+                                <Clock className="h-6 w-6" style={{ color: 'var(--jgreen)', margin: '0 auto 8px' }} />
+                                <p style={{ fontSize: 11.5, fontWeight: 600, color: 'var(--text-3)', marginBottom: 12 }}>{t('freeTrialNoPaymentDesc')}</p>
+                                <button type="button" onClick={handleStartTrial} className="btn btn-outline btn-block" disabled={regTrialProcessing || regPayProcessing}>
+                                  {t('startFreeTrialBtnTemplate').replace('{days}', regTrialDays)}
+                                </button>
+                              </div>
+                              <div className="flex items-center gap-2" style={{ margin: '4px 0 14px', color: 'var(--text-3)', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.05em' }}>
+                                <span style={{ flex: 1, height: 1, background: 'var(--border-2)' }}></span>
+                                {t('orDividerLabel')}
+                                <span style={{ flex: 1, height: 1, background: 'var(--border-2)' }}></span>
+                              </div>
+                            </>
                           )}
 
                           {(() => {

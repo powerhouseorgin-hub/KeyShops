@@ -674,6 +674,12 @@ model PlatformConfig {
   email               String?
   customerCareNumber  String?
 
+  // Length of the free trial (see Plan.TRIAL) offered on the public
+  // self-registration wizard as an alternative to paying immediately - see
+  // AuthService.registerShop's startTrial branch. Super Admin-configurable
+  // from Support Config, same as subscriptionPrice/gstPercent above.
+  trialDays Int @default(14)
+
   updatedAt DateTime @updatedAt
 }
 

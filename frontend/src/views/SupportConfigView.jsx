@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Check, Plus, Trash, RefreshCw, Layers, Edit, ExternalLink, Mail, Phone,
   IndianRupee, User, Tag, Percent, PlayCircle, MessageCircle, LifeBuoy, GripVertical,
-  X,
+  X, Clock,
 } from 'lucide-react';
 
 export function SupportConfigView({ t, api }) {
@@ -12,6 +12,7 @@ export function SupportConfigView({ t, api }) {
   const [videos, setVideos] = useState([]);
   const [subscriptionPrice, setSubscriptionPrice] = useState(999);
   const [gstPercent, setGstPercent] = useState(18);
+  const [trialDays, setTrialDays] = useState(14);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -60,6 +61,7 @@ export function SupportConfigView({ t, api }) {
       setVideos(res.videos || []);
       setSubscriptionPrice(res.subscriptionPrice ?? 999);
       setGstPercent(res.gstPercent ?? 18);
+      setTrialDays(res.trialDays ?? 14);
     } catch (e) {
       console.error('Failed to load support config:', e);
     } finally {
@@ -71,7 +73,7 @@ export function SupportConfigView({ t, api }) {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.updateSupportConfig({ whatsapp, videos, email, customerCareNumber, subscriptionPrice: Number(subscriptionPrice), gstPercent: Number(gstPercent) });
+      await api.updateSupportConfig({ whatsapp, videos, email, customerCareNumber, subscriptionPrice: Number(subscriptionPrice), gstPercent: Number(gstPercent), trialDays: Number(trialDays) });
       alert(t('supportConfigUpdatedMsg'));
     } catch (e) {
       alert(t('saveFailedTemplate').split('{msg}')[0] + e.message);
@@ -297,7 +299,7 @@ export function SupportConfigView({ t, api }) {
               </div>
               <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('subscriptionPriceHint')}</span>
             </div>
-            <div className="reg-field" style={{ marginBottom: 0 }}>
+            <div className="reg-field">
               <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--orange)' }}><Percent /></div><b>{t('gstPercentLabel')} <span className="req">*</span></b></div>
               <div className="input-wrap">
                 <input
@@ -307,6 +309,17 @@ export function SupportConfigView({ t, api }) {
                 />
               </div>
               <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('gstPercentHint')}</span>
+            </div>
+            <div className="reg-field" style={{ marginBottom: 0 }}>
+              <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--skyblue)' }}><Clock /></div><b>{t('trialPeriodDaysLabel')} <span className="req">*</span></b></div>
+              <div className="input-wrap">
+                <input
+                  type="number" required min="0" step="1" value={trialDays}
+                  onChange={(e) => setTrialDays(e.target.value)}
+                  placeholder={t('trialPeriodDaysPlaceholderEg')}
+                />
+              </div>
+              <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('trialPeriodDaysHint')}</span>
             </div>
           </div>
 

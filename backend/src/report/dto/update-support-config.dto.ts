@@ -39,4 +39,11 @@ export class UpdateSupportConfigDto {
   @Min(0)
   @Max(100)
   gstPercent?: number;
+
+  // Free-trial length offered on the public self-registration wizard - see
+  // AuthService.registerShop's startTrial branch.
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
+  trialDays?: number;
 }
