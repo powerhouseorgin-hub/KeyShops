@@ -47,9 +47,10 @@ function DealersView({ t, api, defaultTown, locationReady }) {
   }, [query]);
 
   // Loads the first page for the current search, replacing whatever was
-  // loaded before. The category filter cards were removed - this always
-  // browses every category now (see ShopService.searchPublicShops's
-  // `category` param, simply omitted here).
+  // loaded before. Scoped to the Dealers ShopCategory specifically (see
+  // ShopService.searchPublicShops's `category` param) - this directory is
+  // named "Dealers" and should only list shops actually registered under
+  // that category, not every shop on the platform.
   const fetchDealers = async () => {
     // "Default view" means town is either empty or whatever GPS resolved as
     // the default (not just empty) - see CategoryShopsView's identical
@@ -73,7 +74,7 @@ function DealersView({ t, api, defaultTown, locationReady }) {
     // refreshes silently in the background.
     if (!isDefaultView || dealers.length === 0) setLoading(true);
     try {
-      const res = await api.searchPublicShops({ query: debouncedQuery, town, limit: DEALERS_PAGE_SIZE });
+      const res = await api.searchPublicShops({ query: debouncedQuery, category: 'DEALERS', town, limit: DEALERS_PAGE_SIZE });
       setDealers(res.items);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
@@ -95,7 +96,7 @@ function DealersView({ t, api, defaultTown, locationReady }) {
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
     try {
-      const res = await api.searchPublicShops({ query: debouncedQuery, town, cursor: nextCursor, limit: DEALERS_PAGE_SIZE });
+      const res = await api.searchPublicShops({ query: debouncedQuery, category: 'DEALERS', town, cursor: nextCursor, limit: DEALERS_PAGE_SIZE });
       setDealers((prev) => [...prev, ...res.items]);
       setNextCursor(res.nextCursor);
       setHasMore(!!res.nextCursor);
