@@ -1,0 +1,13 @@
+{
+  "name": "keyshops-functions",
+  "description": "Cloud Functions for keee-7d6cb - currently just the Firestore-to-Algolia sync that replaces the (soon-deprecated, shutting down 2027-03-31) 'Search with Algolia' Firebase Extension.",
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^6.0.0",
+    "algoliasearch": "^5.59.0"
+  },
+  "private": true
+}

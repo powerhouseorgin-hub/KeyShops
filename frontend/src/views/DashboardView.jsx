@@ -272,7 +272,11 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
   }
 
   // SHOP ADMIN DASHBOARD
-  const sub = data.subscription;
+  // Optional-chained: a failed/slow getDashboard() call (cold start, network
+  // hiccup, or - during the Firestore migration - the not-yet-ported
+  // aggregate endpoint) leaves `data` null rather than blocking on retry, so
+  // this must degrade to "no widgets yet" instead of throwing.
+  const sub = data?.subscription;
   const firstName = (user.name || 'there').split(' ')[0];
   // Populated by AuthContext (GET /auth/me, refreshed whenever the session
   // token changes) only when the shop's subscription is in its 3-day

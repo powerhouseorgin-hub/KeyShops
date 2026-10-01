@@ -1,0 +1,12 @@
+rules_version = '2';
+
+// Deny-all, matching firestore.rules - the backend is the sole Storage
+// access point via the Admin SDK, which bypasses Security Rules entirely,
+// so there's nothing for a direct client request to legitimately do here.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

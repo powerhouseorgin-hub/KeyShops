@@ -282,24 +282,6 @@ export const AuthProvider = ({ children }) => {
       return parseJsonSafe(response);
     },
 
-    // Native app's phone verification - the OTP itself was already sent and
-    // checked by Firebase on-device (see OtpVerificationModal.jsx's
-    // Capacitor Firebase Authentication flow); this just has the backend
-    // confirm the resulting ID token is genuine before treating the phone
-    // as verified.
-    verifyFirebasePhoneToken: async (identifier, purpose, idToken) => {
-      const response = await fetch(`${API_BASE}/api/auth/verify-firebase-phone`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, purpose, idToken })
-      });
-      if (!response.ok) {
-        const err = await parseJsonSafe(response);
-        throw new Error(err.message || 'Phone verification failed');
-      }
-      return parseJsonSafe(response);
-    },
-
     registerShop: async (dto) => {
       const response = await fetch(`${API_BASE}/api/auth/register-shop`, {
         method: 'POST',
@@ -553,6 +535,20 @@ export const AuthProvider = ({ children }) => {
         ? `/api/super/customers/${customerId}/report`
         : `/api/shop/customers/${customerId}/report`;
       return request(url, 'POST', formData, true);
+    },
+
+    // Triggers the backend to send an already-uploaded report (see
+    // uploadCustomerReport above) to the customer's own WhatsApp number
+    // automatically via Meta's Cloud API - the server-initiated counterpart
+    // to reportShare.js's manual wa.me link. Returns { delivered: boolean };
+    // `delivered: false` means it was logged server-side rather than
+    // actually sent (WhatsApp template not configured yet), not an error -
+    // callers should not surface this as a failure to the shop admin.
+    sendCustomerInvoice: async (customerId, reportId) => {
+      const url = user.role === 'SUPER_ADMIN'
+        ? `/api/super/customers/${customerId}/send-invoice`
+        : `/api/shop/customers/${customerId}/send-invoice`;
+      return request(url, 'POST', { reportId });
     },
 
     // --- SHOP SETTINGS: VERIFICATION DOCUMENTS ---

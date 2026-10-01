@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { createPortal } from 'react-dom';
 import { useBackHandler } from '../utils/backHandler';
-import { getFresh, setCache } from '../utils/fetchCache';
+import { getFresh, setCache, invalidate } from '../utils/fetchCache';
 import { getAssetUrl, downloadAsset, filenameForAsset } from '../apiConfig';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { primeStoragePermission } from '../utils/platform';
@@ -323,6 +323,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       await api.createShop(dto);
       setShowAddModal(false);
       resetAddForm();
+      invalidate(SHOPS_CACHE_KEY);
       fetchShops();
     } catch (err) {
       setErrorMsg(err.message || t('failedToCreateShop'));
@@ -458,6 +459,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
       try {
         await api.updateSubscription(selectedShop.id, { status: 'ACTIVE' });
         setShowSubModal(false);
+        invalidate(SHOPS_CACHE_KEY);
         fetchShops();
       } catch (e) {
         alert(e.message);
@@ -525,6 +527,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
           companyDetails
         });
         setShowEditModal(false);
+        invalidate(SHOPS_CACHE_KEY);
         fetchShops();
       } catch (err) {
         alert(err.message || t('updateFailedMsg'));

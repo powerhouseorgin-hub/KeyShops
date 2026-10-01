@@ -117,6 +117,12 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // Post-submit confirmation - shown instead of a plain alert() so the
   // success state reads as part of the app's UI rather than a native dialog.
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  // Relative download path for the invoice generated right after a NEW
+  // customer is saved (see sendInvoiceForNewCustomer) - null until that
+  // background upload finishes, so the success modal's Download Invoice
+  // button only appears once there's actually something to download.
+  const [invoiceDownloadPath, setInvoiceDownloadPath] = useState(null);
+  const [invoiceSending, setInvoiceSending] = useState(false);
   // Guards Save Record against double-clicks/duplicate submissions - stays
   // true for the whole create/update + document-upload sequence and only
   // clears on error (so the shop admin can retry) or once the success modal
@@ -431,6 +437,15 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         await api.uploadDocument(customer.id, doc.type, doc.file);
       }
 
+      // Fire-and-forget: the customer record (and its documents) are already
+      // safely saved by this point, so a slow/failed invoice send should
+      // never hold up or fail the registration itself - see
+      // sendInvoiceForNewCustomer's doc comment. Only for new registrations,
+      // not edits, matching "invoice sent after registration".
+      if (!isEditMode) {
+        sendInvoiceForNewCustomer(customer);
+      }
+
       window.dispatchEvent(new CustomEvent('customer_updated'));
       setShowSuccessModal(true);
       setSavingRecord(false);
@@ -484,6 +499,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setGpsError('');
     setCapturedAddress('');
     setShowReviewModal(false);
+    setInvoiceDownloadPath(null);
+    setInvoiceSending(false);
   };
 
   // Mirrors CustomerHistoryView's ensureShopInfo() - fetches once (or again
@@ -509,6 +526,38 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     } catch (e) {
       console.error('Failed to load shop info for report:', e);
       return { name: superAdminMode ? (shops.find(s => s.id === selectedShopId)?.name || 'N/A') : 'N/A', address: 'N/A', phone: 'N/A' };
+    }
+  };
+
+  // Builds the customer-facing English service invoice (see
+  // customerInvoicePdf.js), uploads it for a stable public download link,
+  // and asks the backend to push it to the customer's own WhatsApp number
+  // automatically - the new-registration counterpart to the existing manual
+  // "Share via WhatsApp" wa.me button, which still requires the shop admin
+  // to tap Send themselves. Runs in the background after Save Record
+  // succeeds; never blocks or fails the registration itself - a failed
+  // invoice send is logged, not surfaced as a registration error, since the
+  // customer record is already safely saved by the time this runs.
+  const sendInvoiceForNewCustomer = async (customer) => {
+    setInvoiceSending(true);
+    try {
+      const shop = await ensureShopInfoForReport();
+      const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
+      const pdf = await buildCustomerInvoicePdf({ customer, shop, registeredByName: user?.name });
+
+      const safeName = (customer.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_') || 'Customer';
+      const fileName = `Invoice_${safeName}_${(customer.id || '').slice(-8)}.pdf`;
+      const blob = pdf.output('blob');
+      const file = new File([blob], fileName, { type: 'application/pdf' });
+
+      const { id: reportId } = await api.uploadCustomerReport(customer.id, file, fileName);
+      setInvoiceDownloadPath(`/api/public/reports/${reportId}/download`);
+
+      await api.sendCustomerInvoice(customer.id, reportId);
+    } catch (e) {
+      console.error('Failed to generate/send customer invoice:', e);
+    } finally {
+      setInvoiceSending(false);
     }
   };
 
@@ -1156,7 +1205,23 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
               <CheckCircle2 style={{ width: 28, height: 28 }} />
             </div>
             <h3 style={{ marginBottom: 8 }}>{isEditMode ? 'Customer Updated Successfully!' : t('registrationSuccessTitle')}</h3>
-            <p className="desc" style={{ marginBottom: 22 }}>{isEditMode ? 'All customer and key compliance details have been updated.' : t('registrationSuccessDesc')}</p>
+            <p className="desc" style={{ marginBottom: isEditMode ? 22 : 14 }}>{isEditMode ? 'All customer and key compliance details have been updated.' : t('registrationSuccessDesc')}</p>
+            {!isEditMode && (
+              <div style={{ marginBottom: 18 }}>
+                {invoiceDownloadPath ? (
+                  <button
+                    type="button"
+                    onClick={() => downloadAsset(invoiceDownloadPath, 'Invoice.pdf')}
+                    className="btn btn-outline"
+                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                  >
+                    <Download style={{ width: 16, height: 16 }} /> Download Invoice
+                  </button>
+                ) : invoiceSending ? (
+                  <p style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600 }}>Preparing invoice…</p>
+                ) : null}
+              </div>
+            )}
             <button type="button" onClick={handleSuccessModalOk} className="btn btn-primary" style={{ width: '100%' }}>
               {t('okBtn')}
             </button>

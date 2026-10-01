@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBackHandler } from '../utils/backHandler';
-import { getFresh, setCache } from '../utils/fetchCache';
+import { getFresh, setCache, invalidate } from '../utils/fetchCache';
 import { getAssetUrl, downloadAsset } from '../apiConfig';
 import { downloadPdf } from '../utils/pdfDelivery';
 import {
@@ -21,8 +21,14 @@ const CustomerRegistrationWizard = lazy(() => import('./CustomerRegistrationWiza
 // CustomerService.getSuperCustomers.
 const CUSTOMER_REGISTRY_PAGE_SIZE = 20;
 
+// Shop picker cache for the Add/Edit Customer wizard's shop dropdown - a
+// separate module-scope cache from AdsManagementView's own copy of the same
+// name (shops rarely change, so each screen that needs the full list keeps
+// its own instant-first-paint cache rather than sharing one across files).
+let platformShopsCache = null;
+
 // Caches only the first page of the default (no-search) list - module
-// scope, same rationale as shopsFirstPageCache above.
+// scope, same rationale as platformShopsCache above.
 let customersFirstPageCache = null;
 // Within this many ms of the last fetch, a revisit skips the network/DB
 // round-trip entirely (see fetchCache.js) instead of just avoiding the
@@ -436,6 +442,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 onCancel={() => setShowCreateWizard(false)}
                 onDone={() => {
                   setShowCreateWizard(false);
+                  invalidate(CUSTOMERS_CACHE_KEY);
                   fetchCustomers();
                 }}
               />
@@ -650,6 +657,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 onDone={(updated) => {
                   setFullEditCust(null);
                   if (viewCust && updated) setViewCust(updated);
+                  invalidate(CUSTOMERS_CACHE_KEY);
                   fetchCustomers();
                 }}
               />

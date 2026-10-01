@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CustomSelect from '../components/CustomSelect';
 import CountUp from '../components/CountUp';
 import { useSubmitting } from '../hooks/useSubmitting';
-import { getFresh, setCache } from '../utils/fetchCache';
+import { getFresh, setCache, invalidate } from '../utils/fetchCache';
 import {
   Banknote, Calendar, CalendarRange, Check, FileText, IndianRupee, Receipt, RefreshCw, TrendingUp,
 } from 'lucide-react';
@@ -71,6 +71,10 @@ function RevenueManagementView({ t, api }) {
         await api.logRevenue(Number(month), Number(year), numericAmount, notes);
         setAmount('');
         setNotes('');
+        // Without this, fetchRevenue()'s own TTL-cache check below wins and
+        // silently re-shows the pre-submit (stale) list - the record was
+        // saved correctly, but the screen looked like the submit did nothing.
+        invalidate(REVENUE_CACHE_KEY);
         fetchRevenue();
       } catch (e) {
         alert(e.message);

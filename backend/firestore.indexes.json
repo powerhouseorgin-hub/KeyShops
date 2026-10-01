@@ -1,0 +1,145 @@
+{
+  "indexes": [
+    { "collectionGroup": "otpCodes", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "identifier", "order": "ASCENDING" },
+      { "fieldPath": "purpose", "order": "ASCENDING" },
+      { "fieldPath": "consumed", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "shopCategories", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "deletedAt", "order": "ASCENDING" },
+      { "fieldPath": "sortOrder", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "productTypes", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "deletedAt", "order": "ASCENDING" },
+      { "fieldPath": "name", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "keyTypes", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "deletedAt", "order": "ASCENDING" },
+      { "fieldPath": "name", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "masterKeys", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "shopId", "order": "ASCENDING" },
+      { "fieldPath": "keyNumber", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "notifications", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "shopId", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "notifications", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "audience", "order": "ASCENDING" },
+      { "fieldPath": "shopId", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "promotions", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "type", "order": "ASCENDING" },
+      { "fieldPath": "validUntil", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "promotions", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "deletedAt", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" },
+      { "fieldPath": "__name__", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "promotions", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "deletedAt", "order": "ASCENDING" },
+      { "fieldPath": "type", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" },
+      { "fieldPath": "__name__", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "promotions", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "deletedAt", "order": "ASCENDING" },
+      { "fieldPath": "shopId", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" },
+      { "fieldPath": "__name__", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "activityLogs", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "action", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "activityLogs", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "shopId", "order": "ASCENDING" },
+      { "fieldPath": "action", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "revenueRecords", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "year", "order": "DESCENDING" },
+      { "fieldPath": "month", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "referrals", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "referrerShopId", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "subscriptions", "queryScope": "COLLECTION_GROUP", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "endDate", "order": "ASCENDING" }
+    ] },
+    { "collectionGroup": "subscriptions", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "endDate", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "subscriptions", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "status", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "customers", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "phone", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "customers", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "keyNumber", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "customers", "queryScope": "COLLECTION_GROUP", "fields": [
+      { "fieldPath": "phone", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" },
+      { "fieldPath": "__name__", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "customers", "queryScope": "COLLECTION_GROUP", "fields": [
+      { "fieldPath": "keyNumber", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" },
+      { "fieldPath": "__name__", "order": "DESCENDING" }
+    ] }
+  ],
+  "fieldOverrides": [
+    { "collectionGroup": "customers", "fieldPath": "masterKeyId", "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION" },
+      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION_GROUP" }
+    ] },
+    { "collectionGroup": "customers", "fieldPath": "keyNumber", "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION" },
+      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION_GROUP" }
+    ] },
+    { "collectionGroup": "documents", "fieldPath": "deletedAt", "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION" },
+      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION_GROUP" }
+    ] },
+    { "collectionGroup": "customers", "fieldPath": "createdAt", "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION" },
+      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION_GROUP" }
+    ] },
+    { "collectionGroup": "customers", "fieldPath": "phone", "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION" },
+      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION_GROUP" }
+    ] }
+  ]
+}

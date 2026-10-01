@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useBackHandler } from '../utils/backHandler';
-import { getFresh, setCache } from '../utils/fetchCache';
+import { getFresh, setCache, invalidate } from '../utils/fetchCache';
 import { useSubmitting } from '../hooks/useSubmitting';
 import { cleanGoogleImageUrl, resizeImageFileToBlob } from '../utils/imageUtils';
 import { primeStoragePermission } from '../utils/platform';
@@ -141,6 +141,7 @@ function AdsManagementView({ t, api }) {
         }
         setShowAddModal(false);
         resetForm();
+        invalidate(ADS_LIST_CACHE_KEY);
         fetchAds();
       } catch (err) {
         setErrorMsg(err.message || (editingAdId ? t('failedUpdateCampaign') : t('failedScheduleCampaign')));
@@ -180,6 +181,7 @@ function AdsManagementView({ t, api }) {
     if (!confirm(t('confirmTerminateAdCampaign'))) return;
     try {
       await api.deleteAdvertisement(id);
+      invalidate(ADS_LIST_CACHE_KEY);
       fetchAds();
     } catch (e) {
       alert(e.message);

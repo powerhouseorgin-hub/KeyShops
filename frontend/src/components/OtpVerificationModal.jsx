@@ -1,11 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { ShieldCheck, X, RefreshCw } from 'lucide-react';
-import { Capacitor } from '@capacitor/core';
-import { FirebaseAuthentication } from '@capacitor-firebase/authentication';
-import { normalizePhone, toE164, PHONE_REGEX_MESSAGE } from '../utils/phone';
-
-const IS_NATIVE_APP = Capacitor.isNativePlatform();
+import { normalizePhone, PHONE_REGEX_MESSAGE } from '../utils/phone';
 
 // Shared OTP entry dialog used by every verification flow in the app (Shop
 // Registration, Customer Registration, Forgot Password, Shop Settings
@@ -15,12 +11,13 @@ const IS_NATIVE_APP = Capacitor.isNativePlatform();
 // supply the identifier/method/purpose to verify and a callback for what
 // happens next.
 //
-// Phone verification in the native app goes through Firebase Phone Auth
-// (the Capacitor plugin) instead of the backend's send-otp/verify-otp
-// endpoints - Firebase generates, texts, and checks the code itself on
-// the device; the backend's only role is confirming the resulting ID
-// token afterward (see AuthContext.verifyFirebasePhoneToken). Email
-// verification and web phone verification are unaffected.
+// Phone verification always goes through the backend's WhatsApp-based
+// send-otp/verify-otp endpoints (see WhatsappOtpService), the same path as
+// email - there is no on-device SMS/Firebase Phone Auth path anymore. That
+// native-only branch was retired along with Firebase Phone Auth itself
+// (see the migration plan's decision #6); the backend's Firestore rewrite
+// never implemented the verify-firebase-phone endpoint the old branch
+// depended on, so it would have 404'd at cutover.
 export default function OtpVerificationModal({
   open,
   onClose,
@@ -41,11 +38,7 @@ export default function OtpVerificationModal({
   const [sending, setSending] = useState(false);
   const [verifying, setVerifying] = useState(false);
   const intervalRef = useRef(null);
-
-  const useFirebasePhoneAuth = IS_NATIVE_APP && method === 'phone';
-  const codeLength = useFirebasePhoneAuth ? 6 : 4;
-  const verificationIdRef = useRef(null);
-  const hasSentOnceRef = useRef(false);
+  const codeLength = 4;
 
   const startCooldown = useCallback(() => {
     setSecondsLeft(resendCooldownSeconds);
@@ -75,50 +68,21 @@ export default function OtpVerificationModal({
       return;
     }
     try {
-      if (useFirebasePhoneAuth) {
-        await FirebaseAuthentication.signInWithPhoneNumber({
-          phoneNumber: toE164(identifier),
-          resendCode: hasSentOnceRef.current,
-        });
-        hasSentOnceRef.current = true;
-      } else {
-        const result = await api.sendOtp(identifier, method, purpose);
-        if (result?.devCode) setDevCode(result.devCode);
-      }
+      const result = await api.sendOtp(identifier, method, purpose);
+      if (result?.devCode) setDevCode(result.devCode);
       startCooldown();
     } catch (e) {
       setOtpError(e.message || t('failedSendOtpMsg'));
     } finally {
       setSending(false);
     }
-  }, [api, identifier, method, purpose, startCooldown, t, useFirebasePhoneAuth]);
-
-  // Firebase's own events for the phone-auth path - registered only while
-  // this modal is open for a phone verification, torn down on close so a
-  // stale listener from a previous open never fires into a later attempt.
-  useEffect(() => {
-    if (!open || !useFirebasePhoneAuth) return;
-    let codeSentHandle;
-    let failedHandle;
-    FirebaseAuthentication.addListener('phoneCodeSent', (event) => {
-      verificationIdRef.current = event.verificationId;
-    }).then((h) => { codeSentHandle = h; });
-    FirebaseAuthentication.addListener('phoneVerificationFailed', (event) => {
-      setOtpError(event.message || t('failedSendOtpMsg'));
-    }).then((h) => { failedHandle = h; });
-    return () => {
-      codeSentHandle?.remove();
-      failedHandle?.remove();
-    };
-  }, [open, useFirebasePhoneAuth, t]);
+  }, [api, identifier, method, purpose, startCooldown, t]);
 
   useEffect(() => {
     if (open) {
       setEnteredOtp('');
       setOtpError('');
       setDevCode('');
-      verificationIdRef.current = null;
-      hasSentOnceRef.current = false;
       sendCode();
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -137,18 +101,7 @@ export default function OtpVerificationModal({
     setVerifying(true);
     setOtpError('');
     try {
-      if (useFirebasePhoneAuth) {
-        if (!verificationIdRef.current) throw new Error(t('failedSendOtpMsg'));
-        await FirebaseAuthentication.confirmVerificationCode({
-          verificationId: verificationIdRef.current,
-          verificationCode: enteredOtp,
-        });
-        const { token } = await FirebaseAuthentication.getIdToken();
-        await api.verifyFirebasePhoneToken(identifier, purpose, token);
-        FirebaseAuthentication.signOut().catch(() => {});
-      } else {
-        await api.verifyOtp(identifier, method, purpose, enteredOtp);
-      }
+      await api.verifyOtp(identifier, method, purpose, enteredOtp);
       onVerified?.();
       onClose?.();
     } catch (e) {
@@ -188,7 +141,7 @@ export default function OtpVerificationModal({
         {devCode && (
           <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 16 }}>
             <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-              {t('testingModeNoProviderTemplate').split('{provider}')[0]}{method === 'email' ? 'SMTP' : 'SMS'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
+              {t('testingModeNoProviderTemplate').split('{provider}')[0]}{method === 'email' ? 'SMTP' : 'WhatsApp'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
             </p>
             <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{devCode}</p>
           </div>
@@ -197,7 +150,7 @@ export default function OtpVerificationModal({
         <input
           type="text" maxLength={codeLength} value={enteredOtp}
           onChange={(e) => setEnteredOtp(e.target.value.replace(/\D/g, ''))}
-          placeholder={codeLength === 6 ? '123456' : '1234'}
+          placeholder="1234"
           style={{
             width: '100%', background: 'var(--card-2)', border: '1.5px solid var(--border-2)', color: 'var(--text-0)',
             borderRadius: 13, padding: '11px 15px', fontSize: 20, outline: 'none',

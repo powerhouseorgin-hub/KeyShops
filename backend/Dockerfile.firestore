@@ -1,0 +1,59 @@
+# Separate image for the Firestore-rewrite backend (src/main-firestore.ts) -
+# deployed as its OWN Cloud Run service, independent of the live app's
+# Dockerfile/Render deployment. Building and deploying this image has no
+# effect on production traffic until something is explicitly pointed at it
+# (DNS, a Hosting rewrite, or a mobile app config change) - see
+# src/main-firestore.ts's top comment.
+#
+# Unlike the live Dockerfile, this never runs `prisma migrate deploy` (this
+# service has no Postgres connection at all - DATABASE_URL is deleted at
+# startup, see main-firestore.ts) and needs no DATABASE_URL/DIRECT_URL set
+# in its Cloud Run environment. `prisma generate` still runs at build time
+# because firestore/auth/firebase-auth.guard.ts's RolesGuard imports the
+# `Role` enum type from @prisma/client - compilation fails without it, even
+# though no Prisma query ever executes in this module tree.
+#
+# Required Cloud Run environment variables / secrets for this service:
+#   FIREBASE_SERVICE_ACCOUNT_JSON   (the keee-7d6cb service account JSON, as
+#                                    a single-line string - inject via Secret
+#                                    Manager, never as a plain env var)
+#   FIREBASE_WEB_API_KEY
+#   FIREBASE_STORAGE_BUCKET         (keee-7d6cb.firebasestorage.app)
+#   WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_NUMBER_ID, WHATSAPP_OTP_TEMPLATE_NAME
+#   PUBLIC_API_BASE_URL             (this service's own Cloud Run URL, for
+#                                    building the invoice download links
+#                                    WhatsApp messages point to)
+#
+# Build/deploy (once gcloud access is available):
+#   docker build -f Dockerfile.firestore -t <region>-docker.pkg.dev/keee-7d6cb/<repo>/firestore-backend .
+#   gcloud run deploy firestore-backend --image <that-tag> --region <region> --allow-unauthenticated
+
+FROM node:22-slim AS build
+WORKDIR /app
+
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json ./
+COPY prisma ./prisma
+RUN npm ci
+
+COPY . .
+RUN npm run prisma:generate
+RUN npm run build
+
+FROM node:22-slim AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+
+COPY package*.json ./
+COPY prisma ./prisma
+RUN npm ci --omit=dev
+RUN npx prisma generate
+
+COPY --from=build /app/dist ./dist
+
+EXPOSE 8080
+
+CMD ["node", "dist/src/main-firestore.js"]

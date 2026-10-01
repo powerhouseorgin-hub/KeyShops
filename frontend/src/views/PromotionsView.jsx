@@ -5,7 +5,7 @@ import { cleanGoogleImageUrl, resizeImageFileToBlob } from '../utils/imageUtils'
 import { primeStoragePermission } from '../utils/platform';
 import { useLocationFilter } from '../utils/locationFilter';
 import { useSubmitting } from '../hooks/useSubmitting';
-import { getFresh, setCache } from '../utils/fetchCache';
+import { getFresh, setCache, invalidate } from '../utils/fetchCache';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import CustomSelect from '../components/CustomSelect';
 import PriceTag from '../components/PriceTag';
@@ -429,6 +429,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
         }
         setShowAddModal(false);
         resetForm();
+        invalidate(promotionsCacheKey(onlyOffers));
         fetchPromotions();
       } catch (err) {
         setErrorMsg(err.message || (editingId ? t('failedUpdateListing') : t('failedPublishListing')));
@@ -440,6 +441,7 @@ function PromotionsFeed({ t, api, user, isSuperAdmin, onlyOffers, searchDispatch
     if (!confirm(t('confirmRemoveListing'))) return;
     try {
       await api.deletePromotion(id);
+      invalidate(promotionsCacheKey(onlyOffers));
       fetchPromotions();
     } catch (e) {
       alert(e.message);
