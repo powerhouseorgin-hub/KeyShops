@@ -11,6 +11,10 @@ import keyShopLogo from '../assets/branding/keyshop-logo.png';
 // shipping the same 680px file used by the 340px-wide hero image.
 import keyShopLogoSm from '../assets/branding/keyshop-logo-sm.png';
 
+// Bump this whenever the privacy policy text changes. It used to render today's date on
+// every page view, which made the "Last updated" line meaningless.
+const PRIVACY_POLICY_LAST_UPDATED = '2026-10-02';
+
 // Static Android APK, copied into public/downloads at build time (see
 // frontend/public/downloads/keyshop-app.keeapp) so Vite/Firebase Hosting
 // serves it as a plain static file - no backend involvement needed. Shop
@@ -812,7 +816,7 @@ function PrivacyPolicyPage({ t }) {
     { title: t('privacySection5Title'), body: t('privacySection5Body') },
     { title: t('privacySection6Title'), list: [t('privacySection6Item1'), t('privacySection6Item2'), t('privacySection6Item3'), t('privacySection6Item4'), t('privacySection6Item5')] },
     { title: t('privacySection7Title'), body: t('privacySection7Body') },
-    { title: t('privacySection8Title'), list: [t('privacySection8Item1'), t('privacySection8Item3'), t('privacySection8Item4'), t('privacySection8Item5')] },
+    { title: t('privacySection8Title'), list: [t('privacySection8Item1'), t('privacySection8Item2'), t('privacySection8Item3'), t('privacySection8Item4'), t('privacySection8Item5'), t('privacySection8Item6')] },
     { title: t('privacySection9Title'), body: t('privacySection9Body') },
     { title: t('privacySection10Title'), body: t('privacySection10Body') },
     { title: t('privacySection11Title'), body: t('privacySection11Body') },
@@ -823,7 +827,7 @@ function PrivacyPolicyPage({ t }) {
       <Reveal className="public-section-head">
         <span className="eyebrow"><ShieldCheck className="h-3.5 w-3.5" /> {t('privacyEyebrow')}</span>
         <h2>{t('privacyHeading')}</h2>
-        <p style={{ maxWidth: 640 }}>{t('privacyLastUpdatedPrefix')} {new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+        <p style={{ maxWidth: 640 }}>{t('privacyLastUpdatedPrefix')} {new Date(PRIVACY_POLICY_LAST_UPDATED).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
       </Reveal>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 28, maxWidth: 760 }}>
