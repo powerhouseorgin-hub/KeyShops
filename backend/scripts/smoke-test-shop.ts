@@ -26,9 +26,8 @@ async function json(method: string, urlPath: string, body?: any, token?: string)
 }
 
 async function loginAsSuperAdmin(firestore: FirestoreService) {
-  // No self-registration path for Super Admin exists (by design - see
-  // AuthService's original comment: Super Admins are provisioned directly,
-  // never self-register) - so this test creates one straight through the
+  // No self-registration path for Super Admin exists (by design: Super Admins are
+  // provisioned directly, never self-register) - so this test creates one straight through the
   // Auth emulator + a Firestore users doc, mirroring what a one-off seed
   // script would do in production.
   const { FirebaseAuthService } = await import('../src/firestore/auth/firebase-auth.service');

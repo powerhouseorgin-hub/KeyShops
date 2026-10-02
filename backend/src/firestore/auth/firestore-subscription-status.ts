@@ -1,10 +1,8 @@
 import { FirestoreService } from '../firestore.service';
 import { computeSubscriptionState, type SubscriptionState } from '../../common/subscription-status';
 
-// Firestore counterpart to getShopSubscriptionState - computeSubscriptionState
-// itself is a pure function (no DB dependency) and is reused completely
-// unchanged from the pre-migration code; only the lookup that feeds it
-// changes (a subcollection query instead of a Prisma findFirst).
+// Looks up a shop's latest subscription (shops/{shopId}/subscriptions) and feeds it to
+// computeSubscriptionState, a pure function with no DB dependency.
 export async function getShopSubscriptionStateFirestore(
   firestore: FirestoreService,
   shopId: string,

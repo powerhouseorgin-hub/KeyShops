@@ -5,7 +5,7 @@ import { FirestoreDashboardService } from './firestore-dashboard.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { Roles } from '../../auth/roles.decorator';
-import { Role } from '@prisma/client';
+import { Role } from '../../auth/role.enum';
 
 @Controller()
 @UseGuards(FirebaseAuthGuard, RolesGuard)
@@ -56,10 +56,8 @@ export class FirestoreReportController {
   }
 
   // A Shop Admin's shopId is forced from their own token, never trusted
-  // from the query string - the old TenantInterceptor/TenantService did
-  // this injection automatically for every query; Firestore has no such
-  // choke point, so it's enforced explicitly here instead (see the
-  // migration plan's decision #9).
+  // from the query string - Firestore has no automatic tenant filter, so it
+  // is enforced explicitly here.
   @Get('activity-log')
   @Roles(Role.SUPER_ADMIN, Role.SHOP_ADMIN)
   async getActivityLog(

@@ -1,14 +1,11 @@
 import { CookieOptions } from 'express';
 
-// Web-only session cookie carrying the same JWT the login response already
-// returns in its body (see AuthController.login) - httpOnly so it's
-// unreachable from JS (the actual point of this: an XSS bug can no longer
-// read a persisted, long-lived token out of localStorage, which is where
-// the web dashboard used to keep it - see AuthContext.jsx). Native never
-// gets this cookie at all (see the `platform !== 'native'` check at both
-// call sites below) - it keeps sending the token via the Authorization
-// header exactly as before, since a Capacitor WebView's cookie jar doesn't
-// reliably carry a cross-origin cookie the way a real browser does.
+// Web-only session cookie carrying a Firebase session cookie (minted from the user's ID token at login, see
+// FirebaseAuthService.createSessionCookie) - httpOnly so it's unreachable from JS (the point of this: an XSS
+// bug can't read a persisted, long-lived token out of localStorage - see AuthContext.jsx). Native never gets
+// this cookie at all (see the `platform !== 'native'` check at the call sites) - it sends the Firebase ID
+// token via the Authorization header instead, since a Capacitor WebView's cookie jar doesn't reliably carry a
+// cross-origin cookie the way a real browser does.
 //
 // Set and cleared with the exact same options - clearCookie only actually
 // removes a cookie whose Domain/Path/SameSite match what it was set with.
@@ -30,7 +27,7 @@ export function sessionCookieOptions(): CookieOptions {
     sameSite: 'lax',
     domain: isProd ? '.keyshops.in' : undefined,
     path: '/',
-    maxAge: 24 * 60 * 60 * 1000, // 24h, matches JwtModule's signOptions.expiresIn
+    maxAge: 24 * 60 * 60 * 1000, // 24h, matches the session-cookie lifetime minted in FirebaseAuthService
   };
 }
 
@@ -38,7 +35,7 @@ export function sessionCookieOptions(): CookieOptions {
 // empty value and an immediately-past Expires - but Express computes
 // Expires from `maxAge` when one is present in the options, which silently
 // overrides that past-Expires back to "24h from now" (the emptied value
-// still fails JWT verification, so login-gating stays correct either way,
+// still fails session-cookie verification, so login-gating stays correct either way,
 // but the cookie then lingers in the browser for a full day instead of
 // actually being removed). Every field must otherwise match what the
 // cookie was set with, or the browser treats this as a different cookie

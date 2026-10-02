@@ -1,5 +1,4 @@
 import { ArgumentsHost, ConflictException, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { AllExceptionsFilter } from './all-exceptions.filter';
 
 describe('AllExceptionsFilter', () => {
@@ -41,41 +40,6 @@ describe('AllExceptionsFilter', () => {
     expect(jsonMock).toHaveBeenCalledWith(expect.objectContaining({ message: 'Shop category not found' }));
   });
 
-  it('maps an uncaught Prisma P2002 (unique constraint) to 409 without leaking column details', () => {
-    const err = new Prisma.PrismaClientKnownRequestError('Unique constraint failed on the fields: (`name`)', {
-      code: 'P2002',
-      clientVersion: 'test',
-    });
-
-    filter.catch(err, host);
-
-    expect(statusMock).toHaveBeenCalledWith(409);
-    const body = jsonMock.mock.calls[0][0];
-    expect(body.message).toBe('A database constraint was violated');
-    expect(JSON.stringify(body)).not.toContain('name');
-    expect(consoleErrorSpy).toHaveBeenCalled();
-  });
-
-  it('maps an uncaught Prisma P2025 (record not found) to 404', () => {
-    const err = new Prisma.PrismaClientKnownRequestError('Record not found', { code: 'P2025', clientVersion: 'test' });
-
-    filter.catch(err, host);
-
-    expect(statusMock).toHaveBeenCalledWith(404);
-  });
-
-  it('falls back to a generic 500 for any other Prisma error code', () => {
-    const err = new Prisma.PrismaClientKnownRequestError('Something else went wrong', {
-      code: 'P2003',
-      clientVersion: 'test',
-    });
-
-    filter.catch(err, host);
-
-    expect(statusMock).toHaveBeenCalledWith(500);
-    expect(jsonMock).toHaveBeenCalledWith(expect.objectContaining({ message: 'Internal server error' }));
-  });
-
   it('returns a generic 500 for a plain unexpected Error and logs it server-side', () => {
     const err = new TypeError("Cannot read properties of undefined (reading 'foo')");
 
@@ -83,6 +47,17 @@ describe('AllExceptionsFilter', () => {
 
     expect(statusMock).toHaveBeenCalledWith(500);
     expect(jsonMock).toHaveBeenCalledWith({ statusCode: 500, message: 'Internal server error' });
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Unhandled exception:', err);
+  });
+
+  it('never leaks the text of an internal error to the client', () => {
+    const err = new Error('9 FAILED_PRECONDITION: The query requires an index. https://console.firebase.google.com/project/secret-project');
+
+    filter.catch(err, host);
+
+    expect(statusMock).toHaveBeenCalledWith(500);
+    expect(JSON.stringify(jsonMock.mock.calls[0][0])).not.toContain('FAILED_PRECONDITION');
+    expect(JSON.stringify(jsonMock.mock.calls[0][0])).not.toContain('secret-project');
     expect(consoleErrorSpy).toHaveBeenCalledWith('Unhandled exception:', err);
   });
 });

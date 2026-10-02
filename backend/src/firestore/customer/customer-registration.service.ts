@@ -10,7 +10,7 @@ export interface CreateCustomerInput {
   phone: string;
   address?: string;
   idProofType?: string;
-  idProofNumber?: string; // already encrypted by the caller (CryptoService), same as before
+  idProofNumber?: string; // already encrypted by the caller (CryptoService)
   reason?: string;
   keyNumber?: string;
   keyType?: string;
@@ -28,13 +28,10 @@ export interface CreateCustomerInput {
   vehicleCategory?: string;
 }
 
-// Firestore counterpart to CustomerService.createCustomer's $transaction -
-// upserts a shop-scoped MasterKey catalog entry (find-or-create by the
-// deterministic doc ID, see MasterKeyRepository), then creates the
-// Customer (as a shops/{shopId}/customers subcollection doc), an
-// ActivityLog row, and a Notification, all atomically - same "never end up
-// with a customer pointing at a missing key" guarantee the old Prisma
-// transaction gave.
+// Customer registration: upserts a shop-scoped MasterKey catalog entry (find-or-create by the
+// deterministic doc ID, see MasterKeyRepository), then creates the Customer (as a
+// shops/{shopId}/customers subcollection doc), an ActivityLog row, and a Notification, all in one
+// Firestore transaction - so a customer can never end up pointing at a missing key.
 @Injectable()
 export class CustomerRegistrationService {
   constructor(

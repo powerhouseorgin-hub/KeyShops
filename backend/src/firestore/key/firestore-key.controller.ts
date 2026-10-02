@@ -3,7 +3,7 @@ import { FirestoreKeyService, type CreateKeyInput, type UpdateKeyInput } from '.
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { Roles } from '../../auth/roles.decorator';
-import { Role } from '@prisma/client';
+import { Role } from '../../auth/role.enum';
 
 @Controller()
 @UseGuards(FirebaseAuthGuard, RolesGuard)

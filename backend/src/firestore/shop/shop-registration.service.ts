@@ -6,7 +6,7 @@ import { PlatformConfigService } from '../config/platform-config.service';
 import { CryptoService } from '../../crypto/crypto.service';
 
 export interface RegisterShopInput {
-  uid: string; // Firebase Auth UID, created by the caller (AuthService) before this runs
+  uid: string; // Firebase Auth UID, created by the caller (FirestoreAuthController) before this runs
   shopName: string;
   ownerName: string;
   email?: string;
@@ -22,13 +22,9 @@ export interface RegisterShopInput {
   startTrial?: boolean;
 }
 
-// Firestore counterpart to AuthService.registerShop's $transaction block -
-// same shape (Shop + User + Subscription + Referral, one atomic unit,
-// trial-or-paid branch preserved from the earlier trial-period feature),
-// rewritten against Firestore's transaction API. Payment verification
-// (Razorpay) and the free-trial decision stay the CALLER's job (same
-// separation as before: the payment gate ran before the transaction in
-// the old code too) - this only owns the atomic write.
+// Shop registration as one atomic Firestore transaction: Shop + User + Subscription + Referral, with a
+// trial-or-paid branch. Payment verification (Razorpay) and the free-trial decision stay the CALLER's job (the
+// payment gate runs before the transaction) - this only owns the atomic write.
 //
 // Firestore transactions require ALL reads before ANY writes, so every
 // existence/uniqueness check below runs first, then every write happens
@@ -97,8 +93,8 @@ export class ShopRegistrationService {
         isActive: true,
         storageUsed: 0,
         companyDetails: JSON.stringify({ address: input.location || 'Pending registration details', gst: 'Pending', phone: input.phone }),
-        // Encrypted at rest, exactly as the original AuthService.registerShop did - this field was being
-        // stored (and copied into the Algolia index) as a plain 12-digit number.
+        // Encrypted at rest - this must never be stored (or copied into the Algolia index) as a plain
+        // 12-digit number.
         aadhaarNumber: input.aadhaarNumber ? this.crypto.encrypt(input.aadhaarNumber) : null,
         latitude: input.latitude ?? null,
         longitude: input.longitude ?? null,

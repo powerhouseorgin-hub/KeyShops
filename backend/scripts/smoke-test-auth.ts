@@ -12,7 +12,7 @@ import { FirestoreService } from '../src/firestore/firestore.service';
 import { FirebaseAuthService } from '../src/firestore/auth/firebase-auth.service';
 
 async function main() {
-  new FirestoreService(); // initializes the shared 'firestore-migration' app
+  new FirestoreService(); // initializes the shared 'kee-admin' app
   const auth = new FirebaseAuthService();
 
   console.log('--- Create a user (Firebase Auth owns the password now, no bcrypt) ---');

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { FirestoreService } from '../firestore.service';
 
-// Maps Prisma's PlatformConfig singleton (fixed id: 'default') onto a single
-// Firestore document - the simplest possible translation, no repository
-// base needed (no soft-delete, no list queries).
+// Platform-wide settings (support contacts, tutorial videos, subscription price, GST, trial days) held in a
+// single Firestore document - no repository base needed (no soft-delete, no list queries).
 const DOC_PATH = ['config', 'platform'] as const;
 
 export interface PlatformConfigData {

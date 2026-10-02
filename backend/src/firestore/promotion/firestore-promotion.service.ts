@@ -6,15 +6,11 @@ import { FirebaseFileService } from '../storage/firebase-file.service';
 import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.service';
 import { pick } from '../../common/pick.util';
 
-// Firestore port of PromotionService - the most structurally complex piece
-// of the migration (cross-shop feed, dynamic filter composition, a linked
-// shop's town/district used as a filter). Two things are deliberately NOT
-// carried over yet, both already flagged in the migration plan:
-// 1. Free-text `search` (title/description/productType `contains`) runs
-//    through the "promotions" Algolia index when
-//    AlgoliaSearchService.isConfigured (see that service's doc comment);
-//    until then it has no effect. Every OTHER filter (category, type, town,
-//    shopId, excludeOffers, includeExpiredOffers) works exactly as before.
+// Promotions: the most structurally complex service (cross-shop feed, dynamic filter composition, a linked
+// shop's town/district used as a filter). Two Firestore limits to know about:
+// 1. Free-text `search` (title/description/productType) runs through the "promotions" Algolia index when
+//    AlgoliaSearchService.isConfigured (see that service's doc comment); otherwise it has no effect. Every
+//    OTHER filter (category, type, town, shopId, excludeOffers, includeExpiredOffers) is a Firestore query.
 // 2. Cross-collection filtering by the linked Shop's town/district (used
 //    for the location filter) can't be a single Firestore query the way a
 //    SQL join could - it's done as a post-fetch filter: query everything

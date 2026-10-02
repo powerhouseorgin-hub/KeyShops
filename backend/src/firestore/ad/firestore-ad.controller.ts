@@ -4,12 +4,11 @@ import { FirestoreAdService, type CreateAdInput } from './firestore-ad.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { Roles } from '../../auth/roles.decorator';
-import { Role } from '@prisma/client';
+import { Role } from '../../auth/role.enum';
 
 // IMPORTANT: FirebaseAuthGuard only proves "this request is authenticated
-// as someone" - it does NOT check role. RolesGuard (reused unchanged from
-// the pre-migration code - it's pure Reflector + req.user.role, no Prisma
-// dependency at all) must run alongside it on every route that isn't
+// as someone" - it does NOT check role. RolesGuard (pure Reflector +
+// req.user.role) must run alongside it on every route that isn't
 // meant for both roles equally. A live HTTP test caught this exact gap
 // during development - a Shop Admin token was able to create a
 // Super-Admin-only ad before this was added.

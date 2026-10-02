@@ -34,7 +34,7 @@
     },
     {
       "target": "api",
-      "comment": "Dedicated Hosting site for api.keyshops.in, routing every request to the deployed Firestore backend (backend/src/functions-main.ts, codebase 'api') - keeps the same custom domain the Render deployment used, so the already-built frontend and published Android APK (both with VITE_API_BASE_URL=https://api.keyshops.in baked in at build time) need zero changes for the cutover.",
+      "comment": "Dedicated Hosting site for api.keyshops.in, routing every request to the deployed backend (backend/src/functions-main.ts, codebase 'api'). The web app and the Android app both have VITE_API_BASE_URL=https://api.keyshops.in baked in at build time.",
       "public": "backend/functions-api/public-placeholder",
       "rewrites": [
         {

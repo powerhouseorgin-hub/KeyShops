@@ -8,14 +8,10 @@ import { SUBSCRIPTION_EXPIRED_MESSAGE } from '../../common/subscription-status';
 import { SESSION_COOKIE_NAME } from '../../common/session-cookie';
 import { getCachedAuthCheck, setCachedAuthCheck } from '../../auth/auth-cache';
 
-// Replaces JwtAuthGuard + JwtStrategy combined - a plain NestJS guard
-// instead of a Passport strategy, since there's no passport-jwt-style
-// synchronous secret-based verification happening anymore (Firebase Admin
-// SDK's verifyIdToken/verifySessionCookie are the verification, already
-// async, so wrapping them in Passport's Strategy abstraction would add
-// nothing). Same dual-extraction (header first, cookie fallback), same
-// auth-cache reuse (unchanged - it's already generic, keyed by uid), same
-// shop-suspended/subscription-expired enforcement on every request.
+// Plain NestJS guard: Firebase Admin SDK's verifyIdToken/verifySessionCookie are the verification. Token
+// extraction is dual (Authorization Bearer header first - native - then the session cookie - web), results
+// are cached per uid (see auth-cache.ts), and shop-suspended / subscription-expired is enforced on every
+// request.
 function extractToken(req: Request): string | null {
   const header = req.headers.authorization;
   if (header?.startsWith('Bearer ')) return header.slice(7);

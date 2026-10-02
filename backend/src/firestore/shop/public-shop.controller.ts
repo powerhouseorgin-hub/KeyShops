@@ -38,8 +38,7 @@ export class PublicShopController {
   }
 }
 
-// PUBLIC (no auth): the pre-login app's combined search overlay - same
-// composition as the old PublicSearchController. Deliberately only calls the
+// PUBLIC (no auth): the pre-login app's combined search overlay. Deliberately only calls the
 // two vetted public projections above and never touches customer data.
 @Throttle({ default: { limit: 60, ttl: 60000 } })
 @Controller('public/search')

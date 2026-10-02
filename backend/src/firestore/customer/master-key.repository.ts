@@ -6,9 +6,9 @@ import { FirestoreService } from '../firestore.service';
 // a genuine "no shop" case: shopId: null means a global catalog entry
 // (Super Admin's cross-shop Master Key Catalogue mixes shop-owned and
 // global rows in one view). A subcollection has nowhere to put a
-// shopId:null row, so this mirrors the old nullable-FK column instead.
+// shopId:null row, so a null shopId is stored on a top-level catalog collection instead.
 //
-// The old @@unique([shopId, keyNumber]) becomes a deterministic doc ID:
+// Uniqueness of (shopId, keyNumber) is a deterministic doc ID:
 // `${shopId ?? 'GLOBAL'}_${keyNumber}` - uniqueness is then just "it's the
 // doc ID", no transaction/query needed to enforce it.
 export interface MasterKeyDoc {

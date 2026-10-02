@@ -4,7 +4,7 @@ import { ShopCategoryService, ProductTypeService, KeyTypeService } from './refer
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { Roles } from '../../auth/roles.decorator';
-import { Role } from '@prisma/client';
+import { Role } from '../../auth/role.enum';
 
 // Firestore port of the three near-identical reference-list controllers
 // (key-type, product-type, shop-category) - one file since they're now all

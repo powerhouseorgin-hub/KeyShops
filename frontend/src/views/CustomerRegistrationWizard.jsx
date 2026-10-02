@@ -24,8 +24,7 @@ import {
   X, MessageCircle,
 } from 'lucide-react';
 
-// Lazy-loaded: pulls in the Capacitor Firebase Authentication SDK - see the
-// identical import in App.jsx for why this is deferred rather than static.
+// Lazy-loaded - see the identical import in App.jsx for why this is deferred rather than static.
 const OtpVerificationModal = lazy(() => import('../components/OtpVerificationModal'));
 
 function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = [], editCustomer = null, onDone, onCancel }) {

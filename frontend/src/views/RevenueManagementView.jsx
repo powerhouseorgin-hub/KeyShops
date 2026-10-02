@@ -58,9 +58,8 @@ function RevenueManagementView({ t, api }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     // `amount` comes straight off a text input's e.target.value, so it's a
-    // string here (e.g. "25000") - Prisma's RevenueRecord.amount column is a
-    // Float, so it must be coerced to a real number before it goes over the
-    // wire, or the backend rejects the whole request.
+    // string here (e.g. "25000") - the backend expects a number, so it must be
+    // coerced before it goes over the wire, or the whole request is rejected.
     const numericAmount = Number(amount);
     if (!Number.isFinite(numericAmount)) {
       alert(t('enterValidAmountMsg'));

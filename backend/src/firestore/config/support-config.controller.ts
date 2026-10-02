@@ -6,7 +6,7 @@ import { PlatformConfigService } from './platform-config.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { Roles } from '../../auth/roles.decorator';
-import { Role } from '@prisma/client';
+import { Role } from '../../auth/role.enum';
 
 class SupportVideoDto {
   @IsString()
@@ -58,9 +58,7 @@ export class UpdateSupportConfigDto {
 // PlatformConfigService.get() already matches this response shape exactly
 // (whatsapp, videos, subscriptionPrice, gstPercent, email,
 // customerCareNumber, trialDays) - no separate cache needed here since
-// PlatformConfigService is a single small Firestore doc read, not a
-// cross-region Postgres round-trip the way the original's 5-minute
-// TtlCache was compensating for.
+// PlatformConfigService is a single small Firestore doc read.
 @Throttle({ default: { limit: 30, ttl: 60000 } })
 @Controller('support-config')
 export class PublicSupportConfigController {
@@ -80,8 +78,7 @@ export class SuperSupportConfigController {
 
   @Post()
   async update(@Body() dto: UpdateSupportConfigDto) {
-    // Matches the original Prisma upsert's explicit-null-on-omit semantics
-    // for email/customerCareNumber (Firestore's `.set(..., {merge:true})`
+    // Explicit-null-on-omit semantics for email/customerCareNumber (Firestore's `.set(..., {merge:true})`
     // would otherwise leave a previously-set value untouched when the field
     // is omitted from this request, not clear it).
     return this.platformConfig.update({

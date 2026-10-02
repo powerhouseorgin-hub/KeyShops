@@ -2,7 +2,7 @@ rules_version = '2';
 
 // Deny all direct client access - the NestJS backend is the sole data-access
 // point, using the Firebase Admin SDK (which bypasses these rules entirely).
-// See the migration plan's decision #9: tenant/role authorization is
+// Tenant/role authorization is
 // enforced in application code (guards checking custom claims), not here.
 service cloud.firestore {
   match /databases/{database}/documents {

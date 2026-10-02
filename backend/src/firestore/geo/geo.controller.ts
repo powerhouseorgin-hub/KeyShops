@@ -1,11 +1,8 @@
 import { BadRequestException, Controller, Get, Query } from '@nestjs/common';
 import { TtlCache } from '../../common/ttl-cache';
 
-// Identical to the pre-migration GeoController - zero Prisma/DB dependency
-// (pure external LocationIQ proxy + in-memory cache), so this is a verbatim
-// copy rather than a rewrite. See the original file's own doc comments for
-// the BigDataCloud -> Nominatim -> LocationIQ history and the zoom=18/14
-// fallback rationale.
+// Reverse-geocoding proxy for LocationIQ with an in-memory cache - no database dependency. The API key stays
+// server-side (LOCATIONIQ_API_KEY); the app never calls LocationIQ directly.
 const REVERSE_GEOCODE_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 const reverseGeocodeCache = new TtlCache<any>(2000);
 const coordKey = (lat: number, lng: number) => `${lat.toFixed(4)}_${lng.toFixed(4)}`;

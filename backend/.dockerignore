@@ -1,9 +1,0 @@
-node_modules
-dist
-public/uploads
-*.log
-.env
-.env.*
-!.env.example
-docs
-scripts/*.log

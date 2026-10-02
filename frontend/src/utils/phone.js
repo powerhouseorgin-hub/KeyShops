@@ -17,7 +17,7 @@ export function normalizePhone(raw) {
   return PHONE_REGEX.test(candidate) ? candidate : null;
 }
 
-// E.164 form for Firebase Phone Auth (India-only, matches normalizePhone).
+// E.164 form (India-only, matches normalizePhone).
 export function toE164(raw) {
   const normalized = normalizePhone(raw);
   return normalized ? `+91${normalized}` : null;

@@ -1,12 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FirestoreService } from '../firestore.service';
 
-// Firestore port of NotificationService. The old `OR: [{shopId}, {shopId:
-// null, audience:'SHOP'}]` (flagged during planning as a hard-to-port
-// pattern) is resolved by just running two separate queries and merging
-// client-side, rather than fighting Firestore's more restricted OR-query
-// rules for a two-query-sized problem - simpler and needs no extra
-// composite index.
+// Notifications for a shop are "its own, plus the broadcast ones for shops" (shopId null, audience 'SHOP'),
+// resolved by running two separate queries and merging client-side, rather than fighting Firestore's more
+// restricted OR-query rules - simpler and needs no extra composite index.
 @Injectable()
 export class FirestoreNotificationService {
   constructor(private readonly firestore: FirestoreService) {}

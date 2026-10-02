@@ -9,7 +9,7 @@ export const useAuth = () => useContext(AuthContext);
 const PHONE_REGEX = /^[1-9]\d{9}$/;
 
 // Safely parses a fetch Response body as JSON, tolerating a non-JSON or
-// empty body (a bare 500/502, a cold-started Render instance timing out
+// empty body (a bare 500/502, a cold-started Cloud Function instance timing out
 // mid-response, a proxy error page) instead of letting a raw
 // "Unexpected end of JSON input" SyntaxError mask whatever the real
 // problem was - every api.* method routes its response through this
@@ -264,9 +264,8 @@ export const AuthProvider = ({ children }) => {
         throw new Error(err.message || 'Failed to send OTP code');
       }
       const result = await parseJsonSafe(response);
-      // Testing convenience: backend only includes devCode when no real email/SMS
-      // provider is configured for this environment (delivery failed/not attempted),
-      // so this stops appearing automatically once SMTP/Twilio are set up.
+      // Testing convenience: the backend only includes devCode when WhatsApp delivery failed or is not
+      // configured (and OTP_SHOW_CODE_IN_UI is on), so this stops appearing once WhatsApp delivery is live.
       if (result.devCode) {
         console.log(`%c[KEE DEV] OTP code for ${identifier}: ${result.devCode}`, 'color:#4f46e5; font-weight:bold; font-size:13px;');
       }
@@ -560,11 +559,11 @@ export const AuthProvider = ({ children }) => {
     getVehicleSales: async (limit = 20) => request(`/api/shop/vehicle-sales?limit=${limit}`),
 
     // --- SHOP SETTINGS: VERIFICATION DOCUMENTS ---
-    // Backed by the ShopDocument table (see ShopService.addOrReplaceShopDocument /
+    // Backed by shops/{shopId}/documents (see FirestoreShopService.addOrReplaceShopDocument /
     // deleteShopDocument). documentType is one of SHOP_PHOTO / SHOP_LICENSE / OWNER_AADHAAR.
     // shopId is only needed (and only honored by the backend) when a Super
     // Admin is managing a specific shop's settings from Shops Management -
-    // Shop Admins are always scoped to their own shop via the JWT.
+    // Shop Admins are always scoped to their own shop via their auth token's claims.
     uploadSettingsDocument: async (documentType, file, shopId) => {
       const formData = new FormData();
       formData.append('file', file);

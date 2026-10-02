@@ -43,15 +43,13 @@ import { PublicSupportConfigController, SuperSupportConfigController } from './c
 import { FirestorePaymentService } from './payment/firestore-payment.service';
 import { FirestorePaymentController } from './payment/firestore-payment.controller';
 import { AlgoliaSearchService } from './search/algolia-search.service';
+import { HealthController } from './health.controller';
 import { FirestoreVehicleSaleService } from './vehicle-sale/firestore-vehicle-sale.service';
 import { FirestoreVehicleSaleController } from './vehicle-sale/firestore-vehicle-sale.controller';
 
-// Aggregates every Firestore-rewrite piece built so far. Deliberately NOT
-// imported by the live AppModule yet - this is its own self-contained
-// module graph, bootstrapped only by the smoke-test scripts (and, once
-// ready, a separate standalone bootstrap for real Cloud Run testing). The
-// production app keeps running entirely on the Prisma-based modules until
-// an explicit, deliberate cutover.
+// The application's single module: every controller and provider of the backend. Bootstrapped by
+// functions-main.ts (Cloud Functions), main-firestore.ts (standalone server) and the local smoke-test
+// bootstrap script.
 // Behind Firebase Hosting + Google's frontends, req.ip is a Google proxy
 // address shared by every visitor - throttling on it would rate-limit ALL
 // users collectively. Key on the client IP in X-Forwarded-For instead. (The
@@ -72,11 +70,12 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
     FirestoreModule,
     ReferenceListsModule,
     ScheduleModule.forRoot(),
-    // Same global baseline as the old AppModule; sensitive routes override
+    // Global baseline; sensitive routes override
     // with tighter @Throttle limits directly on their controller methods.
     ThrottlerModule.forRoot([{ name: 'default', ttl: 60000, limit: 120 }]),
   ],
   controllers: [
+    HealthController,
     FirestoreAuthController,
     FirestoreAdController,
     PublicAdController,

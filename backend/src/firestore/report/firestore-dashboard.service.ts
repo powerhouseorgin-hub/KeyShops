@@ -4,9 +4,8 @@ import { FirestoreService } from '../firestore.service';
 import { PlatformConfigService } from '../config/platform-config.service';
 import { TtlCache } from '../../common/ttl-cache';
 
-// Firestore port of ReportService's two dashboard aggregation endpoints.
-// Two structural gaps from the Prisma/SQL originals, both disclosed rather
-// than silently worked around:
+// The Super Admin and Shop Admin dashboard aggregation endpoints. Two structural limits of Firestore, both
+// handled explicitly rather than silently worked around:
 //
 // 1. `collectionGroup('documents')` ambiguity - CustomerDocument
 //    (shops/{id}/customers/{id}/documents/{id}) and ShopDocument
@@ -16,14 +15,11 @@ import { TtlCache } from '../../common/ttl-cache';
 //    would silently mix the two together. Disambiguated here by filtering
 //    `deletedAt == null`: CustomerDocument rows always carry that field
 //    (even when not deleted, it's set to null); ShopDocument rows never
-//    have it at all (see ShopService's hard-delete convention for that
-//    collection), so Firestore's equality filter naturally excludes them.
-// 2. "Popular keys" (originally a SQL GROUP BY over the whole Customer
-//    table) and the Shop Dashboard's 6-month registration trend
-//    (originally a raw SQL date-bucketed GROUP BY) have no Firestore
-//    equivalent without either maintained counter documents (a real Cloud
-//    Functions build-out, called out as separate future work in the
-//    migration plan) or fetching and aggregating in application code. This
+//    have it at all (they are hard-deleted), so Firestore's equality filter
+//    naturally excludes them.
+// 2. "Popular keys" (a GROUP BY over every customer) and the Shop Dashboard's 6-month registration trend
+//    (a date-bucketed GROUP BY) have no Firestore equivalent without either maintained counter documents (a
+//    Cloud Functions build-out, separate future work) or fetching and aggregating in application code. This
 //    fetches a capped, bounded batch and aggregates in memory - correct at
 //    this app's current data volume, but an approximation that would need
 //    the counter-document approach if the platform-wide customer/key volume

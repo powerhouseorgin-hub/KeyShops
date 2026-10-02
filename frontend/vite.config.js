@@ -13,13 +13,11 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      // Defaults to the live Prisma backend (port 4000). Set
-      // DEV_API_PROXY_TARGET=http://localhost:4100 to point the dev server
-      // at the standalone Firestore-rewrite bootstrap instead (see
-      // backend/scripts/bootstrap-firestore-app.ts) - same-origin proxying
-      // keeps the httpOnly session cookie working without any CORS setup.
+      // Proxies /api/* to the local backend bootstrap (backend/scripts/bootstrap-firestore-app.ts, port 4100).
+      // Set DEV_API_PROXY_TARGET to point at a different backend - same-origin proxying keeps the httpOnly
+      // session cookie working without any CORS setup.
       '/api': {
-        target: process.env.DEV_API_PROXY_TARGET || 'http://localhost:4000',
+        target: process.env.DEV_API_PROXY_TARGET || 'http://localhost:4100',
         changeOrigin: true,
       },
     },

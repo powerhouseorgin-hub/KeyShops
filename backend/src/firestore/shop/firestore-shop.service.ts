@@ -12,11 +12,8 @@ import { TtlCache } from '../../common/ttl-cache';
 import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.service';
 import { pick } from '../../common/pick.util';
 
-// Firestore port of ShopService - the largest single file in the migration
-// (Super Admin shop provisioning/management, Shop Admin settings, the
-// public shop directory, and referral queries all lived in one Prisma
-// service, so they stay together here too). Two things NOT carried over,
-// both already flagged elsewhere in this migration:
+// Shops: Super Admin shop provisioning/management, Shop Admin settings, the public shop directory and
+// referral queries (the largest service in the backend). Two Firestore limits to know about:
 // 1. Free-text `search`/`query` (shop name, admin name/email, companyDetails
 //    substring match) runs through the "shops" Algolia index when
 //    AlgoliaSearchService.isConfigured (see that service's doc comment and
@@ -540,9 +537,8 @@ export class FirestoreShopService {
     return this.getShopById(shopId);
   }
 
-  // Unlike the app-wide soft-delete convention, ShopDocument rows are hard
-  // deleted - matches the original Prisma model exactly (see
-  // ShopService.addOrReplaceShopDocument/deleteShopDocument).
+  // Unlike the app-wide soft-delete convention, shop document rows are hard
+  // deleted (see addOrReplaceShopDocument/deleteShopDocument).
   async addOrReplaceShopDocument(shopId: string, documentType: string, file: any) {
     const doc = await this.db.collection('shops').doc(shopId).get();
     if (!doc.exists) throw new NotFoundException('Shop not found');

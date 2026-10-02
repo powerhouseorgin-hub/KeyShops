@@ -1,18 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { FirestoreService } from '../firestore.service';
 
-// Firestore port of ReportService.getActivityLog. Two things changed from
-// the original, both noted in the migration plan:
-// 1. Offset pagination (page/skip) has no Firestore equivalent - switched
-//    to cursor pagination (same nextCursor shape every other list view in
-//    this app already uses) instead of page numbers. The frontend's
-//    Activity Log screen will need the small adjustment from a page-number
-//    control to "Load more" - same UX every other paginated screen here
-//    already has.
-// 2. Prisma's `include` (user/shop names) has no join equivalent - resolved
-//    with a batched Admin SDK getAll() over the unique user/shop ids in the
-//    fetched page, instead of denormalizing those fields onto every
-//    ActivityLog write site (would touch every place that creates one).
+// The Activity Log listing. Two Firestore-specific design points:
+// 1. Listing uses cursor pagination (the same nextCursor shape every other list view in this app uses), not
+//    page numbers - Firestore has no offset pagination.
+// 2. User/shop names are resolved with a batched Admin SDK getAll() over the unique user/shop ids in the
+//    fetched page (Firestore has no joins), instead of denormalizing those fields onto every ActivityLog
+//    write site.
 @Injectable()
 export class FirestoreActivityLogService {
   constructor(private readonly firestore: FirestoreService) {}
@@ -29,7 +23,7 @@ export class FirestoreActivityLogService {
     if (params.action) {
       q = q.where('action', '==', params.action);
     } else {
-      // Matches the old default: LOGIN excluded unless explicitly requested.
+      // Default: LOGIN entries are excluded unless explicitly requested.
       q = q.where('action', '!=', 'LOGIN');
     }
     q = q.orderBy('action').orderBy('createdAt', 'desc').limit(limit + 1);

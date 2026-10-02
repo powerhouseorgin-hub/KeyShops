@@ -1,5 +1,5 @@
 // Deletes smoke-test debris created against the REAL keee-7d6cb project
-// during backend migration validation. Safe by default: runs as a DRY RUN
+// by the smoke-test scripts and manual testing. Safe by default: runs as a DRY RUN
 // (reports what it would delete) unless invoked with --confirm.
 //
 //   npx ts-node -r tsconfig-paths/register scripts/cleanup-test-data.ts
@@ -79,7 +79,7 @@ async function deleteAllDocs(db: FirebaseFirestore.Firestore, docs: QueryDocumen
 async function main() {
   const firestore = new FirestoreService();
   const db = firestore.db;
-  const app = getApps().find((a) => a.name === 'firestore-migration')!;
+  const app = getApps().find((a) => a.name === 'kee-admin')!;
   const auth = getAuth(app);
   // Not set in backend/.env (the running bootstrap server was started with
   // it exported inline in its shell, not via .env) - default to the real

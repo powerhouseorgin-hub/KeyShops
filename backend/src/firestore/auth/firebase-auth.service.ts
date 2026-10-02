@@ -2,8 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { getAuth, type Auth, type DecodedIdToken } from 'firebase-admin/auth';
 import { getApps } from 'firebase-admin/app';
 
-// Replaces AuthService's bcrypt + custom JWT issuance entirely - Firebase
-// Auth now owns password storage/verification, not us. Two things the
+// Firebase Auth owns password storage/verification, not us. Two things the
 // Admin SDK deliberately does NOT do (by design - it's a trusted-server
 // SDK, password verification is a client-facing operation) had to be
 // worked around:
@@ -17,9 +16,9 @@ import { getApps } from 'firebase-admin/app';
 //    still owns the login endpoint the frontend already talks to, instead
 //    of every client needing its own Firebase client SDK integration).
 // 2. Verifying a *session cookie* vs a raw *ID token* are different Admin
-//    SDK calls (verifySessionCookie vs verifyIdToken) - the JwtStrategy
-//    equivalent needs to try the right one depending on which the request
-//    is carrying (see verifyRequestToken below).
+//    SDK calls (verifySessionCookie vs verifyIdToken) - the guard has to try
+//    the right one depending on which the request is carrying (see
+//    verifyRequestToken below).
 // GCF_WEB_API_KEY is a fallback for deployed Cloud Functions specifically:
 // env var names starting with FIREBASE_/X_GOOGLE_/EXT_ are reserved there,
 // so functions-api/.env.api supplies the same value under this name
@@ -36,17 +35,12 @@ export interface FirebaseLoginResult {
 }
 
 // Firebase Auth's password sign-in (accounts:signInWithPassword) has no
-// phone+password equivalent - only email+password. The old system let a
-// Shop Admin log in with EITHER their email or phone (see
-// AuthService.login's `OR: [{email},{phone}]` lookup) with no real email
-// required at all. To preserve that UX while still fully delegating
-// password storage/verification to Firebase, every Auth user gets a real
-// login-identity email: the one they typed, or - when they only gave a
-// phone - a synthetic, never-user-facing address derived from it. This is
-// a standard, well-documented pattern for "phone+password via Firebase
-// Auth" (Firebase's REST API leaves no other option); UserRepository's
-// Firestore profile doc still stores the real email as null/undefined,
-// exactly as before - this synthetic address only ever exists inside
+// phone+password equivalent - only email+password. A Shop Admin logs in with EITHER their email or phone
+// (no real email is required at all). To support that while still fully delegating password
+// storage/verification to Firebase, every Auth user gets a login-identity email: the one they typed, or - when
+// they only gave a phone - a synthetic, never-user-facing address derived from it. This is a standard pattern
+// for "phone+password via Firebase Auth" (the REST API leaves no other option); UserRepository's Firestore
+// profile doc still stores the real email as null/undefined - the synthetic address only ever exists inside
 // Firebase Auth's own user record.
 const SYNTHETIC_EMAIL_DOMAIN = 'phone.keyshops.internal';
 
@@ -57,16 +51,15 @@ export function syntheticEmailForPhone(phone: string): string {
 @Injectable()
 export class FirebaseAuthService {
   private get auth(): Auth {
-    const app = getApps().find((a) => a.name === 'firestore-migration');
-    if (!app) throw new Error('Firestore migration Firebase app not initialized - see FirestoreService');
+    const app = getApps().find((a) => a.name === 'kee-admin');
+    if (!app) throw new Error('Firebase admin app not initialized - see FirestoreService');
     return getAuth(app);
   }
 
   // Verifies email+password against Firebase Auth itself via the REST API
   // (see class doc comment) - throws UnauthorizedException on any failure,
-  // matching the old bcrypt path's "Invalid email or password" behavior
-  // (Firebase's own error codes are intentionally not leaked to the client,
-  // same reasoning as before: don't reveal whether the email exists).
+  // with a generic "Invalid email or password" (Firebase's own error codes are
+  // intentionally not leaked to the client: don't reveal whether the email exists).
   async signInWithPassword(email: string, password: string): Promise<FirebaseLoginResult> {
     const apiKey = getWebApiKey();
     const emulatorHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
@@ -99,8 +92,8 @@ export class FirebaseAuthService {
   // Resolves whatever the login form's single identifier field holds (a
   // real email, or a phone number) to the actual email Firebase Auth has
   // on file for that user - see syntheticEmailForPhone's doc comment.
-  // Deliberately returns null rather than throwing on "no such user" (same
-  // as the old bcrypt path): the caller should surface a generic "Invalid
+  // Deliberately returns null rather than throwing on "no such user": the
+  // caller should surface a generic "Invalid
   // email or password" either way, never revealing whether the account
   // exists.
   async resolveLoginEmail(identifier: string): Promise<string | null> {
@@ -115,15 +108,13 @@ export class FirebaseAuthService {
     }
   }
 
-  // Web session cookie - same 24h lifetime as the old JWT, carried the same
-  // way (see session-cookie.ts, reused unchanged for the httpOnly
-  // cookie options themselves).
+  // Web session cookie - 24h lifetime, carried as an httpOnly cookie (see
+  // session-cookie.ts for the cookie options).
   async createSessionCookie(idToken: string, expiresInMs: number): Promise<string> {
     return this.auth.createSessionCookie(idToken, { expiresIn: expiresInMs });
   }
 
-  // Dual verification, mirroring JwtStrategy's dual-extractor pattern:
-  // native sends the raw ID token as a Bearer header (verifyIdToken), web
+  // Dual verification: native sends the raw ID token as a Bearer header (verifyIdToken), web
   // sends the session cookie (verifySessionCookie). Tries ID-token
   // verification first (cheaper, no revocation-list round trip) and falls
   // back to session-cookie verification - a request only ever carries one

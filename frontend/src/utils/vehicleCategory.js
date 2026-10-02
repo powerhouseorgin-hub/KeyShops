@@ -1,6 +1,6 @@
 // The 5 icon categories shown on Page 1 of the Customer Registration wizard.
 // Free-form strings (not an enum) to match the keyType/documentType precedent
-// in the backend schema - see Customer.vehicleCategory in schema.prisma.
+// in the backend data model - see Customer.vehicleCategory in FirestoreCustomerService.
 export const VEHICLE_CATEGORIES = {
   TWO_WHEELER: 'TWO_WHEELER',
   FOUR_WHEELER: 'FOUR_WHEELER',

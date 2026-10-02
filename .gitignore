@@ -43,13 +43,9 @@ Thumbs.db
 # dependencies, so nothing here is ever hand-maintained or committed stale).
 backend/functions-api/package.json
 backend/functions-api/package-lock.json
-backend/functions-api/prisma/
-
-# Prisma
-backend/prisma/*.db
 
 # Firebase Admin SDK service account keys - full-admin credentials, never
-# committed. Matches both the pre-migration key (FIREBASE_SERVICE_ACCOUNT_JSON
+# committed. Matches both the previous key (FIREBASE_SERVICE_ACCOUNT_JSON
 # in .env) and any downloaded service-account JSON files (Firebase Console's
 # own default naming is "<project-id>-firebase-adminsdk-<id>.json").
 backend/*firebase-adminsdk*.json

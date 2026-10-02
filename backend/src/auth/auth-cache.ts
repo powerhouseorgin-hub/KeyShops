@@ -1,17 +1,13 @@
 import { TtlCache } from '../common/ttl-cache';
 
-// Caches JwtStrategy.validate()'s result - a real DB lookup that runs on
-// EVERY authenticated request, not just at login. Measured impact: a Shop
-// Admin request pays 2 extra sequential cross-region round-trips beyond
-// what a Super Admin request pays (shop.isActive + subscription-state
-// check, neither of which applies to SUPER_ADMIN) - confirmed live, this
-// added 2-4+ seconds versus a Super Admin's ~0.6s for the identical
-// /api/auth/me endpoint. Every screen a shop owner opens pays this on top
-// of that screen's own query cost.
+// Caches FirebaseAuthGuard's per-user check - Firestore lookups (shop.isActive + subscription state, neither
+// of which applies to SUPER_ADMIN) that would otherwise run on EVERY authenticated request, not just at
+// login. A Shop Admin request pays those extra sequential reads on top of what a Super Admin request pays,
+// and every screen a shop owner opens would pay that on top of its own query cost.
 //
 // A short TTL means a shop that gets suspended (or whose subscription lapses
 // mid-session) is locked out within TTL_MS instead of on its very next
-// request, as before - a small, deliberate trade of immediacy for
+// request - a small, deliberate trade of immediacy for
 // eliminating this cost on every other request in between. Callers that
 // change shop status, subscription status, or a user's login-identifier
 // fields (email/phone) MUST call invalidateAuthCache() for every affected

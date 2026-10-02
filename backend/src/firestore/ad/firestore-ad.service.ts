@@ -4,12 +4,8 @@ import { TtlCache } from '../../common/ttl-cache';
 import { FirebaseFileService } from '../storage/firebase-file.service';
 import { pick } from '../../common/pick.util';
 
-// Firestore port of AdService - Advertisement has no relations/FKs at all
-// in the old schema (targetShops is a plain denormalized string array
-// already, not a Prisma relation), so this is one of the most direct
-// translations in the whole migration: same collection shape, same
-// TtlCache instances (that class is already DB-agnostic), same query
-// logic, just Firestore's query builder instead of Prisma's.
+// Advertisements: a flat top-level `ads` collection with no relations (targetShops is a plain denormalized
+// string array). Public/app-poster reads are served from short-TTL in-memory TtlCache instances.
 const PUBLIC_ADS_CACHE_KEY = 'all';
 const APP_POSTER_CACHE_KEY = 'current';
 const PUBLIC_ADS_CACHE_TTL_MS = 2 * 60 * 1000;

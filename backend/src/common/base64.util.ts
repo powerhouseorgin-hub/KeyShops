@@ -1,6 +1,5 @@
 // Shared helper for decoding base64 data-URI uploads (used by the registration
-// wizard, the Super Admin "Provision Shop" flow, and the one-off document
-// migration script). Kept dependency-free so it can run both inside Nest
+// wizard and the Super Admin "Provision Shop" flow). Kept dependency-free so it can run both inside Nest
 // services and inside standalone ts-node scripts.
 
 export interface ParsedDataUri {

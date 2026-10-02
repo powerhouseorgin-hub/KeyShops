@@ -5,33 +5,16 @@ import * as compression from 'compression';
 import { FirestoreAppModule } from './firestore/firestore-app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
-// Production entrypoint for the Firestore-rewrite backend, parallel to
-// main.ts (which still boots the live Prisma-based AppModule - see its own
-// comment). Not yet wired into any deployment: this exists so the Firestore
-// stack can be built into its own Docker image and deployed to Cloud Run as
-// an independent service for real-infrastructure testing, BEFORE the actual
-// cutover decision (pointing keyshops.in's traffic at it) is made. Until
-// that cutover happens, deploying this image has no effect on the live app
-// or its users - it's reachable only at whatever URL Cloud Run assigns it.
+// Standalone server entrypoint (`npm run start:prod`) - the same app as functions-main.ts, but listening on a
+// port instead of being invoked as a Cloud Function. Production deploys use functions-main.ts through Firebase
+// Functions; this is for running the built backend locally or in any container.
 //
-// SAFETY: AllExceptionsFilter imports @prisma/client (for its
-// PrismaClientKnownRequestError check) purely as an instanceof check that
-// will never match here - but importing it at all still triggers Prisma's
-// generated client to auto-load a local .env file as a side effect if one
-// is present in the working directory. This image is never built with
-// backend/.env copied in (local runs only - production deploys via Firebase Functions, see functions-main.ts), so there is nothing
-// for it to load in the deployed container - but the explicit deletes below
-// are kept anyway as defense in depth, matching the same safety pattern
-// scripts/bootstrap-firestore-app.ts already uses for local dev/testing.
+// SAFETY: this standalone server is for local use, and a developer's backend/.env may hold the LIVE Razorpay
+// keys. They are dropped here so a local run can never create a real payment order (create-order then fails
+// with "not configured"). The deployed Cloud Function deliberately keeps them - there they are the payment
+// backend.
 delete process.env.RAZORPAY_KEY_ID;
 delete process.env.RAZORPAY_KEY_SECRET;
-delete process.env.DATABASE_URL;
-delete process.env.DIRECT_URL;
-delete process.env.SUPABASE_URL;
-delete process.env.SUPABASE_SERVICE_ROLE_KEY;
-delete process.env.SUPABASE_STORAGE_BUCKET;
-delete process.env.RENDER_API_KEY;
-delete process.env.JWT_SECRET;
 
 process.on('unhandledRejection', (reason) => {
   console.error('Unhandled promise rejection:', reason);
@@ -40,11 +23,9 @@ process.on('uncaughtException', (err) => {
   console.error('Uncaught exception:', err);
 });
 
-// Mirrors main.ts's production origin allowlist (see its comment on why
-// `credentials: true` requires an explicit list rather than a wildcard).
-// Add this service's own Cloud Run URL here temporarily if you need to hit
-// it directly from a browser (Postman/curl/native app requests have no
-// Origin header and are unaffected either way).
+// Production origin allowlist (same list as functions-main.ts) - `credentials: true` requires an explicit
+// list rather than a wildcard. Add a service URL here temporarily if you need to hit it directly from a
+// browser (Postman/curl/native app requests have no Origin header and are unaffected either way).
 const PROD_ALLOWED_ORIGINS = [
   'https://keyshops.in',
   'https://www.keyshops.in',
@@ -75,11 +56,7 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api');
 
-  // No local-disk static file route here (unlike main.ts's /api/uploads
-  // fallback) - this backend always has Firebase Storage configured, so
-  // that Supabase-era fallback path doesn't apply.
-
-  // NOT using { whitelist: true, forbidNonWhitelisted: true } like main.ts -
+  // NOT using { whitelist: true, forbidNonWhitelisted: true } -
   // the Firestore controllers' @Body() DTOs are plain TypeScript interfaces,
   // not class-validator classes (only the reference-list/support-config
   // controllers use class-validator so far). Whitelist mode strips any

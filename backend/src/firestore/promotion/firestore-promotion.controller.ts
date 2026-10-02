@@ -5,7 +5,7 @@ import { FirestorePromotionService, type CreatePromotionInput } from './firestor
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { Roles } from '../../auth/roles.decorator';
-import { Role } from '@prisma/client';
+import { Role } from '../../auth/role.enum';
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -18,10 +18,8 @@ function assertValidImageUpload(file: any) {
   }
 }
 
-// See FirestorePromotionService's class doc comment: `search` is accepted
-// here for API-shape compatibility with the old client but silently has no
-// effect yet - it's blocked on the Algolia setup called out in the
-// migration plan, not forgotten.
+// See FirestorePromotionService's class doc comment: free-text `search` runs through the "promotions" Algolia
+// index when Algolia is configured, and has no effect otherwise.
 @Controller()
 @UseGuards(FirebaseAuthGuard, RolesGuard)
 export class FirestorePromotionController {

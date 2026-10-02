@@ -12,9 +12,7 @@
 // every shop record (owner Aadhaar ciphertext, GPS, referral codes) was copied
 // into Algolia and was even searchable as free text.
 //
-// Searchable fields mirror what the original Postgres search matched
-// (customer.service.ts / shop.service.ts / promotion.service.ts `contains`
-// clauses).
+// Searchable fields are exactly what the app's search boxes match on (customer / shop / promotion lookups).
 const INDEXES = {
   customers: {
     // shopId is not stored on customer docs (tenant scoping is the Firestore

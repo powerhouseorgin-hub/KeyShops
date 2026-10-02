@@ -3,13 +3,9 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import Razorpay = require('razorpay');
 import { PlatformConfigService } from '../config/platform-config.service';
 
-// Firestore counterpart to PaymentService.createSubscriptionOrder -
-// identical Razorpay-SDK logic (nothing here was Prisma-specific to begin
-// with, see the original's own doc comment: no order record is persisted to
-// the DB at all, Razorpay itself is the order store), only the pricing
-// lookup source changes from a Prisma PlatformConfig row to
-// PlatformConfigService.get(). verifyPaymentSignature is a pure function
-// already ported separately (see ../payment/verify-razorpay-signature.ts).
+// Creates Razorpay orders for subscription payments. No order record is persisted to the database at all -
+// Razorpay itself is the order store; the price comes from PlatformConfigService.get().
+// Signature verification is a pure function in ./verify-razorpay-signature.ts.
 @Injectable()
 export class FirestorePaymentService {
   private razorpayInstance: Razorpay | null = null;

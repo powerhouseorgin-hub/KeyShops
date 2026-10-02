@@ -1,7 +1,4 @@
-// One-time seed of the REAL product types and key types (previously
-// hardcoded defaults in the old Prisma migrations - see
-// prisma/migrations/20260726090000_add_product_type and
-// 20260726110000_add_key_type) into the now-live keee-7d6cb Firestore.
+// One-time seed of the REAL product types and key types into the live keee-7d6cb Firestore.
 // Mirrors seed-production-categories.ts for shopCategories. Safe to re-run:
 // NamedReferenceListService's create() revives-by-name instead of
 // duplicating.

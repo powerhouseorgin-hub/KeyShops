@@ -2,15 +2,13 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import type { Firestore, Transaction } from 'firebase-admin/firestore';
 import { FirestoreService } from '../firestore.service';
 
-// users/{uid} - doc ID is the Firebase Auth UID (set by AuthService after
+// users/{uid} - doc ID is the Firebase Auth UID (set by FirestoreAuthController after
 // creating the Firebase Auth user; this repository never creates Auth
 // users itself, only the Firestore profile doc alongside one).
 //
-// email/phone uniqueness (Postgres' `@unique` on both, nullable) has no
-// Firestore-native equivalent, so it's enforced via two lookup collections
-// written in the SAME transaction as the user doc - see registerUser().
-// This is the exact same guarantee the DB gave for free before: either
-// both index docs + the user doc land, or none of them do.
+// email/phone uniqueness (both nullable) has no Firestore-native equivalent, so it's enforced via two lookup
+// collections (emailIndex, phoneIndex) written in the SAME transaction as the user doc - see registerUser():
+// either both index docs + the user doc land, or none of them do.
 export type Role = 'SUPER_ADMIN' | 'SHOP_ADMIN';
 
 export interface UserDoc {

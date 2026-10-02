@@ -4,8 +4,8 @@ import { FirestoreContactService } from './firestore-contact.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { Roles } from '../../auth/roles.decorator';
-import { Role } from '@prisma/client';
-import { CreateContactMessageDto } from '../../contact/dto/create-contact-message.dto';
+import { Role } from '../../auth/role.enum';
+import { CreateContactMessageDto } from './dto/create-contact-message.dto';
 
 @Controller('contact')
 export class FirestoreContactController {

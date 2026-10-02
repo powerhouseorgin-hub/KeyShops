@@ -15,12 +15,10 @@ import { sessionCookieOptions, clearedSessionCookieOptions, SESSION_COOKIE_NAME 
 import { verifyRazorpaySignature } from '../payment/verify-razorpay-signature';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
 
-// Firestore/Firebase-Auth counterpart to AuthController - same route paths
-// (/auth/login, /auth/register-shop, /auth/send-otp, /auth/verify-otp) so
-// this is a drop-in replacement at cutover time, not a parallel API
-// surface the frontend would need to learn about.
+// Authentication endpoints (/auth/*): login (Firebase password sign-in + session cookie / ID token), logout,
+// OTP send/verify, shop self-registration, password reset/change, login-phone change and account deletion.
 export class LoginDto {
-  email: string; // identifier - email or phone, same dual-purpose field as before
+  email: string; // identifier - email or phone (a dual-purpose field)
   password: string;
   platform?: string;
 }
@@ -55,10 +53,9 @@ export class FirestoreAuthController {
     private readonly users: UserRepository,
   ) {}
 
-  // Backs GET /auth/me - see AuthService.getSessionInfo's doc comment for
-  // why `subscription` is only present during GRACE_PERIOD (not on every
-  // healthy subscription): a bare truthiness check on the frontend
-  // otherwise misreads an always-present field as "expired".
+  // Backs GET /auth/me. `subscription` is only present during GRACE_PERIOD (not on every healthy
+  // subscription): a bare truthiness check on the frontend would otherwise misread an always-present
+  // field as "expired".
   @UseGuards(FirebaseAuthGuard)
   @Get('me')
   async me(@Req() req: any) {
@@ -70,7 +67,7 @@ export class FirestoreAuthController {
     return { user, ...(subscription.state === 'GRACE_PERIOD' ? { subscription } : {}) };
   }
 
-  // Matches AuthService.login's exact response shape - `user` and the
+  // Response shape: `user` and the
   // conditional `subscription` field are both required, not cosmetic: the
   // frontend's AuthContext JSON.stringifies `res.user` straight into
   // localStorage on every login, and a missing `user` key there crashes
@@ -78,8 +75,8 @@ export class FirestoreAuthController {
   @Throttle({ default: { limit: 20, ttl: 600000 } })
   @Post('login')
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    // dto.email is either a real email or a phone number (same dual-purpose
-    // field as the pre-migration DTO) - resolved to whatever email Firebase
+    // dto.email is either a real email or a phone number (a dual-purpose
+    // field) - resolved to whatever email Firebase
     // Auth actually has on file (real or synthetic) before attempting
     // sign-in, since Firebase's password sign-in only accepts an email.
     const resolvedEmail = await this.firebaseAuth.resolveLoginEmail(dto.email);
@@ -90,8 +87,7 @@ export class FirestoreAuthController {
     const profile = await this.users.findById(uid);
     if (!profile) throw new UnauthorizedException('Invalid email or password');
 
-    // Shop Admin accounts may only sign in from the native mobile app - same
-    // restriction as before, web login is reserved for Super Admin.
+    // Shop Admin accounts may only sign in from the native mobile app; web login is reserved for Super Admin.
     if (profile.role === 'SHOP_ADMIN' && dto.platform !== 'native') {
       throw new UnauthorizedException('Shop Admin accounts can only sign in from the Key Shop mobile app. Please download the app to continue.');
     }
@@ -132,8 +128,7 @@ export class FirestoreAuthController {
   }
 
   // 4-digit codes (9000 values) need a strict per-route limit or an attacker
-  // could brute-force one inside its 5-minute window - same values as the
-  // old controller.
+  // could brute-force one inside its 5-minute window.
   @Throttle({ default: { limit: 6, ttl: 600000 } })
   @Post('send-otp')
   async sendOtp(@Body() dto: { identifier: string; purpose: string }) {
@@ -151,13 +146,12 @@ export class FirestoreAuthController {
   async registerShop(@Body() dto: RegisterShopDto) {
     const normalizedPhone = normalizePhone(dto.phone);
     if (!normalizedPhone) throw new BadRequestException(PHONE_REGEX_MESSAGE);
-    // Same rule as the original DTO (@Matches(/^\d{12}$/)) - checked before anything is created.
+    // Exactly 12 digits - checked before anything is created.
     if (dto.aadhaarNumber && !/^\d{12}$/.test(dto.aadhaarNumber)) {
       throw new BadRequestException('Aadhaar number must be exactly 12 digits');
     }
 
-    // Same payment gate as the pre-migration code: skipped entirely for a
-    // free-trial signup, otherwise Razorpay's signature must verify before
+    // Payment gate: skipped entirely for a free-trial signup, otherwise Razorpay's signature must verify before
     // any Auth user or Firestore doc gets created.
     if (!dto.startTrial) {
       if (!dto.razorpayOrderId || !dto.razorpayPaymentId || !dto.razorpaySignature) {
@@ -229,8 +223,8 @@ export class FirestoreAuthController {
   }
 
   // Unauthenticated by design (the user forgot their password) - a recently
-  // verified 'reset' OTP for this exact phone IS the authentication, same
-  // model as AuthService.resetPasswordPublic. redeemVerification is
+  // verified 'reset' OTP for this exact phone IS the authentication.
+  // redeemVerification is
   // single-use, so one verified code can reset one password once.
   @Throttle({ default: { limit: 6, ttl: 600000 } })
   @Post('reset-password-public')
@@ -315,8 +309,7 @@ export class FirestoreAuthController {
 
   // Closes the caller's own account (and, for a Shop Admin, their shop - one
   // user owns each shop, so these are the same action). Requires a recently
-  // verified OTP against their own phone. Soft delete, matching the old
-  // system: the user/shop docs get deletedAt, the Auth user is disabled and
+  // verified OTP against their own phone. Soft delete: the user/shop docs get deletedAt, the Auth user is disabled and
   // its sessions revoked, so the very next request 401s.
   @UseGuards(FirebaseAuthGuard)
   @Delete('account')

@@ -29,11 +29,9 @@ export class NamedReferenceListService {
     return snap.docs.map((d) => ({ id: d.id, ...(d.data() as any) }));
   }
 
-  // Mirrors the old create()'s "revive a soft-deleted row with the same
-  // name instead of inserting a new one" fix (Postgres' unique constraint
-  // on `name` isn't deletedAt-aware, so a straight insert after a soft
-  // delete would collide) - same idea here, just via a doc-ID-by-lowercase
-  // lookup instead of a DB constraint violation.
+  // Revives a soft-deleted item with the same name instead of inserting a new
+  // one: the doc id is derived from the lowercased name, so a straight insert
+  // after a soft delete would collide with the existing (deleted) document.
   async create(name: string): Promise<NamedReferenceItem> {
     const trimmed = name.trim();
     if (!trimmed) throw new BadRequestException('Name is required');

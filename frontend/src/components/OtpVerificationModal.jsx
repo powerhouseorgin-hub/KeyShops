@@ -11,13 +11,8 @@ import { normalizePhone, PHONE_REGEX_MESSAGE } from '../utils/phone';
 // supply the identifier/method/purpose to verify and a callback for what
 // happens next.
 //
-// Phone verification always goes through the backend's WhatsApp-based
-// send-otp/verify-otp endpoints (see WhatsappOtpService), the same path as
-// email - there is no on-device SMS/Firebase Phone Auth path anymore. That
-// native-only branch was retired along with Firebase Phone Auth itself
-// (see the migration plan's decision #6); the backend's Firestore rewrite
-// never implemented the verify-firebase-phone endpoint the old branch
-// depended on, so it would have 404'd at cutover.
+// Phone verification always goes through the backend's WhatsApp-based send-otp/verify-otp endpoints
+// (see WhatsappOtpService) - there is no on-device SMS / Firebase Phone Auth path.
 export default function OtpVerificationModal({
   open,
   onClose,
@@ -141,7 +136,7 @@ export default function OtpVerificationModal({
         {devCode && (
           <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 16 }}>
             <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-              {t('testingModeNoProviderTemplate').split('{provider}')[0]}{method === 'email' ? 'SMTP' : 'WhatsApp'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
+              {t('testingModeNoProviderTemplate').split('{provider}')[0]}{'WhatsApp'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
             </p>
             <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{devCode}</p>
           </div>

@@ -4,11 +4,8 @@
   "webDir": "dist",
   "server": {
     "allowNavigation": [
-      "kee-dopg.onrender.com",
-      "*.onrender.com",
+      "api.keyshops.in",
       "storage.googleapis.com",
-      "res.cloudinary.com",
-      "*.cloudinary.com",
       "*.razorpay.com",
       "checkout.razorpay.com",
       "api.razorpay.com"
@@ -17,10 +14,6 @@
   "plugins": {
     "SplashScreen": {
       "launchAutoHide": false
-    },
-    "FirebaseAuthentication": {
-      "skipNativeAuth": false,
-      "providers": ["phone"]
     }
   }
 }

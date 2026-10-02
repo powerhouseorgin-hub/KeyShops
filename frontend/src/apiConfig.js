@@ -9,20 +9,17 @@ export const SaveToDownloads = registerPlugin('SaveToDownloads');
 
 // Base URL for the NestJS backend. In local dev this stays empty, so
 // requests go to relative paths like /api/... which Vite's dev server
-// proxies to http://localhost:4000 (see vite.config.js).
+// proxies to the local backend (see vite.config.js).
 //
-// In production (Firebase Hosting), the frontend and backend are on
-// different domains (Firebase Hosting can't proxy /api/** to an external
-// host like Render — that rewrite type only supports Cloud Functions/Cloud
-// Run). So VITE_API_BASE_URL must be set at build time to the live Render
-// backend URL, e.g. https://kee-dopg.onrender.com, and every request is
-// made directly to that origin instead. The backend already has CORS
-// enabled for all origins (see backend/src/main.ts), so this works as-is.
+// In production the frontend (keyshops.in) and the API (api.keyshops.in, a Firebase Hosting site rewriting
+// to the `api` Cloud Function) are on different origins, so VITE_API_BASE_URL is set at build time
+// (frontend/.env.production) and every request is made directly to that origin. The backend allows only the
+// production origins with credentials (see backend/src/functions-main.ts).
 export const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
 
 // Uploaded file URLs (customer photos/documents, shop
 // verification docs) are stored in the DB as backend-relative paths like
-// "/api/uploads/xxx.png" (see backend/src/customer/file.service.ts). Those
+// "/api/uploads/xxx.png" or Firebase Storage signed URLs (see backend FirebaseFileService). Relative ones
 // need the same API_BASE prefix to resolve cross-origin. Client-generated
 // previews (data: URLs from webcam capture, before upload) and
 // any absolute http(s) URLs (e.g. ad/promotion image links) are returned
@@ -75,7 +72,7 @@ const guessMimeType = (name) => {
 // The fix for the *web* build is a plain, synchronous <a> click (no await
 // beforehand) so it stays inside the gesture, combined with the backend
 // sending `Content-Disposition: attachment` on these URLs (see
-// file.service.ts and main.ts) — that HTTP header is what actually forces
+// PublicReportController) — that HTTP header is what actually forces
 // a save-to-device across every browser, same-origin or not, rather than
 // relying on the HTML `download` attribute (which browsers ignore
 // cross-origin anyway).

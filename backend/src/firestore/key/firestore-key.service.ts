@@ -9,12 +9,9 @@ import { MasterKeyRepository } from '../customer/master-key.repository';
 //
 // `search` here is a genuine in-memory substring filter, not the
 // exact-match-only workaround used for Customer/Shop/Promotion search
-// elsewhere in this migration - a key catalog (global or per-shop) is small
-// enough, and already capped at the same 500-row safety limit the original
-// Prisma code used, that filtering the fetched batch in application code is
-// both correct and cheap. The one edge case this doesn't cover: a search
-// term matching a key ranked past the 500th alphabetically would be missed,
-// same practical limit the original had.
+// elsewhere - a key catalog (global or per-shop) is small enough, and capped at a 500-row
+// safety limit, that filtering the fetched batch in application code is both correct and cheap. The one edge
+// case this doesn't cover: a search term matching a key ranked past the 500th alphabetically would be missed.
 const MAX_ROWS = 500;
 
 export interface CreateKeyInput {
@@ -63,13 +60,11 @@ export class FirestoreKeyService {
   // SUPER ADMIN: update a key's category/image, or rename its keyNumber.
   // Renaming changes the document's own id (deterministic from shopId +
   // keyNumber - see MasterKeyRepository.docId), since there's no separate
-  // surrogate id the way Prisma's cuid gave the original: `id` moves to a
-  // new value and any Customer.masterKeyId already pointing at the old id
-  // goes stale. This is a rare admin action (renaming a not-yet-issued
-  // blank key's catalog entry) and matches this migration's existing,
-  // disclosed stance on FK-by-reference edge cases rather than a silent
-  // "improvement" over the original - flag to the user if this needs a
-  // rewrite pass over affected customers.
+  // surrogate id: `id` moves to a new value and any Customer.masterKeyId
+  // already pointing at the previous id goes stale. This is a rare admin action
+  // (renaming a not-yet-issued blank key's catalog entry); if it is ever used
+  // on a key that customers already reference, those customers need a rewrite
+  // pass.
   async updateKey(id: string, dto: UpdateKeyInput) {
     const ref = this.col().doc(id);
     const doc = await ref.get();

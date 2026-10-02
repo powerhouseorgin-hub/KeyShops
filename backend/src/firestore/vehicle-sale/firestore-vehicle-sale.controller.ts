@@ -3,7 +3,7 @@ import { FirestoreVehicleSaleService, type CreateVehicleSaleInput } from './fire
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
 import { Roles } from '../../auth/roles.decorator';
-import { Role } from '@prisma/client';
+import { Role } from '../../auth/role.enum';
 
 // Shop Admin only; every query is scoped to req.user.shopId (taken from the verified token claims, never
 // from the request), so a Shop Admin can only ever reach their own shop's sales.

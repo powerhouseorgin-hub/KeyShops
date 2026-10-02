@@ -8,11 +8,12 @@ process.env.FIREBASE_SERVICE_ACCOUNT_JSON = fs.readFileSync(
 import { FirestoreService } from '../src/firestore/firestore.service';
 import { FirestorePromotionService } from '../src/firestore/promotion/firestore-promotion.service';
 import { FirebaseFileService } from '../src/firestore/storage/firebase-file.service';
+import { AlgoliaSearchService } from '../src/firestore/search/algolia-search.service';
 
 async function main() {
   const firestore = new FirestoreService();
   const files = new FirebaseFileService();
-  const promotions = new FirestorePromotionService(firestore, files);
+  const promotions = new FirestorePromotionService(firestore, files, new AlgoliaSearchService());
 
   const now = Date.now();
   const expiredRef = await firestore.db.collection('promotions').add({

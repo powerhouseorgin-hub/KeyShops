@@ -9,32 +9,14 @@ import * as compression from 'compression';
 import { FirestoreAppModule } from './firestore/firestore-app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
 
-// Firebase Functions entry point for the Firestore backend - deployed via
-// the Firebase CLI (`firebase deploy --only functions:api`) instead of a
-// raw Cloud Run container, so no gcloud CLI/Console access is needed for
-// deployment. Functionally the same destination either way: Cloud
-// Functions 2nd-gen runs on Cloud Run infrastructure under the hood. See
-// main-firestore.ts for the (now unused for deployment, kept for local
-// `node dist/src/main-firestore.js` testing) standalone-server version this
-// was adapted from - same safety/CORS/pipe/filter setup, just wired to an
-// Express handler Cloud Functions invokes directly instead of listening on
-// a port.
+// Firebase Functions entry point for the backend - deployed with the Firebase CLI
+// (`firebase deploy --only functions:api`). Cloud Functions 2nd-gen runs on Cloud Run under the hood. The same
+// app also runs as a standalone server via main-firestore.ts (same CORS/pipe/filter setup, but listening on a
+// port instead of exporting an Express handler).
 //
-// SAFETY: same reasoning as main-firestore.ts - AllExceptionsFilter's
-// @prisma/client import can trigger Prisma's dotenv auto-load. This
-// function's env vars come from backend/.env.api (see that file's own
-// comment on why NOT the shared backend/.env) which never contains these
-// in the first place, but the explicit deletes stay as defense in depth.
-// RAZORPAY_KEY_ID/SECRET are deliberately NOT deleted here (unlike the local
-// standalone server): in production this function is the payment backend, and
-// its env comes from functions-api/.env, never from the shared backend/.env.
-delete process.env.DATABASE_URL;
-delete process.env.DIRECT_URL;
-delete process.env.SUPABASE_URL;
-delete process.env.SUPABASE_SERVICE_ROLE_KEY;
-delete process.env.SUPABASE_STORAGE_BUCKET;
-delete process.env.RENDER_API_KEY;
-delete process.env.JWT_SECRET;
+// This function's env vars come from backend/functions-api/.env (gitignored; see prepare-functions-api.js for
+// why NOT the developer's backend/.env). RAZORPAY_KEY_ID/SECRET are deliberately NOT deleted here (unlike the
+// local standalone server): in production this function is the payment backend.
 
 const PROD_ALLOWED_ORIGINS = [
   'https://keyshops.in',

@@ -3,15 +3,10 @@ import * as bcrypt from 'bcrypt';
 import { FirestoreService } from './firestore.service';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 
-// Replaces both of the pre-migration OTP paths (SMS for web,
-// Firebase Phone Auth for native) with one unified, self-hosted mechanism
-// delivered over WhatsApp instead - see the migration plan's revised
-// decision #6. Structurally the same verification model as the old
-// Postgres-backed OtpCode (random code, bcrypt-hashed, 5-minute expiry,
-// per-record failed-attempt lockout), just against a Firestore collection
-// and a different delivery channel. Firebase Auth itself is untouched by
-// this - it still owns the login session, this only gates
-// registration/reset/customer-verify/etc, same as before.
+// One unified, self-hosted OTP mechanism for web and native, delivered over WhatsApp: a random code,
+// bcrypt-hashed, 5-minute expiry, per-record failed-attempt lockout, stored in the `otpCodes` Firestore
+// collection. Firebase Auth itself is untouched by this - it owns the login session; OTPs only gate
+// registration / reset / customer-verify / change-credentials / delete-account.
 const OTP_COLLECTION = 'otpCodes';
 const OTP_TTL_MS = 5 * 60 * 1000;
 const MAX_OTP_ATTEMPTS = 5;
@@ -66,8 +61,7 @@ export class WhatsappOtpService {
     const col = this.firestore.db.collection(OTP_COLLECTION);
 
     // Invalidate any prior un-consumed code for this (identifier, purpose) -
-    // same rationale as the Postgres version: a fresh send always
-    // supersedes whatever was pending before it.
+    // A fresh send always supersedes whatever was pending before it.
     const stale = await col
       .where('identifier', '==', identifier)
       .where('purpose', '==', purpose)

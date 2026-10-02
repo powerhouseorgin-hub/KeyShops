@@ -2,10 +2,9 @@ const { onDocumentWritten } = require('firebase-functions/v2/firestore');
 const { algoliasearch } = require('algoliasearch');
 const { slimRecord } = require('./algolia-fields');
 
-// Replaces the "Search with Algolia" Firebase Extension (which would have
-// done exactly this) - Extensions are being shut down 2027-03-31 and can't
-// be edited after that date, so this is written as a plain, self-managed
-// Cloud Function instead, matching Google's own migration guidance.
+// Keeps the Algolia indexes in step with Firestore: a plain, self-managed Cloud Functions codebase ("sync"
+// in firebase.json) rather than the "Search with Algolia" Firebase Extension (Extensions are being shut down
+// 2027-03-31 and can't be edited after that date).
 //
 // ALGOLIA_APP_ID / ALGOLIA_ADMIN_API_KEY come from functions/.env (Cloud
 // Functions v2 loads this automatically at deploy/runtime - see

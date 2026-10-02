@@ -14,12 +14,12 @@ import { normalizePhone, PHONE_REGEX_MESSAGE } from '../../common/validators/pho
 //
 // `query`/`search`: when AlgoliaSearchService.isConfigured, free-text search
 // across name/phone/keyNumber/vehicleNumber/address runs through the
-// "customers" Algolia index (synced from this collection group by a
-// "Search with Algolia" Firebase Extension instance - see that service's
-// doc comment). Search hits are re-fetched from Firestore by objectID
+// "customers" Algolia index (synced from this collection group by the
+// syncCustomersToAlgolia Cloud Function - see AlgoliaSearchService's doc
+// comment). Search hits are re-fetched from Firestore by objectID
 // (= doc ID) rather than trusted directly, so results stay authoritative
 // and still go through enrichCustomerRows's shop/masterKey join. When
-// Algolia isn't configured, this falls back to the original fail-soft
+// Algolia isn't configured, this falls back to a fail-soft
 // behavior: an exact match against phone or keyNumber only (both
 // structured fields Firestore can query directly) - still enough for
 // App.jsx's checkDuplicateKey (exact key code) and phone-based lookup.
@@ -285,9 +285,8 @@ export class FirestoreCustomerService {
         if (keysOnly) filtered = filtered.filter((r) => !!r.keyNumber);
         return limit ? { items: filtered, nextCursor: null } : filtered;
       }
-      // Algolia configured but this index isn't ready yet (no Extension/
-      // backfill) - fall through to the exact-match path below instead of
-      // silently returning zero results for a search that used to work.
+      // Algolia configured but this index isn't ready yet (not created / not backfilled) - fall through to
+      // the exact-match path below instead of silently returning zero results.
     }
 
     let q = this.shops.customers(shopId) as FirebaseFirestore.Query;
@@ -323,9 +322,8 @@ export class FirestoreCustomerService {
   }
 
   // SUPER ADMIN: list/search customers platform-wide via a collectionGroup
-  // query - see the migration plan's decision #1 for why Customer nests
-  // under shops/{shopId}/customers (structural tenant scoping) while still
-  // supporting this cross-shop view.
+  // query - Customer nests under shops/{shopId}/customers (structural tenant
+  // scoping) while this still supports a cross-shop view.
   async getSuperCustomers(query?: string, pageOpts: { cursor?: string; limit?: number; keysOnly?: boolean } = {}) {
     const { cursor, limit, keysOnly } = pageOpts;
 

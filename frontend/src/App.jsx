@@ -35,12 +35,10 @@ import PublicSite from './components/PublicSite';
 import PublicMobileApp, { PublicBottomNav } from './components/PublicMobileApp';
 import CustomSelect from './components/CustomSelect';
 import CountUp from './components/CountUp';
-// Lazy-loaded: pulls in the Capacitor Firebase Authentication SDK, which
-// anonymous pre-login visitors (Home/Search/About/Contact) never need until
-// they actually tap Login - a static import here would ship that weight in
-// the main bundle for every visitor regardless. Every usage site below is
-// already gated behind the login-shell or the authenticated dashboard, so
-// pre-login browsing never triggers this chunk's fetch at all.
+// Lazy-loaded: anonymous pre-login visitors (Home/Search/About/Contact) never need the OTP modal until
+// they actually tap Login or register - a static import here would ship that weight in the main bundle for
+// every visitor regardless. Every usage site below is already gated behind the login-shell or the
+// authenticated dashboard, so pre-login browsing never triggers this chunk's fetch at all.
 const OtpVerificationModal = lazy(() => import('./components/OtpVerificationModal'));
 // SEO blog, service, and location page components
 const BlogKeyCostGuide = lazy(() => import('./components/BlogKeyCostGuide'));

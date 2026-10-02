@@ -72,7 +72,7 @@ export class CustomerFilesService {
 
   // Cross-shop variant - resolves the customer's shopId first, via a
   // collectionGroup lookup by document ID (Customer legitimately needs
-  // cross-shop addressing for Super Admin, per the migration plan).
+  // cross-shop addressing for Super Admin).
   async addCustomerDocumentSuper(customerId: string, actorUserId: string, documentType: string, file: { originalname: string; buffer: Buffer; size: number }) {
     const shopId = await this.findCustomerShopId(customerId);
     if (!shopId) throw new NotFoundException('Customer record not found');

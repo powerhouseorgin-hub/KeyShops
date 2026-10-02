@@ -3,10 +3,10 @@
 Key Shop (internal codename **Kee**) is a multi-tenant SaaS platform for duplicate-key shops.
 A **Super Admin** onboards and manages every shop on the network (subscriptions, platform-wide
 advertising, the cross-shop Master Key catalogue, revenue, curated taxonomy lists), while each
-**Shop Admin** runs their own shop day-to-day (customer compliance records, machine/product
-listings, shop settings, documents) — all on one shared database with tenant isolation enforced
-at the service layer (every query is filtered by the caller's JWT-derived `shopId`, never by
-client input).
+**Shop Admin** runs their own shop day-to-day (customer records and service invoices, vehicle
+sales, machine/product listings, shop settings, documents) — all on one shared Firestore database
+with tenant isolation enforced structurally (shop data lives under `shops/{shopId}/…` and every
+query is scoped by the caller's token-derived `shopId`, never by client input).
 
 The product ships as:
 - A **public marketing site & directory** (`keyshops.in`, anyone, no login) — SEO landing pages,
@@ -17,7 +17,11 @@ The product ships as:
 
 **Live:**
 - Web app / marketing site: https://keyshops.in (Firebase Hosting)
-- Backend API: https://api.keyshops.in
+- Backend API: https://api.keyshops.in (Firebase Hosting → Cloud Function `api`)
+
+> **Full engineering reference:** [`docs/TECHNICAL_DOCUMENTATION.md`](docs/TECHNICAL_DOCUMENTATION.md) —
+> architecture, security model, data model, all 99 API endpoints, third-party integrations,
+> end-to-end flows, deployment and operations.
 
 ## Table of contents
 
@@ -27,7 +31,6 @@ The product ships as:
 - [Getting started](#getting-started)
 - [Environment variables](#environment-variables)
 - [Available scripts](#available-scripts)
-- [Backend architecture notes](#backend-architecture-notes)
 - [Android app](#android-app)
 - [Deployment](#deployment)
 - [Testing](#testing)
@@ -40,139 +43,106 @@ The product ships as:
 
 | Layer | Technology |
 |---|---|
-| Backend | [NestJS 10](https://nestjs.com/) (TypeScript), [Prisma 5](https://www.prisma.io/), PostgreSQL, JWT auth (Passport), `@nestjs/throttler` rate limiting |
-| Frontend | React 18 + Vite, [lucide-react](https://lucide.dev/) icons — one codebase serves the marketing site, the pre-login native shell, and the authenticated dashboard |
-| Mobile | [Capacitor 8](https://capacitorjs.com/) — wraps the same React app into a native Android APK, plus native plugins for camera, GPS, filesystem, share, Razorpay checkout, and Firebase phone auth |
-| Payments | [Razorpay](https://razorpay.com/) — order creation + server-side HMAC-SHA256 signature verification gates self-service shop registration |
-| Email OTP | SMTP via Nodemailer; falls back to a server-log-only dev code when unset |
-| Native phone auth | [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — verifies ID tokens from the native app's client-side Firebase phone verification (legacy path; the current app no longer uses it) |
-| File storage | Local disk in dev; [Supabase Storage](https://supabase.com/storage) in production (ephemeral hosts don't persist local disk) |
-| Local infra | Docker Compose — PostgreSQL for local dev |
-| Hosting | Firebase Hosting (frontend, static) + Render (backend API, Docker) + [Supabase](https://supabase.com/) (Postgres + Storage) |
+| Frontend | React 18, Vite 5, Tailwind CSS 3, lucide-react, html2canvas + jsPDF (invoices) |
+| Mobile | Capacitor 8 (Android), custom WhatsApp-share and save-to-Downloads plugins |
+| Backend | NestJS 10 (TypeScript), Firebase Admin SDK, `@nestjs/throttler`, `@nestjs/schedule` |
+| Database | Cloud Firestore (subcollection tenancy, composite indexes in `backend/firestore.indexes.json`) |
+| Auth | Firebase Authentication (email/password, synthetic email for phone logins), custom claims for roles, web session cookie / native Bearer ID token |
+| File storage | Cloud Storage for Firebase (private bucket, signed URLs) |
+| Search | [Algolia](https://www.algolia.com/) (fed by Cloud Functions in `backend/functions`) |
+| Messaging | WhatsApp Business Cloud API (OTP + invoice delivery) |
+| Payments | [Razorpay](https://razorpay.com/) |
+| Geocoding | [LocationIQ](https://locationiq.com/) (server-side proxy) |
+| Hosting / compute | Firebase Hosting (site + API domain), Cloud Functions Gen2 (Cloud Run), Cloud Scheduler |
 
 ## Project structure
 
 ```
-kee/
-├── backend/                     NestJS API (see backend/docs/ for deep-dive docs)
-│   ├── src/
-│   │   ├── auth/                  Login, OTP send/verify, Firebase phone verification, shop self-registration, JWT strategy, guards
-│   │   ├── shop/                   Shop CRUD, settings, suspension, subscriptions, referrals, public shop directory & search
-│   │   ├── shop-category/          Super Admin–curated shop category list (orderable)
-│   │   ├── product-type/           Super Admin–curated product-type list
-│   │   ├── customer/                Compliance-record CRUD (Shop Admin + Super Admin), document/report uploads, public report download
-│   │   ├── promotion/                Machines/Products/Offers listings (the `Promotion` model), public machines directory
-│   │   ├── ad/                       Super Admin advertisement campaigns (banner/popup/app-poster), public ad & poster feeds
-│   │   ├── key/, key-type/            Platform-wide Master Key catalogue + curated key-type list
-│   │   ├── payment/                   Razorpay order creation and signature verification
-│   │   ├── notification/              In-app notifications (shop-scoped + Super Admin)
-│   │   ├── report/                    Dashboards, revenue log, support configuration
-│   │   ├── geo/                       Reverse-geocoding proxy (Nominatim) backing every GPS "Current Location" autofill
-│   │   └── common/, prisma/           Shared guards/decorators, tenant-scoped Prisma wrapper, crypto & file-storage services
-│   ├── prisma/                    Schema (24 models) & versioned migrations
-│   ├── scripts/                   One-off/maintenance DB scripts (see inline usage comments in each file)
-│   └── docs/                      Architecture deep-dives (tenant scoping, schema reference, migration history)
-├── frontend/                     React SPA + Capacitor Android shell
-│   ├── src/
-│   │   ├── App.jsx                   Authenticated shell: routing, six-language dictionary, every Shop Admin / Super Admin dashboard view
-│   │   ├── components/PublicSite.jsx  Public marketing site (landing page, shop directory, SEO blog/location pages, app download)
-│   │   ├── PublicMobileApp.jsx        Pre-login browse experience shown on the native app before sign-in
-│   │   ├── context/AuthContext.jsx    Single API client — every network call in the app goes through this one module
-│   │   ├── utils/                     PDF builders (customer report), SEO meta helpers, location datasets
-│   │   └── assets/                    Branding + dashboard icons
-│   ├── index.html                  The real Vite build entry (SEO meta tags/schema live here — NOT `public/index.html`)
-│   ├── public/downloads/            Hosted Android APK (see note in firebase.json)
-│   ├── android/                    Capacitor-generated native Android project
-│   └── scripts/                    One-off asset-processing scripts (image background removal, etc.)
-├── docs/                          Client-facing documentation (User Manual, Technical & Non-Technical PDFs — see Documentation below)
-├── firebase.json / .firebaserc     Firebase Hosting config (SPA rewrite, cache headers, APK content-type)
-├── docker-compose.yml             Postgres for local dev
-└── README.md
+.
+├── backend/                  NestJS API
+│   ├── src/functions-main.ts   Cloud Functions entry (api + purgeExpiredProducts)
+│   ├── src/main-firestore.ts   Standalone server entry (npm run start:prod)
+│   ├── src/firestore/          Application module + every feature (auth, shop, customer, vehicle-sale, ...)
+│   ├── functions/              Algolia sync Cloud Functions (codebase "sync")
+│   ├── functions-api/          Generated deploy folder for the API function
+│   ├── scripts/                Local bootstrap server, seeders, reindex, cleanup, smoke tests
+│   ├── firestore.rules, storage.rules   Deny-all (the backend is the only data-access point)
+│   └── firestore.indexes.json
+├── frontend/                 React app + Capacitor Android project (frontend/android)
+├── scripts/deploy-web.js     Safe website deploy (embeds + verifies the APK)
+├── docs/                     TECHNICAL_DOCUMENTATION.md, user manual, non-technical overview
+└── firebase.json, .firebaserc   Hosting targets (default, api)
 ```
 
 ## Login access model
 
 Two roles, two entry points — enforced on the **backend**, not just hidden in the UI:
 
-- **SUPER_ADMIN** — signs in through the web app only. Manages shops, subscriptions, the global
+- **SUPER_ADMIN** — signs in through the web app. Manages shops, subscriptions, the global
   Master Key catalogue, revenue, advertisement campaigns, and curated taxonomy lists.
-- **SHOP_ADMIN** — signs in through the **native Android app only**. The web login endpoint
-  rejects Shop Admin credentials (`auth.service.ts`: `if (user.role === SHOP_ADMIN && platform !== 'native')`)
-  with a clear error pointing to the app download.
+- **SHOP_ADMIN** — signs in through the **native Android app only**. The login endpoint rejects
+  Shop Admin credentials unless the request carries `platform: "native"`, with a clear error
+  pointing to the app download.
 
-This is implemented via a `platform` field (`'web'` vs `'native'`) sent on every login request —
-set automatically by the frontend using `Capacitor.isNativePlatform()`. The public web landing
-page and the web login screen both surface a **"Download App"** button so a Shop Admin who lands
-on the web login is never stuck.
+The `platform` field (`'web'` vs `'native'`) is set automatically by the frontend using
+`Capacitor.isNativePlatform()`. The public landing page and the web login screen both surface a
+**"Download App"** button so a Shop Admin who lands on the web login is never stuck.
 
 ## Getting started
 
 ### Prerequisites
 
-- Node.js 18+
-- Docker & Docker Compose (for local Postgres)
-- Android Studio + JDK 17 (only needed if building the Android app)
-- A [Supabase](https://supabase.com/) project (production Postgres + Storage — free tier is enough for dev/staging)
+- Node.js 22+ and npm
+- Firebase CLI (`npm i -g firebase-tools`), logged in to project `keee-7d6cb` for deploys
+- For the Android app: Java 17+ and the Android SDK
 
-### 1. Start local infrastructure
-
-```bash
-docker-compose up -d
-```
-
-Starts PostgreSQL on port `5435`. Local dev uses this local Postgres, not Supabase — Supabase is only
-needed for staging/production `DATABASE_URL`/`DIRECT_URL` and file uploads.
-
-### 2. Backend
+### Backend
 
 ```bash
 cd backend
 npm install
-cp .env.example .env      # fill in real values — see Environment variables below
-npm run prisma:generate
-npm run prisma:migrate
-npm run start:dev
+cp .env.example .env        # fill in what you need (see Environment variables)
 ```
 
-API runs at `http://localhost:4000` (see `PORT` in `.env`).
+Run the API locally against the Firebase emulators (no real data touched):
 
-### 3. Frontend (web)
+```bash
+npx firebase emulators:start --only firestore,auth,storage
+# in a second terminal:
+FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 FIREBASE_AUTH_EMULATOR_HOST=127.0.0.1:9099 \
+  npx ts-node -r tsconfig-paths/register scripts/bootstrap-firestore-app.ts   # http://localhost:4100/api
+```
+
+### Frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev                 # http://localhost:5173 — /api is proxied to http://localhost:4100
 ```
 
-Runs at `http://localhost:5173`; Vite proxies relative `/api/*` calls to the local backend — no
-`VITE_API_BASE_URL` needed for local dev.
+Set `DEV_API_PROXY_TARGET` to proxy to a different backend.
 
 ## Environment variables
 
-Full reference with inline comments in `backend/.env.example` and `frontend/.env.example`.
-Summary — **no real secret values are reproduced here**; every deployment holds its own values
-in the hosting platform's environment configuration, never committed to source control.
-
-**Backend** (`backend/.env`)
+Templates: [`backend/.env.example`](backend/.env.example) and [`frontend/.env.example`](frontend/.env.example).
+The full table (what each variable does and which component reads it) is in
+[`docs/TECHNICAL_DOCUMENTATION.md`](docs/TECHNICAL_DOCUMENTATION.md#12-configuration-and-environment-variables).
 
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | Pooled Postgres connection (Supavisor transaction mode) for runtime queries |
-| `DIRECT_URL` | Direct Postgres connection, required for `prisma migrate` |
-| `JWT_SECRET` | Signs auth tokens — use a long random value in production (currently falls back to a default if unset; see [Technical Documentation](#documentation) §7.2 for the hardening note) |
-| `ENCRYPTION_KEY` | AES key for encrypting sensitive PII (ID-proof numbers, Aadhaar) at rest — **losing/rotating it makes existing encrypted data unreadable** |
-| `PORT`, `NODE_ENV` | Server port / environment |
-| `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` + `SUPABASE_STORAGE_BUCKET` | Production file storage — required on ephemeral hosts (Render); falls back to local disk if unset (dev only) |
-| `SEED_SUPER_ADMIN_EMAIL/PASSWORD/NAME` | Auto-seeded on first boot if zero Super Admins exist |
-| `SMTP_*` | Email OTP delivery (Nodemailer) — falls back to console-logged dev OTP if unset |
-| `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payment order creation and signature verification for shop registration |
-| `FIREBASE_SERVICE_ACCOUNT_JSON` | Firebase Admin SDK credential (raw JSON pasted into the env var, not a file path — Render has no persistent disk) |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | Admin SDK credential for local scripts (single-line JSON). Not needed in Cloud Functions. |
+| `FIREBASE_WEB_API_KEY`, `FIREBASE_STORAGE_BUCKET` | Password sign-in REST call; Storage bucket (`GCF_*` variants in deployed functions) |
+| `ENCRYPTION_KEY` | 64-hex AES-256 key for ID-proof/Aadhaar numbers — required in production |
+| `ALGOLIA_APP_ID`, `ALGOLIA_SEARCH_API_KEY`, `ALGOLIA_ADMIN_API_KEY` | Search (admin key only for sync functions / reindex) |
+| `LOCATIONIQ_API_KEY` | Reverse geocoding |
+| `WHATSAPP_*`, `OTP_SHOW_CODE_IN_UI` | WhatsApp Cloud API delivery and the temporary on-screen OTP fallback |
+| `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payments |
+| `VITE_API_BASE_URL` (frontend) | API origin baked into the build (`https://api.keyshops.in`) |
+| `VITE_GA_MEASUREMENT_ID` (frontend) | Optional Google Analytics 4 id |
 
-**Frontend** (`frontend/.env`)
-
-| Variable | Purpose |
-|---|---|
-| `VITE_API_BASE_URL` | Backend base URL for production builds (Firebase Hosting and Render are on different domains, so this can't be a relative proxy in prod). Leave unset for local dev. |
+Deployed values live in the gitignored `backend/functions-api/.env` (API) and `backend/functions/.env`
+(sync functions). Never commit a real `.env`.
 
 ## Available scripts
 
@@ -180,12 +150,11 @@ in the hosting platform's environment configuration, never committed to source c
 
 | Script | Purpose |
 |---|---|
-| `npm run start:dev` | Dev server with hot reload |
-| `npm run build` | Compile TypeScript to `dist/` |
-| `npm run start:prod` | Run the compiled build |
-| `npm run prisma:migrate` | Apply Prisma migrations (dev) |
-| `npm run prisma:studio` | Open Prisma Studio (DB browser) |
-| `npm test` / `npm run test:cov` | Unit tests (Jest) |
+| `npm run build` | Compile to `dist/` |
+| `npm run start:prod` | Run the compiled standalone server (`dist/src/main-firestore`) |
+| `npm run start:dev` | Nest watch mode |
+| `npm test` | Unit tests (Jest) |
+| `npx ts-node -r tsconfig-paths/register scripts/<name>.ts` | Seeders, `reindex-algolia`, `cleanup-test-data`, `smoke-test-*` |
 
 **Frontend** (`cd frontend`)
 
@@ -194,17 +163,6 @@ in the hosting platform's environment configuration, never committed to source c
 | `npm run dev` | Dev server (`localhost:5173`) |
 | `npm run build` | Production build to `dist/` (real entry: `frontend/index.html`) |
 | `npm run preview` | Preview the production build locally |
-
-## Backend architecture notes
-
-The single most important convention in this codebase: every tenant-scoped Shop Admin query is
-filtered server-side by the caller's JWT-derived `shopId` — never trust a `shopId` from the
-request body/params. Every read additionally excludes soft-deleted rows (`deletedAt IS NULL`)
-via a shared Prisma wrapper. Full details, gotchas, and the checklist for adding a new
-soft-deletable or tenant-scoped model live in
-[`backend/docs/DEVELOPER_GUIDE.md`](backend/docs/DEVELOPER_GUIDE.md) — read it before writing
-any new Prisma query. For the complete API surface, database schema, and integration reference,
-see the [Technical Documentation PDF](#documentation).
 
 ## Android app
 
@@ -216,59 +174,43 @@ cd frontend
 npm run build
 npx cap sync android
 cd android
-./gradlew assembleDebug      # or assembleRelease for a signed release build
+./gradlew assembleRelease    # signed release build (assembleDebug for a debug build)
 ```
 
-The built APK is copied to `frontend/public/downloads/` for distribution from the web landing
-page's download link whenever a new build should be released.
+Bump `versionCode` / `versionName` in `frontend/android/app/build.gradle` for every release.
 
 ## Deployment
 
-- **Frontend** — Firebase Hosting, static SPA. Deploy with `node scripts/deploy-web.js` from the
-  repo root: it builds, re-embeds the Android APK the landing page links to, deploys, and verifies
-  the live download. **Don't** run a bare `npm run build` + `firebase deploy --only hosting` — the
-  build empties `frontend/dist`, which deletes `/downloads/keyshop-app.keeapp`, and the SPA rewrite
-  then serves `index.html` in its place (a broken download). Build the APK first
-  (`cd frontend/android && ./gradlew assembleRelease`); the script refuses a stale or invalid APK,
-  and `--keep-live-apk` re-embeds the currently live one for web-only deploys. SPA rewrite +
-  long-lived cache headers configured in `firebase.json`. The real build entry is the project-root `frontend/index.html` — **not**
-  anything under `frontend/public/`, which is copied verbatim as static assets only.
-- **Backend** — Render, auto-deploys on every push to `main` (Docker build via `backend/Dockerfile`,
-  which runs `prisma migrate deploy` on boot).
-- **Database & file storage** — [Supabase](https://supabase.com/) (managed Postgres + Storage). Render only
-  hosts the NestJS API itself; it connects out to Supabase via `DATABASE_URL`/`DIRECT_URL`.
-
-Set real production secrets (JWT, encryption key, DB URL, SMTP, Razorpay, Firebase service
-account, Supabase URL/service role key) directly in the Render dashboard's environment
-variables — never commit a real `.env`.
+- **Website + APK download** — `node scripts/deploy-web.js` from the repo root: it builds, re-embeds
+  the Android APK the landing page links to, deploys Hosting, and verifies the live download.
+  **Don't** run a bare `npm run build` + `firebase deploy --only hosting` — the build empties
+  `frontend/dist`, which deletes `/downloads/keyshop-app.keeapp`, and the SPA rewrite then serves
+  `index.html` in its place (a broken download). Build the APK first; the script refuses a stale or
+  invalid APK, and `--keep-live-apk` re-embeds the currently live one for web-only deploys.
+- **API** — `cd backend && firebase deploy --only functions:api` (the predeploy step builds and
+  generates `functions-api/`). Search-sync functions: `--only functions:sync`. Indexes/rules:
+  `--only firestore:indexes` / `firestore:rules`.
+- More (runbook, DNS, rollback notes): [`docs/TECHNICAL_DOCUMENTATION.md`](docs/TECHNICAL_DOCUMENTATION.md#13-build-test-and-deploy).
 
 ## Testing
 
 ```bash
 cd backend
-npm test          # unit tests (Jest) — tenant scoping, soft delete, shop/customer/promotion services
+npm test          # unit tests (Jest)
 ```
 
-There is currently no automated frontend test suite or backend e2e suite.
+HTTP smoke tests live in `backend/scripts/smoke-test-*.ts` and run against the local bootstrap
+server or a deployed API (`SMOKE_TEST_BASE_URL`). There is currently no automated frontend test
+suite.
 
 ## Documentation
 
-Client-facing documents (Orbenyx-branded, cover page + watermark) live in [`docs/`](docs/):
-
-- [`docs/Kee_User_Manual.pdf`](docs/Kee_User_Manual.pdf) — step-by-step workflows for login, shop
-  creation, customer registration, machines, advertisements, and Super Admin screens, with
-  flowcharts.
-- [`docs/Kee_Technical_Documentation.pdf`](docs/Kee_Technical_Documentation.pdf) — architecture,
-  full API reference, database schema, auth/authorization, integrations, deployment, and security
-  considerations, for engineers.
+- [`docs/TECHNICAL_DOCUMENTATION.md`](docs/TECHNICAL_DOCUMENTATION.md) — the engineering reference
+  (architecture, API catalogue, integrations, flows, operations).
+- [`docs/Kee_User_Manual.pdf`](docs/Kee_User_Manual.pdf) — step-by-step workflows for end users
+  (note: still describes the retired SMS OTP).
 - [`docs/Kee_Non_Technical_Documentation.pdf`](docs/Kee_Non_Technical_Documentation.pdf) —
   plain-language project overview for business stakeholders.
-
-Engineering-only references:
-
-- [`backend/docs/DEVELOPER_GUIDE.md`](backend/docs/DEVELOPER_GUIDE.md) — tenant scoping & soft-delete conventions (required reading before touching Prisma queries)
-- [`backend/docs/MIGRATION_REPORT.md`](backend/docs/MIGRATION_REPORT.md) — write-up of the relational-document-storage + soft-delete refactor
-- [`backend/docs/DATABASE_SCHEMA.pdf`](backend/docs/DATABASE_SCHEMA.pdf) — full schema reference (ER diagram, tables, indexes); regenerate with `npx ts-node -r tsconfig-paths/register scripts/generate-schema-doc.ts` from `backend/`
 
 ## SEO status
 

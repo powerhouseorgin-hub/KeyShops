@@ -3,14 +3,9 @@ import * as path from 'path';
 import { getApps } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
 
-// Drop-in replacement for the Supabase-backed FileService - identical
-// method signatures/return shapes at every call site (ad images, customer
-// documents, shop documents, promotion images all keep working unchanged),
-// only the storage backend changes. The conceptual model carries over
-// almost exactly: a private bucket, signed URLs with a caller-chosen
-// expiry, service-account-level access that bypasses any bucket ACL - the
-// same shape Supabase's service-role key gave us, just via Firebase's
-// Admin SDK Storage bucket object instead of @supabase/supabase-js.
+// File storage on Firebase Storage (a Cloud Storage bucket) for ad images, customer documents, shop documents
+// and promotion images: a private bucket, signed URLs with a caller-chosen expiry, and service-account-level
+// access through the Admin SDK that bypasses any bucket ACL.
 const CONTENT_TYPE_BY_EXT: Record<string, string> = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
@@ -23,8 +18,8 @@ const CONTENT_TYPE_BY_EXT: Record<string, string> = {
 @Injectable()
 export class FirebaseFileService {
   private get bucket() {
-    const app = getApps().find((a) => a.name === 'firestore-migration');
-    if (!app) throw new Error('Firestore migration Firebase app not initialized');
+    const app = getApps().find((a) => a.name === 'kee-admin');
+    if (!app) throw new Error('Firebase admin app not initialized - see FirestoreService');
     // GCF_STORAGE_BUCKET is the deployed-Cloud-Function fallback name -
     // FIREBASE_-prefixed env vars are reserved there (see
     // firebase-auth.service.ts's identical GCF_WEB_API_KEY pattern).
@@ -72,10 +67,9 @@ export class FirebaseFileService {
     try {
       await this.bucket.file(fileKey).delete();
     } catch (err: any) {
-      // Match the old Supabase behavior: deleting an already-missing object
-      // is a no-op, not an error - Cloud Storage's Node client throws a 404
-      // where Supabase silently succeeded, so that specific case is
-      // swallowed here to keep the same fail-soft contract callers rely on.
+      // Deleting an already-missing object is a no-op, not an error - Cloud
+      // Storage's Node client throws a 404, so that specific case is swallowed
+      // to keep the fail-soft contract callers rely on.
       if (err.code !== 404) {
         console.warn(`FirebaseFileService: delete failed for "${fileKey}":`, err.message);
       }

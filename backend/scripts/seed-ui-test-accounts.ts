@@ -38,7 +38,7 @@ async function main() {
     superUid = existing.uid;
   } catch {
     const { getApps } = await import('firebase-admin/app');
-    const app = getApps().find((a) => a.name === 'firestore-migration')!;
+    const app = getApps().find((a) => a.name === 'kee-admin')!;
     const rec = await (await import('firebase-admin/auth')).getAuth(app).getUserByEmail(superEmail);
     superUid = rec.uid;
   }

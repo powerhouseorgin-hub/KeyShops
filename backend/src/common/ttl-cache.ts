@@ -17,8 +17,7 @@ export class TtlCache<T = any> {
   // Optional cap for callers with a high-cardinality key space (e.g.
   // GeoController's per-coordinate reverse-geocode cache) where the number
   // of distinct keys isn't small and bounded the way "one row per shop
-  // category" is - every other existing caller omits this and keeps its
-  // prior unbounded behavior exactly as before. Evicts the
+  // category" is - every other existing caller omits this and is unbounded. Evicts the
   // longest-untouched entry (Map iteration order = insertion order, and
   // `get` below re-inserts on hit to bump it to the back), a plain
   // in-process LRU with no extra dependency.
