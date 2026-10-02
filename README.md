@@ -225,9 +225,14 @@ page's download link whenever a new build should be released.
 
 ## Deployment
 
-- **Frontend** — Firebase Hosting, static SPA (`firebase deploy --only hosting` from repo root
-  after `cd frontend && npm run build`). SPA rewrite + long-lived cache headers configured in
-  `firebase.json`. The real build entry is the project-root `frontend/index.html` — **not**
+- **Frontend** — Firebase Hosting, static SPA. Deploy with `node scripts/deploy-web.js` from the
+  repo root: it builds, re-embeds the Android APK the landing page links to, deploys, and verifies
+  the live download. **Don't** run a bare `npm run build` + `firebase deploy --only hosting` — the
+  build empties `frontend/dist`, which deletes `/downloads/keyshop-app.keeapp`, and the SPA rewrite
+  then serves `index.html` in its place (a broken download). Build the APK first
+  (`cd frontend/android && ./gradlew assembleRelease`); the script refuses a stale or invalid APK,
+  and `--keep-live-apk` re-embeds the currently live one for web-only deploys. SPA rewrite +
+  long-lived cache headers configured in `firebase.json`. The real build entry is the project-root `frontend/index.html` — **not**
   anything under `frontend/public/`, which is copied verbatim as static assets only.
 - **Backend** — Render, auto-deploys on every push to `main` (Docker build via `backend/Dockerfile`,
   which runs `prisma migrate deploy` on boot).
