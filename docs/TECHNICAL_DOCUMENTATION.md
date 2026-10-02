@@ -275,6 +275,7 @@ users/{uid}                              Firebase Auth uid; profile + role + sho
 emailIndex/{lowercased email}            { uid }   uniqueness + login lookup
 phoneIndex/{10-digit phone}              { uid }   uniqueness + login lookup
 otpCodes/{id}                            OTP records (hashed)
+razorpayPayments/{paymentId}             { shopId, orderId, createdAt }  makes a payment single-use for registration
 
 shops/{shopId}                           Shop profile
   ├─ subscriptions/{id}                  Plans/terms of the shop
@@ -524,7 +525,7 @@ flowchart LR
 3. The client posts `razorpayOrderId / razorpayPaymentId / razorpaySignature` with the registration form.
 4. The server verifies the HMAC signature (`payment/verify-razorpay-signature.ts`) **before** creating any Auth user or Firestore document, then writes a `revenueRecords` entry for the subscription price.
 
-Orders are not stored in Firestore; Razorpay is the order store. See §15 for a hardening item (payment-id reuse).
+Orders are not stored in Firestore; Razorpay is the order store. The payment id is recorded in `razorpayPayments/{paymentId}` in the same transaction that creates the shop, so a captured order/payment/signature cannot be replayed to register another shop.
 
 ### 9.4 WhatsApp Business Cloud API
 
@@ -726,7 +727,7 @@ DNS: `keyshops.in` / `www` → Hosting site `keee-7d6cb`; `api.keyshops.in` → 
 
 **Security / correctness**
 
-1. **Payment reuse (should be fixed).** `register-shop` verifies the Razorpay signature but does not record the `razorpayPaymentId` as used, so one captured, valid order/payment/signature triple could be replayed to create more shops. Fix: write `razorpayPayments/{paymentId}` inside the registration transaction and reject duplicates; also confirm the order amount via Razorpay's API.
+1. **Payment amount is not re-checked.** `register-shop` verifies the Razorpay signature and records the payment id in `razorpayPayments/{paymentId}` inside the registration transaction, so one payment can register only one shop (a replay is rejected with 400). It does not call Razorpay to confirm the paid amount equals the current price; orders are only created by this backend, so this is low risk, but fetching the payment from Razorpay would close it.
 2. Rate limiting is per function instance and keyed on a client-appendable header — adequate against casual abuse, not against a determined distributed attacker. Firebase App Check / Cloud Armor are the upgrade path.
 3. 4-digit OTP + 5 attempts + per-IP throttles is acceptable for the current threat model; a 6-digit code would be stronger.
 4. `ENCRYPTION_KEY` has no rotation procedure.

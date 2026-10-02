@@ -20,6 +20,10 @@ export interface RegisterShopInput {
   aadhaarNumber?: string;
   referralCode?: string;
   startTrial?: boolean;
+  // Required for a paid (non-trial) registration: the verified Razorpay payment this signup is spent against.
+  // Recorded in razorpayPayments/{paymentId} inside the transaction so one payment can register only one shop.
+  razorpayOrderId?: string;
+  razorpayPaymentId?: string;
 }
 
 // Shop registration as one atomic Firestore transaction: Shop + User + Subscription + Referral, with a
@@ -48,14 +52,26 @@ export class ShopRegistrationService {
     const categoryRef = db.collection('shopCategories').doc(input.categoryId);
     const platformConfigRef = db.collection('config').doc('platform');
 
+    // A paid signup must carry its payment id: it becomes the document id that makes the payment single-use.
+    // Razorpay ids look like "pay_Abc123"; anything else (notably a "/") is refused before it can name a path.
+    if (!input.startTrial && !(typeof input.razorpayPaymentId === 'string' && /^[A-Za-z0-9_]{1,64}$/.test(input.razorpayPaymentId))) {
+      throw new BadRequestException('A valid payment id is required to complete registration.');
+    }
+    const paymentRef = !input.startTrial ? db.collection('razorpayPayments').doc(input.razorpayPaymentId as string) : null;
+
     return db.runTransaction(async (tx) => {
       // ---- READS (all of them, before any write) ----
-      const [emailIndexSnap, phoneIndexSnap, categorySnap, platformConfigSnap] = await Promise.all([
+      const [emailIndexSnap, phoneIndexSnap, categorySnap, platformConfigSnap, paymentSnap] = await Promise.all([
         emailIndexRef ? tx.get(emailIndexRef) : Promise.resolve(null),
         tx.get(phoneIndexRef),
         tx.get(categoryRef),
         tx.get(platformConfigRef),
+        paymentRef ? tx.get(paymentRef) : Promise.resolve(null),
       ]);
+
+      if (paymentSnap?.exists) {
+        throw new BadRequestException('This payment has already been used to register a shop.');
+      }
 
       if (emailIndexSnap?.exists) {
         throw new BadRequestException('This email address is already registered to another shop');
@@ -138,6 +154,10 @@ export class ShopRegistrationService {
         createdAt: now,
         updatedAt: now,
       });
+
+      if (paymentRef) {
+        tx.set(paymentRef, { shopId: shopRef.id, orderId: input.razorpayOrderId || null, createdAt: now });
+      }
 
       if (!input.startTrial) {
         const revenueRef = db.collection('revenueRecords').doc();

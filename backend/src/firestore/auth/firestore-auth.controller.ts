@@ -203,6 +203,8 @@ export class FirestoreAuthController {
       aadhaarNumber: dto.aadhaarNumber,
       referralCode: dto.referralCode,
       startTrial: dto.startTrial,
+      razorpayOrderId: dto.razorpayOrderId,
+      razorpayPaymentId: dto.razorpayPaymentId,
     };
 
     try {

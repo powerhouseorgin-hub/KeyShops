@@ -68,8 +68,23 @@ async function main() {
     location: 'Test Address 2',
     categoryId: 'key-shops',
     startTrial: false,
+    razorpayOrderId: 'order_smoke1',
+    razorpayPaymentId: 'pay_smoke1',
   });
   console.log(result2);
+  const paymentDoc = await firestore.db.collection('razorpayPayments').doc('pay_smoke1').get();
+  console.log('Payment recorded as used:', paymentDoc.exists && paymentDoc.data()?.shopId === result2.shopId);
+  try {
+    await registration.registerShop({
+      uid: 'test-uid-3b', shopName: 'Replay Shop', ownerName: 'Replay', phone: '9222222223', location: 'x',
+      categoryId: 'key-shops', startTrial: false, razorpayOrderId: 'order_smoke1', razorpayPaymentId: 'pay_smoke1',
+    });
+    console.log('FAIL: a reused payment id registered a second shop');
+  } catch (e: any) {
+    console.log('Reused payment rejected (expect true):', /already been used/.test(e.message));
+  }
+  const replayIndex = await firestore.db.collection('phoneIndex').doc('9222222223').get();
+  console.log('Replay left no phone index behind (expect false):', replayIndex.exists);
   const revenueSnap = await firestore.db.collection('revenueRecords').where('notes', '>=', '').get();
   const matchingRevenue = revenueSnap.docs.find((d) => (d.data().notes || '').includes('Test Paid Shop'));
   console.log('Revenue record created:', !!matchingRevenue, matchingRevenue?.data());
