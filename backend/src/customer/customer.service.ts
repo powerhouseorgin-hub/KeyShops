@@ -187,10 +187,6 @@ export class CustomerService {
       updateData.billNumber = `BILL-${dateStr}-${randomSuffix}`;
     }
 
-    if (dto.idProofNumber) {
-      updateData.idProofNumber = this.cryptoService.encrypt(dto.idProofNumber);
-    }
-
     const updated = await this.tenantService.prisma.customer.update({
       where: { id },
       data: updateData,
@@ -555,10 +551,6 @@ export class CustomerService {
       const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
       const randomSuffix = Math.floor(1000 + Math.random() * 9000);
       updateData.billNumber = `BILL-${dateStr}-${randomSuffix}`;
-    }
-
-    if (dto.idProofNumber) {
-      updateData.idProofNumber = this.cryptoService.encrypt(dto.idProofNumber);
     }
 
     const updated = await this.tenantService.prisma.customer.update({

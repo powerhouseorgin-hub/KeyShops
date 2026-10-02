@@ -13,13 +13,14 @@ import { ShopRepository } from '../src/firestore/shop/shop.repository';
 import { UserRepository } from '../src/firestore/shop/user.repository';
 import { PlatformConfigService } from '../src/firestore/config/platform-config.service';
 import { ShopRegistrationService } from '../src/firestore/shop/shop-registration.service';
+import { CryptoService } from '../src/crypto/crypto.service';
 
 async function main() {
   const firestore = new FirestoreService();
   const shops = new ShopRepository(firestore);
   const users = new UserRepository(firestore);
   const platformConfig = new PlatformConfigService(firestore);
-  const registration = new ShopRegistrationService(firestore, shops, users, platformConfig);
+  const registration = new ShopRegistrationService(firestore, shops, users, platformConfig, new CryptoService());
 
   // Seed a shop category (registration requires a valid one).
   const catRef = firestore.db.collection('shopCategories').doc('key-shops');

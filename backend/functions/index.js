@@ -1,5 +1,6 @@
 const { onDocumentWritten } = require('firebase-functions/v2/firestore');
 const { algoliasearch } = require('algoliasearch');
+const { slimRecord } = require('./algolia-fields');
 
 // Replaces the "Search with Algolia" Firebase Extension (which would have
 // done exactly this) - Extensions are being shut down 2027-03-31 and can't
@@ -22,15 +23,18 @@ async function syncToAlgolia(indexName, objectID, afterSnapshot, extraFields = {
     console.error('ALGOLIA_APP_ID/ALGOLIA_ADMIN_API_KEY not set in functions/.env - skipping sync');
     return;
   }
-  if (!afterSnapshot.exists) {
+  // slimRecord returns null for a soft-deleted document (deletedAt set) - those
+  // must leave the index too, not just hard-deleted ones, or deleted customers'
+  // details would stay in Algolia indefinitely.
+  const record = afterSnapshot.exists ? slimRecord(indexName, objectID, afterSnapshot.data(), extraFields) : null;
+  if (!record) {
     await client.deleteObject({ indexName, objectID });
     return;
   }
-  // Every field on these documents is a plain string/number/boolean/null
-  // (createdAt etc. are stored as Date.now() numbers, never Firestore
-  // Timestamp objects - see the backend's own Firestore services) so
-  // spreading .data() straight into the Algolia record needs no conversion.
-  await client.saveObject({ indexName, body: { objectID, ...afterSnapshot.data(), ...extraFields } });
+  // Only the fields search actually needs are sent (see ./algolia-fields.js) -
+  // the backend re-fetches the authoritative Firestore document for every hit,
+  // so Algolia never needs the rest.
+  await client.saveObject({ indexName, body: record });
 }
 
 // Customer documents never store their own shopId as a field (tenant

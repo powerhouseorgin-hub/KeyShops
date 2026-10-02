@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { FirestoreService } from '../firestore.service';
 import { TtlCache } from '../../common/ttl-cache';
 import { FirebaseFileService } from '../storage/firebase-file.service';
+import { pick } from '../../common/pick.util';
 
 // Firestore port of AdService - Advertisement has no relations/FKs at all
 // in the old schema (targetShops is a plain denormalized string array
@@ -71,7 +72,10 @@ export class FirestoreAdService {
     const doc = await this.col().doc(id).get();
     if (!doc.exists) throw new NotFoundException('Ad not found');
 
-    const updateData: any = { ...dto, updatedAt: Date.now() };
+    const updateData: any = {
+      ...pick(dto, ['title', 'imageUrl', 'type', 'startDate', 'endDate', 'priority', 'targetAll', 'targetShops']),
+      updatedAt: Date.now(),
+    };
     if (dto.startDate) updateData.startDate = new Date(dto.startDate).getTime();
     if (dto.endDate) updateData.endDate = new Date(dto.endDate).getTime();
 

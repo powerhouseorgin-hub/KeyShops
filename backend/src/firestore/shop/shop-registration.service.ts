@@ -3,6 +3,7 @@ import { FirestoreService } from '../firestore.service';
 import { ShopRepository } from './shop.repository';
 import { UserRepository } from './user.repository';
 import { PlatformConfigService } from '../config/platform-config.service';
+import { CryptoService } from '../../crypto/crypto.service';
 
 export interface RegisterShopInput {
   uid: string; // Firebase Auth UID, created by the caller (AuthService) before this runs
@@ -39,6 +40,7 @@ export class ShopRegistrationService {
     private readonly shops: ShopRepository,
     private readonly users: UserRepository,
     private readonly platformConfig: PlatformConfigService,
+    private readonly crypto: CryptoService,
   ) {}
 
   async registerShop(input: RegisterShopInput): Promise<{ shopId: string; plan: 'TRIAL' | 'YEARLY'; endDate: number }> {
@@ -95,7 +97,9 @@ export class ShopRegistrationService {
         isActive: true,
         storageUsed: 0,
         companyDetails: JSON.stringify({ address: input.location || 'Pending registration details', gst: 'Pending', phone: input.phone }),
-        aadhaarNumber: input.aadhaarNumber || null,
+        // Encrypted at rest, exactly as the original AuthService.registerShop did - this field was being
+        // stored (and copied into the Algolia index) as a plain 12-digit number.
+        aadhaarNumber: input.aadhaarNumber ? this.crypto.encrypt(input.aadhaarNumber) : null,
         latitude: input.latitude ?? null,
         longitude: input.longitude ?? null,
         town: input.town || null,

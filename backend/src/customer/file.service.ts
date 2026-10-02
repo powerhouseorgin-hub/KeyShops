@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { BadRequestException, Injectable, OnModuleInit } from '@nestjs/common';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -110,6 +110,18 @@ export class FileService implements OnModuleInit {
   // exposes the storage bucket name, internal file path, or signature token
   // in the recipient's browser address bar - see the redirect vs. proxy
   // discussion there.
+  // Local-disk fallback only: resolves a file key to a path INSIDE uploadDir. Keys are server-generated, but
+  // this is the last line of defence if one ever carries "../" (it would otherwise read or delete arbitrary
+  // files on the host). Only the bare file name is used, and the resolved path must stay under uploadDir.
+  private resolveLocalPath(fileKey: string): string {
+    const root = path.resolve(this.uploadDir);
+    const resolved = path.resolve(root, path.basename(fileKey));
+    if (!resolved.startsWith(root + path.sep)) {
+      throw new BadRequestException('Invalid file key');
+    }
+    return resolved;
+  }
+
   async downloadFileBuffer(fileKey: string): Promise<{ buffer: Buffer; contentType: string }> {
     const fileExt = path.extname(fileKey);
     const contentType = CONTENT_TYPE_BY_EXT[fileExt.toLowerCase()] || 'application/octet-stream';
@@ -123,7 +135,7 @@ export class FileService implements OnModuleInit {
       return { buffer: Buffer.from(arrayBuffer), contentType: data.type || contentType };
     }
 
-    const filePath = path.join(this.uploadDir, fileKey);
+    const filePath = this.resolveLocalPath(fileKey);
     const buffer = await fs.promises.readFile(filePath);
     return { buffer, contentType };
   }
@@ -139,7 +151,7 @@ export class FileService implements OnModuleInit {
       return;
     }
 
-    const filePath = path.join(this.uploadDir, fileKey);
+    const filePath = this.resolveLocalPath(fileKey);
     try {
       await fs.promises.unlink(filePath);
     } catch (err) {

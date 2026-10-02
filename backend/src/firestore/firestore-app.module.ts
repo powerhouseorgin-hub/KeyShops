@@ -15,7 +15,7 @@ import { PublicReportController } from './customer/public-report.controller';
 import { CryptoService } from '../crypto/crypto.service';
 import { FirebaseAuthService } from './auth/firebase-auth.service';
 import { FirebaseAuthGuard } from './auth/firebase-auth.guard';
-import { FirestoreAuthController, AuthGuardSmokeTestController } from './auth/firestore-auth.controller';
+import { FirestoreAuthController } from './auth/firestore-auth.controller';
 import { FirebaseFileService } from './storage/firebase-file.service';
 import { FirestoreAdService } from './ad/firestore-ad.service';
 import { FirestoreAdController } from './ad/firestore-ad.controller';
@@ -76,7 +76,6 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
   ],
   controllers: [
     FirestoreAuthController,
-    AuthGuardSmokeTestController,
     FirestoreAdController,
     PublicAdController,
     FirestoreNotificationController,

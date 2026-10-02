@@ -111,7 +111,6 @@ export class FirestoreDashboardService {
     const now = new Date();
     const todayStart = new Date(now); todayStart.setHours(0, 0, 0, 0);
     const todayEnd = new Date(now); todayEnd.setHours(23, 59, 59, 999);
-    const sixMonthsAgo = new Date(now); sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
     const [
       todayCountSnap,
@@ -119,29 +118,37 @@ export class FirestoreDashboardService {
       recentCustomersSnap,
       keySampleSnap,
       subSnap,
-      recentSixMonthsSnap,
+      monthlyCounts,
     ] = await Promise.all([
       customers.where('createdAt', '>=', todayStart.getTime()).where('createdAt', '<=', todayEnd.getTime()).count().get(),
       customers.count().get(),
       customers.orderBy('createdAt', 'desc').limit(5).get(),
       customers.where('keyNumber', '!=', null).limit(POPULAR_KEYS_SAMPLE_CAP).get(),
       shopRef.collection('subscriptions').where('status', '==', 'ACTIVE').orderBy('createdAt', 'desc').limit(1).get(),
-      customers.where('createdAt', '>=', sixMonthsAgo.getTime()).get(),
+      // Registrations per calendar month for the last 6 months. One count() aggregation per month
+      // instead of downloading every customer document of the period (a busy shop has thousands, and each
+      // carries personal data) just to tally them - cost is 6 small aggregation reads, whatever the volume.
+      Promise.all(
+        Array.from({ length: 6 }, (_, k) => {
+          const monthsBack = 5 - k;
+          const start = new Date(now.getFullYear(), now.getMonth() - monthsBack, 1);
+          const end = new Date(now.getFullYear(), now.getMonth() - monthsBack + 1, 1);
+          return customers
+            .where('createdAt', '>=', start.getTime())
+            .where('createdAt', '<', end.getTime())
+            .count()
+            .get()
+            .then((snap) => ({
+              month: start.toLocaleString('en-US', { month: 'short', year: 'numeric' }),
+              count: snap.data().count,
+            }));
+        }),
+      ),
     ]);
 
     const popularKeys = topKeyNumbers(keySampleSnap.docs.map((d) => (d.data() as any).keyNumber), 5);
 
-    const monthlyCounts: Record<string, number> = {};
-    for (let i = 5; i >= 0; i--) {
-      const d = new Date(now); d.setMonth(d.getMonth() - i);
-      monthlyCounts[d.toLocaleString('en-US', { month: 'short', year: 'numeric' })] = 0;
-    }
-    recentSixMonthsSnap.docs.forEach((d) => {
-      const createdAt = (d.data() as any).createdAt;
-      const mName = new Date(createdAt).toLocaleString('en-US', { month: 'short', year: 'numeric' });
-      if (monthlyCounts[mName] !== undefined) monthlyCounts[mName] += 1;
-    });
-    const monthlyStats = Object.entries(monthlyCounts).map(([month, count]) => ({ month, count }));
+    const monthlyStats = monthlyCounts;
 
     let subscription: any = null;
     if (!subSnap.empty) {

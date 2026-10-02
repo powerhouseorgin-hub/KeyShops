@@ -4,7 +4,7 @@ import { ShopRepository } from '../shop/shop.repository';
 import { CustomerRegistrationService, type CreateCustomerInput } from './customer-registration.service';
 import { CryptoService } from '../../crypto/crypto.service';
 import { FirebaseFileService } from '../storage/firebase-file.service';
-import { AlgoliaSearchService } from '../search/algolia-search.service';
+import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.service';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
 
 // Firestore port of CustomerService's remaining surface - creation itself
@@ -18,7 +18,7 @@ import { normalizePhone, PHONE_REGEX_MESSAGE } from '../../common/validators/pho
 // "Search with Algolia" Firebase Extension instance - see that service's
 // doc comment). Search hits are re-fetched from Firestore by objectID
 // (= doc ID) rather than trusted directly, so results stay authoritative
-// and still go through enrichCustomerRow's shop/masterKey join. When
+// and still go through enrichCustomerRows's shop/masterKey join. When
 // Algolia isn't configured, this falls back to the original fail-soft
 // behavior: an exact match against phone or keyNumber only (both
 // structured fields Firestore can query directly) - still enough for
@@ -139,28 +139,58 @@ export class FirestoreCustomerService {
     return this.enrichCustomerRow(customerId, shopId, doc.data());
   }
 
-  // Re-fetches a customer by (shopId, id) - used for Algolia search hits,
-  // which only give an objectID (= doc ID) and whatever stale fields were
-  // last synced. Returns null for a hit whose underlying doc has since been
-  // deleted (sync lag), which callers filter out rather than erroring.
-  private async enrichCustomerRowById(shopId: string, id: string) {
-    const doc = await this.shops.customers(shopId).doc(id).get();
-    if (!doc.exists) return null;
-    return this.enrichCustomerRow(id, shopId, doc.data());
+  // Re-fetches customers by (shopId, id) - used for Algolia search hits, which only give an
+  // objectID (= doc ID) and a slim synced copy. One batched read for the customer docs, then one for
+  // every distinct shop / master key. A hit whose underlying doc has since been deleted (sync lag) is
+  // dropped rather than erroring. Keeps the hit order.
+  private async enrichCustomerRowsByIds(refs: Array<{ shopId: string; id: string }>) {
+    if (refs.length === 0) return [];
+    const docs = await this.getAllChunked(refs.map((r) => this.shops.customers(r.shopId).doc(r.id)));
+    const rows = docs
+      .map((d, i) => (d.exists ? { id: refs[i].id, shopId: refs[i].shopId, data: d.data() } : null))
+      .filter((r): r is NonNullable<typeof r> => r !== null);
+    return this.enrichCustomerRows(rows);
   }
 
   private async enrichCustomerRow(id: string, shopId: string, data: any) {
-    const [masterKeyDoc, shopDoc] = await Promise.all([
-      data.masterKeyId ? this.db.collection('masterKeys').doc(data.masterKeyId).get() : Promise.resolve(null),
-      this.db.collection('shops').doc(shopId).get(),
+    const [row] = await this.enrichCustomerRows([{ id, shopId, data }]);
+    return row;
+  }
+
+  // Joins the shop and master key onto every row. Previously each row fired its own two reads (a shop
+  // and a master-key doc) - up to ~400 round trips for a 200-row list, and all rows of a shop-scoped
+  // list read the SAME shop doc. Now: collect the distinct shop / master-key ids and fetch them with
+  // getAll, so a list costs 1-2 batched reads however many rows it has.
+  private async enrichCustomerRows(rows: Array<{ id: string; shopId: string; data: any }>) {
+    if (rows.length === 0) return [];
+    const shopIds = [...new Set(rows.map((r) => r.shopId))];
+    const masterKeyIds = [...new Set(rows.map((r) => r.data.masterKeyId).filter((x: unknown): x is string => !!x))];
+    const snaps = await this.getAllChunked([
+      ...shopIds.map((id) => this.db.collection('shops').doc(id)),
+      ...masterKeyIds.map((id) => this.db.collection('masterKeys').doc(id)),
     ]);
-    return {
-      id,
-      shopId,
-      ...this.decryptPII({ ...data }),
-      masterKey: masterKeyDoc?.exists ? { category: (masterKeyDoc.data() as any).category } : null,
-      shop: shopDoc.exists ? { id: shopId, name: (shopDoc.data() as any).name, companyDetails: (shopDoc.data() as any).companyDetails } : null,
-    };
+    const shopSnaps = new Map(snaps.slice(0, shopIds.length).map((d) => [d.id, d]));
+    const masterKeySnaps = new Map(snaps.slice(shopIds.length).map((d) => [d.id, d]));
+    return rows.map(({ id, shopId, data }) => {
+      const masterKeyDoc = data.masterKeyId ? masterKeySnaps.get(data.masterKeyId) : null;
+      const shopDoc = shopSnaps.get(shopId);
+      return {
+        id,
+        shopId,
+        ...this.decryptPII({ ...data }),
+        masterKey: masterKeyDoc?.exists ? { category: (masterKeyDoc.data() as any).category } : null,
+        shop: shopDoc?.exists ? { id: shopId, name: (shopDoc.data() as any).name, companyDetails: (shopDoc.data() as any).companyDetails } : null,
+      };
+    });
+  }
+
+  // db.getAll in slices so a very large id set never produces one oversized request.
+  private async getAllChunked(refs: FirebaseFirestore.DocumentReference[]) {
+    const out: FirebaseFirestore.DocumentSnapshot[] = [];
+    for (let i = 0; i < refs.length; i += 100) {
+      out.push(...(await this.db.getAll(...refs.slice(i, i + 100))));
+    }
+    return out;
   }
 
   async updateCustomer(shopId: string, id: string, actorUserId: string, dto: UpdateCustomerInput) {
@@ -249,10 +279,9 @@ export class FirestoreCustomerService {
     const { cursor, limit, keysOnly } = pageOpts;
 
     if (query && this.algolia.isConfigured) {
-      const result = await this.algolia.search('customers', query, { filters: `shopId:${shopId}` });
+      const result = await this.algolia.search('customers', query, { filters: facetFilter('shopId', shopId) });
       if (result.ok) {
-        let rows = await Promise.all(result.hits.map((h) => this.enrichCustomerRowById(shopId, h.objectID)));
-        let filtered = rows.filter((r): r is NonNullable<typeof r> => r !== null);
+        let filtered = await this.enrichCustomerRowsByIds(result.hits.map((h) => ({ shopId, id: h.objectID })));
         if (keysOnly) filtered = filtered.filter((r) => !!r.keyNumber);
         return limit ? { items: filtered, nextCursor: null } : filtered;
       }
@@ -276,7 +305,7 @@ export class FirestoreCustomerService {
     // therefore sorted by keyNumber, not createdAt, when active.
     if (!limit) {
       const snap = keysOnly ? await q.orderBy('keyNumber', 'asc').get() : await q.orderBy('createdAt', 'desc').get();
-      return Promise.all(snap.docs.map((d) => this.enrichCustomerRow(d.id, shopId, d.data())));
+      return this.enrichCustomerRows(snap.docs.map((d) => ({ id: d.id, shopId, data: d.data() })));
     }
 
     q = keysOnly
@@ -289,7 +318,7 @@ export class FirestoreCustomerService {
     const snap = await q.get();
     const hasMore = snap.docs.length > limit;
     const page = hasMore ? snap.docs.slice(0, limit) : snap.docs;
-    const items = await Promise.all(page.map((d) => this.enrichCustomerRow(d.id, shopId, d.data())));
+    const items = await this.enrichCustomerRows(page.map((d) => ({ id: d.id, shopId, data: d.data() })));
     return { items, nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
@@ -309,8 +338,7 @@ export class FirestoreCustomerService {
         // that was added and hasn't been re-synced yet; skip rather than
         // crash on an invalid Firestore path.
         const hitsWithShop = result.hits.filter((h) => typeof h.shopId === 'string' && h.shopId);
-        let rows = await Promise.all(hitsWithShop.map((h) => this.enrichCustomerRowById(h.shopId as string, h.objectID)));
-        let filtered = rows.filter((r): r is NonNullable<typeof r> => r !== null);
+        let filtered = await this.enrichCustomerRowsByIds(hitsWithShop.map((h) => ({ shopId: h.shopId as string, id: h.objectID })));
         if (keysOnly) filtered = filtered.filter((r) => !!r.keyNumber);
         return limit ? { items: filtered, nextCursor: null } : filtered;
       }
@@ -332,7 +360,7 @@ export class FirestoreCustomerService {
     // orderBy onto that same field.
     if (!limit) {
       const snap = keysOnly ? await q.orderBy('keyNumber', 'asc').limit(200).get() : await q.orderBy('createdAt', 'desc').limit(200).get();
-      return Promise.all(snap.docs.map((d) => this.enrichCustomerRow(d.id, rowShopId(d), d.data())));
+      return this.enrichCustomerRows(snap.docs.map((d) => ({ id: d.id, shopId: rowShopId(d), data: d.data() })));
     }
 
     q = keysOnly
@@ -348,7 +376,7 @@ export class FirestoreCustomerService {
     const snap = await q.get();
     const hasMore = snap.docs.length > limit;
     const page = hasMore ? snap.docs.slice(0, limit) : snap.docs;
-    const items = await Promise.all(page.map((d) => this.enrichCustomerRow(d.id, rowShopId(d), d.data())));
+    const items = await this.enrichCustomerRows(page.map((d) => ({ id: d.id, shopId: rowShopId(d), data: d.data() })));
     return { items, nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 }

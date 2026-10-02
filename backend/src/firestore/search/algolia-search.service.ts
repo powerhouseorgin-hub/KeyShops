@@ -1,6 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { algoliasearch, type SearchClient } from 'algoliasearch';
 
+// Builds a safe Algolia facet filter ("attribute:\"value\""). Several filter values come from request
+// parameters (a public `shopId` / `town` query string), and a value pasted raw into the filter string
+// could carry its own syntax (`x OR shopId:y`) and widen or alter the query - so the value is always
+// quoted with quotes and backslashes escaped.
+export function facetFilter(attribute: string, value: string): string {
+  const escaped = String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  return `${attribute}:"${escaped}"`;
+}
+
 export interface AlgoliaSearchResult {
   // false means "couldn't actually search this index" (no credentials yet,
   // or the index doesn't exist yet because its Firebase Extension hasn't

@@ -9,7 +9,8 @@ import { forwardGeocodeAddress } from '../../common/geocode.util';
 import { parseBase64DataUri } from '../../common/base64.util';
 import { invalidateAuthCache } from '../../auth/auth-cache';
 import { TtlCache } from '../../common/ttl-cache';
-import { AlgoliaSearchService } from '../search/algolia-search.service';
+import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.service';
+import { pick } from '../../common/pick.util';
 
 // Firestore port of ShopService - the largest single file in the migration
 // (Super Admin shop provisioning/management, Shop Admin settings, the
@@ -258,7 +259,7 @@ export class FirestoreShopService {
     const { search, town, cursor, limit } = opts;
 
     if (search && this.algolia.isConfigured) {
-      const filters = town ? `town:"${town}" OR district:"${town}"` : undefined;
+      const filters = town ? `${facetFilter('town', town)} OR ${facetFilter('district', town)}` : undefined;
       const result = await this.algolia.search('shops', search, { filters });
       if (result.ok) {
         const rows = await Promise.all(result.hits.map((h) => this.enrichShopRowById(h.objectID)));
@@ -489,7 +490,19 @@ export class FirestoreShopService {
   }
 
   async updateSettings(shopId: string, dto: UpdateSettingsInput) {
-    const data: Record<string, any> = { ...dto };
+    // Allowlist: this body comes straight from a Shop Admin and the DTO is a plain interface, so nothing
+    // else strips unknown fields - without it `referralPoints`, `categoryId`, `isActive`, `aadhaarNumber`
+    // etc. could be written to the shop document by any Shop Admin.
+    const data: Record<string, any> = pick(dto, ['name', 'companyDetails', 'themeColor']);
+    // The DTO is only a TypeScript interface, so nothing has checked the types or sizes of these values yet.
+    const limits: Record<string, number> = { name: 200, companyDetails: 10000, themeColor: 32 };
+    for (const [key, max] of Object.entries(limits)) {
+      const value = data[key];
+      if (value === undefined) continue;
+      if (typeof value !== 'string' || value.length > max) {
+        throw new BadRequestException(`${key} must be text of at most ${max} characters`);
+      }
+    }
     if (dto.companyDetails) {
       try {
         const details = JSON.parse(dto.companyDetails);

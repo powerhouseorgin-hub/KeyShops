@@ -96,16 +96,21 @@ async function bootstrap() {
   // but wrong for an image (shop logo/photo) meant to render inline in an
   // `<img>` tag, which this used to force into a download dialog too.
   const INLINE_IMAGE_EXTENSIONS = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
-  app.use(
-    '/api/uploads',
-    express.static(path.join(process.cwd(), 'public', 'uploads'), {
-      setHeaders: (res, filePath) => {
-        const filename = path.basename(filePath).replace(/[^a-zA-Z0-9._-]/g, '_');
-        const disposition = INLINE_IMAGE_EXTENSIONS.has(path.extname(filePath).toLowerCase()) ? 'inline' : 'attachment';
-        res.setHeader('Content-Disposition', `${disposition}; filename="${filename}"`);
-      },
-    }),
-  );
+  // Local-disk uploads are served unauthenticated by this static mount, so it must never exist in production:
+  // there uploads live in Supabase Storage (served through signed URLs) and public/uploads is only the dev
+  // fallback. Mounting it in production would expose any file that landed on disk (Aadhaar scans, licences).
+  if (process.env.NODE_ENV !== 'production') {
+    app.use(
+      '/api/uploads',
+      express.static(path.join(process.cwd(), 'public', 'uploads'), {
+        setHeaders: (res, filePath) => {
+          const filename = path.basename(filePath).replace(/[^a-zA-Z0-9._-]/g, '_');
+          const disposition = INLINE_IMAGE_EXTENSIONS.has(path.extname(filePath).toLowerCase()) ? 'inline' : 'attachment';
+          res.setHeader('Content-Disposition', `${disposition}; filename="${filename}"`);
+        },
+      }),
+    );
+  }
 
   // Global validation pipes
   app.useGlobalPipes(new ValidationPipe({

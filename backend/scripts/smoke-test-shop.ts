@@ -99,13 +99,13 @@ async function main() {
   console.log('suspend:', suspend.status, suspend.body?.isActive);
 
   console.log('\n--- Existing session rejected while suspended ---');
-  const whoamiSuspended = await json('POST', '/auth-test/whoami', undefined, adminToken);
+  const whoamiSuspended = await json('GET', '/auth/me', undefined, adminToken);
   console.log('whoami while suspended (expect 401):', whoamiSuspended.status);
 
   console.log('\n--- Reactivate shop ---');
   const reactivate = await json('POST', `/super/shops/${shopId}/suspend`, { isActive: true }, superToken);
   console.log('reactivate:', reactivate.status, reactivate.body?.isActive);
-  const whoamiActive = await json('POST', '/auth-test/whoami', undefined, adminToken);
+  const whoamiActive = await json('GET', '/auth/me', undefined, adminToken);
   console.log('whoami after reactivate (expect 200):', whoamiActive.status);
 
   console.log('\n--- Super Admin renews subscription ---');

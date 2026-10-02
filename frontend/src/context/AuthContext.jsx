@@ -176,12 +176,16 @@ export const AuthProvider = ({ children }) => {
   // response) but a page reload of a session that was already open before the
   // shop's subscription entered its grace period, so the dashboard alert
   // still appears without requiring the user to log out and back in.
+  // Keyed on the signed-in user, not just `token`: on web the token lives in an httpOnly cookie, so after a
+  // reload `token` stays null while `user` is restored from localStorage - guarding on `token` meant /me
+  // never ran on a web reload and the subscription state went stale until the next full login. request()
+  // authenticates with the cookie (web) or the Bearer token (native) either way.
   useEffect(() => {
-    if (!token) return;
+    if (!user) return;
     request('/api/auth/me')
       .then((res) => setSubscription(res.subscription || null))
       .catch(() => {});
-  }, [token]);
+  }, [user?.id, token]);
 
   // Unified API Methods, backed entirely by the live NestJS backend.
   // Memoized so this object keeps one identity across renders instead of a

@@ -19,7 +19,7 @@ import { AllExceptionsFilter } from './common/all-exceptions.filter';
 // will never match here - but importing it at all still triggers Prisma's
 // generated client to auto-load a local .env file as a side effect if one
 // is present in the working directory. This image is never built with
-// backend/.env copied in (see Dockerfile.firestore), so there is nothing
+// backend/.env copied in (local runs only - production deploys via Firebase Functions, see functions-main.ts), so there is nothing
 // for it to load in the deployed container - but the explicit deletes below
 // are kept anyway as defense in depth, matching the same safety pattern
 // scripts/bootstrap-firestore-app.ts already uses for local dev/testing.
@@ -92,7 +92,7 @@ async function bootstrap() {
   app.useGlobalFilters(new AllExceptionsFilter());
 
   // Cloud Run injects PORT at runtime (defaults the container to listen on
-  // 8080 if unset - see Dockerfile.firestore's EXPOSE).
+  // 8080 if unset - local default).
   const port = process.env.PORT || 8080;
   await app.listen(port);
   console.log(`Firestore backend successfully started on port ${port}`);

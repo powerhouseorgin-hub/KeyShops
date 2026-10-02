@@ -3,7 +3,8 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { FirestoreService } from '../firestore.service';
 import { TtlCache } from '../../common/ttl-cache';
 import { FirebaseFileService } from '../storage/firebase-file.service';
-import { AlgoliaSearchService } from '../search/algolia-search.service';
+import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.service';
+import { pick } from '../../common/pick.util';
 
 // Firestore port of PromotionService - the most structurally complex piece
 // of the migration (cross-shop feed, dynamic filter composition, a linked
@@ -94,7 +95,11 @@ export class FirestorePromotionService {
   }
 
   private clampImageUrls(requested: string[] | undefined): { imageUrl: string | null; imageUrls: string[] } {
-    const imageUrls = (requested ?? []).slice(0, PROMOTION_MAX_PHOTOS);
+    // These URLs come straight from the client and are later used to derive storage keys for deletion (see
+    // deleteExpiredProducts), so only keep plausible string URLs rather than arbitrary values.
+    const imageUrls = (Array.isArray(requested) ? requested : [])
+      .filter((u): u is string => typeof u === 'string' && u.length > 0 && u.length <= 2048)
+      .slice(0, PROMOTION_MAX_PHOTOS);
     return { imageUrl: imageUrls[0] ?? null, imageUrls };
   }
 
@@ -170,7 +175,7 @@ export class FirestorePromotionService {
     const { cursor, limit, search } = opts;
 
     if (search && this.algolia.isConfigured) {
-      const filters = opts.shopId ? `shopId:${opts.shopId}` : undefined;
+      const filters = opts.shopId ? facetFilter('shopId', opts.shopId) : undefined;
       const result = await this.algolia.search('promotions', search, { filters });
       if (result.ok) {
         const refs = result.hits.map((h) => this.col().doc(h.objectID));
@@ -324,7 +329,12 @@ export class FirestorePromotionService {
 
   private async applyUpdate(doc: FirebaseFirestore.DocumentSnapshot, dto: Partial<CreatePromotionInput>) {
     const existing = doc.data() as any;
-    const data: any = { ...dto, updatedAt: Date.now() };
+    // Allowlist (not `...dto`): a Shop Admin must not be able to rewrite shopId, createdById, createdAt,
+    // deletedAt or the promotion `type` through this body. imageUrls is handled separately below.
+    const data: any = {
+      ...pick(dto, ['title', 'description', 'price', 'discountPercentage', 'validUntil', 'linkedPromotionId', 'productType', 'phone']),
+      updatedAt: Date.now(),
+    };
     if (dto.validUntil !== undefined) {
       data.validUntil = dto.validUntil ? this.clampProductExpiry(existing.type, dto.validUntil, new Date(existing.createdAt)) : null;
     }
@@ -347,9 +357,18 @@ export class FirestorePromotionService {
     for (const doc of snap.docs) {
       const promo = doc.data() as any;
       const urls = new Set([...(promo.imageUrls || []), ...(promo.imageUrl ? [promo.imageUrl] : [])]);
+      // Uploaded images are named `<shopId>_<timestamp>_<random>.<ext>` (FirebaseFileService.uploadFile), and
+      // the URLs stored on a promotion are client-supplied. Only delete a storage object whose name carries
+      // THIS promotion's own shop prefix - otherwise a crafted URL could make this job delete another
+      // shop's file.
+      const ownerPrefix = `${String(promo.shopId || 'platform').replace(/[^a-zA-Z0-9]/g, '')}_`;
       for (const url of urls) {
         const fileKey = extractFileKeyFromUrl(url);
         if (!fileKey) continue;
+        if (!fileKey.startsWith(ownerPrefix)) {
+          this.logger.warn(`Skipping storage delete for expired promotion ${doc.id}: "${fileKey}" is not one of its shop's uploads`);
+          continue;
+        }
         try {
           await this.fileService.deleteFile(fileKey);
         } catch (err: any) {

@@ -36,6 +36,7 @@ const FIXTURE_SUPER_ADMIN_EMAIL_RE = /^super@uitest\.com$/i;
 // scripts/debug-*.ts (shopName/name fields, all `${prefix}${suffix}` where
 // suffix is Date.now()-derived).
 const TEST_SHOP_NAME_PREFIXES = [
+  'Audit Fix Shop ', // smoke-test-audit-fixes.ts
   'Customer Test Shop ',
   'Cutover Test Shop ', // smoke-test-cutover-gaps.ts
   'Debug Search Shop ',

@@ -134,6 +134,12 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // { customer, pdf, fileName, shopName } for the invoice currently shown in
   // the success modal - kept so Retry / Send on WhatsApp can reuse it.
   const invoiceRef = useRef(null);
+  // Documents whose upload failed AFTER the customer record was already saved. They are kept so the
+  // success screen can offer a retry - previously the first failed upload aborted the whole submit with a
+  // generic error and re-enabled Save, so pressing it again created a duplicate customer.
+  const [failedDocs, setFailedDocs] = useState([]);
+  const [retryingDocs, setRetryingDocs] = useState(false);
+  const savedCustomerIdRef = useRef(null);
   // Guards Save Record against double-clicks/duplicate submissions - stays
   // true for the whole create/update + document-upload sequence and only
   // clears on error (so the shop admin can retry) or once the success modal
@@ -444,9 +450,19 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
           : await api.createCustomer(payload);
       }
 
+      // Attempt every document even if one fails; failures are collected and offered for retry on the
+      // success screen (the customer record is already saved at this point).
+      const failed = [];
       for (const doc of uploadedDocs) {
-        await api.uploadDocument(customer.id, doc.type, doc.file);
+        try {
+          await api.uploadDocument(customer.id, doc.type, doc.file);
+        } catch (uploadErr) {
+          console.error('Document upload failed:', doc.type, uploadErr);
+          failed.push(doc);
+        }
       }
+      savedCustomerIdRef.current = customer.id;
+      setFailedDocs(failed);
 
       // Fire-and-forget: the customer record (and its documents) are already
       // safely saved by this point, so a slow/failed invoice send should
@@ -468,7 +484,25 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
   // OK on the post-submit success modal - runs the same follow-up the old
   // alert()'s dismissal used to trigger immediately.
+  const handleRetryFailedDocs = async () => {
+    const customerId = savedCustomerIdRef.current;
+    if (!customerId || failedDocs.length === 0) return;
+    setRetryingDocs(true);
+    const stillFailed = [];
+    for (const doc of failedDocs) {
+      try {
+        await api.uploadDocument(customerId, doc.type, doc.file);
+      } catch (uploadErr) {
+        console.error('Document retry failed:', doc.type, uploadErr);
+        stillFailed.push(doc);
+      }
+    }
+    setFailedDocs(stillFailed);
+    setRetryingDocs(false);
+  };
+
   const handleSuccessModalOk = () => {
+    if (failedDocs.length > 0 && !window.confirm('Some documents have not been uploaded yet. Close anyway? They will be lost.')) return;
     setShowSuccessModal(false);
     if (onDone) {
       onDone(editCustomer || null);
@@ -515,6 +549,9 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setInvoiceAutoSent(null);
     setInvoiceWaBusy(false);
     invoiceRef.current = null;
+    setFailedDocs([]);
+    setRetryingDocs(false);
+    savedCustomerIdRef.current = null;
   };
 
   // Mirrors CustomerHistoryView's ensureShopInfo() - fetches once (or again
@@ -1297,6 +1334,22 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
             </div>
             <h3 style={{ marginBottom: 8 }}>{isEditMode ? 'Customer Updated Successfully!' : t('registrationSuccessTitle')}</h3>
             <p className="desc" style={{ marginBottom: isEditMode ? 22 : 14 }}>{isEditMode ? 'All customer and key compliance details have been updated.' : t('registrationSuccessDesc')}</p>
+            {failedDocs.length > 0 && (
+              <div style={{ marginBottom: 14 }}>
+                <p style={{ fontSize: 12, color: 'var(--danger, #c0392b)', fontWeight: 600, marginBottom: 8 }}>
+                  {failedDocs.length === 1 ? '1 document' : `${failedDocs.length} documents`} could not be uploaded ({failedDocs.map((d) => d.type).join(', ')}). The customer record was saved.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleRetryFailedDocs}
+                  disabled={retryingDocs}
+                  className="btn btn-outline"
+                  style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                >
+                  <RefreshCw className={retryingDocs ? 'animate-spin' : ''} style={{ width: 16, height: 16 }} /> Retry upload
+                </button>
+              </div>
+            )}
             {!isEditMode && invoiceStatus !== 'idle' && (
               <div style={{ marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {invoiceStatus === 'preparing' && (

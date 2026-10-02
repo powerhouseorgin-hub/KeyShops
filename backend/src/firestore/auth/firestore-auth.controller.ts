@@ -151,6 +151,10 @@ export class FirestoreAuthController {
   async registerShop(@Body() dto: RegisterShopDto) {
     const normalizedPhone = normalizePhone(dto.phone);
     if (!normalizedPhone) throw new BadRequestException(PHONE_REGEX_MESSAGE);
+    // Same rule as the original DTO (@Matches(/^\d{12}$/)) - checked before anything is created.
+    if (dto.aadhaarNumber && !/^\d{12}$/.test(dto.aadhaarNumber)) {
+      throw new BadRequestException('Aadhaar number must be exactly 12 digits');
+    }
 
     // Same payment gate as the pre-migration code: skipped entirely for a
     // free-trial signup, otherwise Razorpay's signature must verify before
@@ -343,14 +347,5 @@ export class FirestoreAuthController {
       details: JSON.stringify({ message, ...extra }),
       ipAddress: null, createdAt: Date.now(),
     }).catch((err) => console.error(`Failed to write ${action} activity log for user`, userId, err));
-  }
-}
-
-@Controller('auth-test')
-@UseGuards(FirebaseAuthGuard)
-export class AuthGuardSmokeTestController {
-  @Post('whoami')
-  async whoami() {
-    return { ok: true };
   }
 }
