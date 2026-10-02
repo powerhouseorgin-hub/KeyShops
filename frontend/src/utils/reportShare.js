@@ -1,4 +1,7 @@
+import { Capacitor } from '@capacitor/core';
 import { API_BASE } from '../apiConfig';
+import { sendPdfToWhatsApp } from './pdfDelivery';
+import { toWhatsAppNumber } from './phone';
 
 // Shared upload-then-share flow for the Customer Key Registration Report,
 // used by every WhatsApp-share entry point that operates on an
@@ -7,22 +10,15 @@ import { API_BASE } from '../apiConfig';
 // customer.id yet to attach a CustomerReport to at that point, so it keeps
 // its own simpler local-only share behavior instead.
 //
-// Uploads the PDF via api.uploadCustomerReport so it gets a stable, secure
-// public download link (see backend PublicReportController), then opens
-// WhatsApp with a single message containing that link, pre-filled and ready
-// to send in one tap.
+// Android app: opens WhatsApp in the customer's own chat with the report PDF
+// itself attached, ready to send in one tap (see sendPdfToWhatsApp). Falls
+// back to the OS share sheet (PDF still attached) if WhatsApp is missing.
 //
-// This intentionally does NOT also attach the raw PDF as a second share
-// step. WhatsApp's Android/iOS apps silently drop any caption text
-// (EXTRA_TEXT) whenever the shared attachment is a document (non-image/
-// video) mimetype - a confirmed platform limitation, not something fixable
-// via Intent flags or which share-sheet screen is used - so combining both
-// into one WhatsApp send isn't possible, and a separate "attach the file"
-// step after the message requires picking the contact a second time (not a
-// single tap, and a worse experience than just tapping the link). Since the
-// download link itself serves the exact same PDF (see
-// PublicReportController - it auto-downloads with the correct filename),
-// the link alone fully delivers the document without a second step.
+// Website: browsers can't attach a file to a WhatsApp chat, so this uploads
+// the PDF via api.uploadCustomerReport for a stable, secure public download
+// link (see backend PublicReportController) and opens WhatsApp with a message
+// containing that link. (WhatsApp also drops caption text whenever a document
+// is attached, so on the app the file name is what identifies the document.)
 export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
   const customerName = (customer?.name || 'Customer').trim();
   const safeNamePart = customerName.replace(/[^a-zA-Z0-9]+/g, '_') || 'Customer';
@@ -30,6 +26,15 @@ export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
   // security token is the full CustomerReport.id used in the download URL.
   const reportIdShort = (customer?.id || '').replace(/-/g, '').slice(-8).toUpperCase() || Date.now().toString(36).toUpperCase();
   const fileName = `Customer_Key_Registration_${safeNamePart}_${reportIdShort}.pdf`;
+
+  if (Capacitor.isNativePlatform()) {
+    await sendPdfToWhatsApp(pdf, fileName, {
+      phone: customer?.phone,
+      title: 'Customer Key Registration Report',
+      text: `Hi ${customerName}, please find your Customer Key Registration Report attached. Thank you for choosing Key Shops.`,
+    });
+    return;
+  }
 
   let downloadUrl = '';
   try {
@@ -54,9 +59,9 @@ export async function shareCustomerReportViaWhatsApp({ api, pdf, customer }) {
     'Thank you for choosing Key Shops.',
   ].filter((line) => line !== null).join('\n');
 
-  const cleanPhone = (customer?.phone || '').replace(/[^0-9]/g, '');
-  const waUrl = cleanPhone
-    ? `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`
+  const waNumber = toWhatsAppNumber(customer?.phone);
+  const waUrl = waNumber
+    ? `https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`
     : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
 
   window.open(waUrl, '_blank');

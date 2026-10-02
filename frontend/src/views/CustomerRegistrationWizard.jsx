@@ -1,11 +1,11 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBackHandler } from '../utils/backHandler';
-import { downloadAsset } from '../apiConfig';
-import { downloadPdf, sharePdf } from '../utils/pdfDelivery';
+import { API_BASE } from '../apiConfig';
+import { downloadPdf, sharePdf, sendPdfToWhatsApp } from '../utils/pdfDelivery';
 import { VEHICLE_CATEGORIES, isAutomobileCategory } from '../utils/vehicleCategory';
-import { normalizePhone, PHONE_REGEX_MESSAGE } from '../utils/phone';
+import { normalizePhone, toWhatsAppNumber, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { ALL_DOC_TYPES, INDIAN_STATES_DISTRICTS } from '../utils/registrationData';
 import { IS_NATIVE_APP, primeStoragePermission } from '../utils/platform';
 import { resolveCurrentLocation, reverseGeocode, openDeviceLocationSettings, openAppSettings } from '../utils/geolocation';
@@ -21,7 +21,7 @@ import {
   Key, Check, MapPin, Camera, AlertTriangle, RefreshCw, Edit, Eye, CheckCircle2,
   Lock, Phone, ArrowRight, ArrowLeft, Store, UserPlus, IndianRupee, User,
   UploadCloud, Crosshair, FileCheck, Navigation, KeyRound, Car, Download, Home, Save,
-  X,
+  X, MessageCircle,
 } from 'lucide-react';
 
 // Lazy-loaded: pulls in the Capacitor Firebase Authentication SDK - see the
@@ -122,7 +122,18 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // background upload finishes, so the success modal's Download Invoice
   // button only appears once there's actually something to download.
   const [invoiceDownloadPath, setInvoiceDownloadPath] = useState(null);
-  const [invoiceSending, setInvoiceSending] = useState(false);
+  // 'idle' | 'preparing' | 'ready' | 'failed'. 'ready' as soon as the PDF
+  // exists locally - Download and Send on WhatsApp work from that local copy,
+  // so they don't depend on the server upload having succeeded.
+  const [invoiceStatus, setInvoiceStatus] = useState('idle');
+  // Result of the server-side automatic WhatsApp delivery: null while it's
+  // still in flight, true once Meta accepted it, false when it didn't happen
+  // (WhatsApp Business API not configured yet, or the send failed).
+  const [invoiceAutoSent, setInvoiceAutoSent] = useState(null);
+  const [invoiceWaBusy, setInvoiceWaBusy] = useState(false);
+  // { customer, pdf, fileName, shopName } for the invoice currently shown in
+  // the success modal - kept so Retry / Send on WhatsApp can reuse it.
+  const invoiceRef = useRef(null);
   // Guards Save Record against double-clicks/duplicate submissions - stays
   // true for the whole create/update + document-upload sequence and only
   // clears on error (so the shop admin can retry) or once the success modal
@@ -500,7 +511,10 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setCapturedAddress('');
     setShowReviewModal(false);
     setInvoiceDownloadPath(null);
-    setInvoiceSending(false);
+    setInvoiceStatus('idle');
+    setInvoiceAutoSent(null);
+    setInvoiceWaBusy(false);
+    invoiceRef.current = null;
   };
 
   // Mirrors CustomerHistoryView's ensureShopInfo() - fetches once (or again
@@ -539,7 +553,18 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // invoice send is logged, not surfaced as a registration error, since the
   // customer record is already safely saved by the time this runs.
   const sendInvoiceForNewCustomer = async (customer) => {
-    setInvoiceSending(true);
+    setInvoiceStatus('preparing');
+    setInvoiceAutoSent(null);
+    setInvoiceDownloadPath(null);
+    invoiceRef.current = { customer };
+
+    // A hung PDF render/upload must never leave the shop admin staring at
+    // "Preparing invoice..." forever (the modal's OK is disabled meanwhile).
+    const timeout = setTimeout(() => {
+      setInvoiceStatus((cur) => (cur === 'preparing' ? 'failed' : cur));
+    }, 45000);
+
+    let reportId = null;
     try {
       const shop = await ensureShopInfoForReport();
       const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
@@ -547,17 +572,82 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
 
       const safeName = (customer.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_') || 'Customer';
       const fileName = `Invoice_${safeName}_${(customer.id || '').slice(-8)}.pdf`;
-      const blob = pdf.output('blob');
-      const file = new File([blob], fileName, { type: 'application/pdf' });
+      invoiceRef.current = { customer, pdf, fileName, shopName: shop?.name || 'Key Shops' };
+      setInvoiceStatus('ready');
 
-      const { id: reportId } = await api.uploadCustomerReport(customer.id, file, fileName);
-      setInvoiceDownloadPath(`/api/public/reports/${reportId}/download`);
-
-      await api.sendCustomerInvoice(customer.id, reportId);
+      // Upload for a stable public link (used by the website's WhatsApp
+      // button and the automatic send). A failure here is logged but doesn't
+      // take the invoice away - Download and the app's WhatsApp button work
+      // from the local PDF.
+      try {
+        const file = new File([pdf.output('blob')], fileName, { type: 'application/pdf' });
+        ({ id: reportId } = await api.uploadCustomerReport(customer.id, file, fileName));
+        setInvoiceDownloadPath(`/api/public/reports/${reportId}/download`);
+      } catch (e) {
+        console.error('Failed to upload customer invoice:', e);
+      }
     } catch (e) {
-      console.error('Failed to generate/send customer invoice:', e);
+      console.error('Failed to generate customer invoice:', e);
+      setInvoiceStatus('failed');
+      clearTimeout(timeout);
+      return;
+    }
+    clearTimeout(timeout);
+
+    // Server-side automatic delivery to the customer's own WhatsApp number.
+    // `delivered: false` means it didn't happen (Business API not configured
+    // yet) - surfaced in the modal so the shop admin knows to send it manually.
+    if (!reportId) { setInvoiceAutoSent(false); return; }
+    try {
+      const result = await api.sendCustomerInvoice(customer.id, reportId);
+      setInvoiceAutoSent(!!(result && result.delivered));
+    } catch (e) {
+      console.error('Failed to send customer invoice automatically:', e);
+      setInvoiceAutoSent(false);
+    }
+  };
+
+  const handleDownloadInvoice = async () => {
+    const inv = invoiceRef.current;
+    if (!inv?.pdf) return;
+    try {
+      await downloadPdf(inv.pdf, inv.fileName);
+    } catch (err) {
+      console.error('Failed to download invoice:', err);
+      window.alert('Could not save the invoice. Please try again.');
+    }
+  };
+
+  // Manual send, the working path until the WhatsApp Business API is set up:
+  // the app opens the customer's own WhatsApp chat with the invoice PDF
+  // attached (one tap on Send); the website, which can't attach files, opens a
+  // chat with the invoice's download link.
+  const handleSendInvoiceWhatsApp = async () => {
+    const inv = invoiceRef.current;
+    if (!inv?.pdf) return;
+    setInvoiceWaBusy(true);
+    try {
+      const customerPhone = inv.customer.phone || phone;
+      const greeting = `Hi ${inv.customer.name || 'Customer'}, thank you for visiting ${inv.shopName}.`;
+      if (IS_NATIVE_APP) {
+        await sendPdfToWhatsApp(inv.pdf, inv.fileName, {
+          phone: customerPhone,
+          title: 'Service Invoice',
+          text: `${greeting} Your service invoice is attached.`,
+        });
+      } else if (invoiceDownloadPath) {
+        const msg = `${greeting} Your service invoice is ready.\n\n📄 Download Invoice: ${API_BASE}${invoiceDownloadPath}`;
+        window.open(`https://wa.me/${toWhatsAppNumber(customerPhone)}?text=${encodeURIComponent(msg)}`, '_blank');
+      } else {
+        window.alert('The invoice link is not ready yet. Please download the invoice and share it manually.');
+      }
+    } catch (err) {
+      if (err && err.name !== 'AbortError') {
+        console.error('Failed to share invoice on WhatsApp:', err);
+        window.alert('Could not open WhatsApp. Please try again.');
+      }
     } finally {
-      setInvoiceSending(false);
+      setInvoiceWaBusy(false);
     }
   };
 
@@ -630,10 +720,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       }).toString();
       const downloadUrl = `https://keee-7d6cb.web.app/?${queryParams}`;
       const shareMsg = `Hi ${name || 'Customer'},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
-      if (Capacitor.isNativePlatform()) {
-        await sharePdf(pdf, safeName, { title: 'Key Registration Document', fallbackText: shareMsg });
+      if (IS_NATIVE_APP) {
+        await sendPdfToWhatsApp(pdf, safeName, { phone, title: 'Key Registration Document', text: shareMsg });
       } else {
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareMsg)}`, '_blank');
+        const waNumber = toWhatsAppNumber(phone);
+        window.open(`https://${waNumber ? `wa.me/${waNumber}` : 'api.whatsapp.com/send'}?text=${encodeURIComponent(shareMsg)}`, '_blank');
         await downloadPdf(pdf, safeName);
       }
     } catch (err) {
@@ -1206,23 +1297,55 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
             </div>
             <h3 style={{ marginBottom: 8 }}>{isEditMode ? 'Customer Updated Successfully!' : t('registrationSuccessTitle')}</h3>
             <p className="desc" style={{ marginBottom: isEditMode ? 22 : 14 }}>{isEditMode ? 'All customer and key compliance details have been updated.' : t('registrationSuccessDesc')}</p>
-            {!isEditMode && (
-              <div style={{ marginBottom: 18 }}>
-                {invoiceDownloadPath ? (
-                  <button
-                    type="button"
-                    onClick={() => downloadAsset(invoiceDownloadPath, 'Invoice.pdf')}
-                    className="btn btn-outline"
-                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
-                  >
-                    <Download style={{ width: 16, height: 16 }} /> Download Invoice
-                  </button>
-                ) : invoiceSending ? (
+            {!isEditMode && invoiceStatus !== 'idle' && (
+              <div style={{ marginBottom: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {invoiceStatus === 'preparing' && (
                   <p style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600 }}>Preparing invoice…</p>
-                ) : null}
+                )}
+                {invoiceStatus === 'failed' && (
+                  <>
+                    <p style={{ fontSize: 12, color: 'var(--danger, #c0392b)', fontWeight: 600 }}>Could not prepare the invoice.</p>
+                    <button
+                      type="button"
+                      onClick={() => sendInvoiceForNewCustomer(invoiceRef.current?.customer)}
+                      className="btn btn-outline"
+                      style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                    >
+                      <RefreshCw style={{ width: 16, height: 16 }} /> Try again
+                    </button>
+                  </>
+                )}
+                {invoiceStatus === 'ready' && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleDownloadInvoice}
+                      className="btn btn-outline"
+                      style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                    >
+                      <Download style={{ width: 16, height: 16 }} /> Download Invoice
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSendInvoiceWhatsApp}
+                      disabled={invoiceWaBusy}
+                      className="btn btn-outline"
+                      style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                    >
+                      {invoiceWaBusy ? <RefreshCw className="animate-spin" style={{ width: 16, height: 16 }} /> : <MessageCircle style={{ width: 16, height: 16 }} />} Send on WhatsApp
+                    </button>
+                    <p style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 600, marginTop: 2 }}>
+                      {invoiceAutoSent === true
+                        ? "Invoice was also sent to the customer's WhatsApp automatically."
+                        : invoiceAutoSent === false
+                          ? "Automatic sending isn't switched on yet. Tap Send on WhatsApp to send this invoice to the customer."
+                          : 'Checking automatic delivery…'}
+                    </p>
+                  </>
+                )}
               </div>
             )}
-            <button type="button" onClick={handleSuccessModalOk} className="btn btn-primary" style={{ width: '100%' }}>
+            <button type="button" onClick={handleSuccessModalOk} disabled={!isEditMode && invoiceStatus === 'preparing'} className="btn btn-primary" style={{ width: '100%' }}>
               {t('okBtn')}
             </button>
           </div>

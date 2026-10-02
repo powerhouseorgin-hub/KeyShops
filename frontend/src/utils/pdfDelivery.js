@@ -1,5 +1,10 @@
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { SaveToDownloads } from '../apiConfig';
+import { toWhatsAppNumber } from './phone';
+
+// Native bridge to WhatsAppSharePlugin.java - opens WhatsApp in the given
+// contact's chat with a file already attached.
+const WhatsAppShare = registerPlugin('WhatsAppShare');
 
 // Shared save/share plumbing for every generated (jsPDF) report in the app -
 // used by both the Registration wizard's Review step and the Customer
@@ -70,4 +75,44 @@ export async function sharePdf(pdf, filename, { title, text, fallbackText } = {}
   } else {
     pdf.save(filename);
   }
+}
+
+// Android app only. Hands the PDF itself (not a link) to WhatsApp, opened
+// directly in the customer's chat with the document attached - the shop admin
+// just taps Send. WhatsApp ignores the text/caption whenever a document is
+// attached, so the file name is what identifies the document to the customer
+// (callers should keep it descriptive).
+//
+// Falls back to the generic OS share sheet (still attaching the PDF) when
+// WhatsApp isn't installed or the direct hand-off fails, so the document is
+// never silently dropped. Resolves 'chat' when WhatsApp was opened on the
+// customer's chat, 'sheet' when the share sheet was used instead.
+export async function sendPdfToWhatsApp(pdf, filename, { phone, text, title } = {}) {
+  const { Filesystem, Directory } = await import('@capacitor/filesystem');
+  const base64 = pdf.output('datauristring').split(',')[1];
+  let uri;
+  try {
+    await Filesystem.writeFile({ path: filename, data: base64, directory: Directory.Cache });
+    ({ uri } = await Filesystem.getUri({ path: filename, directory: Directory.Cache }));
+  } catch (err) {
+    throw new Error(`Could not prepare the PDF for sharing: ${err.message || err}`);
+  }
+
+  try {
+    await WhatsAppShare.sendDocument({
+      path: uri,
+      phone: phone ? toWhatsAppNumber(phone) : '',
+      mimeType: 'application/pdf',
+      text,
+    });
+    return 'chat';
+  } catch (err) {
+    if (err && err.code !== 'NOT_INSTALLED') {
+      console.warn('Direct WhatsApp hand-off failed, using the share sheet instead:', err);
+    }
+  }
+
+  const { Share } = await import('@capacitor/share');
+  await Share.share({ files: [uri], text, title, dialogTitle: title });
+  return 'sheet';
 }

@@ -3,6 +3,7 @@ import { getFresh, setCache } from '../utils/fetchCache';
 import { useLocationFilter } from '../utils/locationFilter';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
 import { categoryImage } from '../utils/categoryIcon';
+import { toWhatsAppNumber } from '../utils/phone';
 import CustomSelect from '../components/CustomSelect';
 import {
   ChevronRight, Globe, MapPin, MessageCircle, Phone, RefreshCw, Search, Store, Tag,
@@ -214,7 +215,7 @@ function DealersView({ t, api, defaultTown, locationReady }) {
                       <Phone className="h-3.5 w-3.5" />
                       <span>{t('callPrefix') || 'Call'}</span>
                     </a>
-                    <a href={`https://wa.me/${dealer.phone.replace(/[^0-9]/g, '')}`} target="_blank" rel="noopener noreferrer" className="dealer-quick-btn whatsapp">
+                    <a href={`https://wa.me/${toWhatsAppNumber(dealer.phone)}`} target="_blank" rel="noopener noreferrer" className="dealer-quick-btn whatsapp">
                       <MessageCircle className="h-3.5 w-3.5" />
                       <span>WhatsApp</span>
                     </a>

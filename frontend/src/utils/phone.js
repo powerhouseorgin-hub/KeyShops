@@ -22,3 +22,15 @@ export function toE164(raw) {
   const normalized = normalizePhone(raw);
   return normalized ? `+91${normalized}` : null;
 }
+
+// Digits-only international form WhatsApp links/intents need (wa.me/<this>,
+// the Android `jid` extra): the canonical bare 10-digit number gets India's
+// +91 country code prepended. Without the country code WhatsApp can't resolve
+// the number at all, so a link built from the stored 10-digit phone opens no
+// chat. Anything that doesn't normalize to a valid Indian number is passed
+// through as plain digits (it may already carry another country code).
+export function toWhatsAppNumber(raw) {
+  const normalized = normalizePhone(raw);
+  if (normalized) return `91${normalized}`;
+  return String(raw || '').replace(/\D/g, '');
+}
