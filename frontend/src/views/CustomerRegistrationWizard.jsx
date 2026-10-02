@@ -688,14 +688,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
   };
 
-  // Review/Download/Share build the same branded Customer Registration
-  // Report template Customer History uses (see customerReportPdf.js),
-  // instead of a separate plain-text layout, so the document a shop admin
-  // gets here looks identical to the one downloaded later from history.
-  // uploadedDocs are still local { type, file } File objects at this point
-  // (upload only happens after Submit) - buildCustomerReportPdf reads those
-  // directly, no network fetch needed.
-  const buildDraftReportPdf = async () => {
+  // Review/Download/Share build the same Service Invoice (customerInvoicePdf.js) that the
+  // post-registration screen and Customer History use, so the document a shop admin
+  // gets here looks identical to the one downloaded later from history. (This is a
+  // pre-save draft: with no bill number yet, the invoice number is a temporary INV- one.)
+  const buildDraftInvoicePdf = async () => {
     const shop = await ensureShopInfoForReport();
     const isAutomobile = isAutomobileCategory(vehicleCategory);
     const finalKeyNumber = keyCodeEnabled ? (keyNumber || null) : null;
@@ -715,8 +712,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       createdAt: new Date().toISOString(),
       documents: uploadedDocs,
     };
-    const { buildCustomerReportPdf } = await import('../utils/customerReportPdf');
-    return buildCustomerReportPdf({ customer: customerLike, shop, registeredByName: user?.name });
+    const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
+    return buildCustomerInvoicePdf({ customer: customerLike, shop, registeredByName: user?.name });
   };
 
   // Reusing apiConfig.js's downloadAsset() native save flow (write to cache ->
@@ -725,12 +722,12 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const handleDownloadRegistration = async () => {
     setPdfAction('download');
     try {
-      const pdf = await buildDraftReportPdf();
-      const safeName = `${(name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+      const pdf = await buildDraftInvoicePdf();
+      const safeName = `Invoice_${(name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
       await downloadPdf(pdf, safeName);
     } catch (err) {
-      console.error('Failed to generate registration PDF:', err);
-      window.alert('Could not generate the registration PDF. Please try again.');
+      console.error('Failed to generate the invoice PDF:', err);
+      window.alert('Could not generate the invoice PDF. Please try again.');
     } finally {
       setPdfAction(null);
     }
@@ -739,11 +736,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const handleShareRegistration = async () => {
     setPdfAction('share');
     try {
-      const pdf = await buildDraftReportPdf();
+      const pdf = await buildDraftInvoicePdf();
       const shop = await ensureShopInfoForReport();
       const isAutomobile = isAutomobileCategory(vehicleCategory);
       const finalKeyNumber = keyCodeEnabled ? (keyNumber || null) : null;
-      const safeName = `${(name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+      const safeName = `Invoice_${(name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
       const queryParams = new URLSearchParams({
         action: 'download_doc',
         name: name || 'Customer',
@@ -756,9 +753,9 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         vehicleCategory: vehicleCategory || '',
       }).toString();
       const downloadUrl = `https://keee-7d6cb.web.app/?${queryParams}`;
-      const shareMsg = `Hi ${name || 'Customer'},\nThank you for choosing Key Shops. Please find your key registration document attached. You can also download it anytime using the link below.\n${downloadUrl}`;
+      const shareMsg = `Hi ${name || 'Customer'},\nThank you for choosing Key Shops. Please find your service invoice attached. You can also download it anytime using the link below.\n${downloadUrl}`;
       if (IS_NATIVE_APP) {
-        await sendPdfToWhatsApp(pdf, safeName, { phone, title: 'Key Registration Document', text: shareMsg });
+        await sendPdfToWhatsApp(pdf, safeName, { phone, title: 'Service Invoice', text: shareMsg });
       } else {
         const waNumber = toWhatsAppNumber(phone);
         window.open(`https://${waNumber ? `wa.me/${waNumber}` : 'api.whatsapp.com/send'}?text=${encodeURIComponent(shareMsg)}`, '_blank');
@@ -766,8 +763,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
       }
     } catch (err) {
       if (err && err.name !== 'AbortError') {
-        console.error('Failed to share registration PDF:', err);
-        window.alert('Could not share the registration PDF. Please try again.');
+        console.error('Failed to share the invoice PDF:', err);
+        window.alert('Could not share the invoice PDF. Please try again.');
       }
     } finally {
       setPdfAction(null);

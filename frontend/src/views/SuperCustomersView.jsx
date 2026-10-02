@@ -200,34 +200,39 @@ function SuperCustomersView({ t, api, searchDispatch }) {
     return { name, address, phone };
   };
 
-  const handleDownloadCustomerReport = async (c) => {
+  // Same naming the Shop Admin's Customer History uses for a customer's invoice file.
+  const invoiceFileName = (c) => {
+    const safe = (c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_') || 'Customer';
+    return `Invoice_${safe}_${(c.id || '').slice(-8)}.pdf`;
+  };
+
+  const handleDownloadCustomerInvoice = async (c) => {
     setReportBusyId(`${c.id}:download`);
     try {
       const shopRes = await getFullShopDetails(c);
-      const { buildCustomerReportPdf } = await import('../utils/customerReportPdf');
-      const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
-      const safeName = `${(c.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
-      await downloadPdf(pdf, safeName);
+      const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
+      const pdf = await buildCustomerInvoicePdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
+      await downloadPdf(pdf, invoiceFileName(c));
     } catch (err) {
-      console.error('Failed to generate customer report PDF:', err);
-      window.alert('Could not generate the report PDF. Please try again.');
+      console.error('Failed to generate the customer invoice PDF:', err);
+      window.alert('Could not generate the invoice PDF. Please try again.');
     } finally {
       setReportBusyId(null);
     }
   };
 
-  const handleShareCustomerReportViaWhatsApp = async (c) => {
+  const handleShareCustomerInvoiceViaWhatsApp = async (c) => {
     setReportBusyId(`${c.id}:whatsapp`);
     try {
       const shopRes = await getFullShopDetails(c);
-      const { buildCustomerReportPdf } = await import('../utils/customerReportPdf');
-      const pdf = await buildCustomerReportPdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
-      const { shareCustomerReportViaWhatsApp } = await import('../utils/reportShare');
-      await shareCustomerReportViaWhatsApp({ api, pdf, customer: c });
+      const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
+      const pdf = await buildCustomerInvoicePdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
+      const { shareCustomerInvoiceViaWhatsApp } = await import('../utils/reportShare');
+      await shareCustomerInvoiceViaWhatsApp({ api, pdf, fileName: invoiceFileName(c), customer: c, shopName: shopRes?.name });
     } catch (err) {
       if (err && err.name !== 'AbortError') {
-        console.error('Failed to share customer report PDF:', err);
-        window.alert('Could not share the report PDF. Please try again.');
+        console.error('Failed to share the customer invoice PDF:', err);
+        window.alert('Could not share the invoice PDF. Please try again.');
       }
     } finally {
       setReportBusyId(null);
@@ -383,7 +388,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 
                       <button
                         type="button"
-                        onClick={() => handleDownloadCustomerReport(c)}
+                        onClick={() => handleDownloadCustomerInvoice(c)}
                         disabled={reportBusyId === `${c.id}:download`}
                         className="icon-btn"
                         style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--card-2)', color: 'var(--text-1)' }}
@@ -394,7 +399,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
 
                       <button
                         type="button"
-                        onClick={() => handleShareCustomerReportViaWhatsApp(c)}
+                        onClick={() => handleShareCustomerInvoiceViaWhatsApp(c)}
                         disabled={reportBusyId === `${c.id}:whatsapp`}
                         className="icon-btn"
                         style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--card-2)', color: '#25D366' }}
@@ -589,33 +594,32 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                   onClick={async () => {
                     try {
                       const shopRes = await getFullShopDetails(viewCust);
-                      const { buildCustomerReportPdf } = await import('../utils/customerReportPdf');
-                      const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
-                      const safeName = `${(viewCust.name || 'Customer').trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
-                      await downloadPdf(pdf, safeName);
+                      const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
+                      const pdf = await buildCustomerInvoicePdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
+                      await downloadPdf(pdf, invoiceFileName(viewCust));
                     } catch (e) {
                       console.error(e);
-                      alert('Could not download document PDF.');
+                      alert('Could not download the invoice PDF.');
                     }
                   }}
                   className="btn btn-outline btn-sm"
                 >
                   <Download className="h-4 w-4" />
-                  <span>Download Document</span>
+                  <span>Download Invoice</span>
                 </button>
                 <button
                   type="button"
                   onClick={async () => {
                     try {
                       const shopRes = await getFullShopDetails(viewCust);
-                      const { buildCustomerReportPdf } = await import('../utils/customerReportPdf');
-                      const pdf = await buildCustomerReportPdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
-                      const { shareCustomerReportViaWhatsApp } = await import('../utils/reportShare');
-                      await shareCustomerReportViaWhatsApp({ api, pdf, customer: viewCust });
+                      const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
+                      const pdf = await buildCustomerInvoicePdf({ customer: viewCust, shop: shopRes, registeredByName: viewCust.registeredByName || user?.name || 'Key Shops' });
+                      const { shareCustomerInvoiceViaWhatsApp } = await import('../utils/reportShare');
+                      await shareCustomerInvoiceViaWhatsApp({ api, pdf, fileName: invoiceFileName(viewCust), customer: viewCust, shopName: shopRes?.name });
                     } catch (e) {
                       if (e && e.name !== 'AbortError') {
                         console.error(e);
-                        alert('Could not share document via WhatsApp.');
+                        alert('Could not share the invoice via WhatsApp.');
                       }
                     }
                   }}
@@ -623,7 +627,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                   style={{ background: '#25D366', borderColor: '#25D366' }}
                 >
                   <MessageCircle className="h-4 w-4" />
-                  <span>Share WhatsApp</span>
+                  <span>Send Invoice on WhatsApp</span>
                 </button>
               </div>
               <div className="flex gap-2">

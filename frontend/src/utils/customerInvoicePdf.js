@@ -5,10 +5,11 @@ import { isAutomobileCategory } from './vehicleCategory';
 
 // English service invoice, styled after a formal delivery-receipt template
 // (title block, dated header, two-party declaration paragraphs, signature
-// lines) rather than the more casual card layout customerReportPdf.js uses
-// for the Shop Admin's own verification record. This is the document meant
-// for the CUSTOMER - see invoiceShare.js for the auto-send-after-registration
-// flow and the public download link.
+// lines). This is the one document customer registration produces: shown right
+// after registering (CustomerRegistrationWizard), in the wizard's Review step,
+// and from Customer History / the Super Admin customer list. It is shared with
+// the customer via reportShare.js (WhatsApp) or the server's automatic send.
+// Vehicle SALES have their own template - see vehicleSaleInvoicePdf.js.
 const MAROON = '#7A1220';
 const MAROON_DARK = '#5A0D18';
 const GOLD_BRIGHT = '#F5B800';

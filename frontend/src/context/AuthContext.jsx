@@ -555,6 +555,10 @@ export const AuthProvider = ({ children }) => {
       return request(url, 'POST', { reportId });
     },
 
+    // --- VEHICLE SALES (Shop Admin) - see VehicleSalesView.jsx and the backend's FirestoreVehicleSaleController ---
+    createVehicleSale: async (payload) => request('/api/shop/vehicle-sales', 'POST', payload),
+    getVehicleSales: async (limit = 20) => request(`/api/shop/vehicle-sales?limit=${limit}`),
+
     // --- SHOP SETTINGS: VERIFICATION DOCUMENTS ---
     // Backed by the ShopDocument table (see ShopService.addOrReplaceShopDocument /
     // deleteShopDocument). documentType is one of SHOP_PHOTO / SHOP_LICENSE / OWNER_AADHAAR.

@@ -43,6 +43,8 @@ import { PublicSupportConfigController, SuperSupportConfigController } from './c
 import { FirestorePaymentService } from './payment/firestore-payment.service';
 import { FirestorePaymentController } from './payment/firestore-payment.controller';
 import { AlgoliaSearchService } from './search/algolia-search.service';
+import { FirestoreVehicleSaleService } from './vehicle-sale/firestore-vehicle-sale.service';
+import { FirestoreVehicleSaleController } from './vehicle-sale/firestore-vehicle-sale.controller';
 
 // Aggregates every Firestore-rewrite piece built so far. Deliberately NOT
 // imported by the live AppModule yet - this is its own self-contained
@@ -99,6 +101,7 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
     PublicSupportConfigController,
     SuperSupportConfigController,
     FirestorePaymentController,
+    FirestoreVehicleSaleController,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ClientIpThrottlerGuard },
@@ -124,6 +127,7 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
     FirestoreKeyService,
     FirestorePaymentService,
     AlgoliaSearchService,
+    FirestoreVehicleSaleService,
   ],
   exports: [],
 })

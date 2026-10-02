@@ -6,10 +6,10 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { useAuth } from './context/AuthContext';
 import { getAssetUrl, downloadAsset, filenameForAsset, API_BASE } from './apiConfig';
-// buildCustomerReportPdf is loaded lazily (dynamic import) at each call site
+// buildCustomerInvoicePdf is loaded lazily (dynamic import) at each call site
 // instead of a static top-level import - it pulls in jspdf + html2canvas,
 // which are heavy and only ever needed when a report is actually generated,
-// not on every page load. See the `await import('./utils/customerReportPdf')`
+// not on every page load. See the `await import('./utils/customerInvoicePdf')`
 // calls below.
 import { VEHICLE_CATEGORIES, isAutomobileCategory } from './utils/vehicleCategory';
 import { normalizePhone } from './utils/phone';
@@ -65,6 +65,7 @@ const ShopsManagementView = lazy(() => import('./views/ShopsManagementView'));
 const SuperCustomersView = lazy(() => import('./views/SuperCustomersView'));
 const CustomerRegistrationWizard = lazy(() => import('./views/CustomerRegistrationWizard'));
 const CustomerHistoryView = lazy(() => import('./views/CustomerHistoryView'));
+const VehicleSalesView = lazy(() => import('./views/VehicleSalesView'));
 const SupportConfigView = lazy(() => import('./views/SupportConfigView'));
 // Lazy-loaded (Track B batch 3): AdsManagementView and CategoryShopsView are
 // straightforward; PromotionsView is the nested trio (PromotionsView wraps
@@ -555,6 +556,7 @@ export default function App() {
     'search-keys': t('searchKeys'),
     register: t('register'),
     history: t('history'),
+    'vehicle-sales': t('vehicleSales'),
     reports: t('reports'),
     'customer-care': t('customerCare'),
     'support-contact': t('supportContactTitle'),
@@ -715,7 +717,7 @@ export default function App() {
     return () => window.removeEventListener('document_downloaded', handleDocDownloaded);
   }, []);
 
-  // Auto-download customer report PDF when opening deep link e.g. ?downloadDoc=... or ?action=download_doc&...
+  // Auto-download the customer's service invoice PDF when opening deep link e.g. ?downloadDoc=... or ?action=download_doc&...
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const action = params.get('action');
@@ -812,13 +814,13 @@ export default function App() {
             };
           }
 
-          const { buildCustomerReportPdf } = await import('./utils/customerReportPdf');
-          const pdf = await buildCustomerReportPdf({
+          const { buildCustomerInvoicePdf } = await import('./utils/customerInvoicePdf');
+          const pdf = await buildCustomerInvoicePdf({
             customer: customerData,
             shop: customerData.shop || shopData,
             registeredByName: customerData.registeredByName || shopName,
           });
-          const safeName = `${name.trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
+          const safeName = `Invoice_${name.trim().replace(/[^a-zA-Z0-9_\-\s]+/g, '').replace(/\s+/g, '_')}.pdf`;
           await downloadPdf(pdf, safeName);
         } catch (err) {
           console.error('Failed auto-download of customer document:', err);
@@ -2239,6 +2241,13 @@ export default function App() {
                     <span className="nav-ico" style={{ background: 'var(--purple)' }}><Users /></span>
                     <span>{t('history')}</span>
                   </button>
+                  <button
+                    onClick={() => setActiveTab('vehicle-sales')}
+                    className={`side-link ${activeTab === 'vehicle-sales' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><Car /></span>
+                    <span>{t('vehicleSales')}</span>
+                  </button>
 
                   <div className="side-section-label">{t('navStore')}</div>
                   <button
@@ -2521,6 +2530,11 @@ export default function App() {
             {activeTab === 'history' && (
               <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
                 <CustomerHistoryView t={t} api={api} searchDispatch={activeTab === 'history' ? searchDispatch : null} />
+              </Suspense>
+            )}
+            {activeTab === 'vehicle-sales' && (
+              <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
+                <VehicleSalesView t={t} api={api} lang={lang} />
               </Suspense>
             )}
             {activeTab === 'reports' && (

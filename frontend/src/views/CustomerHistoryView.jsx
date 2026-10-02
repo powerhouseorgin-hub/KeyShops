@@ -68,7 +68,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
   }, [search]);
   const [selectedCust, setSelectedCust] = useState(null);
 
-  // Customer report (Download/WhatsApp buttons on each row) - shop details
+  // Customer invoice (Download/WhatsApp buttons on each row) - shop details
   // are fetched once and cached since every report for this Shop Admin's
   // customers uses the same shop info. reportBusyId tracks "<customerId>:
   // <download|share>" so only the button that's mid-generation shows a
@@ -91,40 +91,6 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     const info = { name: res.name, address, phone };
     setShopInfo(info);
     return info;
-  };
-
-  const handleDownloadCustomerReport = async (c) => {
-    setReportBusyId(`${c.id}:download`);
-    try {
-      const shop = await ensureShopInfo();
-      const { buildCustomerReportPdf } = await import('../utils/customerReportPdf');
-      const pdf = await buildCustomerReportPdf({ customer: c, shop, registeredByName: user?.name });
-      const safeName = `${(c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_')}_Key_Registration_Report.pdf`;
-      await downloadPdf(pdf, safeName);
-    } catch (err) {
-      console.error('Failed to generate customer report PDF:', err);
-      window.alert('Could not generate the report PDF. Please try again.');
-    } finally {
-      setReportBusyId(null);
-    }
-  };
-
-  const handleShareCustomerReportViaWhatsApp = async (c) => {
-    setReportBusyId(`${c.id}:whatsapp`);
-    try {
-      const shop = await ensureShopInfo();
-      const { buildCustomerReportPdf } = await import('../utils/customerReportPdf');
-      const pdf = await buildCustomerReportPdf({ customer: c, shop, registeredByName: user?.name });
-      const { shareCustomerReportViaWhatsApp } = await import('../utils/reportShare');
-      await shareCustomerReportViaWhatsApp({ api, pdf, customer: c });
-    } catch (err) {
-      if (err && err.name !== 'AbortError') {
-        console.error('Failed to share customer report PDF:', err);
-        alert('Could not share the report PDF. Please try again.');
-      }
-    } finally {
-      setReportBusyId(null);
-    }
   };
 
   // Service invoice (Download / WhatsApp in the customer's file). Rebuilt on demand from the saved customer
@@ -424,18 +390,18 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                             <Eye />
                           </button>
                           <button
-                            onClick={(e) => { e.stopPropagation(); handleDownloadCustomerReport(c); }}
-                            disabled={reportBusyId === `${c.id}:download`}
-                            className="icon-btn" title={t('downloadReportBtn')}
+                            onClick={(e) => { e.stopPropagation(); handleDownloadInvoice(c); }}
+                            disabled={reportBusyId === `${c.id}:invoice-download`}
+                            className="icon-btn" title="Download invoice"
                           >
-                            {reportBusyId === `${c.id}:download` ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
+                            {reportBusyId === `${c.id}:invoice-download` ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
                           </button>
                           <button
-                            onClick={(e) => { e.stopPropagation(); handleShareCustomerReportViaWhatsApp(c); }}
-                            disabled={reportBusyId === `${c.id}:whatsapp`}
-                            className="icon-btn" title={t('shareViaWhatsAppBtn')}
+                            onClick={(e) => { e.stopPropagation(); handleSendInvoiceViaWhatsApp(c); }}
+                            disabled={reportBusyId === `${c.id}:invoice-whatsapp`}
+                            className="icon-btn" title="Send invoice on WhatsApp"
                           >
-                            {reportBusyId === `${c.id}:whatsapp` ? <RefreshCw className="animate-spin h-4 w-4" /> : (
+                            {reportBusyId === `${c.id}:invoice-whatsapp` ? <RefreshCw className="animate-spin h-4 w-4" /> : (
                               <svg viewBox="0 0 24 24" width="16" height="16" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" /><path d="M12.004 2C6.486 2 2 6.486 2 12.004c0 1.85.505 3.649 1.462 5.207L2 22l4.933-1.437a9.96 9.96 0 0 0 5.071 1.39h.004c5.518 0 10.004-4.486 10.004-10.005C22.012 6.486 17.522 2 12.004 2zm0 18.155h-.003a8.14 8.14 0 0 1-4.153-1.14l-.298-.177-3.09.9.918-3.02-.194-.309a8.13 8.13 0 0 1-1.257-4.405c0-4.494 3.657-8.15 8.156-8.15 2.178 0 4.225.85 5.766 2.393a8.096 8.096 0 0 1 2.386 5.762c-.002 4.494-3.658 8.15-8.156 8.15z" /></svg>
                             )}
                           </button>
@@ -613,49 +579,26 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                   )}
                 </div>
 
-                <div className="flex items-center flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 16, marginTop: 18 }}>
-                  <span className="cell-sub" style={{ fontWeight: 800, color: 'var(--text-2)', marginRight: 4 }}>Service invoice</span>
-                  <button
-                    type="button"
-                    onClick={() => handleDownloadInvoice(selectedCust)}
-                    disabled={reportBusyId === `${selectedCust.id}:invoice-download`}
-                    className="btn btn-outline btn-sm"
-                  >
-                    {reportBusyId === `${selectedCust.id}:invoice-download` ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
-                    <span>Download Invoice</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => handleSendInvoiceViaWhatsApp(selectedCust)}
-                    disabled={reportBusyId === `${selectedCust.id}:invoice-whatsapp`}
-                    className="btn btn-primary btn-sm"
-                    style={{ background: '#25D366', borderColor: '#25D366' }}
-                  >
-                    {reportBusyId === `${selectedCust.id}:invoice-whatsapp` ? <RefreshCw className="animate-spin h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
-                    <span>Send on WhatsApp</span>
-                  </button>
-                </div>
-
                 <div className="flex justify-between items-center flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-wrap">
                     <button
                       type="button"
-                      onClick={() => handleDownloadCustomerReport(selectedCust)}
-                      disabled={reportBusyId === `${selectedCust.id}:download`}
+                      onClick={() => handleDownloadInvoice(selectedCust)}
+                      disabled={reportBusyId === `${selectedCust.id}:invoice-download`}
                       className="btn btn-outline btn-sm"
                     >
-                      <Download className="h-4 w-4" />
-                      <span>Download Report</span>
+                      {reportBusyId === `${selectedCust.id}:invoice-download` ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
+                      <span>Download Invoice</span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => handleShareCustomerReportViaWhatsApp(selectedCust)}
-                      disabled={reportBusyId === `${selectedCust.id}:whatsapp`}
+                      onClick={() => handleSendInvoiceViaWhatsApp(selectedCust)}
+                      disabled={reportBusyId === `${selectedCust.id}:invoice-whatsapp`}
                       className="btn btn-primary btn-sm"
                       style={{ background: '#25D366', borderColor: '#25D366' }}
                     >
-                      <MessageCircle className="h-4 w-4" />
-                      <span>Send Report</span>
+                      {reportBusyId === `${selectedCust.id}:invoice-whatsapp` ? <RefreshCw className="animate-spin h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
+                      <span>Send Invoice on WhatsApp</span>
                     </button>
                   </div>
                   <div className="flex gap-2">
