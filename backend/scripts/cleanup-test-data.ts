@@ -23,6 +23,14 @@ import { getStorage } from 'firebase-admin/storage';
 import type { DocumentReference, QueryDocumentSnapshot } from 'firebase-admin/firestore';
 
 const DRY_RUN = !process.argv.includes('--confirm');
+// Opt-in only: also removes the standing UI fixtures (shops 'UI Test Shop' /
+// 'Curl Test Shop' and the super@uitest.com Super Admin). Never default -
+// they're needed for local/browser testing - but they MUST be gone from the
+// production project: seed-ui-test-accounts.ts is committed with their
+// password, so a live super@uitest.com is a known-credential Super Admin.
+const INCLUDE_FIXTURES = process.argv.includes('--include-fixtures');
+const FIXTURE_SHOP_NAMES = ['UI Test Shop', 'Curl Test Shop'];
+const FIXTURE_SUPER_ADMIN_EMAIL_RE = /^super@uitest\.com$/i;
 
 // Every test-shop name prefix found across scripts/smoke-test-*.ts and
 // scripts/debug-*.ts (shopName/name fields, all `${prefix}${suffix}` where
@@ -55,6 +63,7 @@ const FRONTEND_TEST_PROMOTION_TITLES = ['Frontend Verify Key Cutter'];
 
 function isTestShopName(name: string | null | undefined): boolean {
   if (!name) return false;
+  if (INCLUDE_FIXTURES && FIXTURE_SHOP_NAMES.includes(name)) return true;
   return TEST_SHOP_NAME_PREFIXES.some((p) => name.startsWith(p));
 }
 
@@ -242,7 +251,10 @@ async function main() {
   }
 
   const superAdminsSnap = await db.collection('users').where('role', '==', 'SUPER_ADMIN').get();
-  const orphanSuperAdmins = superAdminsSnap.docs.filter((d) => ORPHAN_SUPER_ADMIN_EMAIL_RE.test((d.data() as any).email || ''));
+  const orphanSuperAdmins = superAdminsSnap.docs.filter((d) => {
+    const email = (d.data() as any).email || '';
+    return ORPHAN_SUPER_ADMIN_EMAIL_RE.test(email) || (INCLUDE_FIXTURES && FIXTURE_SUPER_ADMIN_EMAIL_RE.test(email));
+  });
   console.log(`\nFound ${orphanSuperAdmins.length} throwaway Super Admin test user(s) (no shop):`);
   orphanSuperAdmins.forEach((d) => console.log(`  - ${d.id}  ${(d.data() as any).email}`));
   if (!DRY_RUN) {

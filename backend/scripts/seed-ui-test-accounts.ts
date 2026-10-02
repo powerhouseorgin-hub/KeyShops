@@ -4,6 +4,22 @@ process.env.FIREBASE_SERVICE_ACCOUNT_JSON = fs.readFileSync(
   path.join(__dirname, '../firebase-service-account-old.json'), 'utf8',
 );
 
+// SAFETY: this script creates a Super Admin (super@uitest.com) with a
+// password that is committed to git. Against the production project that is a
+// known-credential Super Admin account, so refuse to run there. Only the
+// Firestore/Auth emulator (FIRESTORE_EMULATOR_HOST + FIREBASE_AUTH_EMULATOR_HOST)
+// or a non-production service account is allowed.
+const PRODUCTION_PROJECT_ID = 'keee-7d6cb';
+const targetProject = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_JSON).project_id;
+if (targetProject === PRODUCTION_PROJECT_ID && !process.env.FIRESTORE_EMULATOR_HOST) {
+  console.error(
+    `Refusing to seed UI test accounts into the production project "${PRODUCTION_PROJECT_ID}": ` +
+      'super@uitest.com has a known password. Run against the emulator (set FIRESTORE_EMULATOR_HOST ' +
+      'and FIREBASE_AUTH_EMULATOR_HOST) or a separate non-production Firebase project.',
+  );
+  process.exit(1);
+}
+
 async function main() {
   const { FirestoreService } = await import('../src/firestore/firestore.service');
   const { FirebaseAuthService } = await import('../src/firestore/auth/firebase-auth.service');
