@@ -25,7 +25,10 @@ export class FirebaseFileService {
   private get bucket() {
     const app = getApps().find((a) => a.name === 'firestore-migration');
     if (!app) throw new Error('Firestore migration Firebase app not initialized');
-    const bucketName = process.env.FIREBASE_STORAGE_BUCKET;
+    // GCF_STORAGE_BUCKET is the deployed-Cloud-Function fallback name -
+    // FIREBASE_-prefixed env vars are reserved there (see
+    // firebase-auth.service.ts's identical GCF_WEB_API_KEY pattern).
+    const bucketName = process.env.FIREBASE_STORAGE_BUCKET || process.env.GCF_STORAGE_BUCKET;
     return bucketName ? getStorage(app).bucket(bucketName) : getStorage(app).bucket();
   }
 

@@ -200,8 +200,29 @@ export class FirestorePromotionService {
     return { items, nextCursor: hasMore ? page[page.length - 1].id : null };
   }
 
-  async getPublicPromotions(opts: { category?: string; town?: string; cursor?: string; limit?: number; shopId?: string } = {}) {
-    const { cursor, limit, ...rest } = opts;
+  async getPublicPromotions(opts: { category?: string; town?: string; cursor?: string; limit?: number; shopId?: string; search?: string } = {}) {
+    const { cursor, limit, search, ...rest } = opts;
+
+    // Free-text search: the public listing pool is small (live PRODUCT
+    // listings, hard-capped at 30 days of validity each), so match in
+    // memory over the most recent 200 rather than depend on the Algolia
+    // index for an unauthenticated feature. Filtering must happen BEFORE
+    // paging - slicing first would silently drop matches - so this path
+    // returns one filtered page and never a cursor.
+    const needle = (search || '').trim().toLowerCase();
+    if (needle) {
+      const snap = await this.buildQuery({ ...rest, type: 'PRODUCT' }).orderBy('createdAt', 'desc').orderBy('__name__', 'desc').limit(200).get();
+      const rows = await this.postFilterAndEnrich(snap.docs, { town: rest.town, withCreatorInfo: true });
+      const matched = rows
+        .filter((r: any) => [r.title, r.description, r.productType, r.shop?.name].filter(Boolean).join(' ').toLowerCase().includes(needle))
+        .map((r: any) => ({
+          id: r.id, type: r.type, title: r.title, description: r.description, imageUrl: r.imageUrl, imageUrls: r.imageUrls,
+          price: r.price, discountPercentage: r.discountPercentage, productType: r.productType, phone: r.phone, createdAt: r.createdAt,
+          shop: r.shop ? { id: r.shop.id, name: r.shop.name, town: r.shop.town, district: r.shop.district } : null,
+        }));
+      return limit ? { items: matched.slice(0, limit), nextCursor: null } : matched.slice(0, 50);
+    }
+
     const cacheable = !cursor;
     const cacheKey = cacheable ? publicPromotionsCacheKey(rest.category, rest.town, rest.shopId, limit) : null;
     if (cacheKey) {

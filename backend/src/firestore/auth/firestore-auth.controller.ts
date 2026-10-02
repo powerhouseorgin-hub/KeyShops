@@ -1,5 +1,7 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
+import { invalidateAuthCache } from '../../auth/auth-cache';
 import { FirebaseAuthService, syntheticEmailForPhone } from './firebase-auth.service';
 import { UnauthorizedException } from '@nestjs/common';
 import { ShopRegistrationService, type RegisterShopInput } from '../shop/shop-registration.service';
@@ -73,6 +75,7 @@ export class FirestoreAuthController {
   // frontend's AuthContext JSON.stringifies `res.user` straight into
   // localStorage on every login, and a missing `user` key there crashes
   // <AuthProvider> on the very next reload (JSON.parse("undefined")).
+  @Throttle({ default: { limit: 20, ttl: 600000 } })
   @Post('login')
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     // dto.email is either a real email or a phone number (same dual-purpose
@@ -128,16 +131,22 @@ export class FirestoreAuthController {
     return { success: true };
   }
 
+  // 4-digit codes (9000 values) need a strict per-route limit or an attacker
+  // could brute-force one inside its 5-minute window - same values as the
+  // old controller.
+  @Throttle({ default: { limit: 6, ttl: 600000 } })
   @Post('send-otp')
   async sendOtp(@Body() dto: { identifier: string; purpose: string }) {
     return this.otp.sendOtp(dto.identifier, dto.purpose);
   }
 
+  @Throttle({ default: { limit: 10, ttl: 600000 } })
   @Post('verify-otp')
   async verifyOtp(@Body() dto: { identifier: string; purpose: string; code: string }) {
     return this.otp.verifyOtp(dto.identifier, dto.purpose, dto.code);
   }
 
+  @Throttle({ default: { limit: 5, ttl: 600000 } })
   @Post('register-shop')
   async registerShop(@Body() dto: RegisterShopDto) {
     const normalizedPhone = normalizePhone(dto.phone);
@@ -213,6 +222,127 @@ export class FirestoreAuthController {
       await this.firebaseAuth.deleteUser(authUser.uid).catch(() => {});
       throw err;
     }
+  }
+
+  // Unauthenticated by design (the user forgot their password) - a recently
+  // verified 'reset' OTP for this exact phone IS the authentication, same
+  // model as AuthService.resetPasswordPublic. redeemVerification is
+  // single-use, so one verified code can reset one password once.
+  @Throttle({ default: { limit: 6, ttl: 600000 } })
+  @Post('reset-password-public')
+  async resetPasswordPublic(@Body() dto: { identifier: string; method?: string; newPassword: string }) {
+    const phone = normalizePhone(dto.identifier);
+    if (!phone) throw new BadRequestException(PHONE_REGEX_MESSAGE);
+    if (!dto.newPassword || dto.newPassword.length < 6) {
+      throw new BadRequestException('New password must be at least 6 characters long');
+    }
+    if (!(await this.otp.redeemVerification(phone, 'reset'))) {
+      throw new BadRequestException('Please verify your OTP again before resetting your password.');
+    }
+    const profile = await this.users.findByEmailOrPhone(phone);
+    if (!profile) throw new BadRequestException('No active profile registered with this phone number');
+
+    await this.firebaseAuth.updatePassword(profile.id, dto.newPassword);
+    invalidateAuthCache(profile.id);
+    await this.logActivity(profile.id, profile.shopId, 'RESET_PASSWORD_PUBLIC', 'Password reset successfully via public phone recovery');
+    return { success: true, message: 'Password reset successfully' };
+  }
+
+  @UseGuards(FirebaseAuthGuard)
+  @Post('change-password')
+  async changePassword(@Req() req: any, @Body() dto: { oldPassword: string; newPassword: string }) {
+    if (!dto.newPassword || dto.newPassword.length < 6) {
+      throw new BadRequestException('New password must be at least 6 characters long');
+    }
+    const email = await this.firebaseAuth.getAuthEmail(req.user.id);
+    if (!email) throw new BadRequestException('User not found');
+    try {
+      await this.firebaseAuth.signInWithPassword(email, dto.oldPassword);
+    } catch {
+      throw new BadRequestException('Current password input is incorrect');
+    }
+    await this.firebaseAuth.updatePassword(req.user.id, dto.newPassword);
+    await this.logActivity(req.user.id, req.user.shopId, 'CHANGE_PASSWORD', 'Password updated successfully');
+    return { success: true, message: 'Password updated successfully' };
+  }
+
+  // Changes the caller's own login phone after the frontend has already run
+  // the OTP flow against the NEW number ('change-credentials'). Only the
+  // phone changes - the Firebase Auth login email (real, or the synthetic
+  // one derived from the OLD phone) stays as-is, since login resolves a
+  // phone to its account via the Auth user's phoneNumber, not via the email.
+  @UseGuards(FirebaseAuthGuard)
+  @Post('update-credentials')
+  async updateLoginCredentials(@Req() req: any, @Body() dto: { newPhone?: string }) {
+    if (!dto.newPhone) throw new BadRequestException('Provide a new phone number to update.');
+    const phone = normalizePhone(dto.newPhone);
+    if (!phone) throw new BadRequestException(PHONE_REGEX_MESSAGE);
+
+    const uid: string = req.user.id;
+    const db = this.firestore.db;
+    const existing = await db.collection('phoneIndex').doc(phone).get();
+    if (existing.exists && (existing.data() as any).uid !== uid) {
+      throw new BadRequestException('This phone number is already in use by another account.');
+    }
+    if (!(await this.otp.redeemVerification(phone, 'change-credentials'))) {
+      throw new BadRequestException('Please verify your new phone number with an OTP before saving.');
+    }
+
+    const userRef = db.collection('users').doc(uid);
+    const oldPhone: string | null = req.user.phone ?? null;
+    try {
+      await this.firebaseAuth.updatePhoneNumber(uid, phone);
+    } catch (err: any) {
+      if (err.code === 'auth/phone-number-already-exists') {
+        throw new BadRequestException('This phone number is already in use by another account.');
+      }
+      throw err;
+    }
+    const batch = db.batch();
+    batch.update(userRef, { phone, updatedAt: Date.now() });
+    batch.set(db.collection('phoneIndex').doc(phone), { uid });
+    if (oldPhone && oldPhone !== phone) batch.delete(db.collection('phoneIndex').doc(oldPhone));
+    await batch.commit();
+    invalidateAuthCache(uid);
+
+    await this.logActivity(uid, req.user.shopId, 'UPDATE_LOGIN_CREDENTIALS', 'Login credentials updated successfully', { fields: ['phone'] });
+    return { success: true, email: req.user.email ?? null, phone };
+  }
+
+  // Closes the caller's own account (and, for a Shop Admin, their shop - one
+  // user owns each shop, so these are the same action). Requires a recently
+  // verified OTP against their own phone. Soft delete, matching the old
+  // system: the user/shop docs get deletedAt, the Auth user is disabled and
+  // its sessions revoked, so the very next request 401s.
+  @UseGuards(FirebaseAuthGuard)
+  @Delete('account')
+  async deleteAccount(@Req() req: any) {
+    const uid: string = req.user.id;
+    const phone: string | null = req.user.phone ?? null;
+    if (!phone) throw new BadRequestException('Account deletion requires a verified phone number.');
+    if (!(await this.otp.redeemVerification(phone, 'delete-account'))) {
+      throw new BadRequestException('Please verify your phone number with an OTP before deleting your account.');
+    }
+
+    const db = this.firestore.db;
+    const now = Date.now();
+    const batch = db.batch();
+    batch.update(db.collection('users').doc(uid), { deletedAt: now, updatedAt: now });
+    if (req.user.shopId) batch.update(db.collection('shops').doc(req.user.shopId), { deletedAt: now, updatedAt: now });
+    await batch.commit();
+    await this.firebaseAuth.disableUser(uid);
+    invalidateAuthCache(uid);
+
+    await this.logActivity(uid, req.user.shopId, 'DELETE_ACCOUNT', 'Account deleted by user request', { email: req.user.email, phone });
+    return { success: true, message: 'Your account has been deleted.' };
+  }
+
+  private async logActivity(userId: string, shopId: string | null, action: string, message: string, extra: Record<string, unknown> = {}) {
+    await this.firestore.db.collection('activityLogs').add({
+      shopId, userId, action,
+      details: JSON.stringify({ message, ...extra }),
+      ipAddress: null, createdAt: Date.now(),
+    }).catch((err) => console.error(`Failed to write ${action} activity log for user`, userId, err));
   }
 }
 

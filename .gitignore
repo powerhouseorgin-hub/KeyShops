@@ -38,6 +38,13 @@ Thumbs.db
 # Firebase CLI local deploy cache
 .firebase/
 
+# Generated fresh on every deploy by scripts/prepare-functions-api.js
+# (copies backend/dist + regenerates package.json from backend's own
+# dependencies, so nothing here is ever hand-maintained or committed stale).
+backend/functions-api/package.json
+backend/functions-api/package-lock.json
+backend/functions-api/prisma/
+
 # Prisma
 backend/prisma/*.db
 

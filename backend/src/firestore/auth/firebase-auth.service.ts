@@ -20,7 +20,14 @@ import { getApps } from 'firebase-admin/app';
 //    SDK calls (verifySessionCookie vs verifyIdToken) - the JwtStrategy
 //    equivalent needs to try the right one depending on which the request
 //    is carrying (see verifyRequestToken below).
-const FIREBASE_WEB_API_KEY_ENV = 'FIREBASE_WEB_API_KEY';
+// GCF_WEB_API_KEY is a fallback for deployed Cloud Functions specifically:
+// env var names starting with FIREBASE_/X_GOOGLE_/EXT_ are reserved there,
+// so functions-api/.env.api supplies the same value under this name
+// instead. Standalone scripts/local dev keep using FIREBASE_WEB_API_KEY
+// (from backend/.env) unaffected.
+function getWebApiKey(): string {
+  return process.env.FIREBASE_WEB_API_KEY || process.env.GCF_WEB_API_KEY || '';
+}
 
 export interface FirebaseLoginResult {
   idToken: string;
@@ -61,10 +68,10 @@ export class FirebaseAuthService {
   // (Firebase's own error codes are intentionally not leaked to the client,
   // same reasoning as before: don't reveal whether the email exists).
   async signInWithPassword(email: string, password: string): Promise<FirebaseLoginResult> {
-    const apiKey = process.env[FIREBASE_WEB_API_KEY_ENV] || '';
+    const apiKey = getWebApiKey();
     const emulatorHost = process.env.FIREBASE_AUTH_EMULATOR_HOST;
     if (!apiKey && !emulatorHost) {
-      throw new Error(`${FIREBASE_WEB_API_KEY_ENV} is not set (Firebase Console -> Project Settings -> General -> Web API Key)`);
+      throw new Error('FIREBASE_WEB_API_KEY/GCF_WEB_API_KEY is not set (Firebase Console -> Project Settings -> General -> Web API Key)');
     }
 
     // When FIREBASE_AUTH_EMULATOR_HOST is set (local dev/testing - see
@@ -146,6 +153,27 @@ export class FirebaseAuthService {
 
   async setCustomClaims(uid: string, claims: { role: string; shopId: string | null }): Promise<void> {
     await this.auth.setCustomUserClaims(uid, claims);
+  }
+
+  // The email Firebase Auth actually has on file for this user (real or
+  // synthetic - see syntheticEmailForPhone), needed to verify a current
+  // password via signInWithPassword for change-password.
+  async getAuthEmail(uid: string): Promise<string | null> {
+    return (await this.auth.getUser(uid)).email || null;
+  }
+
+  async updatePassword(uid: string, newPassword: string): Promise<void> {
+    await this.auth.updateUser(uid, { password: newPassword });
+    await this.auth.revokeRefreshTokens(uid);
+  }
+
+  async updatePhoneNumber(uid: string, phone10Digits: string): Promise<void> {
+    await this.auth.updateUser(uid, { phoneNumber: `+91${phone10Digits}` });
+  }
+
+  async disableUser(uid: string): Promise<void> {
+    await this.auth.updateUser(uid, { disabled: true });
+    await this.auth.revokeRefreshTokens(uid);
   }
 
   async revokeAllSessions(uid: string): Promise<void> {

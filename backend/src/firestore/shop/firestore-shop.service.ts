@@ -443,6 +443,20 @@ export class FirestoreShopService {
       : [];
     const categoryNameMap = new Map(categoryDocs.filter((d) => d.exists).map((d) => [d.id, (d.data() as any).name]));
 
+    // Free-text match over name/address/town/district/category. Public
+    // directory only ever holds active shops (a handful today), so an
+    // in-memory pass is exact and instant - no Algolia sync lag, and no
+    // dependency on an index for an unauthenticated landing-page feature.
+    const needle = (opts.query || '').trim().toLowerCase();
+    if (needle) {
+      docs = docs.filter((d) => {
+        const s = d.data() as any;
+        const hay = [s.name, s.companyDetails, s.town, s.district, s.categoryId ? categoryNameMap.get(s.categoryId) : '']
+          .filter(Boolean).join(' ').toLowerCase();
+        return hay.includes(needle);
+      });
+    }
+
     const toPublic = (d: FirebaseFirestore.QueryDocumentSnapshot) => {
       const data = d.data() as any;
       return this.mapPublicShop(d.id, data, data.categoryId ? categoryNameMap.get(data.categoryId) || null : null);

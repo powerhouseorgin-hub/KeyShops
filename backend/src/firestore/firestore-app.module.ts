@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Injectable, Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { FirestoreModule } from './firestore.module';
 import { ReferenceListsModule } from './config/reference-lists.module';
@@ -32,7 +32,9 @@ import { FirestorePromotionService } from './promotion/firestore-promotion.servi
 import { FirestorePromotionController, PublicPromotionController } from './promotion/firestore-promotion.controller';
 import { FirestoreShopService } from './shop/firestore-shop.service';
 import { FirestoreShopController } from './shop/firestore-shop.controller';
-import { PublicShopController } from './shop/public-shop.controller';
+import { PublicShopController, PublicSearchController } from './shop/public-shop.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { GeoController } from './geo/geo.controller';
 import { FirestoreKeyService } from './key/firestore-key.service';
 import { FirestoreKeyController } from './key/firestore-key.controller';
@@ -48,8 +50,30 @@ import { AlgoliaSearchService } from './search/algolia-search.service';
 // ready, a separate standalone bootstrap for real Cloud Run testing). The
 // production app keeps running entirely on the Prisma-based modules until
 // an explicit, deliberate cutover.
+// Behind Firebase Hosting + Google's frontends, req.ip is a Google proxy
+// address shared by every visitor - throttling on it would rate-limit ALL
+// users collectively. Key on the client IP in X-Forwarded-For instead. (The
+// header is client-appendable, so a determined attacker can spoof it; that
+// only weakens throttling for them, it can never lock out real users, which
+// is the right failure direction.)
+@Injectable()
+export class ClientIpThrottlerGuard extends ThrottlerGuard {
+  protected async getTracker(req: Record<string, any>): Promise<string> {
+    const xff = req.headers?.['x-forwarded-for'];
+    const first = typeof xff === 'string' ? xff.split(',')[0].trim() : '';
+    return first || req.ip;
+  }
+}
+
 @Module({
-  imports: [FirestoreModule, ReferenceListsModule, ScheduleModule.forRoot()],
+  imports: [
+    FirestoreModule,
+    ReferenceListsModule,
+    ScheduleModule.forRoot(),
+    // Same global baseline as the old AppModule; sensitive routes override
+    // with tighter @Throttle limits directly on their controller methods.
+    ThrottlerModule.forRoot([{ name: 'default', ttl: 60000, limit: 120 }]),
+  ],
   controllers: [
     FirestoreAuthController,
     AuthGuardSmokeTestController,
@@ -64,6 +88,7 @@ import { AlgoliaSearchService } from './search/algolia-search.service';
     PublicPromotionController,
     FirestoreShopController,
     PublicShopController,
+    PublicSearchController,
     FirestoreCustomerController,
     FirestoreSuperCustomerController,
     PublicReportController,
@@ -77,6 +102,7 @@ import { AlgoliaSearchService } from './search/algolia-search.service';
     FirestorePaymentController,
   ],
   providers: [
+    { provide: APP_GUARD, useClass: ClientIpThrottlerGuard },
     ShopRepository,
     UserRepository,
     ShopRegistrationService,

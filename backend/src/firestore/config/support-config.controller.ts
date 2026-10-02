@@ -86,7 +86,13 @@ export class SuperSupportConfigController {
     // is omitted from this request, not clear it).
     return this.platformConfig.update({
       whatsapp: dto.whatsapp,
-      videos: dto.videos ?? [],
+      // class-transformer (@Type(() => SupportVideoDto), driven by the
+      // global ValidationPipe's transform: true) turns each array element
+      // into a real SupportVideoDto class instance, not a plain object -
+      // Firestore's SDK rejects any value with a custom prototype ("found
+      // in field videos.`0`"), so these need to be plain-object-mapped
+      // before being written.
+      videos: (dto.videos ?? []).map((v) => ({ name: v.name, url: v.url })),
       email: dto.email ?? null,
       customerCareNumber: dto.customerCareNumber ?? null,
       ...(dto.subscriptionPrice !== undefined ? { subscriptionPrice: dto.subscriptionPrice } : {}),

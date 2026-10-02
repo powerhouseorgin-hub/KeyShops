@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "keee-7d6cb"
-  }
+  },
+  "targets": {
+    "keee-7d6cb": {
+      "hosting": {
+        "api": [
+          "keyshops-api"
+        ],
+        "default": [
+          "keee-7d6cb"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

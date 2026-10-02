@@ -29,6 +29,7 @@ const DRY_RUN = !process.argv.includes('--confirm');
 // suffix is Date.now()-derived).
 const TEST_SHOP_NAME_PREFIXES = [
   'Customer Test Shop ',
+  'Cutover Test Shop ', // smoke-test-cutover-gaps.ts
   'Debug Search Shop ',
   'Debug Shop ',
   'Doc Test Shop ',

@@ -37,3 +37,26 @@ export class PublicShopController {
     return { ...shop, products: (products as any).items };
   }
 }
+
+// PUBLIC (no auth): the pre-login app's combined search overlay - same
+// composition as the old PublicSearchController. Deliberately only calls the
+// two vetted public projections above and never touches customer data.
+@Throttle({ default: { limit: 60, ttl: 60000 } })
+@Controller('public/search')
+export class PublicSearchController {
+  constructor(
+    private readonly shopService: FirestoreShopService,
+    private readonly promotions: FirestorePromotionService,
+  ) {}
+
+  @Get()
+  async search(@Query('q') q?: string) {
+    const query = (q || '').trim();
+    if (!query) return { shops: [], machines: [] };
+    const [shops, machines] = await Promise.all([
+      this.shopService.searchPublicShops({ query, limit: 10 }),
+      this.promotions.getPublicPromotions({ search: query, limit: 10 }),
+    ]);
+    return { shops: (shops as any).items, machines: (machines as any).items };
+  }
+}

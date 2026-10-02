@@ -4,7 +4,7 @@ process.env.FIREBASE_SERVICE_ACCOUNT_JSON = fs.readFileSync(
   path.join(__dirname, '../firebase-service-account-old.json'), 'utf8',
 );
 
-const BASE = 'http://127.0.0.1:4100/api';
+const BASE = (process.env.SMOKE_TEST_BASE_URL || 'http://127.0.0.1:4100') + '/api';
 async function jsonReq(method: string, urlPath: string, body?: any, token?: string) {
   const res = await fetch(`${BASE}${urlPath}`, {
     method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },

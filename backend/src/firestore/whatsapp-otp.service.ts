@@ -27,7 +27,24 @@ const WHATSAPP_API_VERSION = process.env.WHATSAPP_API_VERSION || 'v21.0';
 export interface SendOtpResult {
   success: true;
   delivered: boolean;
+  // Only ever present when WhatsApp delivery failed/isn't configured AND
+  // OTP_SHOW_CODE_IN_UI=true AND the purpose is on the allowlist below -
+  // the temporary pre-WhatsApp fallback. Once real delivery works
+  // (delivered: true) the code is never returned, even with the flag left on.
+  devCode?: string;
 }
+
+// Purposes whose code may be shown in the UI as a fallback. Deliberately
+// EXCLUDES 'reset' and 'delete-account': send-otp is unauthenticated and
+// shop phone numbers are public (the shop directory lists them), so showing
+// the code for a password reset would let anyone take over any shop admin's
+// account just by knowing their number. Those two stay log-only until real
+// WhatsApp delivery is live.
+const UI_FALLBACK_PURPOSES = new Set(['register', 'customer_verify', 'change-credentials']);
+
+// How long after a successful verify-otp the follow-up action (reset
+// password, change phone, delete account) may still redeem it.
+const VERIFICATION_REDEEM_WINDOW_MS = 15 * 60 * 1000;
 
 export interface VerifyOtpResult {
   success: true;
@@ -72,13 +89,40 @@ export class WhatsappOtpService {
 
     const delivered = await this.sendWhatsAppTemplate(identifier, code);
     if (!delivered) {
-      // Same "never leak the code" stance as the Postgres/MSG91 version -
-      // only the server log carries it when delivery isn't configured or
-      // fails, never the API response.
+      // Server log always carries the code when delivery isn't configured
+      // or fails. The API response only does too under the explicit,
+      // temporary OTP_SHOW_CODE_IN_UI fallback (see UI_FALLBACK_PURPOSES).
       console.log(`[WhatsApp OTP dev fallback] delivery not configured/failed — code for ${identifier}: ${code}`);
+      if (process.env.OTP_SHOW_CODE_IN_UI === 'true' && UI_FALLBACK_PURPOSES.has(purpose)) {
+        return { success: true, delivered: false, devCode: code };
+      }
     }
 
     return { success: true, delivered };
+  }
+
+  // One-shot redemption of a recent successful verify-otp, for endpoints that
+  // act on a prior verification (reset password, change phone, delete
+  // account) rather than re-accepting the raw code. Keyed on `verifiedAt`,
+  // which ONLY verifyOtp sets - not on `consumed`, which sendOtp also sets
+  // on superseded codes (so requesting two codes can't fake a verification).
+  // Clears the marker on success so one verification authorizes one action.
+  async redeemVerification(identifierRaw: string, purpose: string): Promise<boolean> {
+    const identifier = normalizePhone(identifierRaw);
+    if (!identifier) return false;
+    const snap = await this.firestore.db
+      .collection(OTP_COLLECTION)
+      .where('identifier', '==', identifier)
+      .where('purpose', '==', purpose)
+      .where('consumed', '==', true)
+      .get();
+    const now = Date.now();
+    const fresh = snap.docs
+      .filter((d) => typeof d.data().verifiedAt === 'number' && now - d.data().verifiedAt <= VERIFICATION_REDEEM_WINDOW_MS)
+      .sort((a, b) => b.data().verifiedAt - a.data().verifiedAt)[0];
+    if (!fresh) return false;
+    await fresh.ref.update({ verifiedAt: null });
+    return true;
   }
 
   async verifyOtp(identifierRaw: string, purpose: string, code: string): Promise<VerifyOtpResult> {
@@ -115,7 +159,7 @@ export class WhatsappOtpService {
       throw new BadRequestException('Incorrect OTP code. Please try again.');
     }
 
-    await doc.ref.update({ consumed: true });
+    await doc.ref.update({ consumed: true, verifiedAt: Date.now() });
     return { success: true };
   }
 

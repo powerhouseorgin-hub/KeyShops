@@ -6,9 +6,22 @@
   "storage": {
     "rules": "storage.rules"
   },
-  "functions": {
-    "source": "functions"
-  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "sync"
+    },
+    {
+      "source": "functions-api",
+      "codebase": "api",
+      "runtime": "nodejs22",
+      "predeploy": [
+        "npm run build",
+        "node scripts/prepare-functions-api.js"
+      ],
+      "ignore": ["node_modules", ".git"]
+    }
+  ],
   "emulators": {
     "firestore": {
       "port": 8080

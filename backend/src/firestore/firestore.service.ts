@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { initializeApp, cert, getApps, type App } from 'firebase-admin/app';
+import { initializeApp, applicationDefault, cert, getApps, type App } from 'firebase-admin/app';
 import { getFirestore, type Firestore } from 'firebase-admin/firestore';
 
 // Firestore-rewrite counterpart to TenantService's Prisma client (see the
@@ -23,11 +23,21 @@ function getApp(): App {
     return app;
   }
   const raw = process.env.FIREBASE_SERVICE_ACCOUNT_JSON || '';
-  if (!raw) {
-    throw new Error('FIREBASE_SERVICE_ACCOUNT_JSON is not set (keee-7d6cb service account key)');
+  if (raw) {
+    app = initializeApp({ credential: cert(JSON.parse(raw)) }, 'firestore-migration');
+    return app;
   }
-  const serviceAccount = JSON.parse(raw);
-  app = initializeApp({ credential: cert(serviceAccount) }, 'firestore-migration');
+  // No explicit key - this must be a key name running NATIVELY inside the
+  // keee-7d6cb project (a deployed Cloud Function), where the runtime's own
+  // service account already has full project access via Application
+  // Default Credentials. FIREBASE_SERVICE_ACCOUNT_JSON can't be supplied as
+  // a deployed env var there anyway - Cloud Functions reserves any env var
+  // name starting with FIREBASE_/X_GOOGLE_/EXT_ - and ADC makes supplying
+  // the key redundant in that one context regardless (see
+  // functions-api/.env.api's comment). Every local/standalone script still
+  // sets FIREBASE_SERVICE_ACCOUNT_JSON explicitly, so this fallback is only
+  // ever reached when truly running inside GCP.
+  app = initializeApp({ credential: applicationDefault() }, 'firestore-migration');
   return app;
 }
 

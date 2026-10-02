@@ -1,33 +1,50 @@
 {
-  "hosting": {
-    "public": "frontend/dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "headers": [
-      {
-        "source": "**/*.@(js|css|svg|png|jpg|jpeg|woff|woff2)",
-        "headers": [
-          { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
-        ]
-      },
-      {
-        "comment": "The Android APK is deployed under a non-.apk extension because Firebase Hosting's Spark (free) plan rejects executable file extensions (.apk included) at deploy time. These headers restore the correct type/filename on download - see frontend/public/downloads/keyshop-app.keeapp.",
-        "source": "/downloads/keyshop-app.keeapp",
-        "headers": [
-          { "key": "Content-Type", "value": "application/vnd.android.package-archive" },
-          { "key": "Content-Disposition", "value": "attachment; filename=\"KeyShop.apk\"" },
-          { "key": "Cache-Control", "value": "public, max-age=3600" }
-        ]
-      }
-    ]
-  }
+  "hosting": [
+    {
+      "target": "default",
+      "public": "frontend/dist",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ],
+      "headers": [
+        {
+          "source": "**/*.@(js|css|svg|png|jpg|jpeg|woff|woff2)",
+          "headers": [
+            { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+          ]
+        },
+        {
+          "comment": "The Android APK is deployed under a non-.apk extension because Firebase Hosting's Spark (free) plan rejects executable file extensions (.apk included) at deploy time. These headers restore the correct type/filename on download - see frontend/public/downloads/keyshop-app.keeapp.",
+          "source": "/downloads/keyshop-app.keeapp",
+          "headers": [
+            { "key": "Content-Type", "value": "application/vnd.android.package-archive" },
+            { "key": "Content-Disposition", "value": "attachment; filename=\"KeyShop.apk\"" },
+            { "key": "Cache-Control", "value": "public, max-age=3600" }
+          ]
+        }
+      ]
+    },
+    {
+      "target": "api",
+      "comment": "Dedicated Hosting site for api.keyshops.in, routing every request to the deployed Firestore backend (backend/src/functions-main.ts, codebase 'api') - keeps the same custom domain the Render deployment used, so the already-built frontend and published Android APK (both with VITE_API_BASE_URL=https://api.keyshops.in baked in at build time) need zero changes for the cutover.",
+      "public": "backend/functions-api/public-placeholder",
+      "rewrites": [
+        {
+          "source": "**",
+          "function": {
+            "functionId": "api",
+            "region": "us-central1"
+          }
+        }
+      ]
+    }
+  ]
 }

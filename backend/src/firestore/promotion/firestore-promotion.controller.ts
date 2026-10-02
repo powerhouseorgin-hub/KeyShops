@@ -122,9 +122,10 @@ export class PublicPromotionController {
     @Query('cursor') cursor?: string,
     @Query('limit') limit?: string,
     @Query('shopId') shopId?: string,
+    @Query('search') search?: string,
   ) {
     return this.promotions.getPublicPromotions({
-      category, town, cursor, shopId,
+      category, town, cursor, shopId, search: search || undefined,
       limit: limit ? Number(limit) : undefined,
     });
   }
