@@ -127,6 +127,48 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     }
   };
 
+  // Service invoice (Download / WhatsApp in the customer's file). Rebuilt on demand from the saved customer
+  // record - nothing needs to have been stored when the customer was registered, so it also works for
+  // customers registered before invoices existed. Invoice number and date come from the record, so a
+  // re-sent invoice matches the original.
+  const buildInvoiceForCustomer = async (c) => {
+    const shop = await ensureShopInfo();
+    const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
+    const pdf = await buildCustomerInvoicePdf({ customer: c, shop, registeredByName: user?.name });
+    const safeName = (c.name || 'Customer').replace(/[^a-zA-Z0-9]+/g, '_') || 'Customer';
+    const fileName = `Invoice_${safeName}_${(c.id || '').slice(-8)}.pdf`;
+    return { pdf, fileName, shop };
+  };
+
+  const handleDownloadInvoice = async (c) => {
+    setReportBusyId(`${c.id}:invoice-download`);
+    try {
+      const { pdf, fileName } = await buildInvoiceForCustomer(c);
+      await downloadPdf(pdf, fileName);
+    } catch (err) {
+      console.error('Failed to generate the invoice PDF:', err);
+      window.alert('Could not generate the invoice PDF. Please try again.');
+    } finally {
+      setReportBusyId(null);
+    }
+  };
+
+  const handleSendInvoiceViaWhatsApp = async (c) => {
+    setReportBusyId(`${c.id}:invoice-whatsapp`);
+    try {
+      const { pdf, fileName, shop } = await buildInvoiceForCustomer(c);
+      const { shareCustomerInvoiceViaWhatsApp } = await import('../utils/reportShare');
+      await shareCustomerInvoiceViaWhatsApp({ api, pdf, fileName, customer: c, shopName: shop?.name });
+    } catch (err) {
+      if (err && err.name !== 'AbortError') {
+        console.error('Failed to send the invoice on WhatsApp:', err);
+        window.alert('Could not send the invoice. Please try again.');
+      }
+    } finally {
+      setReportBusyId(null);
+    }
+  };
+
   // Picks up a query dispatched from the global header search panel
   // (filter = "Customer").
   useEffect(() => {
@@ -571,6 +613,29 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                   )}
                 </div>
 
+                <div className="flex items-center flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 16, marginTop: 18 }}>
+                  <span className="cell-sub" style={{ fontWeight: 800, color: 'var(--text-2)', marginRight: 4 }}>Service invoice</span>
+                  <button
+                    type="button"
+                    onClick={() => handleDownloadInvoice(selectedCust)}
+                    disabled={reportBusyId === `${selectedCust.id}:invoice-download`}
+                    className="btn btn-outline btn-sm"
+                  >
+                    {reportBusyId === `${selectedCust.id}:invoice-download` ? <RefreshCw className="animate-spin h-4 w-4" /> : <Download className="h-4 w-4" />}
+                    <span>Download Invoice</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSendInvoiceViaWhatsApp(selectedCust)}
+                    disabled={reportBusyId === `${selectedCust.id}:invoice-whatsapp`}
+                    className="btn btn-primary btn-sm"
+                    style={{ background: '#25D366', borderColor: '#25D366' }}
+                  >
+                    {reportBusyId === `${selectedCust.id}:invoice-whatsapp` ? <RefreshCw className="animate-spin h-4 w-4" /> : <MessageCircle className="h-4 w-4" />}
+                    <span>Send on WhatsApp</span>
+                  </button>
+                </div>
+
                 <div className="flex justify-between items-center flex-wrap gap-2" style={{ borderTop: '1px solid var(--border)', paddingTop: 18, marginTop: 18 }}>
                   <div className="flex gap-2">
                     <button
@@ -580,7 +645,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                       className="btn btn-outline btn-sm"
                     >
                       <Download className="h-4 w-4" />
-                      <span>Download Document</span>
+                      <span>Download Report</span>
                     </button>
                     <button
                       type="button"
@@ -590,7 +655,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                       style={{ background: '#25D366', borderColor: '#25D366' }}
                     >
                       <MessageCircle className="h-4 w-4" />
-                      <span>WhatsApp</span>
+                      <span>Send Report</span>
                     </button>
                   </div>
                   <div className="flex gap-2">

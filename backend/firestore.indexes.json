@@ -98,6 +98,21 @@
       { "fieldPath": "keyNumber", "order": "ASCENDING" },
       { "fieldPath": "createdAt", "order": "DESCENDING" },
       { "fieldPath": "__name__", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "promotions", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "deletedAt", "order": "ASCENDING" },
+      { "fieldPath": "productType", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" },
+      { "fieldPath": "__name__", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "advertisements", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "startDate", "order": "ASCENDING" },
+      { "fieldPath": "priority", "order": "DESCENDING" }
+    ] },
+    { "collectionGroup": "advertisements", "queryScope": "COLLECTION", "fields": [
+      { "fieldPath": "type", "order": "ASCENDING" },
+      { "fieldPath": "targetAll", "order": "ASCENDING" },
+      { "fieldPath": "startDate", "order": "ASCENDING" }
     ] }
   ],
   "fieldOverrides": [
