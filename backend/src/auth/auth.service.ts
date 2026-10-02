@@ -87,7 +87,7 @@ export class AuthService implements OnModuleInit {
     // Accepts +91/91-prefixed, leading-0, spaced/dashed, or bare 10-digit
     // input and normalizes to the canonical bare 10-digit form so every
     // downstream lookup/store below (User.phone uniqueness check,
-    // OtpCode.identifier, MSG91 delivery) uses one consistent value
+    // OtpCode.identifier) uses one consistent value
     // regardless of how the caller typed it. dto.method is always 'phone'
     // here - SendOtpDto's @IsIn(['phone']) rejects anything else before this
     // method ever runs.
@@ -126,53 +126,14 @@ export class AuthService implements OnModuleInit {
       },
     });
 
-    let delivered = false;
+    // No SMS provider exists any more (SMS OTP was dropped - the Firestore
+    // backend delivers codes over WhatsApp). The code is only ever visible in
+    // this server log, never in the API response: echoing it back would let
+    // anyone read a real user's OTP and defeat verification everywhere it is
+    // required (registration, password reset, phone confirmation).
+    console.log(`[OTP dev fallback] Code for ${dto.identifier}: ${otpCode}`);
 
-    // MSG91's OTP-send endpoint, passed our own bcrypt-hashed-and-stored
-    // `otpCode` as the `otp` query param rather than letting MSG91 generate
-    // and verify it themselves - keeps verifyOtp() above (DB-backed,
-    // already working) as the single source of truth, MSG91 is purely a
-    // delivery channel. template_id must be an approved OTP template in
-    // the MSG91 dashboard (DLT-registered, required for Indian numbers).
-    const authKey = process.env.MSG91_AUTH_KEY || '';
-    const templateId = process.env.MSG91_OTP_TEMPLATE_ID || '';
-
-    if (authKey && templateId) {
-      try {
-        const digits = dto.identifier.replace(/\D/g, '');
-        const mobile = digits.length === 10 ? `91${digits}` : digits;
-        const params = new URLSearchParams({
-          authkey: authKey,
-          template_id: templateId,
-          mobile,
-          otp: otpCode,
-        });
-        const res = await fetch(`https://control.msg91.com/api/v5/otp?${params.toString()}`, { method: 'POST' });
-        const body = await res.json();
-        if (res.ok && body.type === 'success') {
-          delivered = true;
-        } else {
-          console.error('MSG91 SMS send failed:', body);
-        }
-      } catch (err) {
-        console.error('MSG91 SMS send failed:', err.message);
-      }
-    }
-
-    if (!delivered) {
-      // No MSG91 provider is configured (or delivery failed) - the code is
-      // only ever visible in this server log, never in the API response. It
-      // used to be echoed back to the client as `devCode` so the frontend
-      // could show it during local development without a provider set up,
-      // but that meant anyone could read a real user's OTP straight out of
-      // the send-otp response on any environment where delivery isn't
-      // configured - defeating verification everywhere it's required
-      // (registration, password reset, phone confirmation). Check this log
-      // if you need the code while testing without a provider set up.
-      console.log(`[OTP dev fallback] No SMS provider configured — code for ${dto.identifier}: ${otpCode}`);
-    }
-
-    return { success: true, delivered };
+    return { success: true, delivered: false };
   }
 
   async verifyOtp(dto: { identifier: string, method: string, purpose?: string, code: string }) {

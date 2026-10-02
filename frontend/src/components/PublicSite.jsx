@@ -812,7 +812,7 @@ function PrivacyPolicyPage({ t }) {
     { title: t('privacySection5Title'), body: t('privacySection5Body') },
     { title: t('privacySection6Title'), list: [t('privacySection6Item1'), t('privacySection6Item2'), t('privacySection6Item3'), t('privacySection6Item4'), t('privacySection6Item5')] },
     { title: t('privacySection7Title'), body: t('privacySection7Body') },
-    { title: t('privacySection8Title'), list: [t('privacySection8Item1'), t('privacySection8Item2'), t('privacySection8Item3'), t('privacySection8Item4'), t('privacySection8Item5')] },
+    { title: t('privacySection8Title'), list: [t('privacySection8Item1'), t('privacySection8Item3'), t('privacySection8Item4'), t('privacySection8Item5')] },
     { title: t('privacySection9Title'), body: t('privacySection9Body') },
     { title: t('privacySection10Title'), body: t('privacySection10Body') },
     { title: t('privacySection11Title'), body: t('privacySection11Body') },

@@ -14,7 +14,7 @@ import { WhatsappOtpService } from '../src/firestore/whatsapp-otp.service';
 
 // Captures the dev-fallback console.log line (no WHATSAPP_* env vars are
 // set for this test, so delivery is skipped and the code is only logged -
-// same fail-soft behavior the old MSG91 integration had) to pull the real
+// fail-soft: delivery never throws, the code is just logged) to pull the real
 // code out for this test only. A real caller never does this.
 function captureLoggedCode(fn: () => Promise<any>): Promise<{ result: any; code: string | null }> {
   const original = console.log;

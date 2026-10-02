@@ -44,8 +44,8 @@ The product ships as:
 | Frontend | React 18 + Vite, [lucide-react](https://lucide.dev/) icons — one codebase serves the marketing site, the pre-login native shell, and the authenticated dashboard |
 | Mobile | [Capacitor 8](https://capacitorjs.com/) — wraps the same React app into a native Android APK, plus native plugins for camera, GPS, filesystem, share, Razorpay checkout, and Firebase phone auth |
 | Payments | [Razorpay](https://razorpay.com/) — order creation + server-side HMAC-SHA256 signature verification gates self-service shop registration |
-| SMS / Email OTP | [MSG91](https://msg91.com/) (SMS) and SMTP via Nodemailer (email); both fall back to server-log-only dev codes when unset |
-| Native phone auth | [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — verifies ID tokens from the native app's client-side Firebase phone verification, an alternate path to MSG91 OTP |
+| Email OTP | SMTP via Nodemailer; falls back to a server-log-only dev code when unset |
+| Native phone auth | [Firebase Admin SDK](https://firebase.google.com/docs/admin/setup) — verifies ID tokens from the native app's client-side Firebase phone verification (legacy path; the current app no longer uses it) |
 | File storage | Local disk in dev; [Supabase Storage](https://supabase.com/storage) in production (ephemeral hosts don't persist local disk) |
 | Local infra | Docker Compose — PostgreSQL for local dev |
 | Hosting | Firebase Hosting (frontend, static) + Render (backend API, Docker) + [Supabase](https://supabase.com/) (Postgres + Storage) |
@@ -165,7 +165,6 @@ in the hosting platform's environment configuration, never committed to source c
 | `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` + `SUPABASE_STORAGE_BUCKET` | Production file storage — required on ephemeral hosts (Render); falls back to local disk if unset (dev only) |
 | `SEED_SUPER_ADMIN_EMAIL/PASSWORD/NAME` | Auto-seeded on first boot if zero Super Admins exist |
 | `SMTP_*` | Email OTP delivery (Nodemailer) — falls back to console-logged dev OTP if unset |
-| `MSG91_AUTH_KEY`, `MSG91_OTP_TEMPLATE_ID` | SMS OTP delivery (India, DLT-registered template) — falls back to console-logged dev OTP if unset |
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payment order creation and signature verification for shop registration |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | Firebase Admin SDK credential (raw JSON pasted into the env var, not a file path — Render has no persistent disk) |
 
@@ -239,7 +238,7 @@ page's download link whenever a new build should be released.
 - **Database & file storage** — [Supabase](https://supabase.com/) (managed Postgres + Storage). Render only
   hosts the NestJS API itself; it connects out to Supabase via `DATABASE_URL`/`DIRECT_URL`.
 
-Set real production secrets (JWT, encryption key, DB URL, SMTP/MSG91, Razorpay, Firebase service
+Set real production secrets (JWT, encryption key, DB URL, SMTP, Razorpay, Firebase service
 account, Supabase URL/service role key) directly in the Render dashboard's environment
 variables — never commit a real `.env`.
 

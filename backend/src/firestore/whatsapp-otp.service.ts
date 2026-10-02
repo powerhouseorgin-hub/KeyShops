@@ -3,7 +3,7 @@ import * as bcrypt from 'bcrypt';
 import { FirestoreService } from './firestore.service';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 
-// Replaces both of the pre-migration OTP paths (MSG91 SMS for web,
+// Replaces both of the pre-migration OTP paths (SMS for web,
 // Firebase Phone Auth for native) with one unified, self-hosted mechanism
 // delivered over WhatsApp instead - see the migration plan's revised
 // decision #6. Structurally the same verification model as the old
@@ -166,7 +166,7 @@ export class WhatsappOtpService {
   // Sends a WhatsApp "Authentication" template message via Meta's Cloud
   // API directly (no BSP middleman). Returns false (never throws) on any
   // config/delivery failure so sendOtp's dev-fallback log path can take
-  // over - mirrors the old MSG91 integration's fail-soft behavior.
+  // over (fail-soft: a delivery problem never blocks the flow).
   private async sendWhatsAppTemplate(phoneDigits: string, code: string): Promise<boolean> {
     const accessToken = process.env.WHATSAPP_ACCESS_TOKEN || '';
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || '';
