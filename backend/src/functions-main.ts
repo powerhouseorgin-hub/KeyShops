@@ -8,6 +8,7 @@ import * as express from 'express';
 import * as compression from 'compression';
 import { FirestoreAppModule } from './firestore/firestore-app.module';
 import { AllExceptionsFilter } from './common/all-exceptions.filter';
+import { replayMultipartBody } from './common/replay-multipart-body';
 
 // Firebase Functions entry point for the backend - deployed with the Firebase CLI
 // (`firebase deploy --only functions:api`). Cloud Functions 2nd-gen runs on Cloud Run under the hood. The same
@@ -37,6 +38,8 @@ let appReady: Promise<INestApplication> | null = null;
 async function bootstrap(): Promise<INestApplication> {
   const app = await NestFactory.create(FirestoreAppModule, new ExpressAdapter(expressServer), { bodyParser: false });
   app.use(compression());
+  // Cloud Functions has already read the body into req.rawBody; give multer (file uploads) the bytes again.
+  app.use(replayMultipartBody);
   // The raw bytes are kept (req.rawBody) because the WhatsApp webhook's signature is computed over them.
   app.use(express.json({ limit: '15mb', verify: (req: any, _res, buf) => { req.rawBody = buf; } }));
   app.use(express.urlencoded({ extended: true, limit: '15mb' }));

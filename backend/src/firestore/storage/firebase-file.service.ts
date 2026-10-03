@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import * as path from 'path';
+import { randomUUID } from 'crypto';
 import { getApps } from 'firebase-admin/app';
 import { getStorage } from 'firebase-admin/storage';
 
-// File storage on Firebase Storage (a Cloud Storage bucket) for ad images, customer documents, shop documents
-// and promotion images: a private bucket, signed URLs with a caller-chosen expiry, and service-account-level
-// access through the Admin SDK that bypasses any bucket ACL.
+// File storage on Firebase Storage (a Cloud Storage bucket) for ad images, customer documents, shop documents,
+// promotion images and vehicle-sale photos. The bucket is private (storage.rules deny all client access) and the
+// backend reads and writes it through the Admin SDK.
+//
+// A file's URL is a Firebase "download token" link (https://firebasestorage.googleapis.com/v0/b/<bucket>/o/<key>
+// ?alt=media&token=<token>): a random token is stored in the object's metadata at upload time and the link works
+// for whoever holds it, until the object is deleted. This is used instead of V4 signed URLs because signing needs
+// the iam.serviceAccounts.signBlob permission, which the Cloud Functions runtime account does not have - every
+// upload would fail with "Permission 'iam.serviceAccounts.signBlob' denied" - whereas a token link needs no signing.
 const CONTENT_TYPE_BY_EXT: Record<string, string> = {
   '.png': 'image/png',
   '.jpg': 'image/jpeg',
@@ -14,6 +21,13 @@ const CONTENT_TYPE_BY_EXT: Record<string, string> = {
   '.webp': 'image/webp',
   '.pdf': 'application/pdf',
 };
+
+// Exported for tests. Against the Storage emulator the link points at the emulator instead.
+export function downloadUrl(bucketName: string, fileKey: string, token: string): string {
+  const emulator = process.env.FIREBASE_STORAGE_EMULATOR_HOST;
+  const origin = emulator ? `http://${emulator}` : 'https://firebasestorage.googleapis.com';
+  return `${origin}/v0/b/${bucketName}/o/${encodeURIComponent(fileKey)}?alt=media&token=${token}`;
+}
 
 @Injectable()
 export class FirebaseFileService {
@@ -31,7 +45,7 @@ export class FirebaseFileService {
     originalname: string,
     buffer: Buffer,
     shopId: string,
-    expirySeconds = 60 * 60 * 24 * 7,
+    _expirySeconds?: number, // kept for the existing call sites; a token link does not expire
   ): Promise<{ fileUrl: string; fileKey: string }> {
     const fileExt = path.extname(originalname);
     const cleanShopId = shopId.replace(/[^a-zA-Z0-9]/g, '');
@@ -39,21 +53,22 @@ export class FirebaseFileService {
     const contentType = CONTENT_TYPE_BY_EXT[fileExt.toLowerCase()] || 'application/octet-stream';
     const safeName = (originalname || uniqueName).replace(/[^a-zA-Z0-9._-]/g, '_');
 
-    const file = this.bucket.file(uniqueName);
-    await file.save(buffer, {
+    const token = randomUUID();
+    const bucket = this.bucket;
+    await bucket.file(uniqueName).save(buffer, {
       contentType,
-      metadata: { contentDisposition: `attachment; filename="${safeName}"` },
+      metadata: {
+        contentDisposition: `attachment; filename="${safeName}"`,
+        metadata: { firebaseStorageDownloadTokens: token },
+      },
     });
 
-    const [fileUrl] = await file.getSignedUrl({
-      action: 'read',
-      expires: Date.now() + expirySeconds * 1000,
-    });
-    return { fileUrl, fileKey: uniqueName };
+    return { fileUrl: downloadUrl(bucket.name, uniqueName, token), fileKey: uniqueName };
   }
 
+  // Same as uploadFile; the name is kept because the call sites that want a link that never lapses use it.
   async uploadLongLivedFile(originalname: string, buffer: Buffer, namespace: string) {
-    return this.uploadFile(originalname, buffer, namespace, 60 * 60 * 24 * 365 * 10);
+    return this.uploadFile(originalname, buffer, namespace);
   }
 
   async downloadFileBuffer(fileKey: string): Promise<{ buffer: Buffer; contentType: string }> {

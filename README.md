@@ -48,7 +48,7 @@ The product ships as:
 | Backend | NestJS 10 (TypeScript), Firebase Admin SDK, `@nestjs/throttler`, `@nestjs/schedule` |
 | Database | Cloud Firestore (subcollection tenancy, composite indexes in `backend/firestore.indexes.json`) |
 | Auth | Firebase Authentication (email/password, synthetic email for phone logins), custom claims for roles, web session cookie / native Bearer ID token |
-| File storage | Cloud Storage for Firebase (private bucket, signed URLs) |
+| File storage | Cloud Storage for Firebase (private bucket, Firebase download-token links) |
 | Search | [Algolia](https://www.algolia.com/) (fed by Cloud Functions in `backend/functions`) |
 | Messaging | WhatsApp Business Cloud API (OTP + invoice delivery) |
 | Payments | [Razorpay](https://razorpay.com/) |
