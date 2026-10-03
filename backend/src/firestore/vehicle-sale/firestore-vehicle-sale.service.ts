@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { randomInt } from 'crypto';
 import { FirestoreService } from '../firestore.service';
 import { normalizePhone } from '../../common/validators/phone';
 
@@ -11,7 +12,6 @@ import { normalizePhone } from '../../common/validators/phone';
 // type-checked and length-limited here - nothing from the body is spread into the document, and the
 // balance is always recomputed server-side (never trusted from the client).
 export interface CreateVehicleSaleInput {
-  saleNumber?: string;
   saleDate?: string; // YYYY-MM-DD
   saleTime?: string; // HH:MM (24h)
   sellerName: string;
@@ -35,6 +35,15 @@ export interface CreateVehicleSaleInput {
   notes?: string;
   lang?: string;
 }
+
+// The receipt number is never supplied by the client: it is generated here as "VS-" + 10 random digits (first digit
+// non-zero) and made globally unique by an index document, vehicleSaleNumbers/{number}, that is created in the same
+// transaction as the sale. If a generated number already exists the transaction is abandoned and a new one is drawn.
+export const SALE_NUMBER_PREFIX = 'VS-';
+export function generateSaleNumber(): string {
+  return `${SALE_NUMBER_PREFIX}${randomInt(1, 10)}${String(randomInt(0, 1_000_000_000)).padStart(9, '0')}`;
+}
+const MAX_NUMBER_ATTEMPTS = 10;
 
 const LANGS = ['en', 'hi', 'ta', 'te', 'kn', 'ml'];
 const MAX_AMOUNT = 1_000_000_000;
@@ -141,24 +150,30 @@ export class FirestoreVehicleSaleService {
       notes: this.text(dto, 'notes', 500),
       lang,
     };
-    const customNumber = this.text(dto, 'saleNumber', 30);
+    // (A `saleNumber` in the request body is deliberately ignored - the server owns the numbering.)
 
     const db = this.firestore.db;
     const shopRef = db.collection('shops').doc(shopId);
     const saleRef = this.col(shopId).doc();
     const now = Date.now();
 
-    // Sequential per-shop receipt number, allocated in the same transaction that writes the sale so two
-    // simultaneous sales can never share one.
-    const saleNumber = await db.runTransaction(async (tx) => {
-      const shopSnap = await tx.get(shopRef);
-      if (!shopSnap.exists) throw new NotFoundException('Shop not found');
-      const seq = ((shopSnap.data() as any).vehicleSaleSeq || 0) + 1;
-      const number = customNumber || `VS-${String(seq).padStart(4, '0')}`;
-      tx.update(shopRef, { vehicleSaleSeq: seq });
-      tx.set(saleRef, { ...fields, saleNumber: number, createdById: userId, createdAt: now, updatedAt: now, deletedAt: null });
-      return number;
-    });
+    let saleNumber: string | null = null;
+    for (let attempt = 0; attempt < MAX_NUMBER_ATTEMPTS && !saleNumber; attempt++) {
+      const candidate = generateSaleNumber();
+      const indexRef = db.collection('vehicleSaleNumbers').doc(candidate);
+      // Claim the number and write the sale atomically: either both exist or neither does, and two simultaneous
+      // sales that drew the same number cannot both commit (the loser's transaction retries, finds the index
+      // document, and draws again).
+      saleNumber = await db.runTransaction(async (tx) => {
+        const [shopSnap, indexSnap] = await Promise.all([tx.get(shopRef), tx.get(indexRef)]);
+        if (!shopSnap.exists) throw new NotFoundException('Shop not found');
+        if (indexSnap.exists) return null;
+        tx.set(indexRef, { shopId, saleId: saleRef.id, createdAt: now });
+        tx.set(saleRef, { ...fields, saleNumber: candidate, createdById: userId, createdAt: now, updatedAt: now, deletedAt: null });
+        return candidate;
+      });
+    }
+    if (!saleNumber) throw new InternalServerErrorException('Could not allocate a receipt number, please try again');
 
     await this.firestore.db.collection('activityLogs').add({
       shopId,

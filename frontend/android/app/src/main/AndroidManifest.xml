@@ -61,4 +61,8 @@
          permission (and its runtime prompt) from ever being requested on
          modern devices. -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
+
+    <!-- In-app update (AppUpdatePlugin): hands the downloaded APK to Android's package installer. Android 8+
+         also makes the user allow "Install unknown apps" for this app once. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 </manifest>

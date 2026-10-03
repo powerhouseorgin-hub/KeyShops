@@ -765,6 +765,18 @@ input[type="date"], input[type="month"], input[type="time"], input[type="datetim
 .reg-wizard-head.page-head { margin-bottom: 8px; }
 .reg-wizard-head.page-head h1 { font-size: 19px; }
 .reg-wizard-head .eyebrow { margin-bottom: 2px; }
+/* Vehicle Sales form: compact spacing. The shared .reg-field / .form-grid rules stack a 13px bottom margin on top of an
+   18px grid gap (~31px between fields) and the inputs keep a 42px left inset for an icon that is not inside the
+   input here; both are tightened for this screen only. On a phone, fields marked .vs-half sit two to a row. */
+.vs-form .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+.vs-form .reg-field { margin-bottom: 0; min-width: 0; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 1fr auto; }
+.vs-form .reg-field-label { align-self: start; }
+.vs-form .reg-field-label { margin-bottom: 4px; gap: 6px; }
+.vs-form .reg-ico { width: 22px; height: 22px; border-radius: 7px; }
+.vs-form .reg-ico svg { width: 11px; height: 11px; }
+.vs-form .reg-field-label b { font-size: 12px; line-height: 1.2; }
+.vs-form .input-wrap input { padding: 9px 12px; border-radius: 11px; min-width: 0; max-width: 100%; box-sizing: border-box; }
+@media (max-width: 640px) { .vs-form .reg-field:not(.vs-half) { grid-column: 1 / -1; } }
 .reg-field-label { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
 .reg-ico {
   width: 27px; height: 27px; border-radius: 9px; display: flex; align-items: center;

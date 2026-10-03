@@ -18,6 +18,12 @@
  *   node scripts/deploy-web.js --keep-live-apk  no local APK (e.g. another machine): re-embed the one
  *                                               currently live so a web-only deploy can't remove it
  *   node scripts/deploy-web.js --dry-run        do everything except the actual firebase deploy
+ *   node scripts/deploy-web.js --optional-update  publish the new version as optional (the in-app update dialog
+ *                                               gets a "Later" button); the default is a required update
+ *
+ * It also publishes /downloads/version.json ({versionCode, versionName, apkUrl, sha256, size, required}),
+ * generated from the APK it embeds. The Android app reads it at every launch and shows an "Update available"
+ * dialog when its own versionCode is lower - so the manifest and the downloadable file can never disagree.
  *
  * Refuses to continue (exit 1) when the APK is missing, isn't a real APK, isn't
  * com.kee.app, or its versionCode differs from frontend/android/app/build.gradle
@@ -34,6 +40,8 @@ const GRADLE_FILE = path.join(FRONTEND, 'android', 'app', 'build.gradle');
 const DEFAULT_APK = path.join(FRONTEND, 'android', 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk');
 const DIST_APK = path.join(FRONTEND, 'dist', 'downloads', 'keyshop-app.keeapp');
 const LIVE_URL = 'https://keyshops.in/downloads/keyshop-app.keeapp';
+const DIST_MANIFEST = path.join(FRONTEND, 'dist', 'downloads', 'version.json');
+const LIVE_MANIFEST_URL = 'https://keyshops.in/downloads/version.json';
 const APP_ID = 'com.kee.app';
 const MIN_APK_BYTES = 5 * 1024 * 1024; // the real app is ~12 MB; the index.html fallback is ~6 KB
 
@@ -134,6 +142,7 @@ async function fetchLive(attempts = 6) {
   // 2. choose + validate the APK
   fs.mkdirSync(path.dirname(DIST_APK), { recursive: true });
   let source;
+  let apkInfo;
   if (has('--keep-live-apk')) {
     step('Downloading the currently live APK to re-embed it...');
     const live = await fetchLive();
@@ -142,6 +151,7 @@ async function fetchLive(attempts = 6) {
     fs.writeFileSync(tmp, live.buf);
     const info = validateApk(tmp, { expectGradleVersion: false });
     fs.renameSync(tmp, DIST_APK);
+    apkInfo = info;
     source = `currently live APK${info.name ? ` (v${info.name}, code ${info.code})` : ''}`;
   } else {
     const apk = path.resolve(argValue('--apk') || DEFAULT_APK);
@@ -152,11 +162,25 @@ async function fetchLive(attempts = 6) {
     step(`Validating ${path.relative(ROOT, apk)} ...`);
     const info = validateApk(apk, { expectGradleVersion: true });
     fs.copyFileSync(apk, DIST_APK);
+    apkInfo = info;
     source = `${path.relative(ROOT, apk)} (v${info.name}, code ${info.code})`;
   }
   const localHash = sha256(DIST_APK);
   const localSize = fs.statSync(DIST_APK).size;
   console.log(`[deploy-web] Embedded APK: ${source}, ${(localSize / 1048576).toFixed(1)} MB, sha256 ${localHash.slice(0, 16)}...`);
+
+  // 2b. publish the version manifest the app checks at launch
+  if (apkInfo.code == null) fail('Cannot publish version.json: the APK version could not be read (Android build-tools missing).');
+  const manifest = {
+    versionCode: apkInfo.code,
+    versionName: apkInfo.name,
+    apkUrl: LIVE_URL,
+    sha256: localHash,
+    size: localSize,
+    required: !has('--optional-update'),
+  };
+  fs.writeFileSync(DIST_MANIFEST, JSON.stringify(manifest, null, 2) + '\n');
+  console.log(`[deploy-web] Published version manifest: v${manifest.versionName} (code ${manifest.versionCode}), required=${manifest.required}`);
 
   // 3. deploy
   if (has('--dry-run')) {
@@ -179,4 +203,19 @@ async function fetchLive(attempts = 6) {
   }
   if (!ok) fail(`The live APK does NOT match the one just deployed (${detail}). The landing-page download may be broken - check ${LIVE_URL} before leaving it.`);
   console.log(`[deploy-web] OK - live APK matches the deployed build (${detail}).`);
+
+  // 5. verify the manifest the app reads
+  let manifestOk = false;
+  let manifestDetail = '';
+  for (let i = 0; i < 6 && !manifestOk; i++) {
+    if (i) await new Promise((r) => setTimeout(r, 5000));
+    try {
+      const res = await fetch(`${LIVE_MANIFEST_URL}?cb=${Date.now()}`);
+      const live = await res.json();
+      manifestOk = res.status === 200 && live.versionCode === manifest.versionCode && live.sha256 === manifest.sha256;
+      manifestDetail = `HTTP ${res.status}, versionCode ${live.versionCode}, CORS ${res.headers.get('access-control-allow-origin')}`;
+    } catch (e) { manifestDetail = e.message; }
+  }
+  if (!manifestOk) fail(`The live version manifest does NOT match the deployed build (${manifestDetail}). The app's update check would misbehave - check ${LIVE_MANIFEST_URL}.`);
+  console.log(`[deploy-web] OK - live version manifest matches (${manifestDetail}).`);
 })().catch((e) => fail(e.stack || e.message));

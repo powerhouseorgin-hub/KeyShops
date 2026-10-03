@@ -22,6 +22,15 @@
           ]
         },
         {
+          "comment": "Version manifest read by the Android app at every launch (in-app update check; written by scripts/deploy-web.js). The app's WebView calls it cross-origin, so it needs CORS, and it must never be cached or the app would not see a new release.",
+          "source": "/downloads/version.json",
+          "headers": [
+            { "key": "Access-Control-Allow-Origin", "value": "*" },
+            { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
+            { "key": "Content-Type", "value": "application/json; charset=utf-8" }
+          ]
+        },
+        {
           "comment": "The Android APK is deployed under a non-.apk extension because Firebase Hosting's Spark (free) plan rejects executable file extensions (.apk included) at deploy time. These headers restore the correct type/filename on download - see frontend/public/downloads/keyshop-app.keeapp.",
           "source": "/downloads/keyshop-app.keeapp",
           "headers": [

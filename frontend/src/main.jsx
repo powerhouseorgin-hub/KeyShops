@@ -3,11 +3,13 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './styles/index.css'
 import { AuthProvider } from './context/AuthContext.jsx'
+import AppUpdateGate from './components/AppUpdateGate.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <AuthProvider>
       <App />
     </AuthProvider>
+    <AppUpdateGate />
   </React.StrictMode>,
 )

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  Car, User, Phone, MapPin, Hash, IndianRupee, Calendar, Clock, FileText, Download, RefreshCw,
+  Car, User, Phone, MapPin, IndianRupee, Calendar, Clock, FileText, Download, RefreshCw,
   MessageCircle, Plus, CheckCircle2, Palette, Wrench, StickyNote, UserCheck,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -13,14 +13,16 @@ import { toWhatsAppNumber } from '../utils/phone';
 // Vehicle Sales: record a bike/car sale and generate the "Delivery Receipt" invoice for the buyer.
 // Everything on screen follows the app language (vehicleSaleText.js); the invoice is generated in the language
 // that was selected when Sale was pressed, and that language is stored with the sale so re-downloading it later
-// prints the same document.
+// prints the same document. The receipt number is not entered here: the server generates a unique one for every sale.
+// Layout: on a phone, short fields (date/time, price/advance, ...) sit two to a row (marked `half`) and the rest
+// take the full width; the spacing is tightened by the .vs-form rules in index.css.
 
 const pad = (n) => String(n).padStart(2, '0');
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
 const nowTime = () => { const d = new Date(); return `${pad(d.getHours())}:${pad(d.getMinutes())}`; };
 
 const emptyForm = () => ({
-  saleNumber: '', saleDate: todayIso(), saleTime: nowTime(),
+  saleDate: todayIso(), saleTime: nowTime(),
   sellerName: '', sellerAddress: '', sellerPhone: '',
   buyerName: '', buyerAddress: '', buyerPhone: '',
   registrationNumber: '', vehicleModel: '', vehicleColor: '', vehicleName: '', chassisNumber: '', engineNumber: '',
@@ -171,8 +173,8 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     }
   };
 
-  const field = (key, label, { icon: Icon = FileText, required, type = 'text', inputMode, colour = 'var(--purple)', placeholder, full } = {}) => (
-    <div className="reg-field" style={full ? { gridColumn: '1 / -1' } : undefined}>
+  const field = (key, label, { icon: Icon = FileText, required, type = 'text', inputMode, colour = 'var(--purple)', placeholder, full, half } = {}) => (
+    <div className={half ? 'reg-field vs-half' : 'reg-field'} style={full ? { gridColumn: '1 / -1' } : undefined}>
       <div className="reg-field-label">
         <div className="reg-ico" style={{ background: colour }}><Icon /></div>
         <b>{label}{required && <> <span className="req">*</span></>}</b>
@@ -184,8 +186,8 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   );
 
   const section = (title, children) => (
-    <div style={{ marginBottom: 22 }}>
-      <h3 style={{ fontSize: 14, fontWeight: 800, color: 'var(--maroon)', margin: '0 0 12px', letterSpacing: '.01em' }}>{title}</h3>
+    <div style={{ marginBottom: 14 }}>
+      <h3 style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--maroon)', margin: '0 0 7px', letterSpacing: '.01em' }}>{title}</h3>
       <div className="form-grid">{children}</div>
     </div>
   );
@@ -202,11 +204,10 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
         </div>
       </div>
 
-      <form className="card" onSubmit={handleSale} style={{ padding: 24 }} noValidate>
+      <form className="card vs-form" onSubmit={handleSale} style={{ padding: 16 }} noValidate>
         {section(T.secReceipt, <>
-          {field('saleNumber', T.saleNumber, { icon: Hash, placeholder: T.saleNumberHint, colour: 'var(--blue)' })}
-          {field('saleDate', T.saleDate, { icon: Calendar, type: 'date', colour: 'var(--green)' })}
-          {field('saleTime', T.saleTime, { icon: Clock, type: 'time', colour: 'var(--orange)' })}
+          {field('saleDate', T.saleDate, { icon: Calendar, type: 'date', colour: 'var(--green)', half: true })}
+          {field('saleTime', T.saleTime, { icon: Clock, type: 'time', colour: 'var(--orange)', half: true })}
         </>)}
 
         {section(T.secSeller, <>
@@ -222,18 +223,18 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
         </>)}
 
         {section(T.secVehicle, <>
-          {field('registrationNumber', T.regNo, { icon: Car, required: true, colour: 'var(--blue)' })}
-          {field('vehicleName', T.vehicleName, { icon: Car, colour: 'var(--blue)' })}
-          {field('vehicleModel', T.model, { icon: Car, colour: 'var(--blue)' })}
-          {field('vehicleColor', T.colour, { icon: Palette, colour: 'var(--pink, #d6336c)' })}
-          {field('chassisNumber', T.chassisNo, { icon: Wrench, colour: 'var(--maroon)' })}
-          {field('engineNumber', T.engineNo, { icon: Wrench, colour: 'var(--maroon)' })}
+          {field('registrationNumber', T.regNo, { icon: Car, required: true, colour: 'var(--blue)', half: true })}
+          {field('vehicleName', T.vehicleName, { icon: Car, colour: 'var(--blue)', half: true })}
+          {field('vehicleModel', T.model, { icon: Car, colour: 'var(--blue)', half: true })}
+          {field('vehicleColor', T.colour, { icon: Palette, colour: 'var(--pink, #d6336c)', half: true })}
+          {field('chassisNumber', T.chassisNo, { icon: Wrench, colour: 'var(--maroon)', half: true })}
+          {field('engineNumber', T.engineNo, { icon: Wrench, colour: 'var(--maroon)', half: true })}
         </>)}
 
         {section(T.secPayment, <>
-          {field('vehiclePrice', T.price, { icon: IndianRupee, required: true, type: 'number', inputMode: 'decimal', colour: 'var(--gold)' })}
-          {field('advanceAmount', T.advance, { icon: IndianRupee, type: 'number', inputMode: 'decimal', colour: 'var(--gold)' })}
-          <div className="reg-field">
+          {field('vehiclePrice', T.price, { icon: IndianRupee, required: true, type: 'number', inputMode: 'decimal', colour: 'var(--gold)', full: true })}
+          {field('advanceAmount', T.advance, { icon: IndianRupee, type: 'number', inputMode: 'decimal', colour: 'var(--gold)', half: true })}
+          <div className="reg-field vs-half">
             <div className="reg-field-label">
               <div className="reg-ico" style={{ background: 'var(--gold)' }}><IndianRupee /></div>
               <b>{T.balance}</b>
@@ -242,8 +243,8 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
               <input type="text" readOnly value={balance === null ? '' : inr(balance)} style={{ background: 'var(--card-2)', fontWeight: 800 }} aria-label={T.balance} />
             </div>
           </div>
-          {field('officeCommission', T.commission, { icon: IndianRupee, type: 'number', inputMode: 'decimal', colour: 'var(--gold)' })}
-          {field('balanceLastDate', T.lastDate, { icon: Calendar, type: 'date', colour: 'var(--green)', full: true })}
+          {field('officeCommission', T.commission, { icon: IndianRupee, type: 'number', inputMode: 'decimal', colour: 'var(--gold)', half: true })}
+          {field('balanceLastDate', T.lastDate, { icon: Calendar, type: 'date', colour: 'var(--green)', half: true })}
         </>)}
 
         {section(T.secWitness, <>
