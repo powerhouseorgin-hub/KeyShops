@@ -11,12 +11,13 @@ import { IS_NATIVE_APP } from '../utils/platform';
 import { toWhatsAppNumber } from '../utils/phone';
 import { resizeImageFileToBlob } from '../utils/imageUtils';
 import ImageZoomViewer from '../components/ImageZoomViewer';
+import VehicleSaleDetail from '../components/VehicleSaleDetail';
 
 // Vehicle Sales: record a bike/car sale and generate the "Delivery Receipt" invoice for the buyer.
 // Everything on screen follows the app language (vehicleSaleText.js); the invoice is generated in the language
 // that was selected when Sale was pressed, and that language is stored with the sale so re-downloading it later
 // prints the same document. The invoice language is chosen on this screen (default Tamil), independent of the app
-// language. Up to 5 photos can be attached: they are resized in the browser, then uploaded one by one to the saved
+// language. Tapping a sale in Recent sales opens a read-only details screen (VehicleSaleDetail). Up to 5 photos can be attached: they are resized in the browser, then uploaded one by one to the saved
 // sale (the server also refuses a 6th). The receipt number is not entered here: the server generates a unique one for every sale.
 // Layout: on a phone, short fields (date/time, price/advance, ...) sit two to a row (marked `half`) and the rest
 // take the full width; the spacing is tightened by the .vs-form rules in index.css.
@@ -60,6 +61,7 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   const [photoMsg, setPhotoMsg] = useState('');
   const [progress, setProgress] = useState(null); // { done, total } while photos upload
   const [viewer, setViewer] = useState(null); // { images, index }
+  const [detail, setDetail] = useState(null); // the sale whose read-only details screen is open
   const photosRef = useRef([]);
   photosRef.current = photos;
   useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.preview)), []);
@@ -394,14 +396,17 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {recent.map((sale) => (
-              <div key={sale.id} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10, border: '1px solid var(--border)', borderRadius: 14, padding: '12px 14px' }}>
+              <div key={sale.id} role="button" tabIndex={0} aria-label={`${T.detailsTitle}: ${sale.registrationNumber}`}
+                onClick={() => setDetail(sale)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setDetail(sale); } }}
+                style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10, border: '1px solid var(--border)', borderRadius: 14, padding: '12px 14px', cursor: 'pointer' }}>
                 <div style={{ minWidth: 0, flex: '1 1 220px' }}>
                   <div style={{ fontWeight: 800, fontSize: 13 }}>{sale.registrationNumber} <span style={{ color: 'var(--text-3)', fontWeight: 700 }}>· {sale.saleNumber}</span></div>
                   {Array.isArray(sale.photos) && sale.photos.length > 0 && (
                     <div style={{ display: 'flex', gap: 5, marginTop: 6, flexWrap: 'wrap' }}>
                       {sale.photos.map((p, i) => (
                         <img key={p.key || i} src={p.url} alt="" loading="lazy"
-                          onClick={() => setViewer({ images: sale.photos.map((x) => x.url), index: i })}
+                          onClick={(e) => { e.stopPropagation(); setViewer({ images: sale.photos.map((x) => x.url), index: i }); }}
                           style={{ width: 38, height: 38, borderRadius: 7, objectFit: 'cover', border: '1px solid var(--border-2)', cursor: 'zoom-in' }} />
                       ))}
                     </div>
@@ -411,10 +416,10 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 8 }}>
-                  <button type="button" className="btn btn-outline btn-sm" disabled={busy === `${sale.id}:download`} onClick={run(sale, 'download')}>
+                  <button type="button" className="btn btn-outline btn-sm" disabled={busy === `${sale.id}:download`} onClick={(e) => { e.stopPropagation(); run(sale, 'download')(); }}>
                     {busy === `${sale.id}:download` ? spinner : <Download className="h-4 w-4" />} <span>{T.invoiceBtn}</span>
                   </button>
-                  <button type="button" className="btn btn-primary btn-sm" disabled={busy === `${sale.id}:whatsapp`} onClick={run(sale, 'whatsapp')} style={{ background: '#25D366', borderColor: '#25D366' }} aria-label={T.sendBuyer}>
+                  <button type="button" className="btn btn-primary btn-sm" disabled={busy === `${sale.id}:whatsapp`} onClick={(e) => { e.stopPropagation(); run(sale, 'whatsapp')(); }} style={{ background: '#25D366', borderColor: '#25D366' }} aria-label={T.sendBuyer}>
                     {busy === `${sale.id}:whatsapp` ? spinner : <MessageCircle className="h-4 w-4" />}
                   </button>
                 </div>
@@ -423,6 +428,19 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
           </div>
         )}
       </div>
+
+      {detail && (
+        <VehicleSaleDetail
+          sale={detail}
+          T={T}
+          languageName={(INVOICE_LANGS.find(([code]) => code === detail.lang) || [null, detail.lang])[1]}
+          busy={busy}
+          onClose={() => setDetail(null)}
+          onDownload={run(detail, 'download')}
+          onWhatsApp={run(detail, 'whatsapp')}
+          onOpenPhoto={(images, index) => setViewer({ images, index })}
+        />
+      )}
 
       {viewer && <ImageZoomViewer images={viewer.images} initialIndex={viewer.index} onClose={() => setViewer(null)} />}
 
