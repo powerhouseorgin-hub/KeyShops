@@ -46,7 +46,7 @@ import { AlgoliaSearchService } from './search/algolia-search.service';
 import { HealthController } from './health.controller';
 import { WhatsappWebhookController } from './whatsapp-webhook.controller';
 import { FirestoreVehicleSaleService } from './vehicle-sale/firestore-vehicle-sale.service';
-import { FirestoreVehicleSaleController } from './vehicle-sale/firestore-vehicle-sale.controller';
+import { FirestoreVehicleSaleController, FirestoreSuperVehicleSaleController } from './vehicle-sale/firestore-vehicle-sale.controller';
 
 // The application's single module: every controller and provider of the backend. Bootstrapped by
 // functions-main.ts (Cloud Functions), main-firestore.ts (standalone server) and the local smoke-test
@@ -103,6 +103,7 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
     SuperSupportConfigController,
     FirestorePaymentController,
     FirestoreVehicleSaleController,
+    FirestoreSuperVehicleSaleController,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ClientIpThrottlerGuard },

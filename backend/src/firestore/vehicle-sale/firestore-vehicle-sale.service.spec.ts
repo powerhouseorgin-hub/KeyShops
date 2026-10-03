@@ -187,3 +187,67 @@ describe('FirestoreVehicleSaleService.addPhoto', () => {
     await expect(photoFixture(0, true).svc.addPhoto('shop-1', 'sale-1', jpeg())).rejects.toThrow('not found');
   });
 });
+
+// ---- owners: shop vs Super Admin ----------------------------------------------------------------------------
+describe('FirestoreVehicleSaleService owners', () => {
+  const body = { sellerName: 'Seller', buyerName: 'Buyer', registrationNumber: 'TN01AB1234', vehiclePrice: 50000 };
+
+  it('a shop sale records the shop as owner (id and name)', async () => {
+    const { store, firestore } = fakeFirestore();
+    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles).create('shop-1', 'user-1', body as any);
+    expect(sale).toMatchObject({ ownerType: 'SHOP', ownerId: 'shop-1', shopId: 'shop-1', ownerName: 'Shop' });
+    expect(store.get(`vehicleSaleNumbers/${sale.saleNumber}`)).toMatchObject({ shopId: 'shop-1', ownerId: 'shop-1' });
+  });
+
+  it('a Super Admin sale is owned by the Super Admin: no shop, their name, stored under their user document', async () => {
+    const { store, firestore } = fakeFirestore();
+    store.set('users/admin-1', { name: 'Platform Boss' });
+    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles).create({ type: 'SUPER_ADMIN', id: 'admin-1' }, 'admin-1', body as any);
+    expect(sale).toMatchObject({ ownerType: 'SUPER_ADMIN', ownerId: 'admin-1', shopId: null, ownerName: 'Platform Boss' });
+    expect(sale.saleNumber).toMatch(/^VS-[1-9]\d{9}$/);
+    expect(store.get(`vehicleSaleNumbers/${sale.saleNumber}`)).toMatchObject({ shopId: null, ownerId: 'admin-1' });
+    const saved = [...store.entries()].find(([k]) => k.startsWith('users/admin-1/vehicleSales/'));
+    expect(saved).toBeDefined();
+  });
+
+  it('falls back to the name "Super Admin" when the account has none', async () => {
+    const { store, firestore } = fakeFirestore();
+    store.set('users/admin-2', {});
+    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles).create({ type: 'SUPER_ADMIN', id: 'admin-2' }, 'admin-2', body as any);
+    expect(sale.ownerName).toBe('Super Admin');
+  });
+
+  it('refuses to sell for an owner that does not exist', async () => {
+    const { firestore } = fakeFirestore();
+    await expect(new FirestoreVehicleSaleService(firestore, noFiles).create({ type: 'SUPER_ADMIN', id: 'ghost' }, 'ghost', body as any)).rejects.toThrow('User not found');
+    await expect(new FirestoreVehicleSaleService(firestore, noFiles).create('no-such-shop', 'u', body as any)).rejects.toThrow('Shop not found');
+  });
+
+  it("never lets a Super Admin's sale be created with a client-chosen owner (the body is not used for ownership)", async () => {
+    const { store, firestore } = fakeFirestore();
+    store.set('users/admin-1', { name: 'Boss' });
+    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles).create({ type: 'SUPER_ADMIN', id: 'admin-1' }, 'admin-1', { ...body, shopId: 'shop-1', ownerType: 'SHOP', ownerId: 'shop-1', ownerName: 'Hacked' } as any);
+    expect(sale).toMatchObject({ ownerType: 'SUPER_ADMIN', ownerId: 'admin-1', shopId: null, ownerName: 'Boss' });
+  });
+});
+
+describe('FirestoreVehicleSaleService.listAll input checks', () => {
+  const svc = new FirestoreVehicleSaleService(explodingFirestore, noFiles);
+  it.each([['a path-like shopId', { shopId: 'a/b' }], ['a shopId with spaces', { shopId: 'x y' }]])('rejects %s before touching the database', async (_l, opts) => {
+    await expect(svc.listAll(opts as any)).rejects.toBeInstanceOf(BadRequestException);
+  });
+  it('accepts the id formats that really exist: auto-ids and migrated UUIDs (with hyphens)', async () => {
+    for (const shopId of ['4OctK8RACSWxuTBgv3yr', 'e56d81f4-cd32-4d76-84f1-03c3759eed2c']) {
+      await expect(svc.listAll({ shopId })).rejects.not.toBeInstanceOf(BadRequestException);
+    }
+    for (const cursor of ['shops/e56d81f4-cd32-4d76-84f1-03c3759eed2c/vehicleSales/2eIjpp5wCGvLQqjK7aUV', 'users/aBc123/vehicleSales/xyz']) {
+      await expect(svc.listAll({ cursor })).rejects.not.toBeInstanceOf(BadRequestException);
+    }
+  });
+  it('accepts SUPER_ADMIN as a shopId filter (it gets as far as the database)', async () => {
+    await expect(svc.listAll({ shopId: 'SUPER_ADMIN' })).rejects.not.toBeInstanceOf(BadRequestException);
+  });
+  it.each([['a non-sale path', 'customers/abc'], ['a path outside vehicleSales', 'shops/abc/customers/def'], ['path traversal', 'shops/../users/abc/vehicleSales/x'], ['an empty segment', 'shops//vehicleSales/x']])('rejects the cursor %s', async (_l, cursor) => {
+    await expect(svc.listAll({ cursor })).rejects.toBeInstanceOf(BadRequestException);
+  });
+});

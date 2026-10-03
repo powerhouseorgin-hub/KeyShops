@@ -64,6 +64,7 @@ const SuperCustomersView = lazy(() => import('./views/SuperCustomersView'));
 const CustomerRegistrationWizard = lazy(() => import('./views/CustomerRegistrationWizard'));
 const CustomerHistoryView = lazy(() => import('./views/CustomerHistoryView'));
 const VehicleSalesView = lazy(() => import('./views/VehicleSalesView'));
+const SuperVehicleSalesView = lazy(() => import('./views/SuperVehicleSalesView'));
 const SupportConfigView = lazy(() => import('./views/SupportConfigView'));
 // Lazy-loaded (Track B batch 3): AdsManagementView and CategoryShopsView are
 // straightforward; PromotionsView is the nested trio (PromotionsView wraps
@@ -555,6 +556,7 @@ export default function App() {
     register: t('register'),
     history: t('history'),
     'vehicle-sales': t('vehicleSales'),
+    'all-vehicle-sales': t('allSales'),
     reports: t('reports'),
     'customer-care': t('customerCare'),
     'support-contact': t('supportContactTitle'),
@@ -2168,6 +2170,20 @@ export default function App() {
                     <span className="nav-ico" style={{ background: 'var(--teal)' }}><Database /></span>
                     <span>{t('keys')}</span>
                   </button>
+                  <button
+                    onClick={() => setActiveTab('vehicle-sales')}
+                    className={`side-link ${activeTab === 'vehicle-sales' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><Car /></span>
+                    <span>{t('vehicleSales')}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('all-vehicle-sales')}
+                    className={`side-link ${activeTab === 'all-vehicle-sales' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Receipt /></span>
+                    <span>{t('allSales')}</span>
+                  </button>
 
                   <div className="side-section-label">{t('navBusiness')}</div>
                   <button
@@ -2528,6 +2544,11 @@ export default function App() {
             {activeTab === 'history' && (
               <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
                 <CustomerHistoryView t={t} api={api} searchDispatch={activeTab === 'history' ? searchDispatch : null} />
+              </Suspense>
+            )}
+            {activeTab === 'all-vehicle-sales' && user.role === 'SUPER_ADMIN' && (
+              <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
+                <SuperVehicleSalesView t={t} api={api} lang={lang} />
               </Suspense>
             )}
             {activeTab === 'vehicle-sales' && (

@@ -51,6 +51,17 @@ const MAX_NUMBER_ATTEMPTS = 10;
 export const MAX_SALE_PHOTOS = 5;
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
 const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+// Who a sale belongs to. A Shop Admin's sales live under their shop (shops/{shopId}/vehicleSales); a Super Admin has no
+// shop, so their own sales live under their user document (users/{uid}/vehicleSales) - both are collections named
+// "vehicleSales", which lets one collection-group query read every sale on the platform for the review screen.
+// A plain string is treated as a shop id (the original, shop-only signature).
+export type SaleOwner = { type: 'SHOP'; id: string } | { type: 'SUPER_ADMIN'; id: string };
+const asOwner = (o: string | SaleOwner): SaleOwner => (typeof o === 'string' ? { type: 'SHOP', id: o } : o);
+// Ids are Firestore auto-ids (letters and digits) or, for records migrated from the original database, UUIDs (with hyphens).
+const ID = '[A-Za-z0-9_-]{1,64}';
+const ID_ONLY = new RegExp(`^${ID}$`);
+const SALE_PATH = new RegExp(`^(shops|users)/${ID}/vehicleSales/${ID}$`);
+
 export interface SalePhoto { key: string; url: string; size: number; createdAt: number; }
 
 const LANGS = ['en', 'hi', 'ta', 'te', 'kn', 'ml'];
@@ -60,8 +71,12 @@ const MAX_AMOUNT = 1_000_000_000;
 export class FirestoreVehicleSaleService {
   constructor(private readonly firestore: FirestoreService, private readonly files: FirebaseFileService) {}
 
-  private col(shopId: string) {
-    return this.firestore.db.collection('shops').doc(shopId).collection('vehicleSales');
+  private parentRef(owner: SaleOwner) {
+    return this.firestore.db.collection(owner.type === 'SHOP' ? 'shops' : 'users').doc(owner.id);
+  }
+
+  private col(owner: SaleOwner) {
+    return this.parentRef(owner).collection('vehicleSales');
   }
 
   private text(dto: any, key: string, max: number, required = false): string | null {
@@ -123,7 +138,8 @@ export class FirestoreVehicleSaleService {
     return digits;
   }
 
-  async create(shopId: string, userId: string, dto: CreateVehicleSaleInput) {
+  async create(ownerArg: string | SaleOwner, userId: string, dto: CreateVehicleSaleInput) {
+    const owner = asOwner(ownerArg);
     const vehiclePrice = this.amount(dto, 'vehiclePrice', true) as number;
     if (vehiclePrice <= 0) throw new BadRequestException('vehiclePrice must be greater than 0');
     const advanceAmount = this.amount(dto, 'advanceAmount') ?? 0;
@@ -161,11 +177,12 @@ export class FirestoreVehicleSaleService {
     // (A `saleNumber` in the request body is deliberately ignored - the server owns the numbering.)
 
     const db = this.firestore.db;
-    const shopRef = db.collection('shops').doc(shopId);
-    const saleRef = this.col(shopId).doc();
+    const parentRef = this.parentRef(owner);
+    const saleRef = this.col(owner).doc();
     const now = Date.now();
 
     let saleNumber: string | null = null;
+    let ownerFields: { ownerType: string; ownerId: string; shopId: string | null; ownerName: string } = { ownerType: owner.type, ownerId: owner.id, shopId: owner.type === 'SHOP' ? owner.id : null, ownerName: '' };
     for (let attempt = 0; attempt < MAX_NUMBER_ATTEMPTS && !saleNumber; attempt++) {
       const candidate = generateSaleNumber();
       const indexRef = db.collection('vehicleSaleNumbers').doc(candidate);
@@ -173,18 +190,21 @@ export class FirestoreVehicleSaleService {
       // sales that drew the same number cannot both commit (the loser's transaction retries, finds the index
       // document, and draws again).
       saleNumber = await db.runTransaction(async (tx) => {
-        const [shopSnap, indexSnap] = await Promise.all([tx.get(shopRef), tx.get(indexRef)]);
-        if (!shopSnap.exists) throw new NotFoundException('Shop not found');
+        const [parentSnap, indexSnap] = await Promise.all([tx.get(parentRef), tx.get(indexRef)]);
+        if (!parentSnap.exists) throw new NotFoundException(owner.type === 'SHOP' ? 'Shop not found' : 'User not found');
         if (indexSnap.exists) return null;
-        tx.set(indexRef, { shopId, saleId: saleRef.id, createdAt: now });
-        tx.set(saleRef, { ...fields, saleNumber: candidate, createdById: userId, createdAt: now, updatedAt: now, deletedAt: null });
+        // ownerName is copied onto the sale so the review screen can show who sold it without extra lookups.
+        const ownerName = String((parentSnap.data() as any)?.name || '') || (owner.type === 'SUPER_ADMIN' ? 'Super Admin' : '');
+        ownerFields = { ownerType: owner.type, ownerId: owner.id, shopId: owner.type === 'SHOP' ? owner.id : null, ownerName };
+        tx.set(indexRef, { shopId: ownerFields.shopId, ownerId: owner.id, saleId: saleRef.id, createdAt: now });
+        tx.set(saleRef, { ...fields, ...ownerFields, saleNumber: candidate, createdById: userId, createdAt: now, updatedAt: now, deletedAt: null });
         return candidate;
       });
     }
     if (!saleNumber) throw new InternalServerErrorException('Could not allocate a receipt number, please try again');
 
     await this.firestore.db.collection('activityLogs').add({
-      shopId,
+      shopId: owner.type === 'SHOP' ? owner.id : null,
       userId,
       action: 'VEHICLE_SALE_CREATE',
       details: JSON.stringify({ saleNumber, registrationNumber: fields.registrationNumber, saleId: saleRef.id }),
@@ -192,25 +212,26 @@ export class FirestoreVehicleSaleService {
       createdAt: now,
     }).catch((err) => console.error('Failed to write VEHICLE_SALE_CREATE activity log', err));
 
-    return { id: saleRef.id, ...fields, saleNumber, createdById: userId, createdAt: now, updatedAt: now };
+    return { id: saleRef.id, ...fields, ...ownerFields, saleNumber, createdById: userId, createdAt: now, updatedAt: now };
   }
 
   // Adds one photo to a sale. The count is checked before the upload (so a full sale never receives a file) and
   // again inside the transaction that records it (so two simultaneous uploads cannot both take the last slot);
   // if that second check loses, the just-uploaded file is deleted again.
-  async addPhoto(shopId: string, saleId: string, file: { originalname: string; buffer: Buffer; size: number; mimetype: string } | undefined) {
+  async addPhoto(ownerArg: string | SaleOwner, saleId: string, file: { originalname: string; buffer: Buffer; size: number; mimetype: string } | undefined) {
     if (!file || !file.buffer?.length) throw new BadRequestException('A photo file is required');
     if (!PHOTO_TYPES.includes(file.mimetype)) throw new BadRequestException('Only JPEG, PNG or WebP photos are accepted');
     if (file.size > MAX_PHOTO_BYTES) throw new BadRequestException('Each photo must be 5 MB or smaller');
 
-    const saleRef = this.col(shopId).doc(saleId);
+    const owner = asOwner(ownerArg);
+    const saleRef = this.col(owner).doc(saleId);
     const before = await saleRef.get();
     if (!before.exists || (before.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');
     if (((before.data() as any).photos || []).length >= MAX_SALE_PHOTOS) {
       throw new BadRequestException(`A sale can have at most ${MAX_SALE_PHOTOS} photos`);
     }
 
-    const upload = await this.files.uploadLongLivedFile(file.originalname || 'photo.jpg', file.buffer, shopId);
+    const upload = await this.files.uploadLongLivedFile(file.originalname || 'photo.jpg', file.buffer, owner.type === 'SHOP' ? owner.id : 'platform');
     const photo: SalePhoto = { key: upload.fileKey, url: upload.fileUrl, size: file.size, createdAt: Date.now() };
 
     try {
@@ -229,17 +250,60 @@ export class FirestoreVehicleSaleService {
     }
   }
 
-  async list(shopId: string, limit = 50) {
+  async list(ownerArg: string | SaleOwner, limit = 50) {
+    const owner = asOwner(ownerArg);
     const capped = Math.min(100, Math.max(1, Math.floor(limit) || 50));
     // Sort only - a `deletedAt == null` filter together with this orderBy would need a composite index,
     // and nothing can soft-delete a sale yet, so deleted rows are just dropped in memory.
-    const snap = await this.col(shopId).orderBy('createdAt', 'desc').limit(capped).get();
+    const snap = await this.col(owner).orderBy('createdAt', 'desc').limit(capped).get();
     return snap.docs.filter((d) => !(d.data() as any).deletedAt).map((d) => ({ id: d.id, ...d.data() }));
   }
 
-  async get(shopId: string, id: string) {
-    const doc = await this.col(shopId).doc(id).get();
+  async get(ownerArg: string | SaleOwner, id: string) {
+    const doc = await this.col(asOwner(ownerArg)).doc(id).get();
     if (!doc.exists || (doc.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');
     return { id: doc.id, ...doc.data() };
+  }
+
+  // SUPER ADMIN review: every sale on the platform (every shop's, plus the Super Admin's own), newest first, in pages.
+  // `shopId` narrows it to one shop, or to the Super Admin's own sales when it is the literal "SUPER_ADMIN".
+  // The cursor is the path of the last sale of the previous page, so paging is exact even when sales share a timestamp.
+  // Sales saved before owners were recorded are still returned: their owner is read from the document's path.
+  async listAll(opts: { limit?: number; cursor?: string; shopId?: string } = {}) {
+    const limit = Math.min(100, Math.max(1, Math.floor(Number(opts.limit)) || 30));
+    // a shop id, or the literal SUPER_ADMIN (the Super Admin's own sales)
+    if (opts.shopId && opts.shopId !== 'SUPER_ADMIN' && !ID_ONLY.test(opts.shopId)) throw new BadRequestException('Invalid shopId');
+    if (opts.cursor && !SALE_PATH.test(opts.cursor)) throw new BadRequestException('Invalid cursor');
+    const db = this.firestore.db;
+    let q: FirebaseFirestore.Query = db.collectionGroup('vehicleSales');
+    if (opts.shopId) q = q.where('shopId', '==', opts.shopId === 'SUPER_ADMIN' ? null : opts.shopId);
+    q = q.orderBy('createdAt', 'desc');
+    if (opts.cursor) {
+      const after = await db.doc(opts.cursor).get();
+      if (after.exists) q = q.startAfter(after);
+    }
+    const snap = await q.limit(limit + 1).get();
+    const hasMore = snap.docs.length > limit;
+    const docs = snap.docs.slice(0, limit).filter((d) => !(d.data() as any).deletedAt);
+
+    // Owner info for sales that predate the owner fields: derive it from the path, and look up shop names in one batch.
+    const legacyShopIds = new Set<string>();
+    const rows = docs.map((d) => {
+      const data = d.data() as any;
+      const parentCol = d.ref.parent.parent?.parent?.id; // 'shops' | 'users'
+      const ownerId = d.ref.parent.parent?.id || '';
+      const ownerType = data.ownerType || (parentCol === 'users' ? 'SUPER_ADMIN' : 'SHOP');
+      const shopId = data.shopId !== undefined ? data.shopId : ownerType === 'SHOP' ? ownerId : null;
+      if (!data.ownerName && ownerType === 'SHOP' && shopId) legacyShopIds.add(shopId);
+      return { id: d.id, path: d.ref.path, ...data, ownerType, ownerId: data.ownerId || ownerId, shopId };
+    });
+    if (legacyShopIds.size) {
+      const shopSnaps = await db.getAll(...[...legacyShopIds].map((id) => db.collection('shops').doc(id)));
+      const names = new Map(shopSnaps.map((x) => [x.id, String((x.data() as any)?.name || '')]));
+      rows.forEach((r: any) => { if (!r.ownerName) r.ownerName = r.ownerType === 'SUPER_ADMIN' ? 'Super Admin' : names.get(r.shopId) || ''; });
+    }
+    rows.forEach((r: any) => { if (!r.ownerName && r.ownerType === 'SUPER_ADMIN') r.ownerName = 'Super Admin'; });
+
+    return { items: rows, nextCursor: hasMore && docs.length ? docs[docs.length - 1].ref.path : null };
   }
 }

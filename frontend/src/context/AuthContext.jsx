@@ -554,14 +554,22 @@ export const AuthProvider = ({ children }) => {
       return request(url, 'POST', { reportId });
     },
 
-    // --- VEHICLE SALES (Shop Admin) - see VehicleSalesView.jsx and the backend's FirestoreVehicleSaleController ---
-    createVehicleSale: async (payload) => request('/api/shop/vehicle-sales', 'POST', payload),
-    getVehicleSales: async (limit = 20) => request(`/api/shop/vehicle-sales?limit=${limit}`),
+    // --- VEHICLE SALES - see VehicleSalesView.jsx and the backend's FirestoreVehicleSaleController. A Shop Admin's sales are
+    // kept under their shop; a Super Admin's own sales (no shop) go through the /super routes. The same screen serves both.
+    createVehicleSale: async (payload) => request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales`, 'POST', payload),
+    getVehicleSales: async (limit = 20) => request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales?limit=${limit}`),
     // One photo per call (multipart "file"); the server allows at most 5 per sale.
     addVehicleSalePhoto: async (saleId, file) => {
       const formData = new FormData();
       formData.append('file', file);
-      return request(`/api/shop/vehicle-sales/${encodeURIComponent(saleId)}/photos`, 'POST', formData, true);
+      return request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales/${encodeURIComponent(saleId)}/photos`, 'POST', formData, true);
+    },
+    // Super Admin review of every sale on the platform. shopId: a shop id, or "SUPER_ADMIN" for the Super Admin's own sales.
+    getAllVehicleSales: async ({ shopId = '', cursor = '', limit = 30 } = {}) => {
+      const params = new URLSearchParams({ limit: String(limit) });
+      if (shopId) params.set('shopId', shopId);
+      if (cursor) params.set('cursor', cursor);
+      return request(`/api/super/all-vehicle-sales?${params.toString()}`);
     },
 
     // --- SHOP SETTINGS: VERIFICATION DOCUMENTS ---

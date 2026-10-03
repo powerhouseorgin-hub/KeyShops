@@ -37,3 +37,44 @@ export class FirestoreVehicleSaleController {
     return this.sales.get(req.user.shopId, id);
   }
 }
+
+// SUPER ADMIN: sales recorded by the Super Admin themselves (no shop involved - they are stored under the Super Admin's own
+// user document and carry their name), plus the platform-wide review of every sale. The owner always comes from the verified
+// token (req.user.id), never from the request.
+@Controller('super')
+@UseGuards(FirebaseAuthGuard, RolesGuard)
+@Roles(Role.SUPER_ADMIN)
+export class FirestoreSuperVehicleSaleController {
+  constructor(private readonly sales: FirestoreVehicleSaleService) {}
+
+  private owner(req: any) {
+    return { type: 'SUPER_ADMIN' as const, id: req.user.id as string };
+  }
+
+  @Post('vehicle-sales')
+  async create(@Req() req: any, @Body() dto: CreateVehicleSaleInput) {
+    return this.sales.create(this.owner(req), req.user.id, dto);
+  }
+
+  @Get('vehicle-sales')
+  async list(@Req() req: any, @Query('limit') limit?: string) {
+    return this.sales.list(this.owner(req), limit ? Number(limit) : undefined);
+  }
+
+  @Post('vehicle-sales/:id/photos')
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024, files: 1 } }))
+  async addPhoto(@Req() req: any, @Param('id') id: string, @UploadedFile() file: any) {
+    return this.sales.addPhoto(this.owner(req), id, file);
+  }
+
+  @Get('vehicle-sales/:id')
+  async get(@Req() req: any, @Param('id') id: string) {
+    return this.sales.get(this.owner(req), id);
+  }
+
+  // Every sale on the platform, newest first. `shopId` = one shop, or "SUPER_ADMIN" for the Super Admin's own sales.
+  @Get('all-vehicle-sales')
+  async listAll(@Query('limit') limit?: string, @Query('cursor') cursor?: string, @Query('shopId') shopId?: string) {
+    return this.sales.listAll({ limit: limit ? Number(limit) : undefined, cursor, shopId });
+  }
+}

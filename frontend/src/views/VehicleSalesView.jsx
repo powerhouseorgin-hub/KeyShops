@@ -86,6 +86,11 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   // Shop details printed in the invoice header - fetched once.
   const ensureShopInfo = async () => {
     if (shopInfoRef.current) return shopInfoRef.current;
+    if (user?.role === 'SUPER_ADMIN') {
+      // A Super Admin has no shop: the sale (and its invoice header) is under the Super Admin's own name.
+      shopInfoRef.current = { name: user.name || 'Super Admin', address: 'N/A', phone: user.phone || 'N/A' };
+      return shopInfoRef.current;
+    }
     const res = await api.getSettings();
     let address = 'N/A';
     let phone = 'N/A';

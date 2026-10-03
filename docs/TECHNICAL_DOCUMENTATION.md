@@ -96,7 +96,7 @@ flowchart LR
 | API function | `api` (Gen2, Node 22, 512 MiB, 60 s timeout, public invoker) | Codebase `api`, source `backend/functions-api` (generated). |
 | Scheduled job | `purgeExpiredProducts` (every 60 min) | Same codebase; deletes expired PRODUCT promotions. |
 | Search sync | `syncCustomersToAlgolia`, `syncShopsToAlgolia`, `syncPromotionsToAlgolia` | Codebase `sync`, source `backend/functions`; Firestore `onDocumentWritten` triggers. |
-| Database | Firestore (default database) | Indexes in `backend/firestore.indexes.json` (25 composite). |
+| Database | Firestore (default database) | Indexes in `backend/firestore.indexes.json` (26 composite + 6 single-field overrides). |
 | Auth | Firebase Authentication | Email/password provider; custom claims. |
 | Files | Cloud Storage default bucket | Private (deny-all rules); the backend reads and writes it with the Admin SDK. Clients get Firebase download-token links. |
 
@@ -276,14 +276,16 @@ emailIndex/{lowercased email}            { uid }   uniqueness + login lookup
 phoneIndex/{10-digit phone}              { uid }   uniqueness + login lookup
 otpCodes/{id}                            OTP records (hashed)
 razorpayPayments/{paymentId}             { shopId, orderId, createdAt }  makes a payment single-use for registration
-vehicleSaleNumbers/{VS-##########}       { shopId, saleId, createdAt }   claims a receipt number platform-wide (uniqueness index)
+vehicleSaleNumbers/{VS-##########}       { shopId (null for Super Admin), ownerId, saleId, createdAt }   claims a receipt number platform-wide (uniqueness index)
 
 shops/{shopId}                           Shop profile
   ├─ subscriptions/{id}                  Plans/terms of the shop
   ├─ customers/{customerId}              Customers registered by the shop
   │     └─ documents/{id}                Customer files (photo, ID proof, ...)
   ├─ documents/{id}                      Shop documents (photo, license, owner Aadhaar)
-  └─ vehicleSales/{id}                   Vehicle-sale (Delivery Receipt) records
+  └─ vehicleSales/{id}                   Vehicle-sale (Delivery Receipt) records of the shop
+users/{uid}/vehicleSales/{id}            Vehicle sales recorded by a SUPER ADMIN (no shop) - same collection name, so one
+                                         collection-group query reads every sale on the platform
 
 customerShopIndex/{customerId}           { shopId }  reverse lookup for cross-shop admin access
 customerReports/{reportId}               Uploaded invoice PDFs (fileKey, fileName, customerId, shopId)
@@ -307,7 +309,7 @@ config/platform                          Singleton platform/support settings
 | `shops/{id}` | `name`, `companyDetails` (JSON string: address/gst/phone), `logoUrl`, `themeColor`, `isActive`, `storageUsed`, `aadhaarNumber` (encrypted), `latitude`, `longitude`, `town`, `district`, `categoryId`, `referralCode` (the owner's phone), `referredByCode`, `referralPoints`, `deletedAt`, `createdAt`, `updatedAt` |
 | `shops/{id}/subscriptions/{id}` | `plan` (`TRIAL`\|`YEARLY`), `status` (`ACTIVE`…), `startDate`, `endDate`, `createdAt`, `updatedAt` |
 | `shops/{id}/customers/{id}` | `name`, `phone`, `address`, `idProofType`, `idProofNumber` (encrypted), `reason`, `keyNumber`, `keyType`, `vehicleNumber`, `masterKeyId`, `latitude`, `longitude`, `mapsLink`, `capturedAddress`, `photoUrl`, `billAmount`, `billNumber`, `vehicleName`, `lostKey`, `addKey`, `homeOfficeName`, `vehicleCategory`, `deletedAt`, `createdAt`, `updatedAt` |
-| `shops/{id}/vehicleSales/{id}` | `saleNumber` (server-generated, `VS-` + 10 random digits, unique across the platform — see §10.3), `saleDate`, `saleTime`, seller/buyer name+address+phone, `registrationNumber`, `vehicleModel`, `vehicleColor`, `vehicleName`, `chassisNumber`, `engineNumber`, `vehiclePrice`, `advanceAmount`, `officeCommission`, `balanceAmount` (server-computed), `balanceLastDate`, witness name+address, `notes`, `lang` (invoice language), `photos` (array of `{ key, url, size, createdAt }`, max 5), `createdById`, `createdAt` |
+| `shops/{id}/vehicleSales/{id}` | `saleNumber` (server-generated, `VS-` + 10 random digits, unique across the platform — see §10.3), `saleDate`, `saleTime`, seller/buyer name+address+phone, `registrationNumber`, `vehicleModel`, `vehicleColor`, `vehicleName`, `chassisNumber`, `engineNumber`, `vehiclePrice`, `advanceAmount`, `officeCommission`, `balanceAmount` (server-computed), `balanceLastDate`, witness name+address, `notes`, `ownerType` (`SHOP` or `SUPER_ADMIN`), `ownerId`, `shopId` (null for a Super Admin sale), `ownerName` (shop name or Super Admin name at the time), `lang` (invoice language), `photos` (array of `{ key, url, size, createdAt }`, max 5), `createdById`, `createdAt` |
 | `masterKeys/{id}` | `keyNumber`, `category`, `backImageUrl`, `shopId` (null = global), `deletedAt`, timestamps. Id = `${shopId ?? 'GLOBAL'}_${keyNumber}` (deterministic uniqueness). |
 | `promotions/{id}` | `type`, `title`, `description`, `imageUrls[]`, `price`, `discountPercentage`, `validUntil`, `linkedPromotionId`, `productType`, `phone`, `shopId`, `createdById`, `deletedAt`, timestamps |
 | `advertisements/{id}` | `title`, `imageUrl`, `type`, `startDate`, `endDate`, `priority`, `targetAll`, `targetShops[]` |
@@ -318,7 +320,7 @@ config/platform                          Singleton platform/support settings
 
 ### 6.3 Composite indexes
 
-Firestore's emulator does **not** enforce composite indexes, so a query that works locally can fail in production with `FAILED_PRECONDITION`. All 25 required indexes are in `backend/firestore.indexes.json` (otpCodes, shopCategories, productTypes, keyTypes, masterKeys, notifications ×2, promotions ×5, activityLogs ×2, revenueRecords, referrals, subscriptions ×3, customers ×4 incl. collection-group, advertisements ×2). Deploy with `firebase deploy --only firestore:indexes` from `backend/`. After adding any new query, run `backend/scripts/smoke-test-read-routes.ts` against the deployed API — it sweeps 43 read routes and fails on any 5xx.
+Firestore's emulator does **not** enforce composite indexes, so a query that works locally can fail in production with `FAILED_PRECONDITION`. All 26 required composite indexes (plus the single-field overrides) are in `backend/firestore.indexes.json` (vehicleSales collection-group x2 for the Super Admin review, otpCodes, shopCategories, productTypes, keyTypes, masterKeys, notifications ×2, promotions ×5, activityLogs ×2, revenueRecords, referrals, subscriptions ×3, customers ×4 incl. collection-group, advertisements ×2). Deploy with `firebase deploy --only firestore:indexes` from `backend/`. After adding any new query, run `backend/scripts/smoke-test-read-routes.ts` against the deployed API — it sweeps 43 read routes and fails on any 5xx.
 
 ### 6.4 Storage
 
@@ -418,6 +420,19 @@ Conventions:
 | GET | `/shop/vehicle-sales` | Shop | `limit`; newest first. Each sale includes its `photos`. |
 | GET | `/shop/vehicle-sales/:id` | Shop | One sale (own shop only). |
 
+
+**Super Admin sales and review** (`FirestoreSuperVehicleSaleController`). A Super Admin has no shop, so their own sales are stored under their user document and carry their name; the owner always comes from the verified token, never from the request (a `shopId` or `ownerName` in the body is ignored).
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| POST | `/super/vehicle-sales` | Super | Same body and rules as the shop route (validation, server-computed balance, generated receipt number). Stored under `users/{uid}/vehicleSales` with `ownerType: SUPER_ADMIN`, `shopId: null`, `ownerName` = the Super Admin's name. |
+| GET | `/super/vehicle-sales` | Super | `limit`; the Super Admin's **own** sales, newest first. |
+| GET | `/super/vehicle-sales/:id` | Super | One of the Super Admin's own sales. |
+| POST | `/super/vehicle-sales/:id/photos` | Super | multipart `file`; max 5 photos per sale, same type and size rules. |
+| GET | `/super/all-vehicle-sales` | Super | **Review of every sale on the platform** (all shops plus the Super Admin), newest first. Query: `limit` (up to 100, default 30), `cursor` (the `nextCursor` of the previous page), `shopId` (a shop id, or the literal `SUPER_ADMIN` for the Super Admin's own sales). Returns `{ items, nextCursor }`; each item is the full sale plus `ownerType`, `ownerId`, `shopId`, `ownerName` and `path`. |
+
+The routes under `/shop/vehicle-sales` remain Shop Admin only; a Super Admin gets 403 there, and a Shop Admin gets 403 on every `/super/...` route. A shop can never read, list or add photos to the Super Admin's sales (they live outside any shop).
+
 ### 8.7 Shop settings, notifications, dashboard, ads
 
 | Method | Path | Auth | Description |
@@ -483,7 +498,7 @@ Conventions:
 | GET | `/super/contact-messages` (`cursor, limit`), PUT `/super/contact-messages/:id/read` | Inbox of public contact messages. |
 | POST | `/super/support-config` | Update platform settings (whatsapp, videos, price, GST, email, care number, trial days). |
 
-> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (102 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
+> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (107 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
 
 ## 9. Third-party integrations
 
@@ -619,6 +634,14 @@ The shop's referral code is the owner's phone; a valid `referralCode` credits th
 - **Invoice language.** A language selector (Tamil, English, Hindi, Telugu, Kannada, Malayalam, each shown in its own script) sits above the Sale button. **Tamil is the default** for every new sale, independent of the app language. The chosen code is sent as `lang`, stored on the sale, and used to generate the Delivery Receipt: every label, declaration and field heading comes from `i18n/vehicleSaleText.js` for that language. Re-downloading the invoice later from Recent sales reproduces it in the language it was sold in.
 
 **Sale details screen (read-only).** In *Recent sales*, tapping a sale card opens `VehicleSaleDetail` (`frontend/src/components/VehicleSaleDetail.jsx`), a full-screen read-only view of everything recorded for that sale: receipt number, date/time and invoice language; seller; buyer; vehicle; price & payment (price, advance, balance, commission, last date); witness and notes; and the sale's photos in a grid (tap a photo to zoom with `ImageZoomViewer`, swipe between them). Empty values show "—". There are no inputs - nothing on this screen can be edited. The only actions are the two from the list: download the invoice, or send it to the buyer on WhatsApp. The thumbnails, Invoice button and WhatsApp button on the card itself keep their own behaviour and do not open the details. The Android hardware Back button closes the zoom viewer first, then the details screen (the shared `useBackHandler` stack). The invoice PDF does **not** include the photos; they are kept with the sale and shown here and in Recent sales.
+
+**Super Admin: own sales and the all-sales review.**
+
+- **Selling as Super Admin.** *Vehicle Sales* is also in the Super Admin menu and uses the same screen, form, photos, invoice and 5-photo limit. There is **no shop selection**: the sale is recorded under the Super Admin's own name (the invoice header shows the Super Admin's name and phone) and stored under their user document (`users/{uid}/vehicleSales`), tagged `ownerType: SUPER_ADMIN`, `shopId: null`. Shop sales stay strictly shop-specific (`shops/{shopId}/vehicleSales`).
+- **Reviewing everything.** The Super Admin menu has a separate **All Sales** screen (`SuperVehicleSalesView`) that lists every sale on the platform, newest first, with a **filter by shop** (All shops / Super Admin / one shop), a search box over what is loaded (vehicle no., receipt, buyer, seller, shop) and "Load more" paging. Each card shows the vehicle, receipt number, buyer, date, price, balance, photo count and a chip with who sold it (shop name or Super Admin). Tapping a card opens the same **read-only** details screen shops use, with an extra *Sold by* row and **no** invoice buttons: the review screen cannot change or send anything.
+- **How it works.** Both kinds of sale live in collections named `vehicleSales`, so `listAll` uses one collection-group query (`createdAt` descending, optionally `shopId ==` a shop id or `null`), paged by the path of the last sale (validated against `^(shops|users)/<id>/vehicleSales/<id>$`). Two indexes back it (see section 6.3). Sales saved before owners were recorded still appear (owner derived from the document path); the one-time `scripts/backfill-vehicle-sale-owner.ts` stamped the owner fields on them so the shop filter finds them too.
+- **Receipt numbers** stay unique across everyone: the `vehicleSaleNumbers` index covers shops and the Super Admin alike.
+- Covered by unit tests (owner handling, validation of the filter and cursor) and by `scripts/smoke-test-vehicle-sales.ts` (Super Admin section, emulator only because it creates a throwaway Super Admin: own sales, role walls both ways, photos, review across shops, filters, paging, an older sale).
 
 **Receipt numbers.** The form has no receipt-number field; the server owns the numbering:
 

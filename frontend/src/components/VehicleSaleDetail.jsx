@@ -27,7 +27,7 @@ function Section({ title, children }) {
   );
 }
 
-export default function VehicleSaleDetail({ sale, T, languageName, busy, onClose, onDownload, onWhatsApp, onOpenPhoto }) {
+export default function VehicleSaleDetail({ sale, T, languageName, busy, onClose, onDownload, onWhatsApp, onOpenPhoto, showOwner = false, hideActions = false }) {
   useBackHandler(true, onClose);
   const photos = Array.isArray(sale.photos) ? sale.photos : [];
   const spinner = <RefreshCw className="animate-spin h-4 w-4" />;
@@ -56,6 +56,9 @@ export default function VehicleSaleDetail({ sale, T, languageName, busy, onClose
         <div style={{ maxWidth: 720, margin: '0 auto' }}>
           <Section title={T.secReceipt}>
             <Field label={T.receiptNo} value={sale.saleNumber} full />
+            {showOwner && (
+              <Field label={T.soldBy} value={sale.ownerType === 'SUPER_ADMIN' ? `${sale.ownerName || T.superAdminOwner} (${T.superAdminOwner})` : sale.ownerName} full />
+            )}
             <Field label={T.saleDate} value={sale.saleDate} />
             <Field label={T.saleTime} value={sale.saleTime} />
             <Field label={T.invoiceLanguage} value={languageName} full />
@@ -117,7 +120,7 @@ export default function VehicleSaleDetail({ sale, T, languageName, busy, onClose
       </div>
 
       {/* actions */}
-      <footer style={{ display: 'flex', gap: 10, padding: '10px 14px calc(10px + env(safe-area-inset-bottom, 0px))', borderTop: '1px solid var(--border-2)', background: 'var(--card)', flexShrink: 0 }}>
+      {!hideActions && <footer style={{ display: 'flex', gap: 10, padding: '10px 14px calc(10px + env(safe-area-inset-bottom, 0px))', borderTop: '1px solid var(--border-2)', background: 'var(--card)', flexShrink: 0 }}>
         <div style={{ maxWidth: 720, width: '100%', margin: '0 auto', display: 'flex', gap: 10 }}>
           <button type="button" className="btn btn-outline" disabled={busy === `${sale.id}:download`} onClick={onDownload} style={{ flex: '1 1 0', minWidth: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, whiteSpace: 'normal', textAlign: 'center', lineHeight: 1.25, padding: '10px 8px', fontSize: 13 }}>
             {busy === `${sale.id}:download` ? spinner : <Download className="h-4 w-4" />} {T.downloadInvoice}
@@ -126,7 +129,7 @@ export default function VehicleSaleDetail({ sale, T, languageName, busy, onClose
             {busy === `${sale.id}:whatsapp` ? spinner : <MessageCircle className="h-4 w-4" />} {T.sendBuyer}
           </button>
         </div>
-      </footer>
+      </footer>}
     </div>,
     document.body,
   );

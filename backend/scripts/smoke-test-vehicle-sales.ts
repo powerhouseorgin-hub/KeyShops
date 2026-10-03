@@ -83,7 +83,7 @@ async function main() {
 
   const doc = (await db.collection('shops').doc(A.shopId).collection('vehicleSales').doc(sale1.id).get()).data() as any;
   check('stored under the caller\'s own shop (shops/A/vehicleSales)', !!doc, 'missing');
-  check('forged id / shopId / createdById / createdAt / deletedAt are NOT honoured', sale1.id !== 'forged-id' && doc.shopId === undefined && doc.createdById !== 'someone-else' && doc.createdAt > 1000 && doc.deletedAt === null, { createdById: doc?.createdById, createdAt: doc?.createdAt, deletedAt: doc?.deletedAt, shopId: doc?.shopId });
+  check('forged id / shopId / createdById / createdAt / deletedAt are NOT honoured', sale1.id !== 'forged-id' && doc.shopId === A.shopId && doc.createdById !== 'someone-else' && doc.createdAt > 1000 && doc.deletedAt === null, { createdById: doc?.createdById, createdAt: doc?.createdAt, deletedAt: doc?.deletedAt, shopId: doc?.shopId });
   const bDoc = await db.collection('shops').doc(B.shopId).collection('vehicleSales').doc(sale1.id).get();
   check('nothing was written under shop B despite the forged shopId', !bDoc.exists);
 
@@ -163,6 +163,107 @@ async function main() {
   const race = await Promise.all(Array.from({ length: 8 }, () => upload(concurrent.id, A.token)));
   const stored2 = (await db.collection('shops').doc(A.shopId).collection('vehicleSales').doc(concurrent.id).get()).data() as any;
   check('8 simultaneous uploads: exactly 5 succeed, 3 are refused, 5 stored', race.filter((x) => x.status === 201).length === 5 && race.filter((x) => x.status === 400).length === 3 && stored2.photos.length === 5, race.map((x) => x.status));
+
+  // ---------------------------------------------------------------------------------------------------------
+  // Super Admin: own sales (no shop) + the platform-wide review. Creates a throwaway Super Admin account, so this
+  // section only runs against the emulators - never against the live project.
+  console.log('\n--- Super Admin sales and review ---');
+  if (!process.env.FIRESTORE_EMULATOR_HOST) {
+    console.log('SKIPPED (needs the Firebase emulators: FIRESTORE_EMULATOR_HOST / FIREBASE_AUTH_EMULATOR_HOST)');
+  } else {
+    const { FirebaseAuthService } = await import('../src/firestore/auth/firebase-auth.service');
+    const auth = new FirebaseAuthService();
+    const stamp = Date.now();
+    const adminEmail = `super-sales-${stamp}@example.com`;
+    const adminUser = await auth.createUser({ email: adminEmail, password: 'SuperPass123', displayName: 'Platform Boss' });
+    await db.collection('users').doc(adminUser.uid).set({ email: adminEmail, phone: null, name: 'Platform Boss', role: 'SUPER_ADMIN', shopId: null, deletedAt: null, createdAt: stamp, updatedAt: stamp });
+    await auth.setCustomClaims(adminUser.uid, { role: 'SUPER_ADMIN', shopId: null });
+    const adminLogin = await req('POST', '/auth/login', { email: adminEmail, password: 'SuperPass123', platform: 'native' });
+    const S = adminLogin.body.accessToken as string;
+    check('Super Admin can log in for the test', !!S, adminLogin);
+
+    // create under the Super Admin's own name - no shop is involved or accepted
+    const forgedOwner = { ...SALE, registrationNumber: 'TN30SA0001', shopId: A.shopId, ownerType: 'SHOP', ownerName: 'Hacked' };
+    const sa1 = await req('POST', '/super/vehicle-sales', forgedOwner, S);
+    check('Super Admin creates a sale (201)', sa1.status === 201, sa1);
+    check('it is owned by the Super Admin: no shop, their name, a generated receipt number',
+      sa1.body.ownerType === 'SUPER_ADMIN' && sa1.body.shopId === null && sa1.body.ownerName === 'Platform Boss' && /^VS-[1-9]\d{9}$/.test(sa1.body.saleNumber), sa1.body);
+    const storedSuper = (await db.collection('users').doc(adminUser.uid).collection('vehicleSales').doc(sa1.body.id).get()).data() as any;
+    check('stored under the Super Admin user document (users/{uid}/vehicleSales)', !!storedSuper && storedSuper.ownerType === 'SUPER_ADMIN', storedSuper);
+    const leaked = await db.collection('shops').doc(A.shopId).collection('vehicleSales').doc(sa1.body.id).get();
+    check('a client-supplied shopId does not put it under a shop', !leaked.exists);
+
+    // a sale for shop B too, so the review spans several shops
+    const bSale = await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30BB0001' }, B.token);
+    check('shop B records a sale for the review test', bSale.status === 201 && bSale.body.shopId === B.shopId, bSale.status);
+
+    // role walls
+    const shopCallsSuper = await req('POST', '/super/vehicle-sales', { ...SALE, registrationNumber: 'TN30SA0002' }, A.token);
+    check('a Shop Admin cannot use the Super Admin sales route (403)', shopCallsSuper.status === 403, shopCallsSuper.status);
+    const shopReview = await req('GET', '/super/all-vehicle-sales', undefined, A.token);
+    check('a Shop Admin cannot open the all-sales review (403)', shopReview.status === 403, shopReview.status);
+    const superOnShopRoute = await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30SA0003' }, S);
+    check('the shop route still refuses a Super Admin (403)', superOnShopRoute.status === 403, superOnShopRoute.status);
+    const noAuthReview = await req('GET', '/super/all-vehicle-sales');
+    check('the review needs a login (401)', noAuthReview.status === 401, noAuthReview.status);
+
+    // own list / get are scoped to the Super Admin, and shops never see it
+    const ownList = await req('GET', '/super/vehicle-sales', undefined, S);
+    check("the Super Admin's own list contains only their sales", Array.isArray(ownList.body) && ownList.body.length === 1 && ownList.body[0].id === sa1.body.id, ownList.body?.length);
+    const aList = await req('GET', '/shop/vehicle-sales', undefined, A.token);
+    check("a shop's list does not contain the Super Admin's sale", Array.isArray(aList.body) && !aList.body.some((x: any) => x.id === sa1.body.id), aList.body?.length);
+    const shopGetsSuperSale = await req('GET', `/shop/vehicle-sales/${sa1.body.id}`, undefined, A.token);
+    check("a shop cannot fetch the Super Admin's sale by id (404)", shopGetsSuperSale.status === 404, shopGetsSuperSale.status);
+    const superGet = await req('GET', `/super/vehicle-sales/${sa1.body.id}`, undefined, S);
+    check('the Super Admin can fetch their own sale by id', superGet.status === 200 && superGet.body.registrationNumber === 'TN30SA0001', superGet.status);
+
+    // photos on a Super Admin sale: same rules (max 5)
+    const upS = async (id: string, token: string, route = 'super') => {
+      const fd = new FormData();
+      fd.append('file', new Blob([new Uint8Array(png)], { type: 'image/png' }), 'p.png');
+      const r = await fetch(`${BASE}/${route}/vehicle-sales/${id}/photos`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+      return { status: r.status, body: await r.json().catch(() => ({})) };
+    };
+    for (let n = 1; n <= 5; n++) { const r = await upS(sa1.body.id, S); check(`Super Admin photo ${n} of 5 accepted`, r.status === 201 && r.body.photos?.length === n, r); }
+    const sixthS = await upS(sa1.body.id, S);
+    check("a 6th photo on the Super Admin's sale is refused (400)", sixthS.status === 400, sixthS);
+    const shopPhotoOnSuper = await upS(sa1.body.id, A.token, 'shop');
+    check("a shop cannot add photos to the Super Admin's sale (404)", shopPhotoOnSuper.status === 404, shopPhotoOnSuper.status);
+
+    // the review: every owner in one list
+    const review = await req('GET', '/super/all-vehicle-sales?limit=100', undefined, S);
+    const all: any[] = review.body?.items || [];
+    check('the review returns sales from several shops and the Super Admin', review.status === 200 && all.some((x) => x.shopId === A.shopId) && all.some((x) => x.shopId === B.shopId) && all.some((x) => x.ownerType === 'SUPER_ADMIN'), [review.status, all.length]);
+    check('every row names who sold it', all.length > 0 && all.every((x) => typeof x.ownerName === 'string' && x.ownerName.length > 0), all.filter((x) => !x.ownerName).length);
+    check('shop rows carry their shop id and the Super Admin row has none', all.filter((x) => x.ownerType === 'SHOP').every((x) => !!x.shopId) && all.find((x) => x.id === sa1.body.id)?.shopId === null);
+    check('the review is newest first', all.every((x, k) => k === 0 || all[k - 1].createdAt >= x.createdAt));
+    check("the review includes each sale's photos", (all.find((x) => x.id === sa1.body.id)?.photos || []).length === 5, all.find((x) => x.id === sa1.body.id)?.photos?.length);
+    const sameNumbers = all.map((x) => x.saleNumber);
+    check('receipt numbers are unique across shops and the Super Admin', new Set(sameNumbers).size === sameNumbers.length, sameNumbers.length);
+
+    // filters
+    const onlyA = (await req('GET', `/super/all-vehicle-sales?limit=100&shopId=${A.shopId}`, undefined, S)).body.items || [];
+    check('filtering by a shop returns only that shop\'s sales', onlyA.length > 0 && onlyA.every((x: any) => x.shopId === A.shopId), onlyA.length);
+    const onlySuper = (await req('GET', '/super/all-vehicle-sales?limit=100&shopId=SUPER_ADMIN', undefined, S)).body.items || [];
+    check("filtering by Super Admin returns only the Super Admin's sales", onlySuper.length >= 1 && onlySuper.every((x: any) => x.ownerType === 'SUPER_ADMIN' && x.shopId === null) && onlySuper.some((x: any) => x.id === sa1.body.id), onlySuper.length);
+    const badShop = await req('GET', '/super/all-vehicle-sales?shopId=a%2Fb', undefined, S);
+    check('a malformed shopId is refused (400)', badShop.status === 400, badShop.status);
+
+    // paging with a cursor
+    const p1 = (await req('GET', '/super/all-vehicle-sales?limit=3', undefined, S)).body;
+    check('page 1 has 3 sales and a cursor', p1.items?.length === 3 && typeof p1.nextCursor === 'string', [p1.items?.length, p1.nextCursor]);
+    const p2 = (await req('GET', `/super/all-vehicle-sales?limit=3&cursor=${encodeURIComponent(p1.nextCursor)}`, undefined, S)).body;
+    check('page 2 continues without repeating page 1', p2.items?.length > 0 && p2.items.every((x: any) => !p1.items.some((y: any) => y.id === x.id)), p2.items?.length);
+    const badCursor = await req('GET', '/super/all-vehicle-sales?cursor=customers%2Fabc', undefined, S);
+    check('a cursor that is not a sale path is refused (400)', badCursor.status === 400, badCursor.status);
+
+    // a sale from before owners were recorded: still shown, owner read from its path
+    const legacy = db.collection('shops').doc(A.shopId).collection('vehicleSales').doc();
+    await legacy.set({ registrationNumber: 'TN30OLD001', saleNumber: `VS-OLD-${stamp}`, buyerName: 'Old', sellerName: 'Old', vehiclePrice: 1000, advanceAmount: 0, balanceAmount: 1000, lang: 'en', createdAt: 1000, updatedAt: 1000, deletedAt: null });
+    const everything = (await req('GET', '/super/all-vehicle-sales?limit=100', undefined, S)).body.items || [];
+    const oldRow = everything.find((x: any) => x.id === legacy.id);
+    check('an older sale without owner fields still appears, owned by its shop', !!oldRow && oldRow.ownerType === 'SHOP' && oldRow.shopId === A.shopId && oldRow.ownerName.startsWith('Audit Fix Shop'), oldRow);
+  }
 
   console.log(`\n${failures === 0 ? 'ALL CHECKS PASSED' : failures + ' CHECK(S) FAILED'}. Run cleanup-test-data.ts to remove "Audit Fix Shop" data.`);
   process.exit(failures === 0 ? 0 : 1);

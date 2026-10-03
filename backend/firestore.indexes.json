@@ -1,5 +1,9 @@
 {
   "indexes": [
+    { "collectionGroup": "vehicleSales", "queryScope": "COLLECTION_GROUP", "fields": [
+      { "fieldPath": "shopId", "order": "ASCENDING" },
+      { "fieldPath": "createdAt", "order": "DESCENDING" }
+    ] },
     { "collectionGroup": "otpCodes", "queryScope": "COLLECTION", "fields": [
       { "fieldPath": "identifier", "order": "ASCENDING" },
       { "fieldPath": "purpose", "order": "ASCENDING" },
@@ -155,6 +159,12 @@
       { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" },
       { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" },
       { "arrayConfig": "CONTAINS", "queryScope": "COLLECTION_GROUP" }
+    ] },
+    { "collectionGroup": "vehicleSales", "fieldPath": "createdAt", "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION" },
+      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" },
+      { "order": "DESCENDING", "queryScope": "COLLECTION_GROUP" }
     ] }
   ]
 }
