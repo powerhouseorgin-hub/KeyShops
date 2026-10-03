@@ -133,6 +133,37 @@ async function main() {
   const burstNumbers = burst.map((x) => x.body?.saleNumber);
   check('12 simultaneous sales all succeed with 12 distinct numbers', burst.every((x) => x.status === 201) && new Set(burstNumbers).size === 12, burstNumbers);
 
+  console.log('\n--- Photos (max 5 per sale) ---');
+  // Needs file storage: run against the Storage emulator (FIREBASE_STORAGE_EMULATOR_HOST) or a deployed API.
+  const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+  const upload = async (saleId: string, token: string, type = 'image/png', bytes: Buffer = png, name = 'p.png') => {
+    const fd = new FormData();
+    fd.append('file', new Blob([new Uint8Array(bytes)], { type }), name);
+    const res = await fetch(`${BASE}/shop/vehicle-sales/${saleId}/photos`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+    return { status: res.status, body: await res.json().catch(() => ({})) };
+  };
+  const photoSale = (await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30PH0001' }, A.token)).body;
+  const noToken = await fetch(`${BASE}/shop/vehicle-sales/${photoSale.id}/photos`, { method: 'POST', body: new FormData() });
+  check('uploading without a token is rejected (401)', noToken.status === 401, noToken.status);
+  for (let n = 1; n <= 5; n++) {
+    const r = await upload(photoSale.id, A.token);
+    check(`photo ${n} of 5 is accepted`, r.status === 201 && r.body.photos?.length === n, r);
+  }
+  const sixth = await upload(photoSale.id, A.token);
+  check('a 6th photo is refused (400)', sixth.status === 400 && /at most 5/.test(sixth.body.message || ''), sixth);
+  const pdfUpload = await upload((await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30PH0002' }, A.token)).body.id, A.token, 'application/pdf', Buffer.from('%PDF-1.4'), 'x.pdf');
+  check('a PDF is refused as a photo (400)', pdfUpload.status === 400, pdfUpload.status);
+  const crossUpload = await upload(photoSale.id, B.token);
+  check("another shop cannot add photos to this sale (404)", crossUpload.status === 404, crossUpload.status);
+  const stored = (await db.collection('shops').doc(A.shopId).collection('vehicleSales').doc(photoSale.id).get()).data() as any;
+  check('exactly 5 photos are stored on the sale, each with a file key and URL', stored.photos?.length === 5 && stored.photos.every((p: any) => p.key && p.url), stored.photos?.length);
+  const withPhotos = await req('GET', `/shop/vehicle-sales/${photoSale.id}`, undefined, A.token);
+  check('GET returns the sale with its 5 photos', withPhotos.status === 200 && withPhotos.body.photos?.length === 5, withPhotos.body?.photos?.length);
+  const concurrent = (await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30PH0003' }, A.token)).body;
+  const race = await Promise.all(Array.from({ length: 8 }, () => upload(concurrent.id, A.token)));
+  const stored2 = (await db.collection('shops').doc(A.shopId).collection('vehicleSales').doc(concurrent.id).get()).data() as any;
+  check('8 simultaneous uploads: exactly 5 succeed, 3 are refused, 5 stored', race.filter((x) => x.status === 201).length === 5 && race.filter((x) => x.status === 400).length === 3 && stored2.photos.length === 5, race.map((x) => x.status));
+
   console.log(`\n${failures === 0 ? 'ALL CHECKS PASSED' : failures + ' CHECK(S) FAILED'}. Run cleanup-test-data.ts to remove "Audit Fix Shop" data.`);
   process.exit(failures === 0 ? 0 : 1);
 }

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { randomInt } from 'crypto';
 import { FirestoreService } from '../firestore.service';
+import { FirebaseFileService } from '../storage/firebase-file.service';
 import { normalizePhone } from '../../common/validators/phone';
 
 // A vehicle (bike/car) sale recorded by a Shop Admin: the data behind the "Delivery Receipt" invoice
@@ -45,12 +46,19 @@ export function generateSaleNumber(): string {
 }
 const MAX_NUMBER_ATTEMPTS = 10;
 
+// Photos of the vehicle / the handover attached to a sale. At most MAX_SALE_PHOTOS per sale - enforced here, so it
+// holds whatever the client does. Each is a JPEG, PNG or WebP of at most 5 MB (the app resizes before uploading).
+export const MAX_SALE_PHOTOS = 5;
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+export interface SalePhoto { key: string; url: string; size: number; createdAt: number; }
+
 const LANGS = ['en', 'hi', 'ta', 'te', 'kn', 'ml'];
 const MAX_AMOUNT = 1_000_000_000;
 
 @Injectable()
 export class FirestoreVehicleSaleService {
-  constructor(private readonly firestore: FirestoreService) {}
+  constructor(private readonly firestore: FirestoreService, private readonly files: FirebaseFileService) {}
 
   private col(shopId: string) {
     return this.firestore.db.collection('shops').doc(shopId).collection('vehicleSales');
@@ -185,6 +193,40 @@ export class FirestoreVehicleSaleService {
     }).catch((err) => console.error('Failed to write VEHICLE_SALE_CREATE activity log', err));
 
     return { id: saleRef.id, ...fields, saleNumber, createdById: userId, createdAt: now, updatedAt: now };
+  }
+
+  // Adds one photo to a sale. The count is checked before the upload (so a full sale never receives a file) and
+  // again inside the transaction that records it (so two simultaneous uploads cannot both take the last slot);
+  // if that second check loses, the just-uploaded file is deleted again.
+  async addPhoto(shopId: string, saleId: string, file: { originalname: string; buffer: Buffer; size: number; mimetype: string } | undefined) {
+    if (!file || !file.buffer?.length) throw new BadRequestException('A photo file is required');
+    if (!PHOTO_TYPES.includes(file.mimetype)) throw new BadRequestException('Only JPEG, PNG or WebP photos are accepted');
+    if (file.size > MAX_PHOTO_BYTES) throw new BadRequestException('Each photo must be 5 MB or smaller');
+
+    const saleRef = this.col(shopId).doc(saleId);
+    const before = await saleRef.get();
+    if (!before.exists || (before.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');
+    if (((before.data() as any).photos || []).length >= MAX_SALE_PHOTOS) {
+      throw new BadRequestException(`A sale can have at most ${MAX_SALE_PHOTOS} photos`);
+    }
+
+    const upload = await this.files.uploadLongLivedFile(file.originalname || 'photo.jpg', file.buffer, shopId);
+    const photo: SalePhoto = { key: upload.fileKey, url: upload.fileUrl, size: file.size, createdAt: Date.now() };
+
+    try {
+      const photos = await this.firestore.db.runTransaction(async (tx) => {
+        const snap = await tx.get(saleRef);
+        const current: SalePhoto[] = ((snap.data() as any)?.photos) || [];
+        if (current.length >= MAX_SALE_PHOTOS) throw new BadRequestException(`A sale can have at most ${MAX_SALE_PHOTOS} photos`);
+        const next = [...current, photo];
+        tx.update(saleRef, { photos: next, updatedAt: Date.now() });
+        return next;
+      });
+      return { id: saleId, photos };
+    } catch (err) {
+      await this.files.deleteFile(upload.fileKey);
+      throw err;
+    }
   }
 
   async list(shopId: string, limit = 50) {

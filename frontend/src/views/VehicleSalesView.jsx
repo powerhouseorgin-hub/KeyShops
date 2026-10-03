@@ -2,18 +2,22 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Car, User, Phone, MapPin, IndianRupee, Calendar, Clock, FileText, Download, RefreshCw,
-  MessageCircle, Plus, CheckCircle2, Palette, Wrench, StickyNote, UserCheck,
+  MessageCircle, Plus, CheckCircle2, Palette, Wrench, StickyNote, UserCheck, ImagePlus, X, Languages,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { vehicleSaleText, fillText } from '../i18n/vehicleSaleText';
 import { downloadPdf, sendPdfToWhatsApp } from '../utils/pdfDelivery';
 import { IS_NATIVE_APP } from '../utils/platform';
 import { toWhatsAppNumber } from '../utils/phone';
+import { resizeImageFileToBlob } from '../utils/imageUtils';
+import ImageZoomViewer from '../components/ImageZoomViewer';
 
 // Vehicle Sales: record a bike/car sale and generate the "Delivery Receipt" invoice for the buyer.
 // Everything on screen follows the app language (vehicleSaleText.js); the invoice is generated in the language
 // that was selected when Sale was pressed, and that language is stored with the sale so re-downloading it later
-// prints the same document. The receipt number is not entered here: the server generates a unique one for every sale.
+// prints the same document. The invoice language is chosen on this screen (default Tamil), independent of the app
+// language. Up to 5 photos can be attached: they are resized in the browser, then uploaded one by one to the saved
+// sale (the server also refuses a 6th). The receipt number is not entered here: the server generates a unique one for every sale.
 // Layout: on a phone, short fields (date/time, price/advance, ...) sit two to a row (marked `half`) and the rest
 // take the full width; the spacing is tightened by the .vs-form rules in index.css.
 
@@ -30,6 +34,13 @@ const emptyForm = () => ({
   witnessName: '', witnessAddress: '', notes: '',
 });
 
+const MAX_PHOTOS = 5;
+const DEFAULT_INVOICE_LANG = 'ta';
+// Shown in each language's own script so a shop owner can always find theirs.
+const INVOICE_LANGS = [
+  ['ta', 'தமிழ்'], ['en', 'English'], ['hi', 'हिन्दी'], ['te', 'తెలుగు'], ['kn', 'ಕನ್ನಡ'], ['ml', 'മലയാളം'],
+];
+
 const inr = (n) => Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 function VehicleSalesView({ t, api, lang = 'en' }) {
@@ -43,6 +54,15 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   const [recent, setRecent] = useState([]);
   const [busy, setBusy] = useState(null); // `${saleId}:download|whatsapp`
   const shopInfoRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const [invoiceLang, setInvoiceLang] = useState(DEFAULT_INVOICE_LANG);
+  const [photos, setPhotos] = useState([]); // [{ id, file, preview }] chosen but not yet uploaded
+  const [photoMsg, setPhotoMsg] = useState('');
+  const [progress, setProgress] = useState(null); // { done, total } while photos upload
+  const [viewer, setViewer] = useState(null); // { images, index }
+  const photosRef = useRef([]);
+  photosRef.current = photos;
+  useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.preview)), []);
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
@@ -99,6 +119,53 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     return '';
   };
 
+  // Adds the chosen images, never going past MAX_PHOTOS: the picker may return more than the free slots, in which
+  // case the extra ones are ignored and the user is told why.
+  const onPickPhotos = (e) => {
+    const picked = Array.from(e.target.files || []);
+    e.target.value = '';
+    if (!picked.length) return;
+    const images = picked.filter((f) => /^image\//.test(f.type));
+    let message = images.length < picked.length ? T.onlyImages : '';
+    const room = MAX_PHOTOS - photos.length;
+    if (images.length > room) message = T.maxPhotos;
+    const accepted = images.slice(0, Math.max(0, room)).map((file) => ({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, file, preview: URL.createObjectURL(file),
+    }));
+    setPhotoMsg(message);
+    if (accepted.length) setPhotos((p) => [...p, ...accepted]);
+  };
+
+  const removePhoto = (id) => {
+    setPhotos((list) => {
+      const gone = list.find((p) => p.id === id);
+      if (gone) URL.revokeObjectURL(gone.preview);
+      return list.filter((p) => p.id !== id);
+    });
+    setPhotoMsg('');
+  };
+
+  // Uploads files one after another to a saved sale. Returns the sale's photo list as the server last reported it
+  // and the files that failed (so they can be retried). A failure never aborts the rest.
+  const uploadPhotos = async (saleId, files, knownPhotos = []) => {
+    let current = knownPhotos;
+    const failed = [];
+    setProgress({ done: 0, total: files.length });
+    for (let i = 0; i < files.length; i += 1) {
+      try {
+        const blob = await resizeImageFileToBlob(files[i], 1280, 0.82);
+        const result = await api.addVehicleSalePhoto(saleId, new File([blob], `sale-photo-${i + 1}.jpg`, { type: 'image/jpeg' }));
+        if (Array.isArray(result?.photos)) current = result.photos;
+      } catch (err) {
+        console.error('Photo upload failed:', err);
+        failed.push(files[i]);
+      }
+      setProgress({ done: i + 1, total: files.length });
+    }
+    setProgress(null);
+    return { photos: current, failed };
+  };
+
   const handleSale = async (e) => {
     e.preventDefault();
     const problem = validate();
@@ -107,14 +174,21 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     setSaving(true);
     let sale;
     try {
-      sale = await api.createVehicleSale({ ...form, lang });
+      sale = await api.createVehicleSale({ ...form, lang: invoiceLang });
     } catch (err) {
       setSaving(false);
       setError(fillText(T.saveFailed, { message: err.message }));
       return;
     }
-    // The sale is saved at this point; the invoice is generated right away, but a rendering problem must not
-    // lose the sale - it can be retried from "Recent sales".
+    // The sale is saved at this point. Photos are attached next (a failed photo never loses the sale and can be
+    // retried from the success dialog), then the invoice is generated; a rendering problem must not lose the sale
+    // either - it can be retried from "Recent sales".
+    let failedFiles = [];
+    if (photos.length) {
+      const result = await uploadPhotos(sale.id, photos.map((p) => p.file));
+      sale = { ...sale, photos: result.photos };
+      failedFiles = result.failed;
+    }
     let built = null;
     try {
       built = await buildInvoice(sale);
@@ -122,11 +196,24 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
       console.error('Failed to generate the vehicle sale invoice:', err);
     }
     setSaving(false);
-    setDone({ sale, pdf: built?.pdf || null, fileName: built?.fileName || null, invoiceFailed: !built });
+    setDone({ sale, pdf: built?.pdf || null, fileName: built?.fileName || null, invoiceFailed: !built, failedFiles, photoTotal: photos.length });
+    loadRecent();
+  };
+
+  const retryPhotos = async () => {
+    if (!done?.failedFiles?.length) return;
+    setSaving(true);
+    const result = await uploadPhotos(done.sale.id, done.failedFiles, done.sale.photos || []);
+    setSaving(false);
+    setDone((d) => ({ ...d, sale: { ...d.sale, photos: result.photos }, failedFiles: result.failed }));
     loadRecent();
   };
 
   const resetForNewSale = () => {
+    photos.forEach((p) => URL.revokeObjectURL(p.preview));
+    setPhotos([]);
+    setPhotoMsg('');
+    setInvoiceLang(DEFAULT_INVOICE_LANG);
     setDone(null);
     setForm(emptyForm());
     setError('');
@@ -253,6 +340,42 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
           {field('notes', T.notes, { icon: StickyNote, colour: 'var(--text-3)', full: true })}
         </>)}
 
+        <div style={{ marginBottom: 14 }}>
+          <h3 style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--maroon)', margin: '0 0 3px', letterSpacing: '.01em' }}>
+            {T.photosTitle} <span style={{ fontWeight: 700, color: 'var(--text-3)', fontSize: 12 }}>· {fillText(T.photosCount, { count: photos.length, max: MAX_PHOTOS })}</span>
+          </h3>
+          <p className="cell-sub" style={{ margin: '0 0 8px' }}>{T.photosHint}</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(78px, 1fr))', gap: 8 }}>
+            {photos.map((p, i) => (
+              <div key={p.id} style={{ position: 'relative', aspectRatio: '1', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-2)' }}>
+                <img src={p.preview} alt="" onClick={() => setViewer({ images: photos.map((x) => x.preview), index: i })} style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'zoom-in' }} />
+                <button type="button" onClick={() => removePhoto(p.id)} aria-label={T.removePhoto} disabled={saving}
+                  style={{ position: 'absolute', top: 3, right: 3, width: 22, height: 22, borderRadius: '50%', border: 0, background: 'rgba(0,0,0,.62)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', padding: 0 }}>
+                  <X size={13} />
+                </button>
+              </div>
+            ))}
+            {photos.length < MAX_PHOTOS && (
+              <button type="button" onClick={() => fileInputRef.current?.click()} disabled={saving}
+                style={{ aspectRatio: '1', borderRadius: 10, border: '1.5px dashed var(--border-2)', background: 'var(--card-2)', color: 'var(--text-2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, fontSize: 11, fontWeight: 700, cursor: 'pointer', padding: 4 }}>
+                <ImagePlus size={20} /> {T.addPhoto}
+              </button>
+            )}
+          </div>
+          <input ref={fileInputRef} type="file" accept="image/*" multiple onChange={onPickPhotos} style={{ display: 'none' }} />
+          {photoMsg && <p role="alert" style={{ color: '#8A1C1C', fontSize: 12, fontWeight: 700, margin: '8px 0 0' }}>{photoMsg}</p>}
+        </div>
+
+        <div style={{ marginBottom: 14 }}>
+          <h3 style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--maroon)', margin: '0 0 3px', letterSpacing: '.01em' }}>{T.invoiceLanguage}</h3>
+          <p className="cell-sub" style={{ margin: '0 0 6px' }}>{T.invoiceLanguageHint}</p>
+          <div className="input-wrap">
+            <select value={invoiceLang} onChange={(e) => setInvoiceLang(e.target.value)} aria-label={T.invoiceLanguage} disabled={saving}>
+              {INVOICE_LANGS.map(([code, name]) => <option key={code} value={code}>{name}</option>)}
+            </select>
+          </div>
+        </div>
+
         {error && (
           <div role="alert" style={{ background: '#FDECEC', border: '1px solid #F5C2C2', color: '#8A1C1C', borderRadius: 12, padding: '10px 14px', fontSize: 13, fontWeight: 700, marginBottom: 14 }}>
             {error}
@@ -260,7 +383,7 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
         )}
 
         <button type="submit" className="btn btn-primary" disabled={saving} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          {saving ? <>{spinner} {T.saving}</> : <><Car className="h-4 w-4" /> {T.sale}</>}
+          {saving ? <>{spinner} {progress ? fillText(T.photosUploading, progress) : T.saving}</> : <><Car className="h-4 w-4" /> {T.sale}</>}
         </button>
       </form>
 
@@ -274,6 +397,15 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
               <div key={sale.id} style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10, border: '1px solid var(--border)', borderRadius: 14, padding: '12px 14px' }}>
                 <div style={{ minWidth: 0, flex: '1 1 220px' }}>
                   <div style={{ fontWeight: 800, fontSize: 13 }}>{sale.registrationNumber} <span style={{ color: 'var(--text-3)', fontWeight: 700 }}>· {sale.saleNumber}</span></div>
+                  {Array.isArray(sale.photos) && sale.photos.length > 0 && (
+                    <div style={{ display: 'flex', gap: 5, marginTop: 6, flexWrap: 'wrap' }}>
+                      {sale.photos.map((p, i) => (
+                        <img key={p.key || i} src={p.url} alt="" loading="lazy"
+                          onClick={() => setViewer({ images: sale.photos.map((x) => x.url), index: i })}
+                          style={{ width: 38, height: 38, borderRadius: 7, objectFit: 'cover', border: '1px solid var(--border-2)', cursor: 'zoom-in' }} />
+                      ))}
+                    </div>
+                  )}
                   <div className="cell-sub" style={{ marginTop: 2 }}>
                     {T.buyerShort}: {sale.buyerName} · {sale.saleDate} · Rs. {inr(sale.vehiclePrice)} · {T.balanceShort}: Rs. {inr(sale.balanceAmount)}
                   </div>
@@ -292,6 +424,8 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
         )}
       </div>
 
+      {viewer && <ImageZoomViewer images={viewer.images} initialIndex={viewer.index} onClose={() => setViewer(null)} />}
+
       {done && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
           <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 380, padding: 28, textAlign: 'center' }}>
@@ -300,7 +434,24 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
             </div>
             <h3 style={{ marginBottom: 8 }}>{T.successTitle}</h3>
             <p className="desc" style={{ marginBottom: 6 }}>{done.sale.registrationNumber} · {done.sale.saleNumber}</p>
-            <p className="desc" style={{ marginBottom: 18 }}>{done.invoiceFailed ? T.invoiceFailed : T.successDesc}</p>
+            <p className="desc" style={{ marginBottom: done.photoTotal ? 8 : 18 }}>{done.invoiceFailed ? T.invoiceFailed : T.successDesc}</p>
+            {done.photoTotal > 0 && (
+              <div style={{ marginBottom: 18 }}>
+                {(done.sale.photos || []).length > 0 && (
+                  <p className="desc" style={{ margin: '0 0 4px' }}>{fillText(T.photosAttached, { count: (done.sale.photos || []).length })}</p>
+                )}
+                {done.failedFiles.length > 0 && (
+                  <>
+                    <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: '0 0 6px' }}>
+                      {fillText(T.photosPartial, { failed: done.failedFiles.length, total: done.photoTotal })}
+                    </p>
+                    <button type="button" className="btn btn-outline btn-sm" onClick={retryPhotos} disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                      {saving ? spinner : <RefreshCw className="h-4 w-4" />} {saving && progress ? fillText(T.photosUploading, progress) : T.retryPhotos}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
             {!done.invoiceFailed && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
                 <button type="button" className="btn btn-outline" disabled={busy === `${done.sale.id}:download`} onClick={run(done.sale, 'download', done)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>

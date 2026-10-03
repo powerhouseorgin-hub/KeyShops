@@ -557,6 +557,12 @@ export const AuthProvider = ({ children }) => {
     // --- VEHICLE SALES (Shop Admin) - see VehicleSalesView.jsx and the backend's FirestoreVehicleSaleController ---
     createVehicleSale: async (payload) => request('/api/shop/vehicle-sales', 'POST', payload),
     getVehicleSales: async (limit = 20) => request(`/api/shop/vehicle-sales?limit=${limit}`),
+    // One photo per call (multipart "file"); the server allows at most 5 per sale.
+    addVehicleSalePhoto: async (saleId, file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      return request(`/api/shop/vehicle-sales/${encodeURIComponent(saleId)}/photos`, 'POST', formData, true);
+    },
 
     // --- SHOP SETTINGS: VERIFICATION DOCUMENTS ---
     // Backed by shops/{shopId}/documents (see FirestoreShopService.addOrReplaceShopDocument /
