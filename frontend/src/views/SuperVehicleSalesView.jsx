@@ -4,15 +4,18 @@ import { vehicleSaleText, fillText } from '../i18n/vehicleSaleText';
 import VehicleSaleDetail from '../components/VehicleSaleDetail';
 import ImageZoomViewer from '../components/ImageZoomViewer';
 
-// Super Admin review of every vehicle sale on the platform: each shop's sales and the Super Admin's own, newest first,
-// with a filter by shop (or "Super Admin") and a search box over what is loaded. Tapping a sale opens the same read-only
-// details screen the shops use, plus who sold it. Read-only: nothing here edits a sale.
+// "All Sales": a read-only review of vehicle sales, newest first, with a search box over what is loaded and paging.
+//   - Super Admin: every sale on the platform (each shop's and the Super Admin's own), with a filter by shop / Super Admin,
+//     and who sold each one.
+//   - Shop Admin: only their own shop's complete history (no shop filter - it is all theirs).
+// Tapping a sale opens the read-only details screen. Nothing here edits, sends or deletes a sale.
 const inr = (n) => Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const LANG_NAMES = { ta: 'தமிழ்', en: 'English', hi: 'हिन्दी', te: 'తెలుగు', kn: 'ಕನ್ನಡ', ml: 'മലയാളം' };
 const PAGE = 30;
 
-export default function SuperVehicleSalesView({ api, lang = 'en' }) {
+export default function SuperVehicleSalesView({ api, lang = 'en', scope = 'platform' }) {
   const T = vehicleSaleText(lang);
+  const isShop = scope === 'shop';
   const [shops, setShops] = useState([]);
   const [filter, setFilter] = useState(''); // '' = everyone, 'SUPER_ADMIN', or a shop id
   const [search, setSearch] = useState('');
@@ -25,17 +28,21 @@ export default function SuperVehicleSalesView({ api, lang = 'en' }) {
   const [viewer, setViewer] = useState(null);
 
   useEffect(() => {
+    if (isShop) return undefined; // a shop has no shop filter
     let cancelled = false;
     api.getShops()
       .then((list) => { if (!cancelled) setShops((Array.isArray(list) ? list : list?.items || []).map((s) => ({ id: s.id, name: s.name })).sort((a, b) => String(a.name).localeCompare(String(b.name)))); })
       .catch((e) => console.error('Failed to load shops for the filter:', e));
     return () => { cancelled = true; };
-  }, [api]);
+  }, [api, isShop]);
 
   const load = useCallback(async (reset) => {
     if (reset) { setLoading(true); setError(''); } else { setLoadingMore(true); }
     try {
-      const res = await api.getAllVehicleSales({ shopId: filter, cursor: reset ? '' : nextCursor || '', limit: PAGE });
+      const cursor = reset ? '' : nextCursor || '';
+      const res = isShop
+        ? await api.getShopVehicleSalesPage({ cursor, limit: PAGE })
+        : await api.getAllVehicleSales({ shopId: filter, cursor, limit: PAGE });
       setItems((prev) => (reset ? res.items : [...prev, ...res.items]));
       setNextCursor(res.nextCursor || null);
     } catch (e) {
@@ -44,7 +51,7 @@ export default function SuperVehicleSalesView({ api, lang = 'en' }) {
       setLoading(false);
       setLoadingMore(false);
     }
-  }, [api, filter, nextCursor]);
+  }, [api, filter, nextCursor, isShop]);
 
   // reload from the first page whenever the filter changes
   useEffect(() => { load(true); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [filter, api]);
@@ -69,19 +76,21 @@ export default function SuperVehicleSalesView({ api, lang = 'en' }) {
         <div>
           <div className="eyebrow"><Receipt /> {T.reviewEyebrow}</div>
           <h1>{T.reviewTitle}</h1>
-          <p className="desc" style={{ marginTop: 6 }}>{T.reviewSubtitle}</p>
+          <p className="desc" style={{ marginTop: 6 }}>{isShop ? T.reviewSubtitleShop : T.reviewSubtitle}</p>
         </div>
       </div>
 
       <div className="card" style={{ padding: 14, marginBottom: 14 }}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 10 }}>
-          <div className="input-wrap">
-            <select value={filter} onChange={(e) => setFilter(e.target.value)} aria-label={T.filterShop} style={{ paddingLeft: 12 }}>
-              <option value="">{T.allShops}</option>
-              <option value="SUPER_ADMIN">{T.superAdminOwner}</option>
-              {shops.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-            </select>
-          </div>
+          {!isShop && (
+            <div className="input-wrap">
+              <select value={filter} onChange={(e) => setFilter(e.target.value)} aria-label={T.filterShop} style={{ paddingLeft: 12 }}>
+                <option value="">{T.allShops}</option>
+                <option value="SUPER_ADMIN">{T.superAdminOwner}</option>
+                {shops.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+              </select>
+            </div>
+          )}
           <div className="input-wrap" style={{ position: 'relative' }}>
             <Search style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: 'var(--text-3)' }} />
             <input type="search" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={T.reviewSearch} aria-label={T.reviewSearch} style={{ paddingLeft: 36 }} />
@@ -107,7 +116,7 @@ export default function SuperVehicleSalesView({ api, lang = 'en' }) {
                   <div style={{ fontWeight: 800, fontSize: 14 }}>{s.registrationNumber} <span style={{ color: 'var(--text-3)', fontWeight: 700, fontSize: 12 }}>· {s.saleNumber}</span></div>
                   <div className="cell-sub" style={{ marginTop: 3 }}>{T.buyerShort}: {s.buyerName} · {s.saleDate}</div>
                 </div>
-                {ownerChip(s)}
+                {!isShop && ownerChip(s)}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 10, marginTop: 8, fontSize: 12.5, fontWeight: 700, flexWrap: 'wrap' }}>
                 <span>Rs. {inr(s.vehiclePrice)}</span>
@@ -132,7 +141,7 @@ export default function SuperVehicleSalesView({ api, lang = 'en' }) {
           sale={detail}
           T={T}
           languageName={LANG_NAMES[detail.lang] || detail.lang}
-          showOwner
+          showOwner={!isShop}
           hideActions
           onClose={() => setDetail(null)}
           onOpenPhoto={(images, index) => setViewer({ images, index })}

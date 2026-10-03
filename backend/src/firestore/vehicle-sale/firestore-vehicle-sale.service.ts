@@ -259,6 +259,24 @@ export class FirestoreVehicleSaleService {
     return snap.docs.filter((d) => !(d.data() as any).deletedAt).map((d) => ({ id: d.id, ...d.data() }));
   }
 
+  // One owner's sales in pages (the shop's "All Sales" screen): newest first, `nextCursor` is the path of the last sale of
+  // the page. A cursor must point inside THIS owner's own collection - one pointing anywhere else is refused.
+  async listPage(ownerArg: string | SaleOwner, opts: { limit?: number; cursor?: string } = {}) {
+    const owner = asOwner(ownerArg);
+    const limit = Math.min(100, Math.max(1, Math.floor(Number(opts.limit)) || 30));
+    const prefix = `${owner.type === 'SHOP' ? 'shops' : 'users'}/${owner.id}/vehicleSales/`;
+    if (opts.cursor && !(SALE_PATH.test(opts.cursor) && opts.cursor.startsWith(prefix))) throw new BadRequestException('Invalid cursor');
+    let q: FirebaseFirestore.Query = this.col(owner).orderBy('createdAt', 'desc');
+    if (opts.cursor) {
+      const after = await this.firestore.db.doc(opts.cursor).get();
+      if (after.exists) q = q.startAfter(after);
+    }
+    const snap = await q.limit(limit + 1).get();
+    const hasMore = snap.docs.length > limit;
+    const docs = snap.docs.slice(0, limit).filter((d) => !(d.data() as any).deletedAt);
+    return { items: docs.map((d) => ({ id: d.id, path: d.ref.path, ...d.data() })), nextCursor: hasMore && docs.length ? docs[docs.length - 1].ref.path : null };
+  }
+
   async get(ownerArg: string | SaleOwner, id: string) {
     const doc = await this.col(asOwner(ownerArg)).doc(id).get();
     if (!doc.exists || (doc.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');

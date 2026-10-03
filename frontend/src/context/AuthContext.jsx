@@ -564,6 +564,12 @@ export const AuthProvider = ({ children }) => {
       formData.append('file', file);
       return request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales/${encodeURIComponent(saleId)}/photos`, 'POST', formData, true);
     },
+    // The shop's complete sales history in pages ("All Sales" screen for a Shop Admin): { items, nextCursor }.
+    getShopVehicleSalesPage: async ({ cursor = '', limit = 30 } = {}) => {
+      const params = new URLSearchParams({ limit: String(limit) });
+      if (cursor) params.set('cursor', cursor);
+      return request(`/api/shop/vehicle-sales/history?${params.toString()}`);
+    },
     // Super Admin review of every sale on the platform. shopId: a shop id, or "SUPER_ADMIN" for the Super Admin's own sales.
     getAllVehicleSales: async ({ shopId = '', cursor = '', limit = 30 } = {}) => {
       const params = new URLSearchParams({ limit: String(limit) });

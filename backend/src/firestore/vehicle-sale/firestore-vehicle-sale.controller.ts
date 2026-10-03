@@ -32,6 +32,12 @@ export class FirestoreVehicleSaleController {
     return this.sales.addPhoto(req.user.shopId, id, file);
   }
 
+  // The shop's complete sales history in pages (the "All Sales" screen): { items, nextCursor }, own shop only.
+  @Get('history')
+  async history(@Req() req: any, @Query('limit') limit?: string, @Query('cursor') cursor?: string) {
+    return this.sales.listPage(req.user.shopId, { limit: limit ? Number(limit) : undefined, cursor });
+  }
+
   @Get(':id')
   async get(@Req() req: any, @Param('id') id: string) {
     return this.sales.get(req.user.shopId, id);

@@ -2262,6 +2262,13 @@ export default function App() {
                     <span className="nav-ico" style={{ background: 'var(--blue)' }}><Car /></span>
                     <span>{t('vehicleSales')}</span>
                   </button>
+                  <button
+                    onClick={() => setActiveTab('all-vehicle-sales')}
+                    className={`side-link ${activeTab === 'all-vehicle-sales' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Receipt /></span>
+                    <span>{t('allSales')}</span>
+                  </button>
 
                   <div className="side-section-label">{t('navStore')}</div>
                   <button
@@ -2546,9 +2553,9 @@ export default function App() {
                 <CustomerHistoryView t={t} api={api} searchDispatch={activeTab === 'history' ? searchDispatch : null} />
               </Suspense>
             )}
-            {activeTab === 'all-vehicle-sales' && user.role === 'SUPER_ADMIN' && (
+            {activeTab === 'all-vehicle-sales' && (
               <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
-                <SuperVehicleSalesView t={t} api={api} lang={lang} />
+                <SuperVehicleSalesView t={t} api={api} lang={lang} scope={user.role === 'SUPER_ADMIN' ? 'platform' : 'shop'} />
               </Suspense>
             )}
             {activeTab === 'vehicle-sales' && (

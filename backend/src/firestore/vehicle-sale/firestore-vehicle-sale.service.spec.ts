@@ -251,3 +251,19 @@ describe('FirestoreVehicleSaleService.listAll input checks', () => {
     await expect(svc.listAll({ cursor })).rejects.toBeInstanceOf(BadRequestException);
   });
 });
+
+describe('FirestoreVehicleSaleService.listPage cursor checks', () => {
+  const svc = new FirestoreVehicleSaleService(explodingFirestore, noFiles);
+  it.each([
+    ['another shop\'s sale', 'shops/other-shop/vehicleSales/abc'],
+    ['a Super Admin sale', 'users/admin-1/vehicleSales/abc'],
+    ['a path outside vehicleSales', 'shops/shop-1/customers/abc'],
+    ['path traversal', 'shops/shop-1/vehicleSales/../../other/vehicleSales/x'],
+  ])('refuses a cursor pointing at %s', async (_l, cursor) => {
+    await expect(svc.listPage('shop-1', { cursor })).rejects.toBeInstanceOf(BadRequestException);
+  });
+  it('accepts a cursor inside the owner\'s own collection (it then reaches the database)', async () => {
+    await expect(svc.listPage('shop-1', { cursor: 'shops/shop-1/vehicleSales/abc' })).rejects.not.toBeInstanceOf(BadRequestException);
+    await expect(svc.listPage({ type: 'SUPER_ADMIN', id: 'admin-1' }, { cursor: 'users/admin-1/vehicleSales/abc' })).rejects.not.toBeInstanceOf(BadRequestException);
+  });
+});

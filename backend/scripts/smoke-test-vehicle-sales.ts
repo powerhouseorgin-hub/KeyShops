@@ -164,6 +164,20 @@ async function main() {
   const stored2 = (await db.collection('shops').doc(A.shopId).collection('vehicleSales').doc(concurrent.id).get()).data() as any;
   check('8 simultaneous uploads: exactly 5 succeed, 3 are refused, 5 stored', race.filter((x) => x.status === 201).length === 5 && race.filter((x) => x.status === 400).length === 3 && stored2.photos.length === 5, race.map((x) => x.status));
 
+  console.log('\n--- Shop "All Sales" history (paged, own shop only) ---');
+  const h1 = await req('GET', '/shop/vehicle-sales/history?limit=3', undefined, A.token);
+  check('history page 1: 3 sales and a cursor', h1.status === 200 && h1.body.items?.length === 3 && typeof h1.body.nextCursor === 'string', [h1.status, h1.body?.items?.length]);
+  const h2 = await req('GET', `/shop/vehicle-sales/history?limit=100&cursor=${encodeURIComponent(h1.body.nextCursor)}`, undefined, A.token);
+  check('history page 2 continues without repeating page 1', h2.status === 200 && h2.body.items.length > 0 && h2.body.items.every((x: any) => !h1.body.items.some((y: any) => y.id === x.id)), h2.body?.items?.length);
+  const hAll = (await req('GET', '/shop/vehicle-sales/history?limit=100', undefined, A.token)).body;
+  check("history contains only this shop's sales, newest first", hAll.items.length > 3 && hAll.items.every((x: any) => x.shopId === A.shopId) && hAll.items.every((x: any, k: number) => k === 0 || hAll.items[k - 1].createdAt >= x.createdAt), hAll.items?.length);
+  const bHist = (await req('GET', '/shop/vehicle-sales/history', undefined, B.token)).body;
+  check("shop B's history never contains shop A's sales", bHist.items.every((x: any) => x.shopId === B.shopId), bHist.items?.length);
+  const foreignCursor = await req('GET', `/shop/vehicle-sales/history?cursor=${encodeURIComponent(h1.body.items[0].path)}`, undefined, B.token);
+  check("a cursor pointing at another shop's sale is refused (400)", foreignCursor.status === 400, foreignCursor.status);
+  const anonHist = await req('GET', '/shop/vehicle-sales/history');
+  check('history needs a login (401)', anonHist.status === 401, anonHist.status);
+
   // ---------------------------------------------------------------------------------------------------------
   // Super Admin: own sales (no shop) + the platform-wide review. Creates a throwaway Super Admin account, so this
   // section only runs against the emulators - never against the live project.

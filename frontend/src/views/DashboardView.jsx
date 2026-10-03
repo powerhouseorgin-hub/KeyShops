@@ -10,7 +10,7 @@ import meterServiceImg from '../assets/dashboard-icons/meter-service.png';
 import scanningServiceImg from '../assets/dashboard-icons/scanning-service.png';
 import dealerIcon from '../assets/dashboard-icons/dealer.png';
 import customerSupportIcon from '../assets/dashboard-icons/customer-support.png';
-import vehicleServiceIcon from '../assets/dashboard-icons/vehicle-service.svg';
+import vehicleSalesIcon from '../assets/dashboard-icons/vehicle-sales.png';
 import {
   AlertTriangle, Sparkles, Wrench, Cpu, Gauge, ScanLine,
   X,
@@ -259,6 +259,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
             share the same size/spacing via DashCardGrid. */}
         <DashCardGrid items={[
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
+          { title: t('vehicleService'), description: t('vehicleServiceDesc'), image: vehicleSalesIcon, imgScale: 0.9, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
           { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
           { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
@@ -266,7 +267,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
           { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
           { title: t('offersLabel'), description: t('activeOffersBannersDesc') || 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: goToOffers },
-          { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
+          { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
         ]} />
       </div>
     );
@@ -335,21 +336,18 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
 
       {/* Compact, approved dashboard layout - only the essential shortcut cards,
           no reports/lists/charts below. One combined grid so every card shares
-          the same size/spacing. The top row is New Customer | Vehicle Service,
-          each exactly half the width (the grid has two equal columns); then the
-          shortcut cards in pairs, and the Offers and Customer Support cards as
-          full-width, shorter rows. Vehicle Service opens the Vehicle Sales screen. */}
+          the same size/spacing. The grid has two equal columns and EVERY card is exactly half the width (50 | 50): New Customer | Vehicle Service first, then the shortcut cards in pairs, ending with Offers | Customer Support. Vehicle Service opens the Vehicle Sales screen. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: t('vehicleService'), description: t('vehicleServiceDesc'), image: vehicleServiceIcon, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
+        { title: t('vehicleService'), description: t('vehicleServiceDesc'), image: vehicleSalesIcon, imgScale: 0.9, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
         { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => goToProductType('Key Shops') },
         { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
         { title: t('ecm'), description: t('ecmDesc'), image: ecmServiceImg, accent: 'var(--orange)', onClick: () => goToProductType('ECM') },
         { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
         { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
-        { title: t('offersLabel'), description: t('activeOffersBannersDesc') || 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', fullWidth: true, compact: true, accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
-        { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, fullWidth: true, compact: true, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
+        { title: t('offersLabel'), description: t('activeOffersBannersDesc') || 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
+        { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
       ]} />
 
       {/* Active Announcements Popup Modal - shows 2-3 ads/banners/offers together
