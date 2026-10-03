@@ -44,6 +44,7 @@ import { FirestorePaymentService } from './payment/firestore-payment.service';
 import { FirestorePaymentController } from './payment/firestore-payment.controller';
 import { AlgoliaSearchService } from './search/algolia-search.service';
 import { HealthController } from './health.controller';
+import { WhatsappWebhookController } from './whatsapp-webhook.controller';
 import { FirestoreVehicleSaleService } from './vehicle-sale/firestore-vehicle-sale.service';
 import { FirestoreVehicleSaleController } from './vehicle-sale/firestore-vehicle-sale.controller';
 
@@ -76,6 +77,7 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
   ],
   controllers: [
     HealthController,
+    WhatsappWebhookController,
     FirestoreAuthController,
     FirestoreAdController,
     PublicAdController,

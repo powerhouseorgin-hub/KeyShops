@@ -37,7 +37,8 @@ let appReady: Promise<INestApplication> | null = null;
 async function bootstrap(): Promise<INestApplication> {
   const app = await NestFactory.create(FirestoreAppModule, new ExpressAdapter(expressServer), { bodyParser: false });
   app.use(compression());
-  app.use(express.json({ limit: '15mb' }));
+  // The raw bytes are kept (req.rawBody) because the WhatsApp webhook's signature is computed over them.
+  app.use(express.json({ limit: '15mb', verify: (req: any, _res, buf) => { req.rawBody = buf; } }));
   app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
   app.enableCors({
