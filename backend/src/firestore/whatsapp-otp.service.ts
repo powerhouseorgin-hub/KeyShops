@@ -36,8 +36,10 @@ const WHATSAPP_API_VERSION = process.env.WHATSAPP_API_VERSION || 'v21.0';
 //                WHATSAPP_OTP_INBOUND=true, the app secret (the webhook must be signed), the business number, and the Meta app
 //                subscribed to the WhatsApp account with the "messages" webhook field live.
 //   'none'     - not configured; no code can reach the user (the code is never shown on screen in production).
-// A customer_verify code goes to the CUSTOMER's phone, but the shop owner is the one holding the app - so a message sent from the
-// owner's phone could never match the customer's number. That purpose therefore never uses 'inbound'.
+// customer_verify: the number being verified is the CUSTOMER's, while the shop owner holds the app. The same rule applies - the
+// message must come from the customer's own WhatsApp (the app shows the customer what to send); the code is replied in the
+// customer's chat and the customer reads it out to the shop owner. A message from any other number (the owner's included) is a
+// MISMATCH and gets no code.
 export type OtpDeliveryMode = 'template' | 'inbound' | 'none';
 
 // Lifecycle of an inbound request, as shown to the app while it waits.
@@ -50,6 +52,8 @@ export interface SendOtpResult {
   mode?: OtpDeliveryMode;
   ref?: string;
   waLink?: string;
+  businessNumber?: string; // digits with country code; for screens that show the number to somebody else's phone
+  message?: string; // the exact text to send, "KEYSHOPS <ref>"
   expiresInSeconds?: number;
   // LOCAL TESTING ONLY: present solely when running against the Firebase emulator (FIRESTORE_EMULATOR_HOST set) with
   // OTP_SHOW_CODE_IN_UI=true, so the smoke tests can sign up. The deployed API never has an emulator host, so it can never
@@ -101,7 +105,11 @@ export class WhatsappOtpService {
     if (mode === 'inbound') {
       const ref = generateRef();
       await this.createRecord(identifier, purpose, { codeHash: null, ref, state: 'WAITING' });
-      return { success: true, delivered: false, mode, ref, waLink: this.waLink(ref), expiresInSeconds: OTP_TTL_MS / 1000 };
+      return {
+        success: true, delivered: false, mode, ref, waLink: this.waLink(ref),
+        businessNumber: (process.env.WHATSAPP_BUSINESS_NUMBER || '').replace(/[^0-9]/g, ''), message: `KEYSHOPS ${ref}`,
+        expiresInSeconds: OTP_TTL_MS / 1000,
+      };
     }
 
     const claim = await this.claimCode();
@@ -188,7 +196,7 @@ export class WhatsappOtpService {
   deliveryMode(purpose?: string): OtpDeliveryMode {
     if (!process.env.WHATSAPP_ACCESS_TOKEN || !process.env.WHATSAPP_PHONE_NUMBER_ID) return 'none';
     if (process.env.WHATSAPP_OTP_TEMPLATE_NAME) return 'template';
-    if (this.inboundEnabled() && purpose !== 'customer_verify') return 'inbound';
+    if (this.inboundEnabled()) return 'inbound';
     return 'none';
   }
 

@@ -93,11 +93,10 @@ describe('WhatsappOtpService', () => {
       expect(svc.deliveryMode('register')).toBe('none');
     });
 
-    it('a customer verification never uses inbound (the shop owner holds the phone, not the customer)', () => {
+    it('every purpose, a customer verification included, uses inbound when it is on', () => {
       inboundEnv();
       const svc = new WhatsappOtpService(fakeFirestore().firestore);
-      expect(svc.deliveryMode('customer_verify')).toBe('none');
-      for (const p of ['register', 'reset', 'delete-account', 'change-credentials']) expect(svc.deliveryMode(p)).toBe('inbound');
+      for (const p of ['register', 'customer_verify', 'reset', 'delete-account', 'change-credentials']) expect(svc.deliveryMode(p)).toBe('inbound');
     });
   });
 
@@ -148,6 +147,23 @@ describe('WhatsappOtpService', () => {
       const rec = [...docs.values()][0];
       expect(rec).toMatchObject({ identifier: PHONE, purpose: 'register', state: 'WAITING', codeHash: null, consumed: false });
       expect(sent).toHaveLength(0);
+    });
+
+    it('customer verification: the CUSTOMER must send the message, the shop owner phone gets no code', async () => {
+      const fx = fakeFirestore();
+      const svc = new WhatsappOtpService(fx.firestore);
+      const CUSTOMER = '9876543210';
+      const out: any = await svc.sendOtp(CUSTOMER, 'customer_verify');
+      expect(out).toMatchObject({ mode: 'inbound', businessNumber: '919025088853', message: 'KEYSHOPS ' + out.ref });
+      expect(await svc.handleInboundMessage({ from: FROM, id: 'owner', body: out.message })).toBe('mismatch'); // the shop owner's phone
+      expect(sent).toHaveLength(1);
+      expect(sent[0].text.body).toMatch(/different number/);
+      expect(sent.some((m) => codeFrom(m))).toBe(false);
+      const again: any = await svc.sendOtp(CUSTOMER, 'customer_verify');
+      expect(await svc.handleInboundMessage({ from: '91' + CUSTOMER, id: 'cust', body: again.message })).toBe('issued');
+      const code = codeFrom(sent[sent.length - 1]);
+      expect(sent[sent.length - 1].to).toBe('91' + CUSTOMER);
+      await expect(svc.verifyOtp(CUSTOMER, 'customer_verify', code)).resolves.toEqual({ success: true });
     });
 
     it('a new request supersedes the previous one', async () => {

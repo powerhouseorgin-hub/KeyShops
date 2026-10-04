@@ -34,6 +34,12 @@ export default function OtpVerificationModal({
   const [waRef, setWaRef] = useState('');
   const [waLink, setWaLink] = useState('');
   const [waState, setWaState] = useState('');
+  // Customer verification: the number belongs to the CUSTOMER, so the shop owner's phone must not open WhatsApp itself - the
+  // screen shows the customer what to send, from their own WhatsApp, and the code comes back in the customer's chat.
+  const forCustomer = purpose === 'customer_verify';
+  const [waNumber, setWaNumber] = useState('');
+  const [waText, setWaText] = useState('');
+  const [copied, setCopied] = useState(false);
   const openedRef = useRef('');
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [sending, setSending] = useState(false);
@@ -73,9 +79,13 @@ export default function OtpVerificationModal({
       setWaRef(inbound ? result.ref : '');
       setWaLink(inbound ? result.waLink || '' : '');
       setWaState(inbound ? 'WAITING' : '');
+      setWaNumber(inbound ? result.businessNumber || '' : '');
+      setWaText(inbound ? result.message || `KEYSHOPS ${result.ref}` : '');
+      setCopied(false);
       startCooldown(inbound ? 20 : resendCooldownSeconds);
       // On the phone app, open WhatsApp straight away so the whole thing is one tap; the button below is the fallback.
-      if (inbound && result.waLink && IS_NATIVE_APP && openedRef.current !== result.ref) {
+      // (Not for a customer verification: the message has to come from the customer's phone, not this one.)
+      if (inbound && !forCustomer && result.waLink && IS_NATIVE_APP && openedRef.current !== result.ref) {
         openedRef.current = result.ref;
         window.open(result.waLink, '_blank');
       }
@@ -84,7 +94,7 @@ export default function OtpVerificationModal({
     } finally {
       setSending(false);
     }
-  }, [api, identifier, method, purpose, startCooldown, t]);
+  }, [api, identifier, method, purpose, forCustomer, startCooldown, t]);
 
   // While waiting for the WhatsApp message, follow its progress every few seconds (and straight away when the user comes back to the app).
   useEffect(() => {
@@ -105,6 +115,19 @@ export default function OtpVerificationModal({
     return () => { cancelled = true; clearInterval(timer); document.removeEventListener('visibilitychange', onVisible); };
   }, [open, waRef, waState, api]);
 
+  const copyMessage = async () => {
+    try {
+      await navigator.clipboard.writeText(waText);
+      setCopied(true);
+    } catch (e) { /* clipboard refused - the message is shown on screen to read out or type */ }
+  };
+
+  // "919025088853" -> "+91 90250 88853"
+  const prettyNumber = (digits) => {
+    const m = /^(\d{2})(\d{5})(\d{5})$/.exec(digits || '');
+    return m ? `+${m[1]} ${m[2]} ${m[3]}` : digits ? `+${digits}` : '';
+  };
+
   const pasteCode = async () => {
     try {
       const text = await navigator.clipboard.readText();
@@ -117,7 +140,7 @@ export default function OtpVerificationModal({
     if (open) {
       setEnteredOtp('');
       setOtpError('');
-        setWaRef(''); setWaLink(''); setWaState(''); openedRef.current = '';
+        setWaRef(''); setWaLink(''); setWaState(''); setWaNumber(''); setWaText(''); setCopied(false); openedRef.current = '';
       sendCode();
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -175,17 +198,25 @@ export default function OtpVerificationModal({
 
         {waRef && (
           <div style={{ background: 'var(--gold-dim)', border: '1.5px solid var(--gold)', borderRadius: 12, padding: '12px 14px', marginBottom: 16 }}>
-            <p style={{ fontSize: 13, fontWeight: 800, marginBottom: 6 }}>{t('otpWaTitle')}</p>
-            <p style={{ fontSize: 12.5, lineHeight: 1.45, marginBottom: 10 }}>{t('otpWaIntro')}</p>
-            {waLink && ['WAITING', 'CODE_SENT'].includes(waState) && (
+            <p style={{ fontSize: 13, fontWeight: 800, marginBottom: 6 }}>{forCustomer ? t('otpCustTitle') : t('otpWaTitle')}</p>
+            <p style={{ fontSize: 12.5, lineHeight: 1.45, marginBottom: 10 }}>
+              {forCustomer ? t('otpCustIntro').replace('{phone}', identifier).replace('{number}', prettyNumber(waNumber)) : t('otpWaIntro')}
+            </p>
+            {forCustomer && waState === 'WAITING' && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                <p style={{ flex: 1, margin: 0, padding: '9px 12px', background: 'var(--bg-1)', borderRadius: 10, fontSize: 17, fontWeight: 800, letterSpacing: '.06em', textAlign: 'center' }}>{waText}</p>
+                <button type="button" className="btn btn-ghost btn-sm" onClick={copyMessage}>{copied ? t('otpCustCopied') : t('otpCustCopy')}</button>
+              </div>
+            )}
+            {!forCustomer && waLink && ['WAITING', 'CODE_SENT'].includes(waState) && (
               <button type="button" className="btn btn-sm" onClick={() => window.open(waLink, '_blank')}
                 style={{ background: '#25D366', borderColor: '#25D366', color: '#fff', marginBottom: 10, width: '100%' }}>
                 {t('otpWaOpen')}
               </button>
             )}
             <p role="status" style={{ fontSize: 12.5, fontWeight: 700, margin: 0, color: ['MISMATCH', 'EXPIRED', 'SEND_FAILED'].includes(waState) ? 'var(--red)' : 'inherit' }}>
-              {waState === 'WAITING' && t('otpWaWaiting')}
-              {(waState === 'CODE_SENT' || waState === 'DONE') && t('otpWaSent')}
+              {waState === 'WAITING' && (forCustomer ? t('otpCustWaiting') : t('otpWaWaiting'))}
+              {(waState === 'CODE_SENT' || waState === 'DONE') && (forCustomer ? t('otpCustSent') : t('otpWaSent'))}
               {waState === 'MISMATCH' && t('otpWaMismatch').replace('{phone}', identifier)}
               {waState === 'EXPIRED' && t('otpWaExpired')}
               {waState === 'SEND_FAILED' && t('otpWaFailed')}
@@ -193,7 +224,7 @@ export default function OtpVerificationModal({
           </div>
         )}
 
-        {waRef && (
+        {waRef && !forCustomer && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 6 }}>
             <button type="button" className="btn btn-ghost btn-sm" onClick={pasteCode}>{t('otpWaPaste')}</button>
           </div>

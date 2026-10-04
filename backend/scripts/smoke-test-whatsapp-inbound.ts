@@ -43,8 +43,16 @@ async function main() {
   check('the request is waiting', (await status(s1.body.ref)) === 'WAITING');
   const early = await api('POST', '/auth/verify-otp', { identifier: p1, purpose: 'reset', code: '1234' });
   check('verifying before the WhatsApp message is refused', early.status === 400 && /send the message first/.test(early.body.message), early);
-  const cust = await api('POST', '/auth/send-otp', { identifier: phone(), purpose: 'customer_verify' });
-  check('a customer verification does NOT use inbound (it goes to the customer)', cust.body.mode === undefined, cust.body);
+  const custPhone = phone();
+  const cust = await api('POST', '/auth/send-otp', { identifier: custPhone, purpose: 'customer_verify' });
+  check('a customer verification uses inbound too, and tells the app what the customer must send', cust.body.mode === 'inbound' && cust.body.message === 'KEYSHOPS ' + cust.body.ref && cust.body.businessNumber === '919025088853', cust.body);
+  await webhook(msg('919876500001', cust.body.message)); // the shop owner's own phone
+  check("the shop owner's number sending it for the customer is a MISMATCH", (await status(cust.body.ref)) === 'MISMATCH');
+  const cust2 = await api('POST', '/auth/send-otp', { identifier: custPhone, purpose: 'customer_verify' });
+  await webhook(msg('91' + custPhone, cust2.body.message));
+  await sleep(300);
+  const cst = await status(cust2.body.ref);
+  check("the customer's own number gets the code (CODE_SENT, or SEND_FAILED with the dummy token)", cst === 'CODE_SENT' || cst === 'SEND_FAILED', cst);
 
   console.log('\n--- the webhook is protected ---');
   const unsigned = await webhook(msg('91' + p1, `KEYSHOPS ${s1.body.ref}`), SECRET, false);
