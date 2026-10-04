@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post, Query, Req, Res } from '@nestjs/common';
 import { createHmac, timingSafeEqual } from 'crypto';
+import { WhatsappOtpService } from './whatsapp-otp.service';
 import type { Request, Response } from 'express';
 
 // Constant-time check of Meta's X-Hub-Signature-256 header ("sha256=<hex>") against the raw request body, signed
@@ -27,14 +28,17 @@ function sameSecret(a: string, b: string): boolean {
 //
 //   GET  - Meta's one-time subscription handshake. It calls with hub.mode=subscribe, hub.verify_token and
 //          hub.challenge; the challenge is echoed back only when the token equals WHATSAPP_WEBHOOK_VERIFY_TOKEN.
-//   POST - delivery events. Nothing is stored and no message content or phone numbers are logged: only the id,
-//          status (sent / delivered / read / failed) and error code of each message status, which is what is
-//          needed to see whether an OTP or invoice actually reached the customer. When WHATSAPP_APP_SECRET is set
-//          the payload's signature is verified first and an unsigned or wrongly signed call is rejected.
+//   POST - delivery events and incoming messages. Status events are only logged (message id, status and error code - no phone
+//          numbers or content). Incoming TEXT messages are handed to WhatsappOtpService.handleInboundMessage, which acts only on
+//          a live "KEYSHOPS <ref>" (the WhatsApp OTP flow) and ignores everything else; that path needs WHATSAPP_APP_SECRET, so it can
+//          only be driven by calls signed by Meta. When the secret is set, the payload's signature is verified first and an
+//          unsigned or wrongly signed call is rejected.
 //
 // Public by necessity (Meta calls it), so it does as little as possible and trusts nothing in the payload.
 @Controller('webhooks/whatsapp')
 export class WhatsappWebhookController {
+  constructor(private readonly otp: WhatsappOtpService) {}
+
   @Get()
   verify(
     @Query('hub.mode') mode: string,
@@ -51,7 +55,7 @@ export class WhatsappWebhookController {
 
   @Post()
   @HttpCode(200)
-  receive(@Req() req: Request & { rawBody?: Buffer }, @Body() body: any) {
+  async receive(@Req() req: Request & { rawBody?: Buffer }, @Body() body: any) {
     const secret = process.env.WHATSAPP_APP_SECRET || '';
     if (secret) {
       const raw = req.rawBody ?? (req as any)._rawBody;
@@ -64,9 +68,21 @@ export class WhatsappWebhookController {
     try {
       for (const entry of Array.isArray(body?.entry) ? body.entry : []) {
         for (const change of Array.isArray(entry?.changes) ? entry.changes : []) {
-          for (const s of Array.isArray(change?.value?.statuses) ? change.value.statuses : []) {
+          const value = change?.value;
+          for (const s of Array.isArray(value?.statuses) ? value.statuses : []) {
             const error = Array.isArray(s?.errors) && s.errors[0] ? ` error=${String(s.errors[0].code)}` : '';
             console.log(`[WhatsApp status] ${String(s?.status)} id=${String(s?.id).slice(0, 80)}${error}`);
+          }
+          // incoming messages: only for OUR business number, only text, one at a time; a failure on one never affects the rest
+          if (value?.metadata?.phone_number_id && value.metadata.phone_number_id !== process.env.WHATSAPP_PHONE_NUMBER_ID) continue;
+          for (const m of Array.isArray(value?.messages) ? value.messages : []) {
+            if (m?.type !== 'text' || typeof m?.from !== 'string' || typeof m?.text?.body !== 'string') continue;
+            try {
+              const outcome = await this.otp.handleInboundMessage({ from: m.from, id: String(m.id || ''), body: m.text.body });
+              if (outcome !== 'ignored') console.log(`[WhatsApp inbound] ${outcome} id=${String(m.id).slice(0, 80)}`);
+            } catch (err: any) {
+              console.error('WhatsApp inbound message handling failed:', err?.message);
+            }
           }
         }
       }

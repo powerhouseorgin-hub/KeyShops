@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { randomInt } from 'crypto';
 import { FirestoreService } from './firestore.service';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 
@@ -19,9 +20,30 @@ const OTP_HASH_COST = 10;
 // by design, since they're meant purely for OTP delivery).
 const WHATSAPP_API_VERSION = process.env.WHATSAPP_API_VERSION || 'v21.0';
 
+// How the code reaches the user over WhatsApp:
+//   'template' - an approved Authentication template (WHATSAPP_OTP_TEMPLATE_NAME). We message the user; nothing is needed from them.
+//   'inbound'  - NO template. The user's own WhatsApp sends us a message ("KEYSHOPS <ref>", prefilled by the app's wa.me link);
+//                the webhook receives it, checks that the SENDER'S NUMBER is the number that was entered in the app, and only
+//                then replies with the code in that chat. Because WhatsApp itself authenticates the sender, this also proves the
+//                user controls the number. A reply is allowed because the user messaged us first (24-hour window). Needs
+//                WHATSAPP_OTP_INBOUND=true, the app secret (the webhook must be signed), the business number, and the Meta app
+//                subscribed to the WhatsApp account with the "messages" webhook field live.
+//   'none'     - not configured; the code is only logged (and shown on screen under OTP_SHOW_CODE_IN_UI).
+// A customer_verify code goes to the CUSTOMER's phone, but the shop owner is the one holding the app - so a message sent from the
+// owner's phone could never match the customer's number. That purpose therefore never uses 'inbound'.
+export type OtpDeliveryMode = 'template' | 'inbound' | 'none';
+
+// Lifecycle of an inbound request, as shown to the app while it waits.
+export type InboundState = 'WAITING' | 'CODE_SENT' | 'SEND_FAILED' | 'MISMATCH' | 'EXPIRED' | 'DONE' | 'UNKNOWN';
+
 export interface SendOtpResult {
   success: true;
   delivered: boolean;
+  // 'inbound' mode: no code exists yet. The app opens waLink (the user just taps Send in WhatsApp) and polls the status of ref.
+  mode?: OtpDeliveryMode;
+  ref?: string;
+  waLink?: string;
+  expiresInSeconds?: number;
   // Only ever present when WhatsApp delivery failed/isn't configured AND
   // OTP_SHOW_CODE_IN_UI=true AND the purpose is on the allowlist below -
   // the temporary pre-WhatsApp fallback. Once real delivery works
@@ -41,6 +63,20 @@ const UI_FALLBACK_PURPOSES = new Set(['register', 'customer_verify', 'change-cre
 // password, change phone, delete account) may still redeem it.
 const VERIFICATION_REDEEM_WINDOW_MS = 15 * 60 * 1000;
 
+// Reference carried in the user's WhatsApp message: 8 characters from an alphabet without look-alikes (~1e12 values), single use.
+const REF_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const REF_LENGTH = 8;
+const REF_IN_MESSAGE = /KEYSHOPS[\s:#-]*([A-Z0-9]{8})/i;
+const REF_ONLY = /^[A-Z0-9]{8}$/;
+const generateRef = () => Array.from({ length: REF_LENGTH }, () => REF_ALPHABET[randomInt(REF_ALPHABET.length)]).join('');
+
+export interface InboundMessage {
+  from: string; // the sender's WhatsApp id: country code + number, e.g. 919361906840
+  id: string;
+  body: string;
+}
+export type InboundOutcome = 'ignored' | 'issued' | 'mismatch' | 'expired';
+
 export interface VerifyOtpResult {
   success: true;
 }
@@ -55,33 +91,18 @@ export class WhatsappOtpService {
       throw new BadRequestException(PHONE_REGEX_MESSAGE);
     }
 
+    const mode = this.deliveryMode(purpose);
+    if (mode === 'inbound') {
+      const ref = generateRef();
+      await this.createRecord(identifier, purpose, { codeHash: null, ref, state: 'WAITING' });
+      return { success: true, delivered: false, mode, ref, waLink: this.waLink(ref), expiresInSeconds: OTP_TTL_MS / 1000 };
+    }
+
     const code = String(Math.floor(1000 + Math.random() * 9000));
     const codeHash = await bcrypt.hash(code, OTP_HASH_COST);
+    await this.createRecord(identifier, purpose, { codeHash });
 
-    const col = this.firestore.db.collection(OTP_COLLECTION);
-
-    // Invalidate any prior un-consumed code for this (identifier, purpose) -
-    // A fresh send always supersedes whatever was pending before it.
-    const stale = await col
-      .where('identifier', '==', identifier)
-      .where('purpose', '==', purpose)
-      .where('consumed', '==', false)
-      .get();
-    const batch = this.firestore.db.batch();
-    stale.docs.forEach((doc) => batch.update(doc.ref, { consumed: true }));
-    const newDocRef = col.doc();
-    batch.set(newDocRef, {
-      identifier,
-      purpose,
-      codeHash,
-      consumed: false,
-      failedAttempts: 0,
-      expiresAt: Date.now() + OTP_TTL_MS,
-      createdAt: Date.now(),
-    });
-    await batch.commit();
-
-    const delivered = await this.sendWhatsAppTemplate(identifier, code);
+    const delivered = mode === 'template' ? await this.sendWhatsAppTemplate(identifier, code) : false;
     if (!delivered) {
       // Server log always carries the code when delivery isn't configured
       // or fails. The API response only does too under the explicit,
@@ -93,6 +114,107 @@ export class WhatsappOtpService {
     }
 
     return { success: true, delivered };
+  }
+
+  // A fresh record for (identifier, purpose); any earlier un-consumed one is superseded.
+  private async createRecord(identifier: string, purpose: string, extra: Record<string, unknown>) {
+    const col = this.firestore.db.collection(OTP_COLLECTION);
+    const stale = await col
+      .where('identifier', '==', identifier)
+      .where('purpose', '==', purpose)
+      .where('consumed', '==', false)
+      .get();
+    const batch = this.firestore.db.batch();
+    stale.docs.forEach((doc) => batch.update(doc.ref, { consumed: true }));
+    batch.set(col.doc(), {
+      identifier,
+      purpose,
+      consumed: false,
+      failedAttempts: 0,
+      expiresAt: Date.now() + OTP_TTL_MS,
+      createdAt: Date.now(),
+      ...extra,
+    });
+    await batch.commit();
+  }
+
+  // 'template' when an approved template is configured (it works for anyone); 'inbound' when switched on and fully configured;
+  // otherwise 'none'. See OtpDeliveryMode.
+  deliveryMode(purpose?: string): OtpDeliveryMode {
+    if (!process.env.WHATSAPP_ACCESS_TOKEN || !process.env.WHATSAPP_PHONE_NUMBER_ID) return 'none';
+    if (process.env.WHATSAPP_OTP_TEMPLATE_NAME) return 'template';
+    if (this.inboundEnabled() && purpose !== 'customer_verify') return 'inbound';
+    return 'none';
+  }
+
+  // Inbound needs everything: the switch, credentials, the business number (for the link) and the app secret (so the webhook that
+  // triggers code delivery can only be driven by signed calls from Meta).
+  inboundEnabled(): boolean {
+    return process.env.WHATSAPP_OTP_INBOUND === 'true'
+      && !!process.env.WHATSAPP_ACCESS_TOKEN && !!process.env.WHATSAPP_PHONE_NUMBER_ID
+      && !!(process.env.WHATSAPP_BUSINESS_NUMBER || '').replace(/\D/g, '')
+      && !!process.env.WHATSAPP_APP_SECRET;
+  }
+
+  // wa.me link that opens a chat with the business number, "KEYSHOPS <ref>" ready to send.
+  private waLink(ref: string): string | undefined {
+    const number = (process.env.WHATSAPP_BUSINESS_NUMBER || '').replace(/\D/g, '');
+    return number ? `https://wa.me/${number}?text=${encodeURIComponent(`KEYSHOPS ${ref}`)}` : undefined;
+  }
+
+  // The webhook calls this for every incoming WhatsApp text. Only a message carrying a live "KEYSHOPS <ref>" does anything:
+  //   - the sender's number must equal the number entered in the app (else MISMATCH, no code is sent);
+  //   - the request must still be waiting and unexpired (a retried or repeated delivery of the same message does nothing);
+  //   - then the code is generated (only its hash is stored) and sent to the sender in that chat.
+  async handleInboundMessage(msg: InboundMessage): Promise<InboundOutcome> {
+    if (!this.inboundEnabled()) return 'ignored';
+    const found = REF_IN_MESSAGE.exec(msg.body || '');
+    if (!found) return 'ignored';
+    const ref = found[1].toUpperCase();
+
+    const snap = await this.firestore.db.collection(OTP_COLLECTION).where('ref', '==', ref).limit(1).get();
+    if (snap.empty) return 'ignored';
+    const docRef = snap.docs[0].ref;
+
+    // WhatsApp ids are country code + number; this app is India-only (+91).
+    const digits = String(msg.from || '').replace(/\D/g, '');
+    const sender = /^91[1-9]\d{9}$/.test(digits) ? digits.slice(2) : null;
+
+    const code = String(Math.floor(1000 + Math.random() * 9000));
+    const codeHash = await bcrypt.hash(code, OTP_HASH_COST);
+
+    const outcome: InboundOutcome = await this.firestore.db.runTransaction(async (tx) => {
+      const doc = await tx.get(docRef);
+      const r: any = doc.data();
+      if (!r || r.consumed || r.state !== 'WAITING') return 'ignored';
+      if (r.expiresAt < Date.now()) { tx.update(docRef, { state: 'EXPIRED' }); return 'expired'; }
+      if (!sender || sender !== r.identifier) { tx.update(docRef, { state: 'MISMATCH' }); return 'mismatch'; }
+      tx.update(docRef, { state: 'CODE_SENT', codeHash, inboundMessageId: msg.id, codeSentAt: Date.now() });
+      return 'issued';
+    });
+
+    if (outcome === 'issued') {
+      const sent = await this.sendWhatsAppText(digits, `${code} is your Key Shops verification code. It is valid for 5 minutes. Do not share it with anyone.`);
+      if (!sent) await docRef.update({ state: 'SEND_FAILED' });
+    } else if (outcome === 'mismatch') {
+      await this.sendWhatsAppText(digits, 'Key Shops: this message came from a different number than the one entered in the app, so no code was sent. Please send it from the same WhatsApp number you entered.');
+    } else if (outcome === 'expired') {
+      await this.sendWhatsAppText(digits, 'Key Shops: this request has expired. Please start again in the app.');
+    }
+    return outcome;
+  }
+
+  // What the app polls while it waits. The ref is unguessable and single use, and nothing sensitive is returned.
+  async getInboundStatus(refRaw: string): Promise<{ state: InboundState }> {
+    const ref = String(refRaw || '').toUpperCase();
+    if (!REF_ONLY.test(ref)) return { state: 'UNKNOWN' };
+    const snap = await this.firestore.db.collection(OTP_COLLECTION).where('ref', '==', ref).limit(1).get();
+    if (snap.empty) return { state: 'UNKNOWN' };
+    const r: any = snap.docs[0].data();
+    if (r.verifiedAt) return { state: 'DONE' };
+    if (r.state === 'WAITING' && r.expiresAt < Date.now()) return { state: 'EXPIRED' };
+    if (r.consumed && r.state === 'WAITING') return { state: 'EXPIRED' }; // superseded by a newer request
+    return { state: (r.state as InboundState) || 'UNKNOWN' };
   }
 
   // One-shot redemption of a recent successful verify-otp, for endpoints that
@@ -143,6 +265,11 @@ export class WhatsappOtpService {
     if (record.expiresAt < Date.now()) {
       throw new BadRequestException('OTP code has expired. Please request a new code.');
     }
+    // An inbound request that has not produced a code yet
+    if (!record.codeHash) {
+      if (record.state === 'MISMATCH') throw new BadRequestException('The WhatsApp message came from a different number than the one entered. Please send it from the same number.');
+      throw new BadRequestException('No code has been sent yet. Tap "Get code on WhatsApp" and send the message first.');
+    }
     if (record.failedAttempts >= MAX_OTP_ATTEMPTS) {
       throw new BadRequestException('Too many incorrect attempts. Please request a new code.');
     }
@@ -155,6 +282,30 @@ export class WhatsappOtpService {
 
     await doc.ref.update({ consumed: true, verifiedAt: Date.now() });
     return { success: true };
+  }
+
+  // Sends a plain WhatsApp text (no template) to a WhatsApp id. Only delivered when that person messaged the business number in
+  // the last 24 hours - always true for the inbound flow, where we reply to the message that just arrived. Never throws.
+  private async sendWhatsAppText(toDigits: string, body: string): Promise<boolean> {
+    const accessToken = process.env.WHATSAPP_ACCESS_TOKEN || '';
+    const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || '';
+    if (!accessToken || !phoneNumberId) return false;
+    try {
+      const res = await fetch(`https://graph.facebook.com/${WHATSAPP_API_VERSION}/${phoneNumberId}/messages`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messaging_product: 'whatsapp', to: toDigits, type: 'text', text: { body } }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error('WhatsApp text send failed:', err);
+        return false;
+      }
+      return true;
+    } catch (err: any) {
+      console.error('WhatsApp text send failed:', err.message);
+      return false;
+    }
   }
 
   // Sends a WhatsApp "Authentication" template message via Meta's Cloud

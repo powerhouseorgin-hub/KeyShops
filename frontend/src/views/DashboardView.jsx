@@ -259,7 +259,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
             share the same size/spacing via DashCardGrid. */}
         <DashCardGrid items={[
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
-          { title: t('vehicleService'), description: t('vehicleServiceDesc'), image: vehicleSalesIcon, imgScale: 0.9, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
+          { title: t('vehicleSales'), description: t('vehicleServiceDesc'), image: vehicleSalesIcon, imgScale: 0.9, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
           { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
           { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
@@ -336,10 +336,10 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
 
       {/* Compact, approved dashboard layout - only the essential shortcut cards,
           no reports/lists/charts below. One combined grid so every card shares
-          the same size/spacing. The grid has two equal columns and EVERY card is exactly half the width (50 | 50): New Customer | Vehicle Service first, then the shortcut cards in pairs, ending with Offers | Customer Support. Vehicle Service opens the Vehicle Sales screen. */}
+          the same size/spacing. The grid has two equal columns and EVERY card is exactly half the width (50 | 50): New Customer | Vehicle Sales first, then the shortcut cards in pairs, ending with Offers | Customer Support. Vehicle Sales opens the Vehicle Sales screen. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: t('vehicleService'), description: t('vehicleServiceDesc'), image: vehicleSalesIcon, imgScale: 0.9, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
+        { title: t('vehicleSales'), description: t('vehicleServiceDesc'), image: vehicleSalesIcon, imgScale: 0.9, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
         { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => goToProductType('Key Shops') },
         { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },

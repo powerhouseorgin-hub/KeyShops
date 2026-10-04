@@ -233,6 +233,11 @@ Mechanics (`firestore/whatsapp-otp.service.ts`, collection `otpCodes`):
 - 4-digit code, **bcrypt-hashed** (cost 10), 5-minute TTL, max 5 wrong attempts per code; a new send supersedes any pending code for the same `(identifier, purpose)`.
 - `verify-otp` marks the record `consumed` and stamps `verifiedAt`. The follow-up action (reset password / change phone / delete account) must then **redeem** that verification within **15 minutes**; redemption is single-use (`verifiedAt` is cleared).
 - Delivery: WhatsApp Cloud API template message (see §9.4). Fail-soft: a delivery failure never throws — it returns `{ success: true, delivered: false }`.
+- **Delivery modes** (`WhatsappOtpService.deliveryMode()`):
+  - `template`: an approved WhatsApp *Authentication* template (`WHATSAPP_OTP_TEMPLATE_NAME`). Reaches anyone without any action from them. Used whenever a template name is configured.
+  - `inbound`: **no template needed; one step for the user.** `send-otp` returns `{ mode: "inbound", ref, waLink, expiresInSeconds }` and no code. The dialog opens WhatsApp with the prefilled message `KEYSHOPS <ref>` (`waLink` = `https://wa.me/<WHATSAPP_BUSINESS_NUMBER>?text=...`); the user just presses Send. Meta posts that message to our webhook, which (a) finds the request by `ref`, (b) checks the **sender's WhatsApp number equals the mobile number entered in the app** (country code 91 + the 10 digits) and (c) only then generates the code and replies with it as a normal text message - the 24-hour window is open because the user just wrote to us. The app polls `GET /auth/otp-status?ref=` (states `WAITING`, `CODE_SENT`, `MISMATCH`, `EXPIRED`, `SEND_FAILED`, `DONE`, `UNKNOWN`), the user copies the code (a Paste button reads the clipboard) and `verify-otp` runs unchanged. A message from a different number moves the request to `MISMATCH`: no code is issued and the user is told which number must send it. Verifying before the message arrives is refused ("send the message first"). `customer_verify` never uses inbound (the code has to reach the customer, not the shop owner) and falls back to the template / on-screen fallback. Requirements: `WHATSAPP_OTP_INBOUND=true`, the credentials, `WHATSAPP_BUSINESS_NUMBER` and `WHATSAPP_APP_SECRET` (the webhook is the only way the code is issued, so signatures are mandatory), the Meta app set to **Live**, the app subscribed to the WABA with the `messages` webhook field. Covered by `whatsapp-otp.service.spec.ts` and `scripts/smoke-test-whatsapp-inbound.ts`.
+  - `none`: not configured; the code is logged and, under `OTP_SHOW_CODE_IN_UI`, shown on screen for the allowed purposes.
+  - Switching: `inbound` is for use until an Authentication template is approved; once `WHATSAPP_OTP_TEMPLATE_NAME` is set, `template` takes over automatically. Turn `OTP_SHOW_CODE_IN_UI` off when switching to either WhatsApp mode so no code appears on screen.
 - Rate limits: `send-otp` 6 / 10 min / IP, `verify-otp` 10 / 10 min / IP.
 
 ### 4.6 Password and credential operations
@@ -355,7 +360,7 @@ Conventions:
 |---|---|---|---|
 | GET | `/health` | Public | Liveness probe. |
 | GET | `/webhooks/whatsapp` | Public | Meta's one-time webhook subscription handshake. Echoes `hub.challenge` only when `hub.verify_token` equals `WHATSAPP_WEBHOOK_VERIFY_TOKEN`; otherwise 403. |
-| POST | `/webhooks/whatsapp` | Public | WhatsApp delivery events. Always answers 200. Logs only message id, status and error code (never phone numbers or content). When `WHATSAPP_APP_SECRET` is set, the `X-Hub-Signature-256` HMAC over the raw body is verified first and unsigned or wrongly signed calls are ignored. |
+| POST | `/webhooks/whatsapp` | Public | WhatsApp delivery events. Always answers 200. Logs only message id, status and error code (never phone numbers or content). When `WHATSAPP_APP_SECRET` is set, the `X-Hub-Signature-256` HMAC over the raw body is verified first and unsigned or wrongly signed calls are ignored. Also receives the user's inbound `KEYSHOPS <ref>` message for the inbound OTP flow (§4.5) and hands it to `WhatsappOtpService.handleInboundMessage`; messages sent to any other phone number id are ignored. |
 
 ### 8.2 Authentication — `/auth`
 
@@ -364,7 +369,8 @@ Conventions:
 | POST | `/auth/login` | Public | 20/600s | `{ email, password, platform }` — `email` holds an email **or** phone; `platform` = `native` for the app. Returns `{ accessToken, user, subscription? }`; web also gets the cookie. |
 | POST | `/auth/logout` | Public | — | Clears the session cookie. |
 | GET | `/auth/me` | Any | — | `{ user, subscription? }` (`subscription` only during grace period). |
-| POST | `/auth/send-otp` | Public | 6/600s | `{ identifier (phone), purpose }` → `{ success, delivered, devCode? }`. |
+| POST | `/auth/send-otp` | Public | 6/600s | `{ identifier (phone), purpose }` → `{ success, delivered, devCode? }`; in inbound mode `{ success, delivered:false, mode:"inbound", ref, waLink, expiresInSeconds }`. |
+| GET | `/auth/otp-status` | Public | 90/60s | `?ref=` → `{ state }` (inbound OTP progress: WAITING / CODE_SENT / MISMATCH / EXPIRED / SEND_FAILED / DONE / UNKNOWN). Never returns the code. |
 | POST | `/auth/verify-otp` | Public | 10/600s | `{ identifier, purpose, code }` → `{ success }`. |
 | POST | `/auth/register-shop` | Public | 5/600s | Shop self-registration. `{ shopName, ownerName, email?, phone, password, location, town?, district?, latitude?, longitude?, categoryId, aadhaarNumber? (12 digits), referralCode?, startTrial?, razorpayOrderId?, razorpayPaymentId?, razorpaySignature? }`. Payment fields are mandatory unless `startTrial`. Returns `{ success, shopId, loginPhone, message }`. |
 | POST | `/auth/reset-password-public` | Public | 6/600s | `{ identifier (phone), newPassword }` after a verified `reset` OTP. |
@@ -499,7 +505,7 @@ The routes under `/shop/vehicle-sales` remain Shop Admin only; a Super Admin get
 | GET | `/super/contact-messages` (`cursor, limit`), PUT `/super/contact-messages/:id/read` | Inbox of public contact messages. |
 | POST | `/super/support-config` | Update platform settings (whatsapp, videos, price, GST, email, care number, trial days). |
 
-> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (108 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
+> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (109 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
 
 ## 9. Third-party integrations
 
@@ -557,7 +563,7 @@ Two **template messages** (Meta only allows a business to start a conversation w
 | OTP | `WHATSAPP_OTP_TEMPLATE_NAME` (Authentication category) | the 4-digit code | `WhatsappOtpService` |
 | Customer invoice | `WHATSAPP_INVOICE_TEMPLATE_NAME` (Utility category, document header) | `{{1}}` customer name, `{{2}}` shop name; header = invoice link + filename | `WhatsappInvoiceService` |
 
-**Webhook.** Meta posts delivery events (sent / delivered / read / failed) to `https://api.keyshops.in/api/webhooks/whatsapp` (`WhatsappWebhookController`). Configure it in the Meta developer dashboard: app → WhatsApp → Configuration → Callback URL = that address, Verify token = the value of `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, then subscribe to the `messages` field (which carries message statuses). The webhook stores nothing; it logs one line per status, which is how to tell whether an OTP or invoice actually reached the customer (look for `[WhatsApp status] failed … error=<code>` in the function logs). Meta only delivers real (non-test) events once the app is published.
+**Webhook.** Meta posts delivery events (sent / delivered / read / failed) to `https://api.keyshops.in/api/webhooks/whatsapp` (`WhatsappWebhookController`). Configure it in the Meta developer dashboard: app → WhatsApp → Configuration → Callback URL = that address, Verify token = the value of `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, then subscribe to the `messages` field (which carries message statuses). Besides statuses, the webhook receives the user's own messages for the inbound OTP flow (§4.5); it stores nothing itself (the OTP service updates the `otpCodes` record) and logs one line per status, which is how to tell whether an OTP or invoice actually reached the customer (look for `[WhatsApp status] failed … error=<code>` in the function logs). Meta only delivers real (non-test) events once the app is published.
 
 Endpoint: `POST https://graph.facebook.com/{WHATSAPP_API_VERSION}/{WHATSAPP_PHONE_NUMBER_ID}/messages` with `Authorization: Bearer <WHATSAPP_ACCESS_TOKEN>`; recipient `91` + 10-digit phone. The invoice link points at `PUBLIC_API_BASE_URL/api/public/reports/:id/download`.
 
@@ -695,7 +701,7 @@ Fail-open: if the device is offline or the manifest cannot be fetched or parsed,
 - **Session handling**: web keeps the user in memory/`localStorage` metadata only — the credential is the httpOnly cookie; native stores the ID token and sends it as a Bearer header.
 - **Languages**: English, Hindi, Tamil, Telugu, Kannada, Malayalam (`i18n/translations.js`, `publicTranslations.js`, `vehicleSaleText.js`). The vehicle-sale receipt prints in the language chosen on the Sales screen (default Tamil). Hindi/Telugu/Kannada/Malayalam receipt wording should be reviewed by native speakers.
 - **Public site**: home, search, about, contact, privacy policy, blog guides, location and service pages (SEO helpers in `utils/seoHelpers.js`); the APK download button points at `/downloads/keyshop-app.keeapp`.
-- **Dashboard cards (both roles).** The dashboard is a two-column grid of equal columns and **every card is exactly half the width (50 | 50)** - there are no full-width cards. Shop Admin: New Customer | Vehicle Service, Used Machines | Key Shops, Dealers | ECM, Scanning | Meter, Offers | Customer Support. Super Admin: New Customer | Vehicle Service, Shops | Dealers, Used Machines | ECM, Scanning | Meter, Offers | Customer Support. The **Vehicle Service** card (illustration `assets/dashboard-icons/vehicle-sales.png`, a key handover over a red car; shown at 90 % so it keeps a margin inside the card) opens the Vehicle Sales screen for both roles. Keep the number of cards even, or the last row will have a gap.
+- **Dashboard cards (both roles).** The dashboard is a two-column grid of equal columns and **every card is exactly half the width (50 | 50)** - there are no full-width cards. Shop Admin: New Customer | Vehicle Sales, Used Machines | Key Shops, Dealers | ECM, Scanning | Meter, Offers | Customer Support. Super Admin: New Customer | Vehicle Sales, Shops | Dealers, Used Machines | ECM, Scanning | Meter, Offers | Customer Support. The **Vehicle Sales** card (illustration `assets/dashboard-icons/vehicle-sales.png`, a key handover over a red car; shown at 90 % so it keeps a margin inside the card) opens the Vehicle Sales screen for both roles. Keep the number of cards even, or the last row will have a gap.
 - **Android**: `applicationId com.kee.app`; permissions INTERNET, location (coarse/fine), camera, media images / legacy storage (version-capped), REQUEST_INSTALL_PACKAGES (in-app update). `capacitor.config.json` `allowNavigation`: `api.keyshops.in`, `storage.googleapis.com`, `*.razorpay.com`, `checkout.razorpay.com`, `api.razorpay.com`. Custom plugins live in `android/app/src/main/java/com/kee/app`.
 - **Back-button / cold start**: `/api/health` is pinged at boot to wake a cold Cloud Function while the user is typing credentials.
 
@@ -719,6 +725,7 @@ Never commit real values. Templates: `backend/.env.example`, `frontend/.env.exam
 | `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_OTP_TEMPLATE_NAME`, `WHATSAPP_INVOICE_TEMPLATE_NAME`, `WHATSAPP_API_VERSION` | WhatsApp services | Cloud API delivery. |
 | `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` | Webhook controller | Webhook handshake token (required for the webhook to verify) and the optional app secret for signature checks. |
 | `OTP_SHOW_CODE_IN_UI` | OTP service | Temporary on-screen OTP fallback (allow-listed purposes only). |
+| `WHATSAPP_OTP_INBOUND`, `WHATSAPP_BUSINESS_NUMBER` | OTP service | `true` enables the inbound flow (user sends `KEYSHOPS <ref>` to the business number, the webhook replies with the code after checking the sender matches the entered number); the number (country code + digits, e.g. `919025088853`) builds the "Get code on WhatsApp" link. Needs `WHATSAPP_APP_SECRET`. |
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payment | Orders + signature verification. |
 | `NODE_ENV`, `PORT` | Server | `production` enables strict secret checks, secure cookies and the cookie domain. |
 | `SMOKE_TEST_BASE_URL` | Smoke tests | Target origin (default `http://127.0.0.1:4100`). |

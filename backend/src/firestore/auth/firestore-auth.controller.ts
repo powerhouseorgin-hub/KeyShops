@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { invalidateAuthCache } from '../../auth/auth-cache';
@@ -133,6 +133,14 @@ export class FirestoreAuthController {
   @Post('send-otp')
   async sendOtp(@Body() dto: { identifier: string; purpose: string }) {
     return this.otp.sendOtp(dto.identifier, dto.purpose);
+  }
+
+  // WhatsApp OTP, inbound flow: what the app polls while it waits for the user's WhatsApp message to arrive. ref is the
+  // single-use reference from send-otp; the answer is only a state (WAITING / CODE_SENT / MISMATCH / EXPIRED ...).
+  @Throttle({ default: { limit: 90, ttl: 60000 } })
+  @Get('otp-status')
+  async otpStatus(@Query('ref') ref: string) {
+    return this.otp.getInboundStatus(ref);
   }
 
   @Throttle({ default: { limit: 10, ttl: 600000 } })

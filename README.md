@@ -20,7 +20,7 @@ The product ships as:
 - Backend API: https://api.keyshops.in (Firebase Hosting → Cloud Function `api`)
 
 > **Full engineering reference:** [`docs/TECHNICAL_DOCUMENTATION.md`](docs/TECHNICAL_DOCUMENTATION.md) —
-> architecture, security model, data model, all 108 API endpoints, third-party integrations,
+> architecture, security model, data model, all 109 API endpoints, third-party integrations,
 > end-to-end flows, deployment and operations.
 
 ## Table of contents

@@ -272,6 +272,13 @@ export const AuthProvider = ({ children }) => {
       return result;
     },
 
+    // WhatsApp OTP (inbound flow): progress of the user's WhatsApp message - { state: WAITING | CODE_SENT | MISMATCH | EXPIRED | SEND_FAILED | DONE | UNKNOWN }.
+    getOtpStatus: async (ref) => {
+      const response = await fetch(`${API_BASE}/api/auth/otp-status?ref=${encodeURIComponent(ref)}`);
+      if (!response.ok) throw new Error('Could not check the WhatsApp status');
+      return parseJsonSafe(response);
+    },
+
     verifyOtp: async (identifier, method, purpose, code) => {
       const response = await fetch(`${API_BASE}/api/auth/verify-otp`, {
         method: 'POST',
