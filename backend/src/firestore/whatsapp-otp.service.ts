@@ -35,7 +35,7 @@ const WHATSAPP_API_VERSION = process.env.WHATSAPP_API_VERSION || 'v21.0';
 //                user controls the number. A reply is allowed because the user messaged us first (24-hour window). Needs
 //                WHATSAPP_OTP_INBOUND=true, the app secret (the webhook must be signed), the business number, and the Meta app
 //                subscribed to the WhatsApp account with the "messages" webhook field live.
-//   'none'     - not configured; the code is only logged (and shown on screen under OTP_SHOW_CODE_IN_UI).
+//   'none'     - not configured; no code can reach the user (the code is never shown on screen in production).
 // A customer_verify code goes to the CUSTOMER's phone, but the shop owner is the one holding the app - so a message sent from the
 // owner's phone could never match the customer's number. That purpose therefore never uses 'inbound'.
 export type OtpDeliveryMode = 'template' | 'inbound' | 'none';
@@ -51,10 +51,9 @@ export interface SendOtpResult {
   ref?: string;
   waLink?: string;
   expiresInSeconds?: number;
-  // Only ever present when WhatsApp delivery failed/isn't configured AND
-  // OTP_SHOW_CODE_IN_UI=true AND the purpose is on the allowlist below -
-  // the temporary pre-WhatsApp fallback. Once real delivery works
-  // (delivered: true) the code is never returned, even with the flag left on.
+  // LOCAL TESTING ONLY: present solely when running against the Firebase emulator (FIRESTORE_EMULATOR_HOST set) with
+  // OTP_SHOW_CODE_IN_UI=true, so the smoke tests can sign up. The deployed API never has an emulator host, so it can never
+  // return - or log - a code, whatever environment variables are set.
   devCode?: string;
 }
 
@@ -116,17 +115,17 @@ export class WhatsappOtpService {
     }
 
     const delivered = mode === 'template' ? await this.sendWhatsAppTemplate(identifier, code) : false;
-    if (!delivered) {
-      // Server log always carries the code when delivery isn't configured
-      // or fails. The API response only does too under the explicit,
-      // temporary OTP_SHOW_CODE_IN_UI fallback (see UI_FALLBACK_PURPOSES).
-      console.log(`[WhatsApp OTP dev fallback] delivery not configured/failed — code for ${identifier}: ${code}`);
-      if (process.env.OTP_SHOW_CODE_IN_UI === 'true' && UI_FALLBACK_PURPOSES.has(purpose)) {
-        return { success: true, delivered: false, devCode: code };
-      }
+    if (!delivered && this.localTestingMode() && UI_FALLBACK_PURPOSES.has(purpose)) {
+      console.log(`[WhatsApp OTP local testing] delivery not configured/failed - code for ${identifier}: ${code}`);
+      return { success: true, delivered: false, devCode: code };
     }
 
     return { success: true, delivered };
+  }
+
+  // True only on a developer machine talking to the Firebase emulator, with the explicit switch on. Never true when deployed.
+  private localTestingMode(): boolean {
+    return !!process.env.FIRESTORE_EMULATOR_HOST && process.env.OTP_SHOW_CODE_IN_UI === 'true';
   }
 
   // Claims a code nobody else currently holds. The claim expires with the code itself (a new claim may reuse an expired one).

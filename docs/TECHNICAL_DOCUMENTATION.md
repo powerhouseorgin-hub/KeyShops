@@ -226,7 +226,7 @@ OTP gates sensitive, unauthenticated or high-risk actions. It does **not** creat
 | `reset` | Public password reset | **never** |
 | `delete-account` | Account deletion | **never** |
 
-\* Temporary pre-WhatsApp fallback: only when `OTP_SHOW_CODE_IN_UI=true`, the WhatsApp send failed or is not configured, and the purpose is on the allow-list. `reset` and `delete-account` are excluded because shop phone numbers are public, so showing those codes would allow account takeover.
+\* There is **no on-screen fallback in production**: the deployed API never returns a code in a response and never writes one to the logs. `devCode` exists only for local smoke tests: it is returned solely when the server runs against the Firebase emulator (`FIRESTORE_EMULATOR_HOST` set) **and** `OTP_SHOW_CODE_IN_UI=true`, for the allow-listed purposes (`register`, `customer_verify`, `change-credentials`).
 
 Mechanics (`firestore/whatsapp-otp.service.ts`, collection `otpCodes`):
 
@@ -236,8 +236,8 @@ Mechanics (`firestore/whatsapp-otp.service.ts`, collection `otpCodes`):
 - **Delivery modes** (`WhatsappOtpService.deliveryMode()`):
   - `template`: an approved WhatsApp *Authentication* template (`WHATSAPP_OTP_TEMPLATE_NAME`). Reaches anyone without any action from them. Used whenever a template name is configured.
   - `inbound`: **no template needed; one step for the user.** `send-otp` returns `{ mode: "inbound", ref, waLink, expiresInSeconds }` and no code. The dialog opens WhatsApp with the prefilled message `KEYSHOPS <ref>` (`waLink` = `https://wa.me/<WHATSAPP_BUSINESS_NUMBER>?text=...`); the user just presses Send. Meta posts that message to our webhook, which (a) finds the request by `ref`, (b) checks the **sender's WhatsApp number equals the mobile number entered in the app** (country code 91 + the 10 digits) and (c) only then generates the code and replies with it as a normal text message - the 24-hour window is open because the user just wrote to us. The app polls `GET /auth/otp-status?ref=` (states `WAITING`, `CODE_SENT`, `MISMATCH`, `EXPIRED`, `SEND_FAILED`, `DONE`, `UNKNOWN`), the user copies the code (a Paste button reads the clipboard) and `verify-otp` runs unchanged. A message from a different number moves the request to `MISMATCH`: no code is issued and the user is told which number must send it. Verifying before the message arrives is refused ("send the message first"). `customer_verify` never uses inbound (the code has to reach the customer, not the shop owner) and falls back to the template / on-screen fallback. Requirements: `WHATSAPP_OTP_INBOUND=true`, the credentials, `WHATSAPP_BUSINESS_NUMBER` and `WHATSAPP_APP_SECRET` (the webhook is the only way the code is issued, so signatures are mandatory), the Meta app set to **Live**, the app subscribed to the WABA with the `messages` webhook field. Covered by `whatsapp-otp.service.spec.ts` and `scripts/smoke-test-whatsapp-inbound.ts`.
-  - `none`: not configured; the code is logged and, under `OTP_SHOW_CODE_IN_UI`, shown on screen for the allowed purposes.
-  - Switching: `inbound` is for use until an Authentication template is approved; once `WHATSAPP_OTP_TEMPLATE_NAME` is set, `template` takes over automatically. Turn `OTP_SHOW_CODE_IN_UI` off when switching to either WhatsApp mode so no code appears on screen.
+  - `none`: not configured; no code can reach the user (nothing is shown on screen or logged). `customer_verify` is in this state while no Authentication template is approved, because the inbound flow needs the number's owner to send the message.
+  - Switching: `inbound` is for use until an Authentication template is approved; once `WHATSAPP_OTP_TEMPLATE_NAME` is set, `template` takes over automatically. `OTP_SHOW_CODE_IN_UI` has no effect on a deployed API.
 - Rate limits: `send-otp` 6 / 10 min / IP, `verify-otp` 10 / 10 min / IP.
 
 ### 4.6 Password and credential operations
@@ -571,7 +571,7 @@ Endpoint: `POST https://graph.facebook.com/{WHATSAPP_API_VERSION}/{WHATSAPP_PHON
 
 Separately, the **shop owner's own WhatsApp** is used for sharing from the device (`WhatsAppSharePlugin` in the app, or `wa.me` / the share sheet on the web) — that is client-side and does not use the Cloud API.
 
-> Until the Meta business setup is finished the three `WHATSAPP_*` values are unset, delivery returns `delivered:false`, and the temporary `OTP_SHOW_CODE_IN_UI` fallback shows codes for the allow-listed purposes. Remove that flag once real delivery works.
+> Without the `WHATSAPP_*` values, delivery returns `delivered:false` and no code reaches anyone; the old on-screen fallback was removed from production.
 
 ### 9.5 LocationIQ
 
@@ -726,7 +726,7 @@ Never commit real values. Templates: `backend/.env.example`, `frontend/.env.exam
 | `LOCATIONIQ_API_KEY` | Geo controller | Reverse geocoding. |
 | `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_OTP_TEMPLATE_NAME`, `WHATSAPP_INVOICE_TEMPLATE_NAME`, `WHATSAPP_API_VERSION` | WhatsApp services | Cloud API delivery. |
 | `WHATSAPP_WEBHOOK_VERIFY_TOKEN`, `WHATSAPP_APP_SECRET` | Webhook controller | Webhook handshake token (required for the webhook to verify) and the optional app secret for signature checks. |
-| `OTP_SHOW_CODE_IN_UI` | OTP service | Temporary on-screen OTP fallback (allow-listed purposes only). |
+| `OTP_SHOW_CODE_IN_UI` | OTP service | Local smoke tests only: returns `devCode` when the server runs against the Firebase emulator. Ignored on a deployed API. |
 | `WHATSAPP_OTP_INBOUND`, `WHATSAPP_BUSINESS_NUMBER` | OTP service | `true` enables the inbound flow (user sends `KEYSHOPS <ref>` to the business number, the webhook replies with the code after checking the sender matches the entered number); the number (country code + digits, e.g. `919025088853`) builds the "Get code on WhatsApp" link. Needs `WHATSAPP_APP_SECRET`. |
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payment | Orders + signature verification. |
 | `NODE_ENV`, `PORT` | Server | `production` enables strict secret checks, secure cookies and the cookie domain. |

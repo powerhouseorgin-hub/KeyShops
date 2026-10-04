@@ -29,7 +29,6 @@ export default function OtpVerificationModal({
 }) {
   const [enteredOtp, setEnteredOtp] = useState('');
   const [otpError, setOtpError] = useState('');
-  const [devCode, setDevCode] = useState('');
   // WhatsApp "inbound" mode (no template): the user's own WhatsApp sends us a message, we check it came from the number that was
   // entered, and reply with the code in that chat. waRef identifies the request; waState follows it (WAITING -> CODE_SENT ...).
   const [waRef, setWaRef] = useState('');
@@ -59,7 +58,6 @@ export default function OtpVerificationModal({
   const sendCode = useCallback(async () => {
     setSending(true);
     setOtpError('');
-    setDevCode('');
     // Validated here (inside the already-open popup) rather than by the
     // caller before opening it, so an invalid number shown in the field
     // still opens this dialog and explains what's wrong instead of a
@@ -71,7 +69,6 @@ export default function OtpVerificationModal({
     }
     try {
       const result = await api.sendOtp(identifier, method, purpose);
-      if (result?.devCode) setDevCode(result.devCode);
       const inbound = result?.mode === 'inbound' && !!result.ref;
       setWaRef(inbound ? result.ref : '');
       setWaLink(inbound ? result.waLink || '' : '');
@@ -120,8 +117,7 @@ export default function OtpVerificationModal({
     if (open) {
       setEnteredOtp('');
       setOtpError('');
-      setDevCode('');
-      setWaRef(''); setWaLink(''); setWaState(''); openedRef.current = '';
+        setWaRef(''); setWaLink(''); setWaState(''); openedRef.current = '';
       sendCode();
     } else {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -194,15 +190,6 @@ export default function OtpVerificationModal({
               {waState === 'EXPIRED' && t('otpWaExpired')}
               {waState === 'SEND_FAILED' && t('otpWaFailed')}
             </p>
-          </div>
-        )}
-
-        {devCode && (
-          <div style={{ background: 'var(--bg-1)', border: '1.5px dashed var(--gold)', borderRadius: 12, padding: '10px 14px', textAlign: 'center', marginBottom: 16 }}>
-            <p style={{ fontSize: 10, color: 'var(--text-3)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>
-              {t('testingModeNoProviderTemplate').split('{provider}')[0]}{'WhatsApp'}{t('testingModeNoProviderTemplate').split('{provider}')[1]}
-            </p>
-            <p style={{ fontSize: 20, color: 'var(--gold)', fontWeight: 800, letterSpacing: '.2em' }}>{devCode}</p>
           </div>
         )}
 

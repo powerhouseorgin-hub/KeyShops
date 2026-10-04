@@ -136,7 +136,7 @@ The full table (what each variable does and which component reads it) is in
 | `ENCRYPTION_KEY` | 64-hex AES-256 key for ID-proof/Aadhaar numbers — required in production |
 | `ALGOLIA_APP_ID`, `ALGOLIA_SEARCH_API_KEY`, `ALGOLIA_ADMIN_API_KEY` | Search (admin key only for sync functions / reindex) |
 | `LOCATIONIQ_API_KEY` | Reverse geocoding |
-| `WHATSAPP_*`, `OTP_SHOW_CODE_IN_UI` | WhatsApp Cloud API delivery and the temporary on-screen OTP fallback |
+| `WHATSAPP_*` | WhatsApp Cloud API delivery (OTP over WhatsApp, invoices). `OTP_SHOW_CODE_IN_UI` is for local emulator tests only |
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payments |
 | `VITE_API_BASE_URL` (frontend) | API origin baked into the build (`https://api.keyshops.in`) |
 | `VITE_GA_MEASUREMENT_ID` (frontend) | Optional Google Analytics 4 id |

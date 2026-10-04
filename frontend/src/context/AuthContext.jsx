@@ -264,11 +264,6 @@ export const AuthProvider = ({ children }) => {
         throw new Error(err.message || 'Failed to send OTP code');
       }
       const result = await parseJsonSafe(response);
-      // Testing convenience: the backend only includes devCode when WhatsApp delivery failed or is not
-      // configured (and OTP_SHOW_CODE_IN_UI is on), so this stops appearing once WhatsApp delivery is live.
-      if (result.devCode) {
-        console.log(`%c[KEE DEV] OTP code for ${identifier}: ${result.devCode}`, 'color:#4f46e5; font-weight:bold; font-size:13px;');
-      }
       return result;
     },
 

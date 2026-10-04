@@ -58,7 +58,7 @@ describe('WhatsappOtpService', () => {
   let nextOk = true;
   beforeEach(() => {
     process.env = { ...oldEnv };
-    for (const k of ['WHATSAPP_OTP_TEMPLATE_NAME', 'WHATSAPP_OTP_INBOUND', 'WHATSAPP_ACCESS_TOKEN', 'WHATSAPP_PHONE_NUMBER_ID', 'WHATSAPP_BUSINESS_NUMBER', 'WHATSAPP_APP_SECRET', 'OTP_SHOW_CODE_IN_UI']) delete process.env[k];
+    for (const k of ['WHATSAPP_OTP_TEMPLATE_NAME', 'WHATSAPP_OTP_INBOUND', 'WHATSAPP_ACCESS_TOKEN', 'WHATSAPP_PHONE_NUMBER_ID', 'WHATSAPP_BUSINESS_NUMBER', 'WHATSAPP_APP_SECRET', 'OTP_SHOW_CODE_IN_UI', 'FIRESTORE_EMULATOR_HOST']) delete process.env[k];
     sent = []; nextOk = true;
     (global as any).fetch = jest.fn(async (_url: string, init: any) => { sent.push(JSON.parse(init.body)); return { ok: nextOk, json: async () => ({}) }; });
     jest.spyOn(console, 'log').mockImplementation(() => undefined);
@@ -102,8 +102,20 @@ describe('WhatsappOtpService', () => {
   });
 
   describe('template and unconfigured paths (unchanged behaviour)', () => {
-    it('unconfigured: nothing is sent, the code is only logged, and the on-screen fallback applies to the allowed purposes only', async () => {
-      process.env.OTP_SHOW_CODE_IN_UI = 'true';
+    it('PRODUCTION: the code is never returned or logged, even with OTP_SHOW_CODE_IN_UI left on', async () => {
+      process.env.OTP_SHOW_CODE_IN_UI = 'true'; // no emulator host = a deployed API
+      const log = console.log as jest.Mock;
+      const svc = new WhatsappOtpService(fakeFirestore().firestore);
+      for (const purpose of ['register', 'customer_verify', 'change-credentials', 'reset']) {
+        const out: any = await svc.sendOtp(PHONE, purpose);
+        expect(out.devCode).toBeUndefined();
+        expect(out.delivered).toBe(false);
+      }
+      expect(log.mock.calls.flat().join(' ')).not.toMatch(/[0-9]{4}/);
+    });
+
+    it('local emulator only: the on-screen fallback applies to the allowed purposes only', async () => {
+      process.env.OTP_SHOW_CODE_IN_UI = 'true'; process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080';
       const svc = new WhatsappOtpService(fakeFirestore().firestore);
       expect((await svc.sendOtp(PHONE, 'register') as any).devCode).toMatch(/^\d{4}$/);
       expect((await svc.sendOtp(PHONE, 'reset') as any).devCode).toBeUndefined();
@@ -253,7 +265,7 @@ describe('WhatsappOtpService', () => {
     const fillLocks = (docs: Map<string, any>, expiresAt: number) => { for (let c = 1000; c <= 9999; c++) docs.set('otpCodeLocks/' + c, { holder: 'x', expiresAt }); };
 
     it('300 simultaneous live codes are all different', async () => {
-      process.env.OTP_SHOW_CODE_IN_UI = 'true';
+      process.env.OTP_SHOW_CODE_IN_UI = 'true'; process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080';
       const { firestore, docs } = fakeFirestore();
       const svc = new WhatsappOtpService(firestore);
       const codes: string[] = [];
@@ -264,7 +276,7 @@ describe('WhatsappOtpService', () => {
     }, 60000);
 
     it('refuses to issue a code (instead of repeating one) when every code is live, and works again once they expire', async () => {
-      process.env.OTP_SHOW_CODE_IN_UI = 'true';
+      process.env.OTP_SHOW_CODE_IN_UI = 'true'; process.env.FIRESTORE_EMULATOR_HOST = '127.0.0.1:8080';
       const { firestore, docs } = fakeFirestore();
       const svc = new WhatsappOtpService(firestore);
       fillLocks(docs, Date.now() + 60_000);
