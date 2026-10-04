@@ -230,7 +230,7 @@ OTP gates sensitive, unauthenticated or high-risk actions. It does **not** creat
 
 Mechanics (`firestore/whatsapp-otp.service.ts`, collection `otpCodes`):
 
-- 4-digit code, **bcrypt-hashed** (cost 10), 5-minute TTL, max 5 wrong attempts per code; a new send supersedes any pending code for the same `(identifier, purpose)`.
+- 4-digit code (1000-9999, `crypto.randomInt`), **unique among all live codes**: before use a code is claimed in `otpCodeLocks/<code>` inside a transaction (holder id + expiry = code TTL + 10 s), so two live requests can never share a code; a claim that is not used (mismatch, expired, repeated message, failed write) is released by its holder, and an expired claim can be reused. If all 9000 codes were live at once the request is refused with 503 instead of repeating a code. The code is **bcrypt-hashed** (cost 10), 5-minute TTL, max 5 wrong attempts per code; a new send supersedes any pending code for the same `(identifier, purpose)`.
 - `verify-otp` marks the record `consumed` and stamps `verifiedAt`. The follow-up action (reset password / change phone / delete account) must then **redeem** that verification within **15 minutes**; redemption is single-use (`verifiedAt` is cleared).
 - Delivery: WhatsApp Cloud API template message (see §9.4). Fail-soft: a delivery failure never throws — it returns `{ success: true, delivered: false }`.
 - **Delivery modes** (`WhatsappOtpService.deliveryMode()`):
@@ -280,6 +280,7 @@ users/{uid}                              Firebase Auth uid; profile + role + sho
 emailIndex/{lowercased email}            { uid }   uniqueness + login lookup
 phoneIndex/{10-digit phone}              { uid }   uniqueness + login lookup
 otpCodes/{id}                            OTP records (hashed)
+otpCodeLocks/{code}                      claim that keeps live OTP codes unique (holder, expiry)
 razorpayPayments/{paymentId}             { shopId, orderId, createdAt }  makes a payment single-use for registration
 vehicleSaleNumbers/{VS-##########}       { shopId (null for Super Admin), ownerId, saleId, createdAt }   claims a receipt number platform-wide (uniqueness index)
 
@@ -322,6 +323,7 @@ config/platform                          Singleton platform/support settings
 | `activityLogs/{id}` | `shopId`, `userId`, `action` (e.g. `LOGIN`, `SHOP_REGISTERED`, `DOC_UPLOAD`, `CHANGE_PASSWORD`, `DELETE_ACCOUNT`…), `details` (JSON string), `ipAddress`, `createdAt` |
 | `config/platform` | `whatsapp`, `videos[{name,url}]`, `subscriptionPrice`, `gstPercent`, `email`, `customerCareNumber`, `trialDays` (defaults: price 999, GST 18, trial 14 days) |
 | `otpCodes/{id}` | `identifier`, `purpose`, `codeHash`, `attempts`, `consumed`, `verifiedAt`, `createdAt`, expiry |
+| `otpCodeLocks/{code}` | `holder`, `expiresAt` - one doc per 4-digit code that is currently live; makes codes unique across users. |
 
 ### 6.3 Composite indexes
 

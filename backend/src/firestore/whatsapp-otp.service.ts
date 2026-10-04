@@ -1,6 +1,6 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException, ServiceUnavailableException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { randomInt } from 'crypto';
+import { randomBytes, randomInt } from 'crypto';
 import { FirestoreService } from './firestore.service';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone';
 
@@ -10,6 +10,13 @@ import { normalizePhone, PHONE_REGEX_MESSAGE } from '../common/validators/phone'
 // registration / reset / customer-verify / change-credentials / delete-account.
 const OTP_COLLECTION = 'otpCodes';
 const OTP_TTL_MS = 5 * 60 * 1000;
+
+// Codes are unique among all LIVE codes: before a code is used it is claimed in `otpCodeLocks/<code>` (inside a transaction, so two
+// requests can never claim the same one) and the claim lasts as long as the code can be used. The code space is 1000-9999.
+const CODE_LOCK_COLLECTION = 'otpCodeLocks';
+const CODE_LOCK_SLACK_MS = 10 * 1000;
+const CODE_CLAIM_ATTEMPTS = 60;
+const generateCode = () => String(randomInt(1000, 10000));
 const MAX_OTP_ATTEMPTS = 5;
 const OTP_HASH_COST = 10;
 
@@ -98,9 +105,15 @@ export class WhatsappOtpService {
       return { success: true, delivered: false, mode, ref, waLink: this.waLink(ref), expiresInSeconds: OTP_TTL_MS / 1000 };
     }
 
-    const code = String(Math.floor(1000 + Math.random() * 9000));
-    const codeHash = await bcrypt.hash(code, OTP_HASH_COST);
-    await this.createRecord(identifier, purpose, { codeHash });
+    const claim = await this.claimCode();
+    const code = claim.code;
+    try {
+      const codeHash = await bcrypt.hash(code, OTP_HASH_COST);
+      await this.createRecord(identifier, purpose, { codeHash });
+    } catch (e) {
+      await this.releaseCode(claim);
+      throw e;
+    }
 
     const delivered = mode === 'template' ? await this.sendWhatsAppTemplate(identifier, code) : false;
     if (!delivered) {
@@ -114,6 +127,39 @@ export class WhatsappOtpService {
     }
 
     return { success: true, delivered };
+  }
+
+  // Claims a code nobody else currently holds. The claim expires with the code itself (a new claim may reuse an expired one).
+  private async claimCode(): Promise<{ code: string; holder: string }> {
+    const db = this.firestore.db;
+    const holder = randomBytes(8).toString('hex');
+    for (let i = 0; i < CODE_CLAIM_ATTEMPTS; i++) {
+      const code = generateCode();
+      const lockRef = db.collection(CODE_LOCK_COLLECTION).doc(code);
+      const claimed = await db.runTransaction(async (tx) => {
+        const snap = await tx.get(lockRef);
+        const lock: any = snap.exists ? snap.data() : null;
+        if (lock && lock.expiresAt > Date.now()) return false;
+        tx.set(lockRef, { holder, expiresAt: Date.now() + OTP_TTL_MS + CODE_LOCK_SLACK_MS });
+        return true;
+      });
+      if (claimed) return { code, holder };
+    }
+    throw new ServiceUnavailableException('Too many verification requests right now. Please try again in a few minutes.');
+  }
+
+  // Gives back a claim whose code was never used (only the holder can release it).
+  private async releaseCode(claim: { code: string; holder: string }): Promise<void> {
+    try {
+      const db = this.firestore.db;
+      const lockRef = db.collection(CODE_LOCK_COLLECTION).doc(claim.code);
+      await db.runTransaction(async (tx) => {
+        const snap = await tx.get(lockRef);
+        if (snap.exists && (snap.data() as any)?.holder === claim.holder) tx.delete(lockRef);
+      });
+    } catch (e) {
+      console.error('[OTP] could not release a code claim', (e as Error).message);
+    }
   }
 
   // A fresh record for (identifier, purpose); any earlier un-consumed one is superseded.
@@ -180,7 +226,12 @@ export class WhatsappOtpService {
     const digits = String(msg.from || '').replace(/\D/g, '');
     const sender = /^91[1-9]\d{9}$/.test(digits) ? digits.slice(2) : null;
 
-    const code = String(Math.floor(1000 + Math.random() * 9000));
+    // Cheap early exit so a repeated message does not claim a code it will not use.
+    const early: any = snap.docs[0].data();
+    if (!early || early.consumed || early.state !== 'WAITING') return 'ignored';
+
+    const claim = await this.claimCode();
+    const code = claim.code;
     const codeHash = await bcrypt.hash(code, OTP_HASH_COST);
 
     const outcome: InboundOutcome = await this.firestore.db.runTransaction(async (tx) => {
@@ -192,6 +243,8 @@ export class WhatsappOtpService {
       tx.update(docRef, { state: 'CODE_SENT', codeHash, inboundMessageId: msg.id, codeSentAt: Date.now() });
       return 'issued';
     });
+
+    if (outcome !== 'issued') await this.releaseCode(claim);
 
     if (outcome === 'issued') {
       const sent = await this.sendWhatsAppText(digits, `${code} is your Key Shops verification code. It is valid for 5 minutes. Do not share it with anyone.`);

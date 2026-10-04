@@ -10,6 +10,7 @@ function fakeFirestore() {
     path,
     get: async () => ({ exists: docs.has(path), data: () => docs.get(path) }),
     update: async (patch: any) => { docs.set(path, { ...docs.get(path), ...patch }); },
+    delete: async () => { docs.delete(path); },
   });
   const query = (col: string, filters: Array<[string, any]> = [], max = Infinity, order?: string): any => ({
     where: (f: string, _op: string, v: any) => query(col, [...filters, [f, v]], max, order),
@@ -23,7 +24,7 @@ function fakeFirestore() {
     },
   });
   const db: any = {
-    collection: (col: string) => ({ ...query(col), doc: () => ref(`${col}/doc${++seq}`) }),
+    collection: (col: string) => ({ ...query(col), doc: (id?: string) => ref(`${col}/${id ?? 'doc' + (++seq)}`) }),
     batch: () => {
       const ops: Array<() => void> = [];
       return {
@@ -37,6 +38,8 @@ function fakeFirestore() {
       const tx = {
         get: async (r: any) => ({ exists: docs.has(r.path), data: () => docs.get(r.path) }),
         update: (r: any, patch: any) => pending.push(() => docs.set(r.path, { ...docs.get(r.path), ...patch })),
+        set: (r: any, data: any) => pending.push(() => docs.set(r.path, data)),
+        delete: (r: any) => pending.push(() => docs.delete(r.path)),
       };
       const out = await fn(tx);
       pending.forEach((p) => p());
@@ -242,6 +245,63 @@ describe('WhatsappOtpService', () => {
     it('status of malformed or unknown references is UNKNOWN', async () => {
       const { svc } = await start();
       for (const ref of ['', 'short', 'toolongreference1', 'ZZZZZZZZ', undefined as any, '../x']) expect(await svc.getInboundStatus(ref)).toEqual({ state: 'UNKNOWN' });
+    });
+  });
+
+  describe('codes are unique among live codes', () => {
+    const lockCount = (docs: Map<string, any>) => [...docs.keys()].filter((k) => k.startsWith('otpCodeLocks/')).length;
+    const fillLocks = (docs: Map<string, any>, expiresAt: number) => { for (let c = 1000; c <= 9999; c++) docs.set('otpCodeLocks/' + c, { holder: 'x', expiresAt }); };
+
+    it('300 simultaneous live codes are all different', async () => {
+      process.env.OTP_SHOW_CODE_IN_UI = 'true';
+      const { firestore, docs } = fakeFirestore();
+      const svc = new WhatsappOtpService(firestore);
+      const codes: string[] = [];
+      for (let i = 0; i < 300; i++) codes.push(((await svc.sendOtp('9' + String(100000000 + i), 'register')) as any).devCode);
+      expect(codes.every((c) => /^[1-9][0-9]{3}$/.test(c))).toBe(true);
+      expect(new Set(codes).size).toBe(300);
+      expect(lockCount(docs)).toBe(300);
+    }, 60000);
+
+    it('refuses to issue a code (instead of repeating one) when every code is live, and works again once they expire', async () => {
+      process.env.OTP_SHOW_CODE_IN_UI = 'true';
+      const { firestore, docs } = fakeFirestore();
+      const svc = new WhatsappOtpService(firestore);
+      fillLocks(docs, Date.now() + 60_000);
+      await expect(svc.sendOtp(PHONE, 'register')).rejects.toThrow(/try again/i);
+      expect([...docs.keys()].filter((k) => k.startsWith('otpCodes/'))).toHaveLength(0);
+      fillLocks(docs, Date.now() - 1);
+      expect(((await svc.sendOtp(PHONE, 'register')) as any).devCode).toMatch(/^[0-9]{4}$/);
+    }, 60000);
+
+    describe('inbound', () => {
+      beforeEach(inboundEnv);
+      it('the code issued for one user is not held by any other live request', async () => {
+        const { firestore, docs } = fakeFirestore();
+        const svc = new WhatsappOtpService(firestore);
+        const issued: string[] = [];
+        for (let i = 0; i < 40; i++) {
+          const phone = '9' + String(200000000 + i);
+          const out: any = await svc.sendOtp(phone, 'register');
+          await svc.handleInboundMessage({ from: '91' + phone, id: 'm' + i, body: 'KEYSHOPS ' + out.ref });
+          issued.push(codeFrom(sent[sent.length - 1]));
+        }
+        expect(new Set(issued).size).toBe(40);
+        expect(lockCount(docs)).toBe(40);
+      }, 60000);
+
+      it('a mismatch, a repeat and an expired request give their claim back / claim nothing', async () => {
+        const { firestore, docs } = fakeFirestore();
+        const svc = new WhatsappOtpService(firestore);
+        const wrong: any = await svc.sendOtp(PHONE, 'register');
+        await svc.handleInboundMessage({ from: '919876500000', id: 'a', body: 'KEYSHOPS ' + wrong.ref });
+        expect(lockCount(docs)).toBe(0);
+        const ok: any = await svc.sendOtp(PHONE, 'register');
+        await svc.handleInboundMessage({ from: FROM, id: 'b', body: 'KEYSHOPS ' + ok.ref });
+        expect(lockCount(docs)).toBe(1);
+        await svc.handleInboundMessage({ from: FROM, id: 'b', body: 'KEYSHOPS ' + ok.ref });
+        expect(lockCount(docs)).toBe(1);
+      });
     });
   });
 });
