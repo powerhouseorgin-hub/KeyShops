@@ -32,6 +32,13 @@ export class FirestoreVehicleSaleController {
     return this.sales.addPhoto(req.user.shopId, id, file);
   }
 
+  // multipart, field "file": the seller's or buyer's signature (PNG). Signing again replaces the earlier one.
+  @Post(':id/signatures/:party')
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 1024 * 1024, files: 1 } }))
+  async addSignature(@Req() req: any, @Param('id') id: string, @Param('party') party: string, @UploadedFile() file: any) {
+    return this.sales.addSignature(req.user.shopId, id, party, file);
+  }
+
   // The shop's complete sales history in pages (the "All Sales" screen): { items, nextCursor }, own shop only.
   @Get('history')
   async history(@Req() req: any, @Query('limit') limit?: string, @Query('cursor') cursor?: string) {
@@ -71,6 +78,12 @@ export class FirestoreSuperVehicleSaleController {
   @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 5 * 1024 * 1024, files: 1 } }))
   async addPhoto(@Req() req: any, @Param('id') id: string, @UploadedFile() file: any) {
     return this.sales.addPhoto(this.owner(req), id, file);
+  }
+
+  @Post('vehicle-sales/:id/signatures/:party')
+  @UseInterceptors(FileInterceptor('file', { limits: { fileSize: 1024 * 1024, files: 1 } }))
+  async addSignature(@Req() req: any, @Param('id') id: string, @Param('party') party: string, @UploadedFile() file: any) {
+    return this.sales.addSignature(this.owner(req), id, party, file);
   }
 
   @Get('vehicle-sales/:id')

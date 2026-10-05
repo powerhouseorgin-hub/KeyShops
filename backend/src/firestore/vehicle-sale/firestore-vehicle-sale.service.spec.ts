@@ -267,3 +267,51 @@ describe('FirestoreVehicleSaleService.listPage cursor checks', () => {
     await expect(svc.listPage({ type: 'SUPER_ADMIN', id: 'admin-1' }, { cursor: 'users/admin-1/vehicleSales/abc' })).rejects.not.toBeInstanceOf(BadRequestException);
   });
 });
+
+// ---- signatures ---------------------------------------------------------------------------------------------
+const PNG_HEAD = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+const png = (over: Record<string, unknown> = {}) => ({ originalname: 's.png', buffer: Buffer.concat([PNG_HEAD, Buffer.from('data')]), size: 12, mimetype: 'image/png', ...over });
+
+describe('FirestoreVehicleSaleService.addSignature', () => {
+  it('stores the seller and the buyer signature on the right sale, each under its own field', async () => {
+    const { svc, sale } = photoFixture(0);
+    const seller = await svc.addSignature('shop-1', 'sale-1', 'seller', png());
+    expect(seller.sellerSignature).toMatchObject({ key: 'new0', url: 'https://files/new0' });
+    expect(seller.buyerSignature).toBeNull();
+    const buyer = await svc.addSignature('shop-1', 'sale-1', 'buyer', png());
+    expect(buyer.buyerSignature).toMatchObject({ key: 'new1' });
+    expect(buyer.sellerSignature).toMatchObject({ key: 'new0' });
+    expect(sale.sellerSignature.key).toBe('new0');
+    expect(sale.buyerSignature.key).toBe('new1');
+  });
+
+  it('signing again replaces the earlier file (the old one is deleted)', async () => {
+    const f = photoFixture(0);
+    await f.svc.addSignature('shop-1', 'sale-1', 'seller', png());
+    await f.svc.addSignature('shop-1', 'sale-1', 'seller', png());
+    expect(f.sale.sellerSignature.key).toBe('new1');
+    expect(f.deleted).toEqual(['new0']);
+  });
+
+  it.each([
+    ['an unknown party', 'witness', png()],
+    ['no file', 'seller', undefined],
+    ['an empty file', 'seller', png({ buffer: Buffer.alloc(0), size: 0 })],
+    ['a JPEG', 'seller', png({ mimetype: 'image/jpeg' })],
+    ['a file that only claims to be a PNG', 'seller', png({ buffer: Buffer.from('<svg onload=alert(1)>') })],
+    ['a file over 1 MB', 'seller', png({ size: 1024 * 1024 + 1 })],
+  ])('rejects %s with a 400 before touching storage', async (_l, party, file) => {
+    const { svc, uploaded } = photoFixture(0);
+    await expect(svc.addSignature('shop-1', 'sale-1', party as string, file as any)).rejects.toBeInstanceOf(BadRequestException);
+    expect(uploaded).toHaveLength(0);
+  });
+
+  it('404s for a sale that does not exist or was deleted, without uploading', async () => {
+    const missing = photoFixture(0);
+    await expect(missing.svc.addSignature('shop-1', 'nope', 'seller', png())).rejects.toThrow('Vehicle sale not found');
+    const gone = photoFixture(0, true);
+    await expect(gone.svc.addSignature('shop-1', 'sale-1', 'seller', png())).rejects.toThrow('Vehicle sale not found');
+    expect(missing.uploaded).toHaveLength(0);
+    expect(gone.uploaded).toHaveLength(0);
+  });
+});

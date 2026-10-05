@@ -8,6 +8,10 @@ import { vehicleSaleText, fillText } from '../i18n/vehicleSaleText';
 // declaration from each party, witness + signature lines and the closing note. Separate from the customer
 // Service Invoice (customerInvoicePdf.js) - that one is for key services, this one is only for vehicle sales.
 //
+// Page 1 is the receipt itself, with the seller's and the buyer's signatures printed above their signature lines. When the sale has
+// photos, page 2 carries them (up to 5, two per row) under a "Photos" heading. Signatures and photos are read from the sale's stored
+// files, so a receipt downloaded, shared or reprinted later always contains them.
+//
 // Drawn as HTML and rasterised with html2canvas (like the other invoices) so the device's own fonts render
 // every script - Tamil, Hindi, Telugu, Kannada and Malayalam text come out correctly without bundling fonts.
 // Blank optional fields print as a dotted line, as on the paper receipt, so they can still be filled by hand.
@@ -69,11 +73,98 @@ function row(label, valueHtml) {
     </tr>`;
 }
 
+// A stored image (photo / signature) as a data URL, so the rasteriser can never be blocked by a cross-origin image. Tried three
+// times (a fresh upload can take a moment to be readable); null when it cannot be loaded.
+async function toDataUrl(url) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 25000);
+      const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
+      clearTimeout(timer);
+      if (res.ok) {
+        const blob = await res.blob();
+        const dataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(blob);
+        });
+        if (dataUrl) return dataUrl;
+      }
+    } catch (e) { /* try again */ }
+    await new Promise((resolve) => setTimeout(resolve, 600 * (attempt + 1)));
+  }
+  return null;
+}
+
+// One signature slot: the signature image (when there is one) above the labelled line.
+function signatureSlot(dataUrl, label) {
+  return `
+    <div style="width:220px; text-align:center;">
+      <div style="height:${dataUrl ? 58 : 30}px; display:flex; align-items:flex-end; justify-content:center;">
+        ${dataUrl ? `<img src="${dataUrl}" style="max-width:200px; max-height:56px; object-fit:contain;" />` : ''}
+      </div>
+      <div style="border-top:1px solid #888; padding-top:5px; font-size:10px; color:#555; line-height:1.4;">${esc(label)}</div>
+    </div>`;
+}
+
+// Draws an HTML fragment off-screen, waits for its images and fonts, and returns it as a canvas.
+async function rasterise(html) {
+  const container = document.createElement('div');
+  container.style.position = 'fixed';
+  container.style.left = '-10000px';
+  container.style.top = '0';
+  container.innerHTML = html;
+  document.body.appendChild(container);
+  try {
+    const imgs = Array.from(container.querySelectorAll('img'));
+    await Promise.all(imgs.map((img) => {
+      if (img.complete) return Promise.resolve();
+      return new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; });
+    }));
+    // let web fonts / system script fonts settle before rasterising
+    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) { /* ignore */ } }
+    return await html2canvas(container.firstElementChild, { scale: 2.5, useCORS: true, backgroundColor: '#ffffff' });
+  } finally {
+    document.body.removeChild(container);
+  }
+}
+
+// Puts a canvas on the current PDF page, scaled to the page width and - if it is taller than the page (longer text, e.g.
+// Malayalam) - shrunk to fit, so nothing is cut off.
+function placeCanvas(pdf, canvas) {
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const margin = 20;
+  let imgWidth = pageWidth - margin * 2;
+  let imgHeight = (canvas.height * imgWidth) / canvas.width;
+  const maxHeight = pageHeight - margin * 2;
+  if (imgHeight > maxHeight) {
+    imgWidth = (imgWidth * maxHeight) / imgHeight;
+    imgHeight = maxHeight;
+  }
+  const x = (pageWidth - imgWidth) / 2;
+  pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, margin, imgWidth, imgHeight);
+}
+
 export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', registeredByName }) {
   const T = vehicleSaleText(lang);
   const shopName = (shop && shop.name) || '';
   const shopAddress = (shop && shop.address && shop.address !== 'N/A') ? shop.address : '';
   const shopPhone = (shop && shop.phone && shop.phone !== 'N/A') ? shop.phone : '';
+
+  // The sale's stored attachments, loaded up front. A receipt that silently lacks a photo or a signature would be worse than no
+  // receipt, so when one cannot be loaded this throws and the caller offers a retry.
+  const photoUrls = (Array.isArray(sale.photos) ? sale.photos : []).map((p) => p && p.url).filter(Boolean).slice(0, 5);
+  const [sellerSigImg, buyerSigImg, ...photoImgs] = await Promise.all([
+    sale.sellerSignature?.url ? toDataUrl(sale.sellerSignature.url) : Promise.resolve(null),
+    sale.buyerSignature?.url ? toDataUrl(sale.buyerSignature.url) : Promise.resolve(null),
+    ...photoUrls.map((u) => toDataUrl(u)),
+  ]);
+  if ((sale.sellerSignature?.url && !sellerSigImg) || (sale.buyerSignature?.url && !buyerSigImg) || photoImgs.some((x) => !x)) {
+    throw new Error('Could not load the sale photos or signatures for the receipt');
+  }
 
   const sellerName = sale.sellerName || '';
   const buyerName = sale.buyerName || '';
@@ -144,9 +235,7 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
       <div style="text-align:center; margin-bottom:8px;"><span style="display:inline-block; border:1.5px solid #222; border-radius:8px; padding:5px 18px 7px; font-size:12.5px; line-height:1.35; font-weight:800;">${esc(T.sellerDeclTitle)}</span></div>
       <p style="font-size:10.8px; line-height:1.75; margin:0; color:#333; text-align:justify;">${sellerDecl}</p>
       <div style="display:flex; justify-content:flex-end; margin-top:6px;">
-        <div style="width:220px; text-align:center; padding-top:30px;">
-          <div style="border-top:1px solid #888; padding-top:5px; font-size:10px; color:#555; line-height:1.4;">${esc(T.sellerSign)}</div>
-        </div>
+        ${signatureSlot(sellerSigImg, T.sellerSign)}
       </div>
     </div>
 
@@ -160,8 +249,8 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
         <div>${esc(T.witness)}: ${val(sale.witnessName, 180)}</div>
         <div>${esc(T.witnessAddr)}: ${val(sale.witnessAddress, 180)}</div>
       </div>
-      <div style="width:220px; text-align:center; align-self:flex-end; padding-top:30px;">
-        <div style="border-top:1px solid #888; padding-top:5px; font-size:10px; color:#555; line-height:1.4;">${esc(T.buyerSign)}</div>
+      <div style="align-self:flex-end;">
+        ${signatureSlot(buyerSigImg, T.buyerSign)}
       </div>
     </div>
 
@@ -174,41 +263,33 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
     <div style="text-align:center; font-size:8.5px; color:#999; margin-top:10px;">${esc(fillText(T.generated, { name: registeredByName || shopName || 'Shop Admin', date: formatDateTime(new Date()) }))}</div>
   </div>`;
 
-  const container = document.createElement('div');
-  container.style.position = 'fixed';
-  container.style.left = '-10000px';
-  container.style.top = '0';
-  container.innerHTML = html;
-  document.body.appendChild(container);
+  const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
+  placeCanvas(pdf, await rasterise(html));
 
-  try {
-    const imgs = Array.from(container.querySelectorAll('img'));
-    await Promise.all(imgs.map((img) => {
-      if (img.complete) return Promise.resolve();
-      return new Promise((resolve) => { img.onload = resolve; img.onerror = resolve; });
-    }));
-    // let web fonts / system script fonts settle before rasterising
-    if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) { /* ignore */ } }
-
-    const canvas = await html2canvas(container.firstElementChild, { scale: 2.5, useCORS: true, backgroundColor: '#ffffff' });
-
-    const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const margin = 20;
-    // A receipt is one page: scale to the page width, and if the (longer, e.g. Malayalam) text makes it taller
-    // than the page, shrink it to fit instead of cutting the signatures off.
-    let imgWidth = pageWidth - margin * 2;
-    let imgHeight = (canvas.height * imgWidth) / canvas.width;
-    const maxHeight = pageHeight - margin * 2;
-    if (imgHeight > maxHeight) {
-      imgWidth = (imgWidth * maxHeight) / imgHeight;
-      imgHeight = maxHeight;
-    }
-    const x = (pageWidth - imgWidth) / 2;
-    pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, margin, imgWidth, imgHeight);
-    return pdf;
-  } finally {
-    document.body.removeChild(container);
+  if (photoImgs.length) {
+    const cells = photoImgs.map((src) => `
+      <div style="width:351px; height:263px; border:1px solid ${BORDER}; border-radius:8px; background:#F6F3EA; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+        <img src="${src}" style="max-width:100%; max-height:100%; object-fit:contain; display:block;" />
+      </div>`).join('');
+    const photosHtml = `
+    <div style="width:794px; font-family:${FONT_STACK}; background:#ffffff; color:#222; box-sizing:border-box; padding:26px 34px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid ${MAROON}; padding-bottom:10px; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <img src="${keyShopLogo}" style="width:40px; height:40px; object-fit:contain;" />
+          <div style="font-weight:900; font-size:16px; color:${MAROON};">${esc(shopName)}</div>
+        </div>
+        <div style="text-align:right; font-size:11px; line-height:1.7;">
+          <div>${esc(T.docNo)}: <b>${val(sale.saleNumber, 90)}</b></div>
+          <div>${esc(T.regNo)}: <b>${val(sale.registrationNumber, 90)}</b></div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-bottom:18px;">
+        <span style="display:inline-block; border:2px solid #222; border-radius:10px; padding:5px 30px 8px; font-size:17px; line-height:1.4; font-weight:900; color:#111;">${esc(T.photosTitle)}</span>
+      </div>
+      <div style="display:flex; flex-wrap:wrap; gap:20px 24px;">${cells}</div>
+    </div>`;
+    pdf.addPage();
+    placeCanvas(pdf, await rasterise(photosHtml));
   }
+  return pdf;
 }

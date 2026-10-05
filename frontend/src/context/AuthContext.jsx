@@ -566,6 +566,12 @@ export const AuthProvider = ({ children }) => {
       formData.append('file', file);
       return request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales/${encodeURIComponent(saleId)}/photos`, 'POST', formData, true);
     },
+    // The seller's or buyer's signature (PNG blob/file, multipart "file"); party is 'seller' or 'buyer'. Signing again replaces it.
+    addVehicleSaleSignature: async (saleId, party, file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      return request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales/${encodeURIComponent(saleId)}/signatures/${party}`, 'POST', formData, true);
+    },
     // The shop's complete sales history in pages ("All Sales" screen for a Shop Admin): { items, nextCursor }.
     getShopVehicleSalesPage: async ({ cursor = '', limit = 30 } = {}) => {
       const params = new URLSearchParams({ limit: String(limit) });

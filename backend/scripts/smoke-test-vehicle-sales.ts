@@ -164,6 +164,36 @@ async function main() {
   const stored2 = (await db.collection('shops').doc(A.shopId).collection('vehicleSales').doc(concurrent.id).get()).data() as any;
   check('8 simultaneous uploads: exactly 5 succeed, 3 are refused, 5 stored', race.filter((x) => x.status === 201).length === 5 && race.filter((x) => x.status === 400).length === 3 && stored2.photos.length === 5, race.map((x) => x.status));
 
+  console.log('\n--- Signatures (one PNG each for seller and buyer) ---');
+  const sign = async (saleId: string, party: string, token: string, route = 'shop', type = 'image/png', bytes: Buffer = png) => {
+    const fd = new FormData();
+    fd.append('file', new Blob([new Uint8Array(bytes)], { type }), 'sig.png');
+    const r = await fetch(`${BASE}/${route}/vehicle-sales/${saleId}/signatures/${party}`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+    return { status: r.status, body: await r.json().catch(() => ({})) };
+  };
+  const sigSale = (await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30SG0001' }, A.token)).body;
+  const noTokenSig = await fetch(`${BASE}/shop/vehicle-sales/${sigSale.id}/signatures/seller`, { method: 'POST', body: new FormData() });
+  check('signing without a token is rejected (401)', noTokenSig.status === 401, noTokenSig.status);
+  const sellerSig = await sign(sigSale.id, 'seller', A.token);
+  check('the seller signature is accepted and returned with a key and URL', sellerSig.status === 201 && !!sellerSig.body.sellerSignature?.key && !!sellerSig.body.sellerSignature?.url && sellerSig.body.buyerSignature === null, sellerSig);
+  const buyerSig = await sign(sigSale.id, 'buyer', A.token);
+  check('the buyer signature is accepted and the seller one is still there', buyerSig.status === 201 && !!buyerSig.body.buyerSignature?.url && !!buyerSig.body.sellerSignature?.url, buyerSig);
+  const sigStored = (await db.collection('shops').doc(A.shopId).collection('vehicleSales').doc(sigSale.id).get()).data() as any;
+  check('both signatures are stored on THIS sale, each under its own field', sigStored.sellerSignature?.key !== sigStored.buyerSignature?.key && !!sigStored.sellerSignature?.url && !!sigStored.buyerSignature?.url, [sigStored.sellerSignature?.key, sigStored.buyerSignature?.key]);
+  const sigGet = await req('GET', `/shop/vehicle-sales/${sigSale.id}`, undefined, A.token);
+  check('GET returns the sale with both signatures (so a reprint has them)', sigGet.status === 200 && !!sigGet.body.sellerSignature?.url && !!sigGet.body.buyerSignature?.url, sigGet.body);
+  const sigList = (await req('GET', '/shop/vehicle-sales?limit=100', undefined, A.token)).body;
+  check('the recent-sales list carries the signatures too', Array.isArray(sigList) && !!sigList.find((x: any) => x.id === sigSale.id)?.sellerSignature?.url, sigList?.length);
+  const otherSale = (await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30SG0002' }, A.token)).body;
+  const otherGet = (await req('GET', `/shop/vehicle-sales/${otherSale.id}`, undefined, A.token)).body;
+  check('another sale of the same shop is not affected', !otherGet.sellerSignature && !otherGet.buyerSignature, otherGet);
+  const resign = await sign(sigSale.id, 'seller', A.token);
+  check('signing again replaces the earlier seller signature', resign.status === 201 && resign.body.sellerSignature.key !== sigStored.sellerSignature.key && resign.body.buyerSignature.key === sigStored.buyerSignature.key, resign.body);
+  check('a JPEG is refused as a signature (400)', (await sign(sigSale.id, 'seller', A.token, 'shop', 'image/jpeg')).status === 400);
+  check('a file that only claims to be a PNG is refused (400)', (await sign(sigSale.id, 'seller', A.token, 'shop', 'image/png', Buffer.from('<svg onload=alert(1)>'))).status === 400);
+  check('an unknown party is refused (400)', (await sign(sigSale.id, 'witness', A.token)).status === 400);
+  check("another shop cannot sign this shop's sale (404)", (await sign(sigSale.id, 'seller', B.token)).status === 404);
+
   console.log('\n--- Shop "All Sales" history (paged, own shop only) ---');
   const h1 = await req('GET', '/shop/vehicle-sales/history?limit=3', undefined, A.token);
   check('history page 1: 3 sales and a cursor', h1.status === 200 && h1.body.items?.length === 3 && typeof h1.body.nextCursor === 'string', [h1.status, h1.body?.items?.length]);
@@ -243,6 +273,9 @@ async function main() {
     check("a 6th photo on the Super Admin's sale is refused (400)", sixthS.status === 400, sixthS);
     const shopPhotoOnSuper = await upS(sa1.body.id, A.token, 'shop');
     check("a shop cannot add photos to the Super Admin's sale (404)", shopPhotoOnSuper.status === 404, shopPhotoOnSuper.status);
+    const superSign = await sign(sa1.body.id, 'seller', S, 'super');
+    check('the Super Admin can sign their own sale', superSign.status === 201 && !!superSign.body.sellerSignature?.url, superSign);
+    check("a shop cannot sign the Super Admin's sale (404)", (await sign(sa1.body.id, 'buyer', A.token, 'shop')).status === 404);
 
     // the review: every owner in one list
     const review = await req('GET', '/super/all-vehicle-sales?limit=100', undefined, S);
@@ -251,6 +284,7 @@ async function main() {
     check('every row names who sold it', all.length > 0 && all.every((x) => typeof x.ownerName === 'string' && x.ownerName.length > 0), all.filter((x) => !x.ownerName).length);
     check('shop rows carry their shop id and the Super Admin row has none', all.filter((x) => x.ownerType === 'SHOP').every((x) => !!x.shopId) && all.find((x) => x.id === sa1.body.id)?.shopId === null);
     check('the review is newest first', all.every((x, k) => k === 0 || all[k - 1].createdAt >= x.createdAt));
+    check("the review includes the signature of the Super Admin's sale", !!all.find((x) => x.id === sa1.body.id)?.sellerSignature?.url);
     check("the review includes each sale's photos", (all.find((x) => x.id === sa1.body.id)?.photos || []).length === 5, all.find((x) => x.id === sa1.body.id)?.photos?.length);
     const sameNumbers = all.map((x) => x.saleNumber);
     check('receipt numbers are unique across shops and the Super Admin', new Set(sameNumbers).size === sameNumbers.length, sameNumbers.length);

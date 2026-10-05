@@ -116,6 +116,25 @@ export default function VehicleSaleDetail({ sale, T, languageName, busy, onClose
               </div>
             )}
           </section>
+
+          <section style={{ background: 'var(--card)', border: '1px solid var(--border-2)', borderRadius: 16, padding: '14px 16px', marginBottom: 12 }}>
+            <h3 style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--maroon)', margin: '0 0 10px' }}>{T.signaturesTitle}</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12 }}>
+              {[[T.sellerSign, sale.sellerSignature], [T.buyerSign, sale.buyerSignature]].map(([label, sig]) => (
+                <div key={label} style={{ minWidth: 0 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '.04em', marginBottom: 4 }}>{label}</div>
+                  {sig?.url ? (
+                    <button type="button" onClick={() => onOpenPhoto([sig.url], 0)}
+                      style={{ width: '100%', height: 110, padding: 8, border: '1px solid var(--border-2)', borderRadius: 12, background: '#fff', cursor: 'zoom-in', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <img src={sig.url} alt={label} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                    </button>
+                  ) : (
+                    <div style={{ height: 110, border: '1px dashed var(--border-2)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-3)', fontSize: 13, fontWeight: 700 }}>{T.noSignature}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </div>
 

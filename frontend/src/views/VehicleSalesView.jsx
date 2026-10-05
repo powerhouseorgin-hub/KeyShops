@@ -12,13 +12,15 @@ import { toWhatsAppNumber } from '../utils/phone';
 import { resizeImageFileToBlob } from '../utils/imageUtils';
 import ImageZoomViewer from '../components/ImageZoomViewer';
 import VehicleSaleDetail from '../components/VehicleSaleDetail';
+import SignaturePad from '../components/SignaturePad';
 
 // Vehicle Sales: record a bike/car sale and generate the "Delivery Receipt" invoice for the buyer.
 // Everything on screen follows the app language (vehicleSaleText.js); the invoice is generated in the language
 // that was selected when Sale was pressed, and that language is stored with the sale so re-downloading it later
 // prints the same document. The invoice language is chosen on this screen (default Tamil), independent of the app
 // language. Tapping a sale in Recent sales opens a read-only details screen (VehicleSaleDetail). Up to 5 photos can be attached: they are resized in the browser, then uploaded one by one to the saved
-// sale (the server also refuses a 6th). The receipt number is not entered here: the server generates a unique one for every sale.
+// sale (the server also refuses a 6th). The seller and the buyer each sign on a signature pad (both are required); the signatures are saved
+// with the sale like the photos and both are printed on the receipt, with the photos on a second page. The receipt number is not entered here: the server generates a unique one for every sale.
 // Layout: on a phone, short fields (date/time, price/advance, ...) sit two to a row (marked `half`) and the rest
 // take the full width; the spacing is tightened by the .vs-form rules in index.css.
 
@@ -59,12 +61,17 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   const [invoiceLang, setInvoiceLang] = useState(DEFAULT_INVOICE_LANG);
   const [photos, setPhotos] = useState([]); // [{ id, file, preview }] chosen but not yet uploaded
   const [photoMsg, setPhotoMsg] = useState('');
+  const [sigs, setSigs] = useState({ seller: null, buyer: null }); // each null or { blob, preview } once saved on its pad
   const [progress, setProgress] = useState(null); // { done, total } while photos upload
   const [viewer, setViewer] = useState(null); // { images, index }
   const [detail, setDetail] = useState(null); // the sale whose read-only details screen is open
   const photosRef = useRef([]);
   photosRef.current = photos;
   useEffect(() => () => photosRef.current.forEach((p) => URL.revokeObjectURL(p.preview)), []);
+  const sigsRef = useRef(sigs);
+  sigsRef.current = sigs;
+  useEffect(() => () => Object.values(sigsRef.current).forEach((x) => x && URL.revokeObjectURL(x.preview)), []);
+  const setSig = (party) => (value) => setSigs((cur) => ({ ...cur, [party]: value }));
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
@@ -123,6 +130,7 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     }
     if (!(price > 0)) return T.errPrice;
     if (Number.isFinite(advance) && advance > price) return T.errAdvance;
+    if (!sigs.seller || !sigs.buyer) return T.errSignatures;
     return '';
   };
 
@@ -173,6 +181,24 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     return { photos: current, failed };
   };
 
+  // Uploads the saved signatures ([[party, { blob }], ...]) to a saved sale. Returns the signature fields as the server last
+  // reported them and the entries that failed (so they can be retried). A failure never aborts the other one.
+  const uploadSignatures = async (saleId, entries) => {
+    const fields = {};
+    const failed = [];
+    for (const [party, sig] of entries) {
+      try {
+        const result = await api.addVehicleSaleSignature(saleId, party, new File([sig.blob], `${party}-signature.png`, { type: 'image/png' }));
+        if (result?.sellerSignature) fields.sellerSignature = result.sellerSignature;
+        if (result?.buyerSignature) fields.buyerSignature = result.buyerSignature;
+      } catch (err) {
+        console.error('Signature upload failed:', err);
+        failed.push([party, sig]);
+      }
+    }
+    return { fields, failed };
+  };
+
   const handleSale = async (e) => {
     e.preventDefault();
     const problem = validate();
@@ -196,6 +222,9 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
       sale = { ...sale, photos: result.photos };
       failedFiles = result.failed;
     }
+    const signed = await uploadSignatures(sale.id, [['seller', sigs.seller], ['buyer', sigs.buyer]]);
+    sale = { ...sale, ...signed.fields };
+    const failedSigs = signed.failed;
     let built = null;
     try {
       built = await buildInvoice(sale);
@@ -203,16 +232,33 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
       console.error('Failed to generate the vehicle sale invoice:', err);
     }
     setSaving(false);
-    setDone({ sale, pdf: built?.pdf || null, fileName: built?.fileName || null, invoiceFailed: !built, failedFiles, photoTotal: photos.length });
+    setDone({ sale, pdf: built?.pdf || null, fileName: built?.fileName || null, invoiceFailed: !built, failedFiles, failedSigs, photoTotal: photos.length });
     loadRecent();
   };
 
-  const retryPhotos = async () => {
-    if (!done?.failedFiles?.length) return;
+  // Retries whatever failed to upload (photos and/or signatures), then builds the receipt again so it includes them.
+  const retryUploads = async () => {
+    if (!done || (!done.failedFiles.length && !done.failedSigs.length)) return;
     setSaving(true);
-    const result = await uploadPhotos(done.sale.id, done.failedFiles, done.sale.photos || []);
+    let { sale, failedFiles, failedSigs } = done;
+    if (failedFiles.length) {
+      const result = await uploadPhotos(sale.id, failedFiles, sale.photos || []);
+      sale = { ...sale, photos: result.photos };
+      failedFiles = result.failed;
+    }
+    if (failedSigs.length) {
+      const result = await uploadSignatures(sale.id, failedSigs);
+      sale = { ...sale, ...result.fields };
+      failedSigs = result.failed;
+    }
+    let built = null;
+    try {
+      built = await buildInvoice(sale);
+    } catch (err) {
+      console.error('Failed to generate the vehicle sale invoice:', err);
+    }
     setSaving(false);
-    setDone((d) => ({ ...d, sale: { ...d.sale, photos: result.photos }, failedFiles: result.failed }));
+    setDone((d) => ({ ...d, sale, failedFiles, failedSigs, pdf: built?.pdf || null, fileName: built?.fileName || null, invoiceFailed: !built }));
     loadRecent();
   };
 
@@ -220,6 +266,8 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     photos.forEach((p) => URL.revokeObjectURL(p.preview));
     setPhotos([]);
     setPhotoMsg('');
+    Object.values(sigs).forEach((x) => x && URL.revokeObjectURL(x.preview));
+    setSigs({ seller: null, buyer: null });
     setInvoiceLang(DEFAULT_INVOICE_LANG);
     setDone(null);
     setForm(emptyForm());
@@ -374,6 +422,14 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
         </div>
 
         <div style={{ marginBottom: 14 }}>
+          <h3 style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--maroon)', margin: '0 0 8px', letterSpacing: '.01em' }}>{T.signaturesTitle} <span className="req">*</span></h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 14 }}>
+            <SignaturePad label={T.sellerSign} value={sigs.seller} onChange={setSig('seller')} T={T} disabled={saving} />
+            <SignaturePad label={T.buyerSign} value={sigs.buyer} onChange={setSig('buyer')} T={T} disabled={saving} />
+          </div>
+        </div>
+
+        <div style={{ marginBottom: 14 }}>
           <h3 style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--maroon)', margin: '0 0 3px', letterSpacing: '.01em' }}>{T.invoiceLanguage}</h3>
           <p className="cell-sub" style={{ margin: '0 0 6px' }}>{T.invoiceLanguageHint}</p>
           <div className="input-wrap">
@@ -458,20 +514,25 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
             <h3 style={{ marginBottom: 8 }}>{T.successTitle}</h3>
             <p className="desc" style={{ marginBottom: 6 }}>{done.sale.registrationNumber} · {done.sale.saleNumber}</p>
             <p className="desc" style={{ marginBottom: done.photoTotal ? 8 : 18 }}>{done.invoiceFailed ? T.invoiceFailed : T.successDesc}</p>
-            {done.photoTotal > 0 && (
+            {(done.photoTotal > 0 || done.failedSigs.length > 0) && (
               <div style={{ marginBottom: 18 }}>
                 {(done.sale.photos || []).length > 0 && (
                   <p className="desc" style={{ margin: '0 0 4px' }}>{fillText(T.photosAttached, { count: (done.sale.photos || []).length })}</p>
                 )}
                 {done.failedFiles.length > 0 && (
-                  <>
-                    <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: '0 0 6px' }}>
-                      {fillText(T.photosPartial, { failed: done.failedFiles.length, total: done.photoTotal })}
-                    </p>
-                    <button type="button" className="btn btn-outline btn-sm" onClick={retryPhotos} disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                      {saving ? spinner : <RefreshCw className="h-4 w-4" />} {saving && progress ? fillText(T.photosUploading, progress) : T.retryPhotos}
-                    </button>
-                  </>
+                  <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: '0 0 6px' }}>
+                    {fillText(T.photosPartial, { failed: done.failedFiles.length, total: done.photoTotal })}
+                  </p>
+                )}
+                {done.failedSigs.length > 0 && (
+                  <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: '0 0 6px' }}>
+                    {fillText(T.signaturesPartial, { failed: done.failedSigs.length })}
+                  </p>
+                )}
+                {(done.failedFiles.length > 0 || done.failedSigs.length > 0) && (
+                  <button type="button" className="btn btn-outline btn-sm" onClick={retryUploads} disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    {saving ? spinner : <RefreshCw className="h-4 w-4" />} {saving && progress ? fillText(T.photosUploading, progress) : T.retryUploads}
+                  </button>
                 )}
               </div>
             )}

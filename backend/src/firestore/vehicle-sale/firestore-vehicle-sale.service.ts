@@ -64,6 +64,14 @@ const SALE_PATH = new RegExp(`^(shops|users)/${ID}/vehicleSales/${ID}$`);
 
 export interface SalePhoto { key: string; url: string; size: number; createdAt: number; }
 
+// The seller's and buyer's hand-drawn signatures: one PNG each, stored in file storage like the photos (the sale only holds the
+// key and URL). Signing again replaces the previous file. PNG only - the signature pad exports PNG - checked by its magic bytes,
+// not just the declared type.
+export const SIGNATURE_PARTIES = ['seller', 'buyer'] as const;
+export type SignatureParty = (typeof SIGNATURE_PARTIES)[number];
+const MAX_SIGNATURE_BYTES = 1024 * 1024;
+const PNG_MAGIC = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
 const LANGS = ['en', 'hi', 'ta', 'te', 'kn', 'ml'];
 const MAX_AMOUNT = 1_000_000_000;
 
@@ -244,6 +252,41 @@ export class FirestoreVehicleSaleService {
         return next;
       });
       return { id: saleId, photos };
+    } catch (err) {
+      await this.files.deleteFile(upload.fileKey);
+      throw err;
+    }
+  }
+
+  // Stores (or replaces) the seller's or buyer's signature on a sale. Returns the sale id and its current signatures.
+  async addSignature(ownerArg: string | SaleOwner, saleId: string, partyRaw: string, file: { originalname: string; buffer: Buffer; size: number; mimetype: string } | undefined) {
+    if (!(SIGNATURE_PARTIES as readonly string[]).includes(partyRaw)) throw new BadRequestException('party must be seller or buyer');
+    const party = partyRaw as SignatureParty;
+    if (!file || !file.buffer?.length) throw new BadRequestException('A signature image is required');
+    if (file.mimetype !== 'image/png' || file.buffer.length < PNG_MAGIC.length || !file.buffer.subarray(0, PNG_MAGIC.length).equals(PNG_MAGIC)) {
+      throw new BadRequestException('The signature must be a PNG image');
+    }
+    if (file.size > MAX_SIGNATURE_BYTES) throw new BadRequestException('The signature image must be 1 MB or smaller');
+
+    const owner = asOwner(ownerArg);
+    const saleRef = this.col(owner).doc(saleId);
+    const before = await saleRef.get();
+    if (!before.exists || (before.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');
+
+    const upload = await this.files.uploadLongLivedFile(`${party}-signature.png`, file.buffer, owner.type === 'SHOP' ? owner.id : 'platform');
+    const field = `${party}Signature`;
+    const signature: SalePhoto = { key: upload.fileKey, url: upload.fileUrl, size: file.size, createdAt: Date.now() };
+    let previousKey: string | null = null;
+    try {
+      const sale = await this.firestore.db.runTransaction(async (tx) => {
+        const snap = await tx.get(saleRef);
+        const data: any = snap.data() || {};
+        previousKey = data[field]?.key || null;
+        tx.update(saleRef, { [field]: signature, updatedAt: Date.now() });
+        return data;
+      });
+      if (previousKey) await this.files.deleteFile(previousKey);
+      return { id: saleId, sellerSignature: party === 'seller' ? signature : sale.sellerSignature || null, buyerSignature: party === 'buyer' ? signature : sale.buyerSignature || null };
     } catch (err) {
       await this.files.deleteFile(upload.fileKey);
       throw err;
