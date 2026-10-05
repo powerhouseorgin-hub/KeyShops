@@ -561,10 +561,36 @@ export const AuthProvider = ({ children }) => {
     createVehicleSale: async (payload) => request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales`, 'POST', payload),
     getVehicleSales: async (limit = 20) => request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales?limit=${limit}`),
     // One photo per call (multipart "file"); the server allows at most 5 per sale.
-    addVehicleSalePhoto: async (saleId, file) => {
+    // `thumb` (optional): a small JPEG thumbnail that the server keeps inline on the sale, so the details screen can show it at once.
+    addVehicleSalePhoto: async (saleId, file, thumb) => {
       const formData = new FormData();
       formData.append('file', file);
+      if (thumb) formData.append('thumb', thumb, 'thumb.jpg');
       return request(`/api/${user.role === 'SUPER_ADMIN' ? 'super' : 'shop'}/vehicle-sales/${encodeURIComponent(saleId)}/photos`, 'POST', formData, true);
+    },
+    // One sale in full (with its inline thumbnails and signatures) - the lists return a lighter copy. A sale of the review list carries its
+    // document `path`, which is how a Super Admin reads any shop's sale.
+    getVehicleSaleFull: async (sale) => {
+      if (user.role === 'SUPER_ADMIN') {
+        if (sale.path) return request(`/api/super/all-vehicle-sales/item?path=${encodeURIComponent(sale.path)}`);
+        return request(`/api/super/vehicle-sales/${encodeURIComponent(sale.id)}`);
+      }
+      return request(`/api/shop/vehicle-sales/${encodeURIComponent(sale.id)}`);
+    },
+    // Sends the receipt PDF to the sale's seller and buyer over WhatsApp (server side, both at the same time). `recipients`: 'seller',
+    // 'buyer' or 'seller,buyer' (default). Resolves { saleId, results: { seller: { sent, reason?, message? }, buyer: {...} } }.
+    sendVehicleSaleInvoice: async (sale, file, recipients) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      if (recipients) formData.append('recipients', recipients);
+      if (user.role === 'SUPER_ADMIN') {
+        if (sale.path) {
+          formData.append('path', sale.path);
+          return request('/api/super/all-vehicle-sales/send-invoice', 'POST', formData, true);
+        }
+        return request(`/api/super/vehicle-sales/${encodeURIComponent(sale.id)}/send-invoice`, 'POST', formData, true);
+      }
+      return request(`/api/shop/vehicle-sales/${encodeURIComponent(sale.id)}/send-invoice`, 'POST', formData, true);
     },
     // The seller's or buyer's signature (PNG blob/file, multipart "file"); party is 'seller' or 'buyer'. Signing again replaces it.
     addVehicleSaleSignature: async (saleId, party, file) => {

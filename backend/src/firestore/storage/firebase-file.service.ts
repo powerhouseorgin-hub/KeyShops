@@ -46,6 +46,7 @@ export class FirebaseFileService {
     buffer: Buffer,
     shopId: string,
     _expirySeconds?: number, // kept for the existing call sites; a token link does not expire
+    options?: { cacheControl?: string }, // e.g. long-lived caching for files that are never changed in place
   ): Promise<{ fileUrl: string; fileKey: string }> {
     const fileExt = path.extname(originalname);
     const cleanShopId = shopId.replace(/[^a-zA-Z0-9]/g, '');
@@ -58,6 +59,7 @@ export class FirebaseFileService {
     await bucket.file(uniqueName).save(buffer, {
       contentType,
       metadata: {
+        ...(options?.cacheControl ? { cacheControl: options.cacheControl } : {}),
         contentDisposition: `attachment; filename="${safeName}"`,
         metadata: { firebaseStorageDownloadTokens: token },
       },
@@ -67,8 +69,8 @@ export class FirebaseFileService {
   }
 
   // Same as uploadFile; the name is kept because the call sites that want a link that never lapses use it.
-  async uploadLongLivedFile(originalname: string, buffer: Buffer, namespace: string) {
-    return this.uploadFile(originalname, buffer, namespace);
+  async uploadLongLivedFile(originalname: string, buffer: Buffer, namespace: string, options?: { cacheControl?: string }) {
+    return this.uploadFile(originalname, buffer, namespace, undefined, options);
   }
 
   async downloadFileBuffer(fileKey: string): Promise<{ buffer: Buffer; contentType: string }> {

@@ -171,7 +171,10 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     for (let i = 0; i < files.length; i += 1) {
       try {
         const blob = await resizeImageFileToBlob(files[i], 1280, 0.82);
-        const result = await api.addVehicleSalePhoto(saleId, new File([blob], `sale-photo-${i + 1}.jpg`, { type: 'image/jpeg' }));
+        // a ~240 px thumbnail travels with the photo: the server keeps it inline on the sale so the details screen can show it at once
+        let thumb = null;
+        try { thumb = await resizeImageFileToBlob(files[i], 240, 0.6); } catch (e) { /* the photo is still uploaded without one */ }
+        const result = await api.addVehicleSalePhoto(saleId, new File([blob], `sale-photo-${i + 1}.jpg`, { type: 'image/jpeg' }), thumb);
         if (Array.isArray(result?.photos)) {
           current = result.photos;
           const added = current[current.length - 1];
@@ -514,8 +517,9 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
           languageName={(INVOICE_LANGS.find(([code]) => code === detail.lang) || [null, detail.lang])[1]}
           busy={busy}
           onClose={() => setDetail(null)}
-          onDownload={run(detail, 'download')}
-          onWhatsApp={run(detail, 'whatsapp')}
+          api={api}
+          onDownload={(s) => run(s, 'download')()}
+          onWhatsApp={(s) => run(s, 'whatsapp')()}
           onOpenPhoto={(images, index) => setViewer({ images, index })}
         />
       )}
@@ -524,7 +528,11 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
 
       {done && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>
-          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 380, padding: 28, textAlign: 'center' }}>
+          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 380, padding: 28, textAlign: 'center', position: 'relative' }}>
+            {/* Close: the sale is already saved at this point, so closing only dismisses this dialog and clears the form for the next sale */}
+            <button type="button" onClick={resetForNewSale} disabled={saving} aria-label={T.closeLabel} title={T.closeLabel} className="icon-btn" style={{ position: 'absolute', top: 12, right: 12 }}>
+              <X className="h-4 w-4" />
+            </button>
             <div className="icon-badge jgreen" style={{ width: 56, height: 56, borderRadius: '50%', margin: '0 auto 18px' }}>
               <CheckCircle2 style={{ width: 28, height: 28 }} />
             </div>

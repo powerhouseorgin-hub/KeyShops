@@ -102,6 +102,8 @@
          loaded) since `&display=swap` already means text renders
          immediately in a fallback font either way - this just stops the
          stylesheet fetch itself from delaying first paint. -->
+    <!-- vehicle-sale photos and signatures are served from here: connect early so the first picture does not wait for the handshake -->
+    <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" media="print" onload="this.media='all'">

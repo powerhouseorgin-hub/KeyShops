@@ -3,6 +3,7 @@ import { randomInt } from 'crypto';
 import { FirestoreService } from '../firestore.service';
 import { FirebaseFileService } from '../storage/firebase-file.service';
 import { normalizePhone } from '../../common/validators/phone';
+import { WhatsappInvoiceService } from '../whatsapp-invoice.service';
 
 // A vehicle (bike/car) sale recorded by a Shop Admin: the data behind the "Delivery Receipt" invoice
 // (seller, buyer, vehicle, price / advance / balance, witness). Stored per shop under
@@ -62,7 +63,33 @@ const ID = '[A-Za-z0-9_-]{1,64}';
 const ID_ONLY = new RegExp(`^${ID}$`);
 const SALE_PATH = new RegExp(`^(shops|users)/${ID}/vehicleSales/${ID}$`);
 
-export interface SalePhoto { key: string; url: string; size: number; createdAt: number; }
+// `thumb` (photos) and `data` (signatures) are SMALL inline copies - a ~240 px JPEG thumbnail / the signature PNG itself - kept in the
+// sale document so the details screen can show them from the one request that loads the sale, instead of waiting for several
+// separate downloads from file storage. They are only returned by the single-sale reads; every list strips them (liteSale).
+export interface SalePhoto { key: string; url: string; size: number; createdAt: number; thumb?: string; data?: string; }
+const MAX_THUMB_BYTES = 60 * 1024;
+const MAX_INLINE_SIGNATURE_BYTES = 60 * 1024;
+const JPEG_MAGIC = Buffer.from([0xff, 0xd8, 0xff]);
+// Uploaded sale files never change in place (a new upload gets a new key), so they can be cached by the device for a year.
+const SALE_FILE_CACHE = 'private, max-age=31536000, immutable';
+
+// A sale without its inline image copies - what the list endpoints return.
+export function liteSale<T extends Record<string, any>>(sale: T): T {
+  if (!sale) return sale;
+  const out: any = { ...sale };
+  if (Array.isArray(out.photos)) out.photos = out.photos.map(({ thumb: _t, ...p }: any) => p);
+  for (const k of ['sellerSignature', 'buyerSignature']) {
+    if (out[k]) { const { data: _d, ...rest } = out[k]; out[k] = rest; }
+  }
+  return out;
+}
+
+// Sending the receipt to the seller and the buyer over WhatsApp.
+export const INVOICE_PARTIES = ['seller', 'buyer'] as const;
+export type InvoiceParty = (typeof INVOICE_PARTIES)[number];
+export interface PartySendResult { sent: boolean; reason?: 'NO_PHONE' | 'INVALID_PHONE' | 'SEND_FAILED'; message?: string; }
+const MAX_INVOICE_PDF_BYTES = 10 * 1024 * 1024;
+const PDF_MAGIC = Buffer.from('%PDF');
 
 // The seller's and buyer's hand-drawn signatures: one PNG each, stored in file storage like the photos (the sale only holds the
 // key and URL). Signing again replaces the previous file. PNG only - the signature pad exports PNG - checked by its magic bytes,
@@ -77,7 +104,11 @@ const MAX_AMOUNT = 1_000_000_000;
 
 @Injectable()
 export class FirestoreVehicleSaleService {
-  constructor(private readonly firestore: FirestoreService, private readonly files: FirebaseFileService) {}
+  constructor(
+    private readonly firestore: FirestoreService,
+    private readonly files: FirebaseFileService,
+    private readonly whatsappInvoice: WhatsappInvoiceService,
+  ) {}
 
   private parentRef(owner: SaleOwner) {
     return this.firestore.db.collection(owner.type === 'SHOP' ? 'shops' : 'users').doc(owner.id);
@@ -226,7 +257,12 @@ export class FirestoreVehicleSaleService {
   // Adds one photo to a sale. The count is checked before the upload (so a full sale never receives a file) and
   // again inside the transaction that records it (so two simultaneous uploads cannot both take the last slot);
   // if that second check loses, the just-uploaded file is deleted again.
-  async addPhoto(ownerArg: string | SaleOwner, saleId: string, file: { originalname: string; buffer: Buffer; size: number; mimetype: string } | undefined) {
+  async addPhoto(
+    ownerArg: string | SaleOwner,
+    saleId: string,
+    file: { originalname: string; buffer: Buffer; size: number; mimetype: string } | undefined,
+    thumb?: { buffer: Buffer; size: number; mimetype: string },
+  ) {
     if (!file || !file.buffer?.length) throw new BadRequestException('A photo file is required');
     if (!PHOTO_TYPES.includes(file.mimetype)) throw new BadRequestException('Only JPEG, PNG or WebP photos are accepted');
     if (file.size > MAX_PHOTO_BYTES) throw new BadRequestException('Each photo must be 5 MB or smaller');
@@ -239,8 +275,12 @@ export class FirestoreVehicleSaleService {
       throw new BadRequestException(`A sale can have at most ${MAX_SALE_PHOTOS} photos`);
     }
 
-    const upload = await this.files.uploadLongLivedFile(file.originalname || 'photo.jpg', file.buffer, owner.type === 'SHOP' ? owner.id : 'platform');
+    const upload = await this.files.uploadLongLivedFile(file.originalname || 'photo.jpg', file.buffer, owner.type === 'SHOP' ? owner.id : 'platform', { cacheControl: SALE_FILE_CACHE });
     const photo: SalePhoto = { key: upload.fileKey, url: upload.fileUrl, size: file.size, createdAt: Date.now() };
+    // The small inline thumbnail is optional and fail-soft: one that is not a small JPEG is simply not stored (the photo still is).
+    if (thumb?.buffer?.length && thumb.mimetype === 'image/jpeg' && thumb.buffer.length <= MAX_THUMB_BYTES && thumb.buffer.subarray(0, 3).equals(JPEG_MAGIC)) {
+      photo.thumb = `data:image/jpeg;base64,${thumb.buffer.toString('base64')}`;
+    }
 
     try {
       const photos = await this.firestore.db.runTransaction(async (tx) => {
@@ -251,7 +291,7 @@ export class FirestoreVehicleSaleService {
         tx.update(saleRef, { photos: next, updatedAt: Date.now() });
         return next;
       });
-      return { id: saleId, photos };
+      return { id: saleId, photos: photos.map(({ thumb: _t, ...p }: any) => p) };
     } catch (err) {
       await this.files.deleteFile(upload.fileKey);
       throw err;
@@ -273,9 +313,10 @@ export class FirestoreVehicleSaleService {
     const before = await saleRef.get();
     if (!before.exists || (before.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');
 
-    const upload = await this.files.uploadLongLivedFile(`${party}-signature.png`, file.buffer, owner.type === 'SHOP' ? owner.id : 'platform');
+    const upload = await this.files.uploadLongLivedFile(`${party}-signature.png`, file.buffer, owner.type === 'SHOP' ? owner.id : 'platform', { cacheControl: SALE_FILE_CACHE });
     const field = `${party}Signature`;
     const signature: SalePhoto = { key: upload.fileKey, url: upload.fileUrl, size: file.size, createdAt: Date.now() };
+    if (file.buffer.length <= MAX_INLINE_SIGNATURE_BYTES) signature.data = `data:image/png;base64,${file.buffer.toString('base64')}`;
     let previousKey: string | null = null;
     try {
       const sale = await this.firestore.db.runTransaction(async (tx) => {
@@ -286,7 +327,8 @@ export class FirestoreVehicleSaleService {
         return data;
       });
       if (previousKey) await this.files.deleteFile(previousKey);
-      return { id: saleId, sellerSignature: party === 'seller' ? signature : sale.sellerSignature || null, buyerSignature: party === 'buyer' ? signature : sale.buyerSignature || null };
+      const lite = (x: any) => { if (!x) return null; const { data: _d, ...rest } = x; return rest; };
+      return { id: saleId, sellerSignature: lite(party === 'seller' ? signature : sale.sellerSignature), buyerSignature: lite(party === 'buyer' ? signature : sale.buyerSignature) };
     } catch (err) {
       await this.files.deleteFile(upload.fileKey);
       throw err;
@@ -299,7 +341,7 @@ export class FirestoreVehicleSaleService {
     // Sort only - a `deletedAt == null` filter together with this orderBy would need a composite index,
     // and nothing can soft-delete a sale yet, so deleted rows are just dropped in memory.
     const snap = await this.col(owner).orderBy('createdAt', 'desc').limit(capped).get();
-    return snap.docs.filter((d) => !(d.data() as any).deletedAt).map((d) => ({ id: d.id, ...d.data() }));
+    return snap.docs.filter((d) => !(d.data() as any).deletedAt).map((d) => liteSale({ id: d.id, ...d.data() }));
   }
 
   // One owner's sales in pages (the shop's "All Sales" screen): newest first, `nextCursor` is the path of the last sale of
@@ -317,13 +359,111 @@ export class FirestoreVehicleSaleService {
     const snap = await q.limit(limit + 1).get();
     const hasMore = snap.docs.length > limit;
     const docs = snap.docs.slice(0, limit).filter((d) => !(d.data() as any).deletedAt);
-    return { items: docs.map((d) => ({ id: d.id, path: d.ref.path, ...d.data() })), nextCursor: hasMore && docs.length ? docs[docs.length - 1].ref.path : null };
+    return { items: docs.map((d) => liteSale({ id: d.id, path: d.ref.path, ...d.data() })), nextCursor: hasMore && docs.length ? docs[docs.length - 1].ref.path : null };
   }
 
   async get(ownerArg: string | SaleOwner, id: string) {
     const doc = await this.col(asOwner(ownerArg)).doc(id).get();
     if (!doc.exists || (doc.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');
     return { id: doc.id, ...doc.data() };
+  }
+
+  // One sale by its document path (Super Admin only - the controller guards it): the full record, inline thumbnails and signatures
+  // included, with the owner fields the review lists carry. The path must be exactly a vehicleSales document.
+  async getByPath(path: string) {
+    if (!SALE_PATH.test(String(path || ''))) throw new BadRequestException('Invalid sale path');
+    const doc = await this.firestore.db.doc(path).get();
+    if (!doc.exists || (doc.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');
+    const data = doc.data() as any;
+    const parentCol = doc.ref.parent.parent?.parent?.id; // 'shops' | 'users'
+    const ownerId = doc.ref.parent.parent?.id || '';
+    const ownerType = data.ownerType || (parentCol === 'users' ? 'SUPER_ADMIN' : 'SHOP');
+    return { id: doc.id, path: doc.ref.path, ...data, ownerType, ownerId: data.ownerId || ownerId, shopId: data.shopId !== undefined ? data.shopId : ownerType === 'SHOP' ? ownerId : null };
+  }
+
+  // ---- send the receipt to the seller and the buyer over WhatsApp ------------------------------------------------
+  // The app generates the PDF (in the language the sale was made in) and uploads it here. The PDF is stored, and the approved invoice
+  // template (document header + name + shop name) is sent to each recipient AT THE SAME TIME through the WhatsApp Business API. A
+  // missing or invalid number is reported for that recipient without stopping the other; each recipient's outcome is saved on the
+  // sale (`invoiceDelivery`) so a failed one can be retried on its own while the successful one stays recorded as sent.
+  async sendInvoice(ownerArg: string | SaleOwner, saleId: string, file: any, recipientsRaw?: string) {
+    const owner = asOwner(ownerArg);
+    return this.sendInvoiceForRef(this.col(owner).doc(saleId), owner.type === 'SHOP' ? owner.id : 'platform', file, recipientsRaw);
+  }
+
+  async sendInvoiceByPath(path: string, file: any, recipientsRaw?: string) {
+    if (!SALE_PATH.test(String(path || ''))) throw new BadRequestException('Invalid sale path');
+    const ref = this.firestore.db.doc(path);
+    const [kind, ownerId] = path.split('/');
+    return this.sendInvoiceForRef(ref, kind === 'shops' ? ownerId : 'platform', file, recipientsRaw);
+  }
+
+  private parseRecipients(raw?: string): InvoiceParty[] {
+    if (raw === undefined || raw === null || String(raw).trim() === '') return [...INVOICE_PARTIES];
+    const wanted = String(raw).split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);
+    if (!wanted.length || wanted.some((x) => !(INVOICE_PARTIES as readonly string[]).includes(x))) {
+      throw new BadRequestException('recipients must be seller, buyer or seller,buyer');
+    }
+    return INVOICE_PARTIES.filter((p) => wanted.includes(p));
+  }
+
+  private async sendInvoiceForRef(ref: FirebaseFirestore.DocumentReference, namespace: string, file: any, recipientsRaw?: string) {
+    if (!file || !file.buffer?.length) throw new BadRequestException('The invoice PDF is required');
+    if (file.buffer.length > MAX_INVOICE_PDF_BYTES) throw new BadRequestException('The invoice PDF must be 10 MB or smaller');
+    if (file.mimetype !== 'application/pdf' || !file.buffer.subarray(0, PDF_MAGIC.length).equals(PDF_MAGIC)) {
+      throw new BadRequestException('The invoice must be a PDF file');
+    }
+    const parties = this.parseRecipients(recipientsRaw);
+
+    const snap = await ref.get();
+    if (!snap.exists || (snap.data() as any).deletedAt) throw new NotFoundException('Vehicle sale not found');
+    const sale = snap.data() as any;
+
+    // who can be sent to: a valid Indian mobile number (WhatsApp Business API messages go to +91 numbers)
+    const results: Record<string, PartySendResult> = {};
+    const sendable: Array<{ party: InvoiceParty; phone: string }> = [];
+    for (const party of parties) {
+      const raw = sale[`${party}Phone`];
+      if (!raw || !String(raw).trim()) { results[party] = { sent: false, reason: 'NO_PHONE' }; continue; }
+      const phone = normalizePhone(String(raw));
+      if (!phone) { results[party] = { sent: false, reason: 'INVALID_PHONE' }; continue; }
+      sendable.push({ party, phone });
+    }
+
+    let invoiceFile: { key: string; url: string; at: number } | null = null;
+    if (sendable.length) {
+      const safe = (x: any) => String(x || '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+      const fileName = `DeliveryReceipt_${safe(sale.registrationNumber) || 'Vehicle'}_${safe(sale.saleNumber) || ref.id}.pdf`;
+      const upload = await this.files.uploadFile(fileName, file.buffer, namespace, undefined, { cacheControl: 'private, max-age=86400' });
+      invoiceFile = { key: upload.fileKey, url: upload.fileUrl, at: Date.now() };
+      const shopName = String(sale.ownerName || '') || 'Key Shops';
+      // both recipients at the same time
+      const outcomes = await Promise.all(sendable.map(async ({ party, phone }) => ({
+        party,
+        outcome: await this.whatsappInvoice.sendInvoiceDocumentDetailed({
+          phone, customerName: String(sale[`${party}Name`] || (party === 'seller' ? 'Seller' : 'Buyer')), shopName, documentUrl: upload.fileUrl, fileName,
+          // the dedicated vehicle-receipt template once it is approved and configured; otherwise the general invoice template
+          templateName: process.env.WHATSAPP_VEHICLE_RECEIPT_TEMPLATE_NAME || undefined,
+        }),
+      })));
+      for (const { party, outcome } of outcomes) {
+        results[party] = outcome.ok ? { sent: true } : { sent: false, reason: 'SEND_FAILED', message: outcome.error };
+      }
+    }
+
+    // save each attempted recipient's outcome (the other recipient's earlier outcome is left untouched)
+    const now = Date.now();
+    const patch: Record<string, any> = { updatedAt: now };
+    for (const party of parties) {
+      const r = results[party];
+      patch[`invoiceDelivery.${party}`] = { sent: r.sent, at: now, ...(r.reason ? { reason: r.reason } : {}), ...(r.message ? { message: r.message } : {}) };
+    }
+    const previousKey: string | null = sale.invoiceFile?.key || null;
+    if (invoiceFile) patch.invoiceFile = invoiceFile;
+    await ref.update(patch);
+    if (invoiceFile && previousKey) await this.files.deleteFile(previousKey);
+
+    return { saleId: ref.id, results };
   }
 
   // SUPER ADMIN review: every sale on the platform (every shop's, plus the Super Admin's own), newest first, in pages.
@@ -356,7 +496,7 @@ export class FirestoreVehicleSaleService {
       const ownerType = data.ownerType || (parentCol === 'users' ? 'SUPER_ADMIN' : 'SHOP');
       const shopId = data.shopId !== undefined ? data.shopId : ownerType === 'SHOP' ? ownerId : null;
       if (!data.ownerName && ownerType === 'SHOP' && shopId) legacyShopIds.add(shopId);
-      return { id: d.id, path: d.ref.path, ...data, ownerType, ownerId: data.ownerId || ownerId, shopId };
+      return liteSale({ id: d.id, path: d.ref.path, ...data, ownerType, ownerId: data.ownerId || ownerId, shopId });
     });
     if (legacyShopIds.size) {
       const shopSnaps = await db.getAll(...[...legacyShopIds].map((id) => db.collection('shops').doc(id)));

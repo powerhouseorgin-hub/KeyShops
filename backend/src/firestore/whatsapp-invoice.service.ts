@@ -40,11 +40,25 @@ export class WhatsappInvoiceService {
     return { success: true, delivered };
   }
 
+  // Same send, but says WHY it failed (a short, user-safe sentence) so a screen can show which recipient failed and why.
+  async sendInvoiceDocumentDetailed(params: {
+    phone: string; customerName: string; shopName: string; documentUrl: string; fileName: string;
+    templateName?: string; // another approved template with the same shape (document header, {{1}} name, {{2}} shop); default: WHATSAPP_INVOICE_TEMPLATE_NAME
+  }): Promise<{ ok: boolean; error?: string }> {
+    const outcome = await this.sendWithReason(params);
+    if (!outcome.ok) console.log(`[WhatsApp Invoice] not sent to ${params.customerName}: ${outcome.error}`);
+    return outcome;
+  }
+
   private async send(params: { phone: string; customerName: string; shopName: string; documentUrl: string; fileName: string }): Promise<boolean> {
+    return (await this.sendWithReason(params)).ok;
+  }
+
+  private async sendWithReason(params: { phone: string; customerName: string; shopName: string; documentUrl: string; fileName: string; templateName?: string }): Promise<{ ok: boolean; error?: string }> {
     const accessToken = process.env.WHATSAPP_ACCESS_TOKEN || '';
     const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID || '';
-    const templateName = process.env.WHATSAPP_INVOICE_TEMPLATE_NAME || '';
-    if (!accessToken || !phoneNumberId || !templateName) return false;
+    const templateName = params.templateName || process.env.WHATSAPP_INVOICE_TEMPLATE_NAME || '';
+    if (!accessToken || !phoneNumberId || !templateName) return { ok: false, error: 'WhatsApp sending is not set up on the server' };
 
     try {
       const to = `91${params.phone}`;
@@ -77,15 +91,16 @@ export class WhatsappInvoiceService {
           }),
         },
       );
-      const body = await res.json();
+      const body: any = await res.json().catch(() => ({}));
       if (!res.ok) {
         console.error('WhatsApp invoice send failed:', body);
-        return false;
+        const detail = String(body?.error?.error_user_msg || body?.error?.message || `HTTP ${res.status}`).slice(0, 140);
+        return { ok: false, error: detail };
       }
-      return true;
+      return { ok: true };
     } catch (err: any) {
       console.error('WhatsApp invoice send failed:', err.message);
-      return false;
+      return { ok: false, error: 'Could not reach WhatsApp' };
     }
   }
 }

@@ -44,6 +44,47 @@ export async function downloadPdf(pdf, filename) {
   }
 }
 
+// Saves any generated file (a ZIP of invoices, ...) the way downloadPdf saves a PDF: on the phone it goes to the Downloads folder (share
+// sheet as the fallback), in a browser it is an ordinary download.
+export async function downloadBlobFile(blob, filename, mimeType = 'application/octet-stream') {
+  if (Capacitor.isNativePlatform()) {
+    const { Filesystem, Directory } = await import('@capacitor/filesystem');
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).split(',')[1]);
+      reader.onerror = () => reject(new Error('Could not read the file'));
+      reader.readAsDataURL(blob);
+    });
+    let uri;
+    try {
+      await Filesystem.writeFile({ path: filename, data: base64, directory: Directory.Cache });
+      ({ uri } = await Filesystem.getUri({ path: filename, directory: Directory.Cache }));
+    } catch (err) {
+      throw new Error(`Could not save the file to this device: ${err.message || err}`);
+    }
+    try {
+      await SaveToDownloads.saveFile({ sourcePath: uri, fileName: filename, mimeType });
+    } catch (err) {
+      console.warn('Direct save to Downloads failed, falling back to share sheet:', err);
+      try {
+        const { Share } = await import('@capacitor/share');
+        await Share.share({ files: [uri], dialogTitle: `Save ${filename}` });
+      } catch (shareErr) {
+        console.warn('Share sheet dismissed or result unreported (file was already downloaded):', shareErr);
+      }
+    }
+    return;
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
 // `text` (when given) is passed straight to the OS share sheet alongside the
 // file, so apps that support it (WhatsApp included) receive both the PDF and
 // the message in one share action instead of just the file. `fallbackText`

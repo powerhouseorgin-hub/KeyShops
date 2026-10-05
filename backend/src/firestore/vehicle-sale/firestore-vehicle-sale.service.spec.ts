@@ -1,11 +1,12 @@
 import { BadRequestException } from '@nestjs/common';
-import { FirestoreVehicleSaleService, generateSaleNumber } from './firestore-vehicle-sale.service';
+import { FirestoreVehicleSaleService, generateSaleNumber, liteSale } from './firestore-vehicle-sale.service';
 
 // Every rejection below happens in the validation step, before any Firestore access, so the database
 // can be a stub that explodes if touched.
 const explodingFirestore: any = { get db() { throw new Error('database must not be touched for invalid input'); } };
 const noFiles: any = { uploadLongLivedFile: async () => { throw new Error('storage must not be touched'); }, deleteFile: async () => undefined };
-const service = new FirestoreVehicleSaleService(explodingFirestore, noFiles);
+const noWhatsapp: any = { sendInvoiceDocumentDetailed: async () => { throw new Error('WhatsApp must not be touched'); } };
+const service = new FirestoreVehicleSaleService(explodingFirestore, noFiles, noWhatsapp);
 
 const valid = {
   sellerName: 'Seller',
@@ -86,7 +87,7 @@ describe('FirestoreVehicleSaleService.create receipt numbers', () => {
 
   it('generates the number itself and ignores one sent by the client', async () => {
     const { store, firestore } = fakeFirestore();
-    const svc = new FirestoreVehicleSaleService(firestore, noFiles);
+    const svc = new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp);
     const sale = await svc.create('shop-1', 'user-1', { ...body, saleNumber: 'MY-100' } as any);
     expect(sale.saleNumber).toMatch(/^VS-[1-9]\d{9}$/);
     expect(sale.saleNumber).not.toBe('MY-100');
@@ -97,7 +98,7 @@ describe('FirestoreVehicleSaleService.create receipt numbers', () => {
   it('draws a new number when the first one is already taken', async () => {
     const taken = 'VS-1111111111';
     const { firestore } = fakeFirestore([taken]);
-    const svc = new FirestoreVehicleSaleService(firestore, noFiles);
+    const svc = new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp);
     const draws = [taken, 'VS-2222222222'];
     const spy = jest.spyOn(require('crypto'), 'randomInt');
     // generateSaleNumber() calls randomInt twice per number (leading digit, then the other nine)
@@ -112,7 +113,7 @@ describe('FirestoreVehicleSaleService.create receipt numbers', () => {
   it('gives up with a 500 if no free number can be found', async () => {
     const taken = 'VS-1111111111';
     const { firestore } = fakeFirestore([taken]);
-    const svc = new FirestoreVehicleSaleService(firestore, noFiles);
+    const svc = new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp);
     const spy = jest.spyOn(require('crypto'), 'randomInt').mockImplementation(((a: number, b?: number) => (b === 10 ? 1 : 111111111)) as any);
     await expect(svc.create('shop-1', 'user-1', body as any)).rejects.toThrow('Could not allocate a receipt number');
     spy.mockRestore();
@@ -139,7 +140,7 @@ function photoFixture(existingPhotos = 0, deleted = false) {
     uploadLongLivedFile: async () => { const key = `new${uploaded.length}`; uploaded.push(key); return { fileKey: key, fileUrl: `https://files/${key}` }; },
     deleteFile: async (k: string) => { deleted_.push(k); },
   };
-  return { svc: new FirestoreVehicleSaleService(firestore, files), sale, uploaded, deleted: deleted_ };
+  return { svc: new FirestoreVehicleSaleService(firestore, files, noWhatsapp), sale, uploaded, deleted: deleted_ };
 }
 const jpeg = (over: Record<string, unknown> = {}) => ({ originalname: 'p.jpg', buffer: Buffer.from('x'), size: 1, mimetype: 'image/jpeg', ...over });
 
@@ -194,7 +195,7 @@ describe('FirestoreVehicleSaleService owners', () => {
 
   it('a shop sale records the shop as owner (id and name)', async () => {
     const { store, firestore } = fakeFirestore();
-    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles).create('shop-1', 'user-1', body as any);
+    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp).create('shop-1', 'user-1', body as any);
     expect(sale).toMatchObject({ ownerType: 'SHOP', ownerId: 'shop-1', shopId: 'shop-1', ownerName: 'Shop' });
     expect(store.get(`vehicleSaleNumbers/${sale.saleNumber}`)).toMatchObject({ shopId: 'shop-1', ownerId: 'shop-1' });
   });
@@ -202,7 +203,7 @@ describe('FirestoreVehicleSaleService owners', () => {
   it('a Super Admin sale is owned by the Super Admin: no shop, their name, stored under their user document', async () => {
     const { store, firestore } = fakeFirestore();
     store.set('users/admin-1', { name: 'Platform Boss' });
-    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles).create({ type: 'SUPER_ADMIN', id: 'admin-1' }, 'admin-1', body as any);
+    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp).create({ type: 'SUPER_ADMIN', id: 'admin-1' }, 'admin-1', body as any);
     expect(sale).toMatchObject({ ownerType: 'SUPER_ADMIN', ownerId: 'admin-1', shopId: null, ownerName: 'Platform Boss' });
     expect(sale.saleNumber).toMatch(/^VS-[1-9]\d{9}$/);
     expect(store.get(`vehicleSaleNumbers/${sale.saleNumber}`)).toMatchObject({ shopId: null, ownerId: 'admin-1' });
@@ -213,26 +214,26 @@ describe('FirestoreVehicleSaleService owners', () => {
   it('falls back to the name "Super Admin" when the account has none', async () => {
     const { store, firestore } = fakeFirestore();
     store.set('users/admin-2', {});
-    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles).create({ type: 'SUPER_ADMIN', id: 'admin-2' }, 'admin-2', body as any);
+    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp).create({ type: 'SUPER_ADMIN', id: 'admin-2' }, 'admin-2', body as any);
     expect(sale.ownerName).toBe('Super Admin');
   });
 
   it('refuses to sell for an owner that does not exist', async () => {
     const { firestore } = fakeFirestore();
-    await expect(new FirestoreVehicleSaleService(firestore, noFiles).create({ type: 'SUPER_ADMIN', id: 'ghost' }, 'ghost', body as any)).rejects.toThrow('User not found');
-    await expect(new FirestoreVehicleSaleService(firestore, noFiles).create('no-such-shop', 'u', body as any)).rejects.toThrow('Shop not found');
+    await expect(new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp).create({ type: 'SUPER_ADMIN', id: 'ghost' }, 'ghost', body as any)).rejects.toThrow('User not found');
+    await expect(new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp).create('no-such-shop', 'u', body as any)).rejects.toThrow('Shop not found');
   });
 
   it("never lets a Super Admin's sale be created with a client-chosen owner (the body is not used for ownership)", async () => {
     const { store, firestore } = fakeFirestore();
     store.set('users/admin-1', { name: 'Boss' });
-    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles).create({ type: 'SUPER_ADMIN', id: 'admin-1' }, 'admin-1', { ...body, shopId: 'shop-1', ownerType: 'SHOP', ownerId: 'shop-1', ownerName: 'Hacked' } as any);
+    const sale: any = await new FirestoreVehicleSaleService(firestore, noFiles, noWhatsapp).create({ type: 'SUPER_ADMIN', id: 'admin-1' }, 'admin-1', { ...body, shopId: 'shop-1', ownerType: 'SHOP', ownerId: 'shop-1', ownerName: 'Hacked' } as any);
     expect(sale).toMatchObject({ ownerType: 'SUPER_ADMIN', ownerId: 'admin-1', shopId: null, ownerName: 'Boss' });
   });
 });
 
 describe('FirestoreVehicleSaleService.listAll input checks', () => {
-  const svc = new FirestoreVehicleSaleService(explodingFirestore, noFiles);
+  const svc = new FirestoreVehicleSaleService(explodingFirestore, noFiles, noWhatsapp);
   it.each([['a path-like shopId', { shopId: 'a/b' }], ['a shopId with spaces', { shopId: 'x y' }]])('rejects %s before touching the database', async (_l, opts) => {
     await expect(svc.listAll(opts as any)).rejects.toBeInstanceOf(BadRequestException);
   });
@@ -253,7 +254,7 @@ describe('FirestoreVehicleSaleService.listAll input checks', () => {
 });
 
 describe('FirestoreVehicleSaleService.listPage cursor checks', () => {
-  const svc = new FirestoreVehicleSaleService(explodingFirestore, noFiles);
+  const svc = new FirestoreVehicleSaleService(explodingFirestore, noFiles, noWhatsapp);
   it.each([
     ['another shop\'s sale', 'shops/other-shop/vehicleSales/abc'],
     ['a Super Admin sale', 'users/admin-1/vehicleSales/abc'],
@@ -313,5 +314,177 @@ describe('FirestoreVehicleSaleService.addSignature', () => {
     await expect(gone.svc.addSignature('shop-1', 'sale-1', 'seller', png())).rejects.toThrow('Vehicle sale not found');
     expect(missing.uploaded).toHaveLength(0);
     expect(gone.uploaded).toHaveLength(0);
+  });
+});
+
+// ---- inline thumbnails, signature data, list stripping -----------------------------------------------------------
+const JPEG_HEAD = Buffer.from([0xff, 0xd8, 0xff, 0xe0]);
+const thumbOf = (over: Record<string, unknown> = {}) => ({ buffer: Buffer.concat([JPEG_HEAD, Buffer.from('thumb')]), size: 9, mimetype: 'image/jpeg', ...over });
+
+describe('inline thumbnails and signature data', () => {
+  it('keeps a small JPEG thumbnail inline on the photo, but does not return it in the upload response', async () => {
+    const { svc, sale } = photoFixture(0);
+    const out = await svc.addPhoto('shop-1', 'sale-1', jpeg(), thumbOf());
+    expect(sale.photos[0].thumb).toMatch(/^data:image\/jpeg;base64,/);
+    expect(out.photos[0]).not.toHaveProperty('thumb');
+    expect(out.photos[0]).toMatchObject({ key: 'new0', url: 'https://files/new0' });
+  });
+
+  it.each([
+    ['a PNG', thumbOf({ mimetype: 'image/png' })],
+    ['something that is not a JPEG', thumbOf({ buffer: Buffer.from('<svg>') })],
+    ['over 60 KB', thumbOf({ buffer: Buffer.concat([JPEG_HEAD, Buffer.alloc(61 * 1024)]) })],
+  ])('ignores a thumbnail that is %s - the photo itself is still stored', async (_l, bad) => {
+    const { svc, sale } = photoFixture(0);
+    await expect(svc.addPhoto('shop-1', 'sale-1', jpeg(), bad as any)).resolves.toBeDefined();
+    expect(sale.photos).toHaveLength(1);
+    expect(sale.photos[0]).not.toHaveProperty('thumb');
+  });
+
+  it('keeps the signature PNG inline (when small) and does not return it in the response', async () => {
+    const { svc, sale } = photoFixture(0);
+    const out = await svc.addSignature('shop-1', 'sale-1', 'seller', png());
+    expect(sale.sellerSignature.data).toMatch(/^data:image\/png;base64,/);
+    expect(out.sellerSignature).not.toHaveProperty('data');
+    expect(out.sellerSignature).toMatchObject({ key: 'new0' });
+  });
+
+  it('does not inline a large signature', async () => {
+    const { svc, sale } = photoFixture(0);
+    const big = Buffer.concat([PNG_HEAD, Buffer.alloc(70 * 1024)]);
+    await svc.addSignature('shop-1', 'sale-1', 'buyer', png({ buffer: big, size: big.length }));
+    expect(sale.buyerSignature).not.toHaveProperty('data');
+    expect(sale.buyerSignature.url).toBeTruthy();
+  });
+
+  it('liteSale strips the inline copies (and only those)', () => {
+    const lite: any = liteSale({ id: 'x', registrationNumber: 'TN1', photos: [{ key: 'a', url: 'u', thumb: 'data:image/jpeg;base64,AAAA' }], sellerSignature: { key: 's', url: 'su', data: 'data:image/png;base64,BBBB' }, buyerSignature: null });
+    expect(lite.photos[0]).toEqual({ key: 'a', url: 'u' });
+    expect(lite.sellerSignature).toEqual({ key: 's', url: 'su' });
+    expect(lite.buyerSignature).toBeNull();
+    expect(lite.registrationNumber).toBe('TN1');
+  });
+
+  it('uploads sale files with a long-lived cache header', async () => {
+    const f = photoFixture(0);
+    const seen: any[] = [];
+    (f.svc as any).files.uploadLongLivedFile = async (...a: any[]) => { seen.push(a[3]); return { fileKey: 'k' + seen.length, fileUrl: 'u' }; };
+    await f.svc.addPhoto('shop-1', 'sale-1', jpeg());
+    await f.svc.addSignature('shop-1', 'sale-1', 'seller', png());
+    expect(seen).toEqual([{ cacheControl: expect.stringContaining('max-age=31536000') }, { cacheControl: expect.stringContaining('max-age=31536000') }]);
+  });
+});
+
+// ---- sending the receipt to the seller and the buyer -------------------------------------------------------------
+function sendFixture(sale: any, outcomes: Record<string, { ok: boolean; error?: string }> = {}) {
+  const doc: any = { ...sale };
+  const ref: any = {
+    id: 'sale-1', path: 'shops/shop-1/vehicleSales/sale-1',
+    get: async () => ({ exists: true, data: () => doc }),
+    update: async (patch: any) => {
+      for (const [k, v] of Object.entries(patch)) {
+        const m = /^invoiceDelivery\.(seller|buyer)$/.exec(k);
+        if (m) doc.invoiceDelivery = { ...(doc.invoiceDelivery || {}), [m[1]]: v };
+        else doc[k] = v;
+      }
+    },
+  };
+  const missing: any = { get: async () => ({ exists: false }) };
+  const firestore: any = { db: { collection: () => ({ doc: () => ({ collection: () => ({ doc: (id: string) => (id === 'sale-1' ? ref : missing) }) }) }), doc: () => ref } };
+  const uploaded: any[] = []; const removed: string[] = [];
+  const files: any = {
+    uploadFile: async (name: string, _buf: Buffer, ns: string, _e: any, opts: any) => { uploaded.push({ name, ns, opts }); return { fileKey: 'pdf' + uploaded.length, fileUrl: `https://files/pdf${uploaded.length}` }; },
+    deleteFile: async (k: string) => { removed.push(k); },
+  };
+  const sends: any[] = [];
+  const wa: any = { sendInvoiceDocumentDetailed: async (p: any) => { sends.push(p); return outcomes[p.phone] || { ok: true }; } };
+  return { svc: new FirestoreVehicleSaleService(firestore, files, wa), doc, uploaded, removed, sends };
+}
+const pdf = (over: Record<string, unknown> = {}) => ({ originalname: 'r.pdf', buffer: Buffer.from('%PDF-1.4 test'), size: 13, mimetype: 'application/pdf', ...over });
+const SALE = { registrationNumber: 'TN30AB1234', saleNumber: 'VS-1234567890', ownerName: 'Test Shop', sellerName: 'Seller One', sellerPhone: '9361906840', buyerName: 'Buyer Two', buyerPhone: '9876543210' };
+
+describe('FirestoreVehicleSaleService.sendInvoice', () => {
+  it('sends the receipt to the seller AND the buyer, each with their own name and the shop name, and records both as sent', async () => {
+    const f = sendFixture(SALE);
+    const out = await f.svc.sendInvoice('shop-1', 'sale-1', pdf());
+    expect(out.results).toEqual({ seller: { sent: true }, buyer: { sent: true } });
+    expect(f.sends.map((s) => [s.phone, s.customerName, s.shopName]).sort()).toEqual([['9361906840', 'Seller One', 'Test Shop'], ['9876543210', 'Buyer Two', 'Test Shop']]);
+    expect(f.sends[0].documentUrl).toBe('https://files/pdf1');
+    expect(f.sends[0].fileName).toBe('DeliveryReceipt_TN30AB1234_VS_1234567890.pdf');
+    expect(f.doc.invoiceDelivery.seller.sent).toBe(true);
+    expect(f.doc.invoiceDelivery.buyer.sent).toBe(true);
+    expect(f.uploaded).toHaveLength(1); // one stored PDF for both recipients
+  });
+
+  it('both sends are started before either finishes (same time, not one after the other)', async () => {
+    const f = sendFixture(SALE);
+    const order: string[] = [];
+    (f.svc as any).whatsappInvoice.sendInvoiceDocumentDetailed = async (p: any) => { order.push('start ' + p.phone); await new Promise((r) => setTimeout(r, 20)); order.push('end ' + p.phone); return { ok: true }; };
+    await f.svc.sendInvoice('shop-1', 'sale-1', pdf());
+    expect(order.slice(0, 2).every((x) => x.startsWith('start'))).toBe(true);
+  });
+
+  it('reports which recipient failed and why, and keeps the other one as sent', async () => {
+    const f = sendFixture(SALE, { '9876543210': { ok: false, error: 'Message undeliverable' } });
+    const out = await f.svc.sendInvoice('shop-1', 'sale-1', pdf());
+    expect(out.results.seller).toEqual({ sent: true });
+    expect(out.results.buyer).toEqual({ sent: false, reason: 'SEND_FAILED', message: 'Message undeliverable' });
+    expect(f.doc.invoiceDelivery.seller.sent).toBe(true);
+    expect(f.doc.invoiceDelivery.buyer).toMatchObject({ sent: false, reason: 'SEND_FAILED' });
+  });
+
+  it('a missing or invalid number is reported for that recipient only - the other still gets it', async () => {
+    const f = sendFixture({ ...SALE, sellerPhone: '', buyerPhone: '12345678' });
+    const none = await f.svc.sendInvoice('shop-1', 'sale-1', pdf());
+    expect(none.results).toEqual({ seller: { sent: false, reason: 'NO_PHONE' }, buyer: { sent: false, reason: 'INVALID_PHONE' } });
+    expect(f.sends).toHaveLength(0);
+    expect(f.uploaded).toHaveLength(0); // nothing to send to, nothing uploaded
+    const g = sendFixture({ ...SALE, sellerPhone: null });
+    const some = await g.svc.sendInvoice('shop-1', 'sale-1', pdf());
+    expect(some.results.seller).toEqual({ sent: false, reason: 'NO_PHONE' });
+    expect(some.results.buyer).toEqual({ sent: true });
+    expect(g.sends).toHaveLength(1);
+  });
+
+  it('a retry for one recipient leaves the other recipient status alone and replaces the stored PDF', async () => {
+    const f = sendFixture({ ...SALE, invoiceDelivery: { seller: { sent: true, at: 1 }, buyer: { sent: false, at: 1 } }, invoiceFile: { key: 'oldpdf', url: 'x', at: 1 } });
+    const out = await f.svc.sendInvoice('shop-1', 'sale-1', pdf(), 'buyer');
+    expect(Object.keys(out.results)).toEqual(['buyer']);
+    expect(f.sends).toHaveLength(1);
+    expect(f.doc.invoiceDelivery.seller).toEqual({ sent: true, at: 1 });
+    expect(f.doc.invoiceDelivery.buyer.sent).toBe(true);
+    expect(f.removed).toEqual(['oldpdf']);
+  });
+
+  it.each([
+    ['no file', undefined],
+    ['an empty file', pdf({ buffer: Buffer.alloc(0), size: 0 })],
+    ['a non-PDF type', pdf({ mimetype: 'image/png' })],
+    ['a file that only claims to be a PDF', pdf({ buffer: Buffer.from('<script>') })],
+    ['a file over 10 MB', pdf({ buffer: Buffer.concat([Buffer.from('%PDF'), Buffer.alloc(10 * 1024 * 1024)]) })],
+  ])('rejects %s with a 400 before touching storage or WhatsApp', async (_l, file) => {
+    const f = sendFixture(SALE);
+    await expect(f.svc.sendInvoice('shop-1', 'sale-1', file as any)).rejects.toBeInstanceOf(BadRequestException);
+    expect(f.uploaded).toHaveLength(0);
+    expect(f.sends).toHaveLength(0);
+  });
+
+  it.each([['witness'], ['seller,witness'], [',']])('rejects recipients "%s"', async (r) => {
+    const f = sendFixture(SALE);
+    await expect(f.svc.sendInvoice('shop-1', 'sale-1', pdf(), r)).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('404s for a sale that does not exist (and a bad path is a 400)', async () => {
+    const f = sendFixture(SALE);
+    await expect(f.svc.sendInvoice('shop-1', 'nope', pdf())).rejects.toThrow('Vehicle sale not found');
+    await expect(f.svc.sendInvoiceByPath('shops/../../etc', pdf())).rejects.toBeInstanceOf(BadRequestException);
+    await expect(f.svc.getByPath('users/x')).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('by path (Super Admin): works for a shop sale and uses that shop as the storage namespace', async () => {
+    const f = sendFixture(SALE);
+    const out = await f.svc.sendInvoiceByPath('shops/shop-1/vehicleSales/sale-1', pdf());
+    expect(out.results.seller.sent && out.results.buyer.sent).toBe(true);
+    expect(f.uploaded[0].ns).toBe('shop-1');
   });
 });

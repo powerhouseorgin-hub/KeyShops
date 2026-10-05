@@ -194,6 +194,50 @@ async function main() {
   check('an unknown party is refused (400)', (await sign(sigSale.id, 'witness', A.token)).status === 400);
   check("another shop cannot sign this shop's sale (404)", (await sign(sigSale.id, 'seller', B.token)).status === 404);
 
+  console.log('\n--- Fast details: inline thumbnails, light lists, full single read ---');
+  const jpegBytes = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0]), Buffer.from('tiny-thumbnail-bytes')]);
+  const uploadWithThumb = async (saleId: string, token: string) => {
+    const fd = new FormData();
+    fd.append('file', new Blob([new Uint8Array(png)], { type: 'image/png' }), 'p.png');
+    fd.append('thumb', new Blob([new Uint8Array(jpegBytes)], { type: 'image/jpeg' }), 'thumb.jpg');
+    const r = await fetch(`${BASE}/shop/vehicle-sales/${saleId}/photos`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+    return { status: r.status, body: await r.json().catch(() => ({})) };
+  };
+  const fastSale = (await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30FS0001', sellerPhone: '9361906840', buyerPhone: '9876543210' }, A.token)).body;
+  const withThumb = await uploadWithThumb(fastSale.id, A.token);
+  check('a photo with a thumbnail is accepted and the response carries no inline thumbnail', withThumb.status === 201 && withThumb.body.photos?.length === 1 && withThumb.body.photos[0].thumb === undefined, withThumb);
+  await sign(fastSale.id, 'seller', A.token);
+  const fastFull = (await req('GET', `/shop/vehicle-sales/${fastSale.id}`, undefined, A.token)).body;
+  check('the single-sale read has the inline thumbnail and the inline signature', /^data:image\/jpeg;base64,/.test(fastFull.photos?.[0]?.thumb || '') && /^data:image\/png;base64,/.test(fastFull.sellerSignature?.data || ''), [fastFull.photos?.[0]?.thumb?.slice(0, 20), fastFull.sellerSignature?.data?.slice(0, 20)]);
+  const fastList = (await req('GET', '/shop/vehicle-sales?limit=100', undefined, A.token)).body.find((x: any) => x.id === fastSale.id);
+  check('the recent list is light: same sale, no inline copies, but the file links are there', !!fastList && fastList.photos?.[0]?.thumb === undefined && fastList.sellerSignature?.data === undefined && !!fastList.photos?.[0]?.url && !!fastList.sellerSignature?.url, fastList);
+  const fastHist = (await req('GET', '/shop/vehicle-sales/history?limit=100', undefined, A.token)).body.items.find((x: any) => x.id === fastSale.id);
+  check('the All Sales history is light too', !!fastHist && fastHist.photos?.[0]?.thumb === undefined && fastHist.sellerSignature?.data === undefined, fastHist);
+
+  console.log('\n--- Send invoice to seller + buyer (WhatsApp is not configured in the emulator run, so each send is reported as not sent) ---');
+  const pdfBytes = Buffer.from('%PDF-1.4\n1 0 obj\n<< >>\nendobj\ntrailer\n<< >>\n%%EOF\n');
+  const sendInvoice = async (route: string, saleId: string, token: string, extra: Record<string, string> = {}, bytes: Buffer = pdfBytes, type = 'application/pdf') => {
+    const fd = new FormData();
+    fd.append('file', new Blob([new Uint8Array(bytes)], { type }), 'r.pdf');
+    for (const [k, v] of Object.entries(extra)) fd.append(k, v);
+    const r = await fetch(`${BASE}${route.replace(':id', saleId)}`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: fd });
+    return { status: r.status, body: await r.json().catch(() => ({})) };
+  };
+  const noTokenSend = await fetch(`${BASE}/shop/vehicle-sales/${fastSale.id}/send-invoice`, { method: 'POST', body: new FormData() });
+  check('sending without a token is rejected (401)', noTokenSend.status === 401, noTokenSend.status);
+  const sent1 = await sendInvoice('/shop/vehicle-sales/:id/send-invoice', fastSale.id, A.token);
+  check('both recipients are attempted and each gets its own result', sent1.status === 201 && sent1.body.results?.seller && sent1.body.results?.buyer && sent1.body.results.seller.sent === false && sent1.body.results.seller.reason === 'SEND_FAILED', sent1);
+  const afterSend = (await req('GET', `/shop/vehicle-sales/${fastSale.id}`, undefined, A.token)).body;
+  check('each recipient\'s outcome is saved on the sale, with the stored PDF', !!afterSend.invoiceDelivery?.seller && !!afterSend.invoiceDelivery?.buyer && !!afterSend.invoiceFile?.url, afterSend.invoiceDelivery);
+  const noNumbers = (await req('POST', '/shop/vehicle-sales', { ...SALE, registrationNumber: 'TN30FS0002', sellerPhone: '', buyerPhone: '' }, A.token)).body;
+  const sentNone = await sendInvoice('/shop/vehicle-sales/:id/send-invoice', noNumbers.id, A.token);
+  check('a sale with no phone numbers reports NO_PHONE for both and sends nothing', sentNone.status === 201 && sentNone.body.results.seller.reason === 'NO_PHONE' && sentNone.body.results.buyer.reason === 'NO_PHONE', sentNone);
+  const retryBuyer = await sendInvoice('/shop/vehicle-sales/:id/send-invoice', fastSale.id, A.token, { recipients: 'buyer' });
+  check('a retry for the buyer alone answers only for the buyer', retryBuyer.status === 201 && Object.keys(retryBuyer.body.results).join() === 'buyer', retryBuyer);
+  check('recipients must be seller / buyer (400)', (await sendInvoice('/shop/vehicle-sales/:id/send-invoice', fastSale.id, A.token, { recipients: 'witness' })).status === 400);
+  check('a non-PDF is refused (400)', (await sendInvoice('/shop/vehicle-sales/:id/send-invoice', fastSale.id, A.token, {}, Buffer.from('<script>'), 'application/pdf')).status === 400);
+  check("another shop cannot send this shop's invoice (404)", (await sendInvoice('/shop/vehicle-sales/:id/send-invoice', fastSale.id, B.token)).status === 404);
+
   console.log('\n--- Shop "All Sales" history (paged, own shop only) ---');
   const h1 = await req('GET', '/shop/vehicle-sales/history?limit=3', undefined, A.token);
   check('history page 1: 3 sales and a cursor', h1.status === 200 && h1.body.items?.length === 3 && typeof h1.body.nextCursor === 'string', [h1.status, h1.body?.items?.length]);
@@ -273,6 +317,28 @@ async function main() {
     check("a 6th photo on the Super Admin's sale is refused (400)", sixthS.status === 400, sixthS);
     const shopPhotoOnSuper = await upS(sa1.body.id, A.token, 'shop');
     check("a shop cannot add photos to the Super Admin's sale (404)", shopPhotoOnSuper.status === 404, shopPhotoOnSuper.status);
+    // Super Admin: read and send for ANY sale by its path; a shop cannot use those routes
+    const anyPath = `shops/${A.shopId}/vehicleSales/${fastSale.id}`;
+    const superItem = await req('GET', `/super/all-vehicle-sales/item?path=${encodeURIComponent(anyPath)}`, undefined, S);
+    check("the Super Admin reads any shop's sale in full by path (inline copies included)", superItem.status === 200 && superItem.body.registrationNumber === 'TN30FS0001' && !!superItem.body.photos?.[0]?.thumb && superItem.body.shopId === A.shopId, superItem.status);
+    check('a bad path is refused (400)', (await req('GET', '/super/all-vehicle-sales/item?path=users/x', undefined, S)).status === 400 && (await req('GET', '/super/all-vehicle-sales/item?path=shops/a/vehicleSales/b/../../c', undefined, S)).status === 400);
+    check('a shop cannot read by path (403)', (await req('GET', `/super/all-vehicle-sales/item?path=${encodeURIComponent(anyPath)}`, undefined, A.token)).status === 403);
+    const superSend = await (async () => {
+      const fd = new FormData();
+      fd.append('file', new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' }), 'r.pdf');
+      fd.append('path', anyPath);
+      const r = await fetch(`${BASE}/super/all-vehicle-sales/send-invoice`, { method: 'POST', headers: { Authorization: `Bearer ${S}` }, body: fd });
+      return { status: r.status, body: await r.json().catch(() => ({})) };
+    })();
+    check("the Super Admin can send any shop's invoice by path", superSend.status === 201 && !!superSend.body.results?.seller && !!superSend.body.results?.buyer, superSend);
+    const shopOnSuperSend = await (async () => {
+      const fd = new FormData();
+      fd.append('file', new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' }), 'r.pdf');
+      fd.append('path', anyPath);
+      const r = await fetch(`${BASE}/super/all-vehicle-sales/send-invoice`, { method: 'POST', headers: { Authorization: `Bearer ${A.token}` }, body: fd });
+      return r.status;
+    })();
+    check('a shop cannot use the Super Admin send route (403)', shopOnSuperSend === 403, shopOnSuperSend);
     const superSign = await sign(sa1.body.id, 'seller', S, 'super');
     check('the Super Admin can sign their own sale', superSign.status === 201 && !!superSign.body.sellerSignature?.url, superSign);
     check("a shop cannot sign the Super Admin's sale (404)", (await sign(sa1.body.id, 'buyer', A.token, 'shop')).status === 404);
