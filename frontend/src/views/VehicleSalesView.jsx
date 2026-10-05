@@ -71,6 +71,8 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   const sigsRef = useRef(sigs);
   sigsRef.current = sigs;
   useEffect(() => () => Object.values(sigsRef.current).forEach((x) => x && URL.revokeObjectURL(x.preview)), []);
+  // stored url -> local object URL for the photos / signatures just uploaded, so the receipt is drawn without downloading them again
+  const localUrlsRef = useRef({});
   const setSig = (party) => (value) => setSigs((cur) => ({ ...cur, [party]: value }));
 
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -115,7 +117,7 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   const buildInvoice = async (sale) => {
     const shop = await ensureShopInfo();
     const { buildVehicleSaleInvoicePdf } = await import('../utils/vehicleSaleInvoicePdf');
-    const pdf = await buildVehicleSaleInvoicePdf({ sale, shop, lang: sale.lang || lang, registeredByName: user?.name });
+    const pdf = await buildVehicleSaleInvoicePdf({ sale, shop, lang: sale.lang || lang, registeredByName: user?.name, localUrls: localUrlsRef.current });
     const safe = (s) => String(s || '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
     const fileName = `DeliveryReceipt_${safe(sale.registrationNumber) || 'Vehicle'}_${safe(sale.saleNumber) || sale.id}.pdf`;
     return { pdf, fileName, shop };
@@ -170,7 +172,11 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
       try {
         const blob = await resizeImageFileToBlob(files[i], 1280, 0.82);
         const result = await api.addVehicleSalePhoto(saleId, new File([blob], `sale-photo-${i + 1}.jpg`, { type: 'image/jpeg' }));
-        if (Array.isArray(result?.photos)) current = result.photos;
+        if (Array.isArray(result?.photos)) {
+          current = result.photos;
+          const added = current[current.length - 1];
+          if (added?.url) localUrlsRef.current[added.url] = URL.createObjectURL(blob);
+        }
       } catch (err) {
         console.error('Photo upload failed:', err);
         failed.push(files[i]);
@@ -191,6 +197,8 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
         const result = await api.addVehicleSaleSignature(saleId, party, new File([sig.blob], `${party}-signature.png`, { type: 'image/png' }));
         if (result?.sellerSignature) fields.sellerSignature = result.sellerSignature;
         if (result?.buyerSignature) fields.buyerSignature = result.buyerSignature;
+        const stored = party === 'seller' ? result?.sellerSignature : result?.buyerSignature;
+        if (stored?.url) localUrlsRef.current[stored.url] = sig.preview;
       } catch (err) {
         console.error('Signature upload failed:', err);
         failed.push([party, sig]);
@@ -238,7 +246,7 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
 
   // Retries whatever failed to upload (photos and/or signatures), then builds the receipt again so it includes them.
   const retryUploads = async () => {
-    if (!done || (!done.failedFiles.length && !done.failedSigs.length)) return;
+    if (!done || (!done.failedFiles.length && !done.failedSigs.length && !done.invoiceFailed)) return;
     setSaving(true);
     let { sale, failedFiles, failedSigs } = done;
     if (failedFiles.length) {
@@ -268,6 +276,9 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     setPhotoMsg('');
     Object.values(sigs).forEach((x) => x && URL.revokeObjectURL(x.preview));
     setSigs({ seller: null, buyer: null });
+    // (signature previews are in this map too - already revoked above; revoking twice is harmless)
+    Object.values(localUrlsRef.current).forEach((u) => URL.revokeObjectURL(u));
+    localUrlsRef.current = {};
     setInvoiceLang(DEFAULT_INVOICE_LANG);
     setDone(null);
     setForm(emptyForm());
@@ -514,10 +525,15 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
             <h3 style={{ marginBottom: 8 }}>{T.successTitle}</h3>
             <p className="desc" style={{ marginBottom: 6 }}>{done.sale.registrationNumber} · {done.sale.saleNumber}</p>
             <p className="desc" style={{ marginBottom: done.photoTotal ? 8 : 18 }}>{done.invoiceFailed ? T.invoiceFailed : T.successDesc}</p>
-            {(done.photoTotal > 0 || done.failedSigs.length > 0) && (
+            {(done.photoTotal > 0 || done.failedSigs.length > 0 || done.invoiceFailed) && (
               <div style={{ marginBottom: 18 }}>
                 {(done.sale.photos || []).length > 0 && (
                   <p className="desc" style={{ margin: '0 0 4px' }}>{fillText(T.photosAttached, { count: (done.sale.photos || []).length })}</p>
+                )}
+                {done.invoiceFailed && done.failedFiles.length === 0 && done.failedSigs.length === 0 && (
+                  <button type="button" className="btn btn-outline btn-sm" onClick={retryUploads} disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    {saving ? spinner : <RefreshCw className="h-4 w-4" />} {T.retryInvoice}
+                  </button>
                 )}
                 {done.failedFiles.length > 0 && (
                   <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: '0 0 6px' }}>

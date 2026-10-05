@@ -148,7 +148,9 @@ function placeCanvas(pdf, canvas) {
   pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, margin, imgWidth, imgHeight);
 }
 
-export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', registeredByName }) {
+// `localUrls` (optional): { storedUrl: localUrl } for images the app still holds (it has just uploaded them), so a fresh sale's
+// receipt is drawn from those instead of downloading them again.
+export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', registeredByName, localUrls = {} }) {
   const T = vehicleSaleText(lang);
   const shopName = (shop && shop.name) || '';
   const shopAddress = (shop && shop.address && shop.address !== 'N/A') ? shop.address : '';
@@ -157,10 +159,11 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
   // The sale's stored attachments, loaded up front. A receipt that silently lacks a photo or a signature would be worse than no
   // receipt, so when one cannot be loaded this throws and the caller offers a retry.
   const photoUrls = (Array.isArray(sale.photos) ? sale.photos : []).map((p) => p && p.url).filter(Boolean).slice(0, 5);
+  const load = (u) => toDataUrl(localUrls[u] || u);
   const [sellerSigImg, buyerSigImg, ...photoImgs] = await Promise.all([
-    sale.sellerSignature?.url ? toDataUrl(sale.sellerSignature.url) : Promise.resolve(null),
-    sale.buyerSignature?.url ? toDataUrl(sale.buyerSignature.url) : Promise.resolve(null),
-    ...photoUrls.map((u) => toDataUrl(u)),
+    sale.sellerSignature?.url ? load(sale.sellerSignature.url) : Promise.resolve(null),
+    sale.buyerSignature?.url ? load(sale.buyerSignature.url) : Promise.resolve(null),
+    ...photoUrls.map((u) => load(u)),
   ]);
   if ((sale.sellerSignature?.url && !sellerSigImg) || (sale.buyerSignature?.url && !buyerSigImg) || photoImgs.some((x) => !x)) {
     throw new Error('Could not load the sale photos or signatures for the receipt');
@@ -268,7 +271,7 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
 
   if (photoImgs.length) {
     const cells = photoImgs.map((src) => `
-      <div style="width:351px; height:263px; border:1px solid ${BORDER}; border-radius:8px; background:#F6F3EA; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+      <div style="box-sizing:border-box; width:100%; height:263px; border:1px solid ${BORDER}; border-radius:8px; background:#F6F3EA; display:flex; align-items:center; justify-content:center; overflow:hidden;">
         <img src="${src}" style="max-width:100%; max-height:100%; object-fit:contain; display:block;" />
       </div>`).join('');
     const photosHtml = `
@@ -286,7 +289,7 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
       <div style="text-align:center; margin-bottom:18px;">
         <span style="display:inline-block; border:2px solid #222; border-radius:10px; padding:5px 30px 8px; font-size:17px; line-height:1.4; font-weight:900; color:#111;">${esc(T.photosTitle)}</span>
       </div>
-      <div style="display:flex; flex-wrap:wrap; gap:20px 24px;">${cells}</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px 24px;">${cells}</div>
     </div>`;
     pdf.addPage();
     placeCanvas(pdf, await rasterise(photosHtml));
