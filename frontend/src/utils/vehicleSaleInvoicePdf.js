@@ -8,9 +8,10 @@ import { vehicleSaleText, fillText } from '../i18n/vehicleSaleText';
 // declaration from each party, witness + signature lines and the closing note. Separate from the customer
 // Service Invoice (customerInvoicePdf.js) - that one is for key services, this one is only for vehicle sales.
 //
-// Page 1 is the receipt itself. When the sale has photos, page 2 carries them (up to 5, two per row) under a "Photos" heading. The
-// seller's and the buyer's signatures come LAST - after all the photos (on page 2), or at the end of page 1 when there are no photos. Signatures and photos are read from the sale's stored
-// files, so a receipt downloaded, shared or reprinted later always contains them.
+// Order of the receipt: basic details, vehicle details, seller and buyer details, then the PHOTOS (up to 5), then the declarations -
+// the seller's signature inside the seller's declaration and the buyer's inside the buyer's. With photos that is two pages (page 1: details +
+// photos, page 2: declarations, signatures, witness, closing note); without photos it is one page. Signatures and photos are read from the
+// sale's stored files, so a receipt downloaded, shared or reprinted later always contains them.
 //
 // Drawn as HTML and rasterised with html2canvas (like the other invoices) so the device's own fonts render
 // every script - Tamil, Hindi, Telugu, Kannada and Malayalam text come out correctly without bundling fonts.
@@ -98,23 +99,16 @@ async function toDataUrl(url) {
   return null;
 }
 
-// One signature slot: the signature image (when there is one) above the labelled line.
+// One signature slot: the signature image (when there is one) above the labelled line. Sits at the right of a declaration box.
 function signatureSlot(dataUrl, label) {
   return `
-    <div style="width:290px; text-align:center;">
-      <div style="height:${dataUrl ? 76 : 44}px; display:flex; align-items:flex-end; justify-content:center;">
-        ${dataUrl ? `<img src="${dataUrl}" style="max-width:270px; max-height:72px; object-fit:contain;" />` : ''}
+    <div style="display:flex; justify-content:flex-end; margin-top:6px;">
+      <div style="width:250px; text-align:center;">
+        <div style="height:${dataUrl ? 66 : 34}px; display:flex; align-items:flex-end; justify-content:center;">
+          ${dataUrl ? `<img src="${dataUrl}" style="max-width:230px; max-height:62px; object-fit:contain;" />` : ''}
+        </div>
+        <div style="border-top:1px solid #888; padding-top:5px; font-size:10.5px; font-weight:700; color:#444; line-height:1.4;">${esc(label)}</div>
       </div>
-      <div style="border-top:1px solid #888; padding-top:5px; font-size:11px; font-weight:700; color:#444; line-height:1.4;">${esc(label)}</div>
-    </div>`;
-}
-
-// The closing block of the receipt: the seller's and the buyer's signature, side by side.
-function signaturesBlock(sellerImg, buyerImg, T) {
-  return `
-    <div style="display:flex; justify-content:space-between; gap:30px; margin-top:24px; padding:0 8px;">
-      ${signatureSlot(sellerImg, T.sellerSign)}
-      ${signatureSlot(buyerImg, T.buyerSign)}
     </div>`;
 }
 
@@ -200,9 +194,13 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
       </div>
     </div>`;
 
-  const html = `
+  const frame = (inner) => `
   <div style="width:794px; font-family:${FONT_STACK}; background:#ffffff; color:#222; box-sizing:border-box; padding:26px 34px;">
+${inner}
+  </div>`;
 
+  // basic details + vehicle + seller and buyer
+  const topHtml = `
     <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid ${MAROON}; padding-bottom:10px; margin-bottom:14px;">
       <div style="display:flex; align-items:center; gap:10px;">
         <img src="${keyShopLogo}" style="width:40px; height:40px; object-fit:contain;" />
@@ -243,14 +241,20 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
       </div>
     </div>
 
+`;
+
+  // the declarations (with the signatures inside them), witness and closing note
+  const declHtml = `
     <div style="border:1px solid ${BORDER}; border-radius:6px; padding:12px 14px 10px; margin-bottom:10px; background:#FCFAF4;">
       <div style="text-align:center; margin-bottom:8px;"><span style="display:inline-block; border:1.5px solid #222; border-radius:8px; padding:5px 18px 7px; font-size:12.5px; line-height:1.35; font-weight:800;">${esc(T.sellerDeclTitle)}</span></div>
       <p style="font-size:10.8px; line-height:1.75; margin:0; color:#333; text-align:justify;">${sellerDecl}</p>
+      ${signatureSlot(sellerSigImg, T.sellerSign)}
     </div>
 
     <div style="border:1px solid ${BORDER}; border-radius:6px; padding:12px 14px 10px; margin-bottom:12px; background:#FCFAF4;">
       <div style="text-align:center; margin-bottom:8px;"><span style="display:inline-block; border:1.5px solid #222; border-radius:8px; padding:5px 18px 7px; font-size:12.5px; line-height:1.35; font-weight:800;">${esc(T.buyerDeclTitle)}</span></div>
       <p style="font-size:10.8px; line-height:1.75; margin:0; color:#333; text-align:justify;">${buyerDecl}</p>
+      ${signatureSlot(buyerSigImg, T.buyerSign)}
     </div>
 
     <div style="display:flex; justify-content:space-between; gap:30px; font-size:11px; margin-bottom:6px;">
@@ -266,39 +270,50 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
 
     ${blank(sale.notes) ? '' : `<div style="margin-top:8px; font-size:10px; color:#444; line-height:1.5; white-space:pre-wrap; word-break:break-word;">${esc(sale.notes)}</div>`}
 
-    ${photoImgs.length ? '' : signaturesBlock(sellerSigImg, buyerSigImg, T)}
 
     <div style="text-align:center; font-size:8.5px; color:#999; margin-top:10px;">${esc(fillText(T.generated, { name: registeredByName || shopName || 'Shop Admin', date: formatDateTime(new Date()) }))}</div>
-  </div>`;
+`;
 
-  const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
-  placeCanvas(pdf, await rasterise(html));
-
-  if (photoImgs.length) {
+  // the photos: one, two or three per row so a few photos are shown large and five still fit on the page
+  const photosSection = (() => {
+    if (!photoImgs.length) return '';
+    const n = photoImgs.length;
+    const cols = n === 1 ? 1 : n === 2 ? 2 : 3;
+    const height = n === 1 ? 420 : n === 2 ? 300 : 240;
     const cells = photoImgs.map((src) => `
-      <div style="box-sizing:border-box; width:100%; height:245px; border:1px solid ${BORDER}; border-radius:8px; background:#F6F3EA; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+      <div style="box-sizing:border-box; width:100%; height:${height}px; border:1px solid ${BORDER}; border-radius:8px; background:#F6F3EA; display:flex; align-items:center; justify-content:center; overflow:hidden;">
         <img src="${src}" style="max-width:100%; max-height:100%; object-fit:contain; display:block;" />
       </div>`).join('');
-    const photosHtml = `
-    <div style="width:794px; font-family:${FONT_STACK}; background:#ffffff; color:#222; box-sizing:border-box; padding:26px 34px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid ${MAROON}; padding-bottom:10px; margin-bottom:16px;">
-        <div style="display:flex; align-items:center; gap:10px;">
-          <img src="${keyShopLogo}" style="width:40px; height:40px; object-fit:contain;" />
-          <div style="font-weight:900; font-size:16px; color:${MAROON};">${esc(shopName)}</div>
-        </div>
-        <div style="text-align:right; font-size:11px; line-height:1.7;">
-          <div>${esc(T.docNo)}: <b>${val(sale.saleNumber, 90)}</b></div>
-          <div>${esc(T.regNo)}: <b>${val(sale.registrationNumber, 90)}</b></div>
-        </div>
+    return `
+    <div style="margin:2px 0 6px;">
+      <div style="text-align:center; margin-bottom:10px;">
+        <span style="display:inline-block; border:2px solid #222; border-radius:10px; padding:4px 26px 7px; font-size:15px; line-height:1.4; font-weight:900; color:#111;">${esc(T.photosTitle)}</span>
       </div>
-      <div style="text-align:center; margin-bottom:18px;">
-        <span style="display:inline-block; border:2px solid #222; border-radius:10px; padding:5px 30px 8px; font-size:17px; line-height:1.4; font-weight:900; color:#111;">${esc(T.photosTitle)}</span>
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px 24px;">${cells}</div>
-      ${signaturesBlock(sellerSigImg, buyerSigImg, T)}
+      <div style="display:grid; grid-template-columns:repeat(${cols}, 1fr); gap:12px;">${cells}</div>
     </div>`;
-    pdf.addPage();
-    placeCanvas(pdf, await rasterise(photosHtml, 2), 0.88);
+  })();
+
+  const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
+  if (!photoImgs.length) {
+    placeCanvas(pdf, await rasterise(frame(topHtml + declHtml)));
+    return pdf;
   }
+  // page 1: details + photos (the photos are already compressed, so a lighter render keeps the file small)
+  placeCanvas(pdf, await rasterise(frame(topHtml + photosSection), 2.2), 0.9);
+
+  // page 2: a slim header, then the declarations with the signatures
+  const slimHeader = `
+    <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:3px solid ${MAROON}; padding-bottom:10px; margin-bottom:16px;">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${keyShopLogo}" style="width:40px; height:40px; object-fit:contain;" />
+        <div style="font-weight:900; font-size:16px; color:${MAROON};">${esc(shopName)}</div>
+      </div>
+      <div style="text-align:right; font-size:11px; line-height:1.7;">
+        <div>${esc(T.docNo)}: <b>${val(sale.saleNumber, 90)}</b></div>
+        <div>${esc(T.regNo)}: <b>${val(sale.registrationNumber, 90)}</b></div>
+      </div>
+    </div>`;
+  pdf.addPage();
+  placeCanvas(pdf, await rasterise(frame(slimHeader + declHtml)));
   return pdf;
 }
