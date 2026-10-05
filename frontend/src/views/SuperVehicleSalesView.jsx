@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import { Receipt, Search, Store, ShieldCheck, Image as ImageIcon, RefreshCw, Download, CheckSquare, Square } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { vehicleSaleText, fillText } from '../i18n/vehicleSaleText';
 import VehicleSaleDetail from '../components/VehicleSaleDetail';
 import ImageZoomViewer from '../components/ImageZoomViewer';
 import useSaleInvoiceActions from '../hooks/useSaleInvoiceActions';
+import { useDownloads } from '../context/DownloadsContext';
 import { shopInfoFromRow } from '../utils/vehicleSaleInvoice';
 import { downloadBlobFile } from '../utils/pdfDelivery';
 
@@ -44,9 +44,9 @@ export default function SuperVehicleSalesView({ api, lang = 'en', scope = 'platf
   const [viewer, setViewer] = useState(null);
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState(() => new Set());
-  const [bulk, setBulk] = useState(null); // { phase: 'loading' } | { phase: 'working', done, total, part, parts }
+  const [bulk, setBulk] = useState(null); // { phase: 'loading' } while Select All brings in the remaining pages
   const [bulkMsg, setBulkMsg] = useState('');
-  const cancelRef = useRef(false);
+  const { startJob } = useDownloads();
   const shopRowsRef = useRef(new Map());
   const shopsReadyRef = useRef(Promise.resolve());
   const settingsRef = useRef(null);
@@ -130,6 +130,9 @@ export default function SuperVehicleSalesView({ api, lang = 'en', scope = 'platf
       .some((v) => String(v || '').toLowerCase().includes(q)));
   }, [items, search]);
 
+  // warm the full record of the first rows, so opening one of them shows its pictures at once
+  useEffect(() => { items.slice(0, 6).forEach((s) => api.prefetchVehicleSale?.(s)); }, [items, api]);
+
   // ---- selection ----------------------------------------------------------------------------------------------------
   const toggle = (s) => setSelected((cur) => {
     const next = new Set(cur);
@@ -170,59 +173,64 @@ export default function SuperVehicleSalesView({ api, lang = 'en', scope = 'platf
 
   const leaveSelectMode = () => { setSelectMode(false); setSelected(new Set()); };
 
-  // ---- bulk download --------------------------------------------------------------------------------------------------
+  // ---- bulk download ------------------------------------------------------------------------------------------------
+  // Runs as a BACKGROUND download (see DownloadsContext): the list is free again at once, progress is shown behind the download icon in the
+  // top bar (and in an Android notification), and the job carries on if the user leaves this screen.
   const downloadSelected = async () => {
     const chosen = items.filter((s) => selected.has(keyOf(s)));
     if (!chosen.length) { setBulkMsg(T.bulkNone); return; }
     setBulkMsg('');
-    cancelRef.current = false;
     const JSZip = (await import('jszip')).default;
     const parts = Math.ceil(chosen.length / ZIP_CHUNK);
     const stamp = new Date().toISOString().slice(0, 10);
-    let done = 0;
-    let failed = 0;
-    let saved = 0;
-    try {
-      for (let part = 0; part < parts && !cancelRef.current; part += 1) {
-        const slice = chosen.slice(part * ZIP_CHUNK, (part + 1) * ZIP_CHUNK);
-        const zip = new JSZip();
-        const used = new Set();
-        let next = 0;
-        setBulk({ phase: 'working', done, total: chosen.length, part: part + 1, parts });
-        const worker = async () => {
-          while (next < slice.length && !cancelRef.current) {
-            const sale = slice[next]; next += 1;
-            try {
-              const { pdf, fileName } = await actions.buildInvoiceFile(sale);
-              let name = fileName;
-              for (let n = 2; used.has(name); n += 1) name = fileName.replace(/\.pdf$/, `_${n}.pdf`);
-              used.add(name);
-              zip.file(name, pdf.output('arraybuffer'));
-              saved += 1;
-            } catch (e) {
-              failed += 1;
-              console.error('Bulk download: could not create the invoice of', sale.saleNumber, e);
+    const started = await startJob({
+      title: T.bulkTitle,
+      progressLabel: (done, total) => fillText(T.bulkPreparing, { done, total }),
+      cancelledLabel: T.downloadsCancelledText,
+      failedLabel: T.invoiceFailed,
+      run: async ({ progress, addFile, isCancelled }) => {
+        let done = 0;
+        let failed = 0;
+        let saved = 0;
+        progress(0, chosen.length);
+        for (let part = 0; part < parts && !isCancelled(); part += 1) {
+          const slice = chosen.slice(part * ZIP_CHUNK, (part + 1) * ZIP_CHUNK);
+          const zip = new JSZip();
+          const used = new Set();
+          let next = 0;
+          const worker = async () => {
+            while (next < slice.length && !isCancelled()) {
+              const sale = slice[next]; next += 1;
+              try {
+                const { pdf, fileName } = await actions.buildInvoiceFile(sale);
+                let name = fileName;
+                for (let n = 2; used.has(name); n += 1) name = fileName.replace(/\.pdf$/, `_${n}.pdf`);
+                used.add(name);
+                zip.file(name, pdf.output('arraybuffer'));
+                saved += 1;
+              } catch (e) {
+                failed += 1;
+                console.error('Bulk download: could not create the invoice of', sale.saleNumber, e);
+              }
+              done += 1;
+              progress(done, chosen.length);
             }
-            done += 1;
-            setBulk({ phase: 'working', done, total: chosen.length, part: part + 1, parts });
+          };
+          await Promise.all(Array.from({ length: POOL }, worker));
+          if (isCancelled()) break;
+          if (Object.keys(zip.files).length) {
+            const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' }); // PDFs are already compressed
+            const fileName = `SalesInvoices_${stamp}${parts > 1 ? `_part${part + 1}of${parts}` : ''}.zip`;
+            await downloadBlobFile(blob, fileName, 'application/zip');
+            addFile({ name: fileName, size: blob.size });
           }
-        };
-        await Promise.all(Array.from({ length: POOL }, worker));
-        if (cancelRef.current) break;
-        if (Object.keys(zip.files).length) {
-          const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' }); // PDFs are already compressed
-          await downloadBlobFile(blob, `SalesInvoices_${stamp}${parts > 1 ? `_part${part + 1}of${parts}` : ''}.zip`, 'application/zip');
         }
-      }
-    } catch (e) {
-      console.error('Bulk download failed:', e);
-      setError(`${T.invoiceFailed} (${String(e.message || e).slice(0, 120)})`);
-    }
-    setBulk(null);
-    if (!cancelRef.current) {
-      setBulkMsg([saved ? fillText(T.bulkDone, { count: saved }) : '', failed ? fillText(T.bulkFailedSome, { failed }) : ''].filter(Boolean).join(' '));
-      if (saved) leaveSelectMode();
-    }
+        return { message: [saved ? fillText(T.bulkDone, { count: saved }) : '', failed ? fillText(T.bulkFailedSome, { failed }) : ''].filter(Boolean).join(' ') };
+      },
+    });
+    if (!started.started) { setBulkMsg(T.downloadBusy); return; }
+    setBulkMsg(T.downloadStarted);
+    leaveSelectMode();
   };
 
   const ownerChip = (s) => (
@@ -273,7 +281,9 @@ export default function SuperVehicleSalesView({ api, lang = 'en', scope = 'platf
             style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'none', border: 0, padding: 0, fontWeight: 800, fontSize: 13.5, cursor: 'pointer', color: 'var(--text-0)' }}>
             <Check on={allShownSelected} /> {allShownSelected ? T.deselectAll : T.selectAll}
           </button>
-          <span className="cell-sub" style={{ marginRight: 'auto' }}>{fillText(T.selectedCount, { count: selected.size })}</span>
+          <span className="cell-sub" style={{ marginRight: 'auto', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            {bulk ? <><RefreshCw className="animate-spin h-3 w-3" /> {T.selecting}</> : fillText(T.selectedCount, { count: selected.size })}
+          </span>
           <button type="button" className="btn btn-primary btn-sm" onClick={downloadSelected} disabled={!selected.size || !!bulk} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             <Download className="h-4 w-4" /> {fillText(T.downloadSelected, { count: selected.size })}
           </button>
@@ -294,7 +304,7 @@ export default function SuperVehicleSalesView({ api, lang = 'en', scope = 'platf
             const on = selected.has(keyOf(s));
             const open = () => (selectMode ? toggle(s) : setDetail(s));
             return (
-              <div key={keyOf(s)} role={selectMode ? 'checkbox' : 'button'} aria-checked={selectMode ? on : undefined} tabIndex={0} onClick={open}
+              <div key={keyOf(s)} role={selectMode ? 'checkbox' : 'button'} aria-checked={selectMode ? on : undefined} tabIndex={0} onClick={open} onPointerDown={() => { if (!selectMode) api.prefetchVehicleSale?.(s); }}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } }}
                 aria-label={`${selectMode ? '' : `${T.detailsTitle}: `}${s.registrationNumber}`}
                 className="card" style={{ padding: '12px 14px', cursor: 'pointer', display: 'flex', gap: 12, alignItems: 'flex-start', outline: on ? '2px solid var(--maroon)' : undefined }}>
@@ -338,33 +348,12 @@ export default function SuperVehicleSalesView({ api, lang = 'en', scope = 'platf
           onClose={() => setDetail(null)}
           onDownload={(s) => actions.downloadInvoice(s)}
           onSendInvoice={(s) => actions.sendInvoice(s)}
-          onOpenPhoto={(images, index) => setViewer({ images, index })}
+          onOpenPhoto={(images, index, placeholders) => setViewer({ images, index, placeholders })}
         />
       )}
-      {viewer && <ImageZoomViewer images={viewer.images} initialIndex={viewer.index} onClose={() => setViewer(null)} />}
+      {viewer && <ImageZoomViewer images={viewer.images} initialIndex={viewer.index} placeholders={viewer.placeholders} onClose={() => setViewer(null)} />}
       {actions.dialog}
 
-      {bulk && createPortal(
-        <div role="dialog" aria-modal="true" style={{ position: 'fixed', inset: 0, zIndex: 70000, background: 'rgba(5,4,3,0.72)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div className="card animate-fade-in" style={{ width: '100%', maxWidth: 360, padding: 24, textAlign: 'center' }}>
-            <RefreshCw className="animate-spin" style={{ width: 28, height: 28, margin: '0 auto 12px', color: 'var(--maroon)' }} />
-            {bulk.phase === 'loading' ? (
-              <p className="desc" style={{ margin: 0 }}>{T.selecting}</p>
-            ) : (
-              <>
-                <p style={{ fontWeight: 800, fontSize: 14, margin: '0 0 4px' }}>
-                  {fillText(T.bulkPreparing, { done: bulk.done, total: bulk.total })}{bulk.parts > 1 ? fillText(T.bulkPart, { part: bulk.part, parts: bulk.parts }) : ''}
-                </p>
-                <div style={{ height: 6, borderRadius: 3, background: 'var(--border)', overflow: 'hidden', margin: '10px 0 14px' }}>
-                  <div style={{ height: '100%', width: `${Math.round((bulk.done / Math.max(1, bulk.total)) * 100)}%`, background: 'var(--maroon)', transition: 'width .3s' }} />
-                </div>
-                <button type="button" className="btn btn-outline btn-sm" onClick={() => { cancelRef.current = true; }}>{T.cancelSelect}</button>
-              </>
-            )}
-          </div>
-        </div>,
-        document.body,
-      )}
     </div>
   );
 }

@@ -98,7 +98,7 @@ export default function VehicleSaleDetail({
       {!ready && !sig?.data ? (
         <div style={{ position: 'relative', height: 110, border: '1px solid var(--border-2)', borderRadius: 12, overflow: 'hidden', background: '#fff' }}><Pic src={null} alt="" /></div>
       ) : sig?.url || sig?.data ? (
-        <button type="button" onClick={() => onOpenPhoto([sig.url || sig.data], 0)} aria-label={label}
+        <button type="button" onClick={() => onOpenPhoto([sig.data || sig.url], 0)} aria-label={label}
           style={{ position: 'relative', width: '100%', height: 110, padding: 0, border: '1px solid var(--border-2)', borderRadius: 12, background: '#fff', cursor: 'zoom-in', overflow: 'hidden', display: 'block' }}>
           <Pic src={sig.data || sig.url} alt={label} fit="contain" priority />
         </button>
@@ -184,7 +184,7 @@ export default function VehicleSaleDetail({
             ) : (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(96px, 1fr))', gap: 8 }}>
                 {photos.map((p, i) => (
-                  <button key={p.key || i} type="button" onClick={() => onOpenPhoto(photos.map((x) => x.url), i)} aria-label={`${T.photosTitle} ${i + 1}`}
+                  <button key={p.key || i} type="button" onClick={() => onOpenPhoto(photos.map((x) => x.url), i, photos.map((x) => x.thumb || null))} aria-label={`${T.photosTitle} ${i + 1}`}
                     style={{ position: 'relative', padding: 0, border: '1px solid var(--border-2)', borderRadius: 12, overflow: 'hidden', aspectRatio: '1', background: 'var(--card-2)', cursor: 'zoom-in' }}>
                     {/* the inline thumbnail when there is one; a photo saved before thumbnails existed loads its stored file instead */}
                     <Pic src={p.thumb || (ready ? p.url : null)} alt="" />

@@ -91,6 +91,8 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   }, [api]);
 
   useEffect(() => { loadRecent(); }, [loadRecent]);
+  // warm the full record of the first recent sales, so opening one shows its pictures at once
+  useEffect(() => { recent.slice(0, 5).forEach((s) => api.prefetchVehicleSale?.(s)); }, [recent, api]);
 
   // Shop details printed in the invoice header - fetched once.
   const ensureShopInfo = async () => {
@@ -479,6 +481,7 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
             {recent.map((sale) => (
               <div key={sale.id} role="button" tabIndex={0} aria-label={`${T.detailsTitle}: ${sale.registrationNumber}`}
                 onClick={() => setDetail(sale)}
+                onPointerDown={() => api.prefetchVehicleSale?.(sale)}
                 onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setDetail(sale); } }}
                 style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 10, border: '1px solid var(--border)', borderRadius: 14, padding: '12px 14px', cursor: 'pointer' }}>
                 <div style={{ minWidth: 0, flex: '1 1 220px' }}>
@@ -520,11 +523,11 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
           api={api}
           onDownload={(s) => run(s, 'download')()}
           onWhatsApp={(s) => run(s, 'whatsapp')()}
-          onOpenPhoto={(images, index) => setViewer({ images, index })}
+          onOpenPhoto={(images, index, placeholders) => setViewer({ images, index, placeholders })}
         />
       )}
 
-      {viewer && <ImageZoomViewer images={viewer.images} initialIndex={viewer.index} onClose={() => setViewer(null)} />}
+      {viewer && <ImageZoomViewer images={viewer.images} initialIndex={viewer.index} placeholders={viewer.placeholders} onClose={() => setViewer(null)} />}
 
       {done && createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(5,4,3,0.72)' }}>

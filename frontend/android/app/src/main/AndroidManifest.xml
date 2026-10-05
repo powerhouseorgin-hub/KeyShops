@@ -25,6 +25,12 @@
 
         </activity>
 
+        <!-- Keeps the app alive (foreground service + ongoing notification) while an in-app download such as Sales "Download All" is being prepared -->
+        <service
+            android:name=".DownloadKeepAliveService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -65,4 +71,10 @@
     <!-- In-app update (AppUpdatePlugin): hands the downloaded APK to Android's package installer. Android 8+
          also makes the user allow "Install unknown apps" for this app once. -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- Download progress notification (DownloadNotificationPlugin): the notification itself needs POST_NOTIFICATIONS on Android 13+ (asked
+         for once, before the first download); the foreground service that keeps a long download alive needs the two FOREGROUND_SERVICE ones. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
 </manifest>

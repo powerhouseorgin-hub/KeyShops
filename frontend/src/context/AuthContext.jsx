@@ -4,6 +4,10 @@ import { API_BASE } from '../apiConfig';
 
 const AuthContext = createContext(null);
 
+// Full vehicle-sale records already read (see api.getVehicleSaleFull)
+const saleFullCache = new Map();
+const SALE_FULL_TTL_MS = 2 * 60 * 1000;
+
 export const useAuth = () => useContext(AuthContext);
 
 const PHONE_REGEX = /^[1-9]\d{9}$/;
@@ -570,13 +574,29 @@ export const AuthProvider = ({ children }) => {
     },
     // One sale in full (with its inline thumbnails and signatures) - the lists return a lighter copy. A sale of the review list carries its
     // document `path`, which is how a Super Admin reads any shop's sale.
-    getVehicleSaleFull: async (sale) => {
-      if (user.role === 'SUPER_ADMIN') {
-        if (sale.path) return request(`/api/super/all-vehicle-sales/item?path=${encodeURIComponent(sale.path)}`);
-        return request(`/api/super/vehicle-sales/${encodeURIComponent(sale.id)}`);
-      }
-      return request(`/api/shop/vehicle-sales/${encodeURIComponent(sale.id)}`);
+    // Remembered for two minutes and shared between callers, so a record that was prefetched (prefetchVehicleSale: the lists warm the first
+    // few rows) opens at once, and tapping a row twice never sends two requests.
+    getVehicleSaleFull: (sale) => {
+      const key = `${user.role}:${sale.path || sale.id}`;
+      const hit = saleFullCache.get(key);
+      if (hit && Date.now() - hit.at < SALE_FULL_TTL_MS) return hit.promise;
+      const promise = (async () => {
+        if (user.role === 'SUPER_ADMIN') {
+          if (sale.path) return request(`/api/super/all-vehicle-sales/item?path=${encodeURIComponent(sale.path)}`);
+          return request(`/api/super/vehicle-sales/${encodeURIComponent(sale.id)}`);
+        }
+        return request(`/api/shop/vehicle-sales/${encodeURIComponent(sale.id)}`);
+      })();
+      saleFullCache.set(key, { at: Date.now(), promise });
+      promise.catch(() => saleFullCache.delete(key)); // a failed read is never remembered
+      return promise;
     },
+    // Warms the cache for a sale (fire and forget).
+    prefetchVehicleSale: (sale) => {
+      try { api.getVehicleSaleFull(sale).catch(() => {}); } catch (e) { /* ignore */ }
+    },
+    // Forgets what was remembered about a sale (after it changed).
+    forgetVehicleSale: (sale) => { saleFullCache.delete(`${user.role}:${sale.path || sale.id}`); },
     // Sends the receipt PDF to the sale's seller and buyer over WhatsApp (server side, both at the same time). `recipients`: 'seller',
     // 'buyer' or 'seller,buyer' (default). Resolves { saleId, results: { seller: { sent, reason?, message? }, buyer: {...} } }.
     sendVehicleSaleInvoice: async (sale, file, recipients) => {

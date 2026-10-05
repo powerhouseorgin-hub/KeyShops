@@ -20,7 +20,10 @@ function distanceBetween(t1, t2) {
 // pinch-to-zoom (two-finger distance), double-tap-to-zoom, and drag-to-pan
 // once zoomed in. Reused by both the authenticated app (App.jsx) and the
 // pre-login PublicMobileApp.jsx product/machine detail screens.
-export default function ImageZoomViewer({ images, initialIndex = 0, onClose, t = (k, d) => d || k }) {
+// `placeholders` (optional, parallel to `images`): small inline copies (data URLs) shown, blurred, until each full-size image has loaded, so
+// opening a photo is never a blank screen while a slow download finishes.
+export default function ImageZoomViewer({ images, initialIndex = 0, onClose, placeholders, t = (k, d) => d || k }) {
+  const [loadedFull, setLoadedFull] = useState({});
   const [index, setIndex] = useState(Math.min(Math.max(initialIndex, 0), images.length - 1));
   const [scale, setScale] = useState(1);
   const [translate, setTranslate] = useState({ x: 0, y: 0 });
@@ -209,12 +212,16 @@ export default function ImageZoomViewer({ images, initialIndex = 0, onClose, t =
 
       <div className="img-zoom-track" style={{ transform: `translateX(calc(${-index * 100}% + ${dragOffset}px))`, transition: animate ? 'transform .25s ease' : 'none' }}>
         {images.map((src, i) => (
-          <div className="img-zoom-slide" key={src + i} onClick={(e) => e.stopPropagation()}>
+          <div className="img-zoom-slide" key={src + i} onClick={(e) => e.stopPropagation()} style={{ position: 'relative' }}>
+            {placeholders?.[i] && !loadedFull[i] && (
+              <img src={placeholders[i]} alt="" draggable={false} aria-hidden="true" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', maxWidth: 'none', maxHeight: 'none', objectFit: 'contain', filter: 'blur(2px)' }} />
+            )}
             <img
               ref={i === index ? imgRef : undefined}
               src={src}
               alt=""
               draggable={false}
+              onLoad={() => setLoadedFull((l) => (l[i] ? l : { ...l, [i]: true }))}
               onMouseDown={i === index ? handleMouseDown : undefined}
               onDoubleClick={i === index ? handleDoubleClick : undefined}
               style={i === index ? {

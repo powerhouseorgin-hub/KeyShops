@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import DownloadsMenu from './components/DownloadsMenu';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { backHandlerStack, useBackHandler } from './utils/backHandler';
@@ -2387,6 +2388,9 @@ export default function App() {
                     {headerReferralSharing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
                   </button>
                 )}
+
+                {/* Downloads: progress of a running download (e.g. Sales > Download All) and the history of recent ones */}
+                <DownloadsMenu t={t} />
 
                 {/* Notification Bell + dropdown share one ref so the
                     click-outside handler below treats them as a single unit -
