@@ -294,7 +294,10 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   // WhatsApp chat, so the PDF is shared through the OS share sheet where available, otherwise downloaded and
   // a chat to the buyer is opened for the file to be attached by hand.
   const whatsappFor = async (sale, cached) => {
-    const built = cached?.pdf ? cached : await buildInvoice(sale);
+    let built = cached;
+    if (!built?.pdf) {
+      try { built = await buildInvoice(sale); } catch (err) { err.stage = 'build'; throw err; }
+    }
     const shopName = built.shop?.name || (await ensureShopInfo()).name || '';
     const text = `${T.receiptTitle} - ${sale.registrationNumber}${shopName ? ` (${shopName})` : ''}`;
     if (IS_NATIVE_APP) {
@@ -319,7 +322,10 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
     } catch (err) {
       if (err && err.name !== 'AbortError') {
         console.error(`Vehicle sale invoice ${kind} failed:`, err);
-        window.alert(kind === 'whatsapp' ? T.whatsappFailed : T.invoiceFailed);
+        // The invoice itself could not be made (an image could not be loaded, ...) vs WhatsApp could not be opened: say which,
+        // and show the reason so a failure can be diagnosed from a screenshot.
+        const base = kind === 'whatsapp' && err?.stage !== 'build' ? T.whatsappFailed : T.invoiceFailed;
+        window.alert(`${base}\n(${String(err?.message || err).slice(0, 160)})`);
       }
     } finally {
       setBusy(null);

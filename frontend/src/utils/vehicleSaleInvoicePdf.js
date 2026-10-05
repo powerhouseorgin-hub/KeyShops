@@ -8,8 +8,8 @@ import { vehicleSaleText, fillText } from '../i18n/vehicleSaleText';
 // declaration from each party, witness + signature lines and the closing note. Separate from the customer
 // Service Invoice (customerInvoicePdf.js) - that one is for key services, this one is only for vehicle sales.
 //
-// Page 1 is the receipt itself, with the seller's and the buyer's signatures printed above their signature lines. When the sale has
-// photos, page 2 carries them (up to 5, two per row) under a "Photos" heading. Signatures and photos are read from the sale's stored
+// Page 1 is the receipt itself. When the sale has photos, page 2 carries them (up to 5, two per row) under a "Photos" heading. The
+// seller's and the buyer's signatures come LAST - after all the photos (on page 2), or at the end of page 1 when there are no photos. Signatures and photos are read from the sale's stored
 // files, so a receipt downloaded, shared or reprinted later always contains them.
 //
 // Drawn as HTML and rasterised with html2canvas (like the other invoices) so the device's own fonts render
@@ -101,16 +101,25 @@ async function toDataUrl(url) {
 // One signature slot: the signature image (when there is one) above the labelled line.
 function signatureSlot(dataUrl, label) {
   return `
-    <div style="width:220px; text-align:center;">
-      <div style="height:${dataUrl ? 58 : 30}px; display:flex; align-items:flex-end; justify-content:center;">
-        ${dataUrl ? `<img src="${dataUrl}" style="max-width:200px; max-height:56px; object-fit:contain;" />` : ''}
+    <div style="width:290px; text-align:center;">
+      <div style="height:${dataUrl ? 76 : 44}px; display:flex; align-items:flex-end; justify-content:center;">
+        ${dataUrl ? `<img src="${dataUrl}" style="max-width:270px; max-height:72px; object-fit:contain;" />` : ''}
       </div>
-      <div style="border-top:1px solid #888; padding-top:5px; font-size:10px; color:#555; line-height:1.4;">${esc(label)}</div>
+      <div style="border-top:1px solid #888; padding-top:5px; font-size:11px; font-weight:700; color:#444; line-height:1.4;">${esc(label)}</div>
+    </div>`;
+}
+
+// The closing block of the receipt: the seller's and the buyer's signature, side by side.
+function signaturesBlock(sellerImg, buyerImg, T) {
+  return `
+    <div style="display:flex; justify-content:space-between; gap:30px; margin-top:24px; padding:0 8px;">
+      ${signatureSlot(sellerImg, T.sellerSign)}
+      ${signatureSlot(buyerImg, T.buyerSign)}
     </div>`;
 }
 
 // Draws an HTML fragment off-screen, waits for its images and fonts, and returns it as a canvas.
-async function rasterise(html) {
+async function rasterise(html, scale = 2.5) {
   const container = document.createElement('div');
   container.style.position = 'fixed';
   container.style.left = '-10000px';
@@ -125,7 +134,7 @@ async function rasterise(html) {
     }));
     // let web fonts / system script fonts settle before rasterising
     if (document.fonts && document.fonts.ready) { try { await document.fonts.ready; } catch (e) { /* ignore */ } }
-    return await html2canvas(container.firstElementChild, { scale: 2.5, useCORS: true, backgroundColor: '#ffffff' });
+    return await html2canvas(container.firstElementChild, { scale, useCORS: true, backgroundColor: '#ffffff' });
   } finally {
     document.body.removeChild(container);
   }
@@ -133,7 +142,7 @@ async function rasterise(html) {
 
 // Puts a canvas on the current PDF page, scaled to the page width and - if it is taller than the page (longer text, e.g.
 // Malayalam) - shrunk to fit, so nothing is cut off.
-function placeCanvas(pdf, canvas) {
+function placeCanvas(pdf, canvas, quality = 0.95) {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 20;
@@ -145,7 +154,7 @@ function placeCanvas(pdf, canvas) {
     imgHeight = maxHeight;
   }
   const x = (pageWidth - imgWidth) / 2;
-  pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', x, margin, imgWidth, imgHeight);
+  pdf.addImage(canvas.toDataURL('image/jpeg', quality), 'JPEG', x, margin, imgWidth, imgHeight);
 }
 
 // `localUrls` (optional): { storedUrl: localUrl } for images the app still holds (it has just uploaded them), so a fresh sale's
@@ -237,9 +246,6 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
     <div style="border:1px solid ${BORDER}; border-radius:6px; padding:12px 14px 10px; margin-bottom:10px; background:#FCFAF4;">
       <div style="text-align:center; margin-bottom:8px;"><span style="display:inline-block; border:1.5px solid #222; border-radius:8px; padding:5px 18px 7px; font-size:12.5px; line-height:1.35; font-weight:800;">${esc(T.sellerDeclTitle)}</span></div>
       <p style="font-size:10.8px; line-height:1.75; margin:0; color:#333; text-align:justify;">${sellerDecl}</p>
-      <div style="display:flex; justify-content:flex-end; margin-top:6px;">
-        ${signatureSlot(sellerSigImg, T.sellerSign)}
-      </div>
     </div>
 
     <div style="border:1px solid ${BORDER}; border-radius:6px; padding:12px 14px 10px; margin-bottom:12px; background:#FCFAF4;">
@@ -252,9 +258,6 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
         <div>${esc(T.witness)}: ${val(sale.witnessName, 180)}</div>
         <div>${esc(T.witnessAddr)}: ${val(sale.witnessAddress, 180)}</div>
       </div>
-      <div style="align-self:flex-end;">
-        ${signatureSlot(buyerSigImg, T.buyerSign)}
-      </div>
     </div>
 
     <div style="text-align:center; font-size:11px; line-height:1.45; font-weight:700; margin:14px 0 10px;">${esc(T.bothAgree)}</div>
@@ -262,6 +265,8 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
     <div style="border:1.5px solid #333; border-radius:8px; padding:8px 14px 9px; text-align:center; font-size:11.5px; line-height:1.45; font-weight:800; background:#F4F4F4;">${esc(T.footerNote)}</div>
 
     ${blank(sale.notes) ? '' : `<div style="margin-top:8px; font-size:10px; color:#444; line-height:1.5; white-space:pre-wrap; word-break:break-word;">${esc(sale.notes)}</div>`}
+
+    ${photoImgs.length ? '' : signaturesBlock(sellerSigImg, buyerSigImg, T)}
 
     <div style="text-align:center; font-size:8.5px; color:#999; margin-top:10px;">${esc(fillText(T.generated, { name: registeredByName || shopName || 'Shop Admin', date: formatDateTime(new Date()) }))}</div>
   </div>`;
@@ -271,7 +276,7 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
 
   if (photoImgs.length) {
     const cells = photoImgs.map((src) => `
-      <div style="box-sizing:border-box; width:100%; height:263px; border:1px solid ${BORDER}; border-radius:8px; background:#F6F3EA; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+      <div style="box-sizing:border-box; width:100%; height:245px; border:1px solid ${BORDER}; border-radius:8px; background:#F6F3EA; display:flex; align-items:center; justify-content:center; overflow:hidden;">
         <img src="${src}" style="max-width:100%; max-height:100%; object-fit:contain; display:block;" />
       </div>`).join('');
     const photosHtml = `
@@ -290,9 +295,10 @@ export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', regi
         <span style="display:inline-block; border:2px solid #222; border-radius:10px; padding:5px 30px 8px; font-size:17px; line-height:1.4; font-weight:900; color:#111;">${esc(T.photosTitle)}</span>
       </div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px 24px;">${cells}</div>
+      ${signaturesBlock(sellerSigImg, buyerSigImg, T)}
     </div>`;
     pdf.addPage();
-    placeCanvas(pdf, await rasterise(photosHtml));
+    placeCanvas(pdf, await rasterise(photosHtml, 2), 0.88);
   }
   return pdf;
 }
