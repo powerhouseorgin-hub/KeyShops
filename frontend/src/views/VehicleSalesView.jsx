@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
   Car, User, Phone, MapPin, IndianRupee, Calendar, Clock, FileText, Download, RefreshCw,
-  MessageCircle, Plus, CheckCircle2, Palette, Wrench, StickyNote, UserCheck, ImagePlus, X, Languages,
+  MessageCircle, Plus, CheckCircle2, Palette, Wrench, StickyNote, UserCheck, ImagePlus, X, Languages, Eye,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { vehicleSaleText, fillText } from '../i18n/vehicleSaleText';
@@ -13,6 +13,8 @@ import { resizeImageFileToBlob } from '../utils/imageUtils';
 import ImageZoomViewer from '../components/ImageZoomViewer';
 import VehicleSaleDetail from '../components/VehicleSaleDetail';
 import SignaturePad from '../components/SignaturePad';
+import ReceiptReviewDialog from '../components/ReceiptReviewDialog';
+import { phoneProblem } from '../utils/vehicleSaleInvoice';
 
 // Vehicle Sales: record a bike/car sale and generate the "Delivery Receipt" invoice for the buyer.
 // Everything on screen follows the app language (vehicleSaleText.js); the invoice is generated in the language
@@ -20,7 +22,9 @@ import SignaturePad from '../components/SignaturePad';
 // prints the same document. The invoice language is chosen on this screen (default Tamil), independent of the app
 // language. Tapping a sale in Recent sales opens a read-only details screen (VehicleSaleDetail). Up to 5 photos can be attached: they are resized in the browser, then uploaded one by one to the saved
 // sale (the server also refuses a 6th). The seller and the buyer each sign on a signature pad (both are required); the signatures are saved
-// with the sale like the photos and both are printed on the receipt, with the photos on a second page. The receipt number is not entered here: the server generates a unique one for every sale.
+// with the sale like the photos and both are printed on the receipt, with the photos on a second page. *Review* (next to Sale) shows the
+// receipt exactly as it will be printed before anything is saved; once the sale is saved and its photos and signatures are uploaded, the
+// receipt is sent on WhatsApp to the seller AND the buyer automatically. The receipt number is not entered here: the server generates a unique one for every sale.
 // Layout: on a phone, short fields (date/time, price/advance, ...) sit two to a row (marked `half`) and the rest
 // take the full width; the spacing is tightened by the .vs-form rules in index.css.
 
@@ -213,7 +217,7 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
   };
 
   const handleSale = async (e) => {
-    e.preventDefault();
+    e?.preventDefault?.();
     const problem = validate();
     if (problem) { setError(problem); return; }
     setError('');
@@ -245,8 +249,71 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
       console.error('Failed to generate the vehicle sale invoice:', err);
     }
     setSaving(false);
-    setDone({ sale, pdf: built?.pdf || null, fileName: built?.fileName || null, invoiceFailed: !built, failedFiles, failedSigs, photoTotal: photos.length });
+    setDone({ sale, pdf: built?.pdf || null, fileName: built?.fileName || null, invoiceFailed: !built, failedFiles, failedSigs, photoTotal: photos.length, sending: false, sendResults: null, sendError: '' });
     loadRecent();
+    // The receipt goes to the seller and the buyer straight away - but only once it is complete (every photo and signature uploaded);
+    // otherwise it is held and sent after the retry below.
+    if (built && !failedFiles.length && !failedSigs.length) autoSend(sale, built);
+  };
+
+  // Sends the receipt PDF to the seller and the buyer on WhatsApp (server side, both at once) and shows each person's outcome in the success
+  // dialog. `parties` limits it to the ones that failed when retrying.
+  const sendReceipt = async (sale, built, parties) => {
+    setDone((d) => (d ? { ...d, sending: true, sendError: '' } : d));
+    try {
+      const file = new File([built.pdf.output('blob')], built.fileName, { type: 'application/pdf' });
+      const res = await api.sendVehicleSaleInvoice(sale, file, parties && parties.length ? parties.join(',') : undefined);
+      setDone((d) => (d ? { ...d, sending: false, sendResults: { ...(d.sendResults || {}), ...res.results } } : d));
+    } catch (err) {
+      console.error('Sending the receipt failed:', err);
+      setDone((d) => (d ? { ...d, sending: false, sendError: String(err?.message || err).slice(0, 160) } : d));
+    }
+    loadRecent();
+  };
+
+  const autoSend = (sale, built) => {
+    const problems = { seller: phoneProblem(sale.sellerPhone), buyer: phoneProblem(sale.buyerPhone) };
+    if (problems.seller && problems.buyer) {
+      // no usable number for either: nothing to send, say why
+      setDone((d) => (d ? { ...d, sendResults: { seller: { sent: false, reason: problems.seller }, buyer: { sent: false, reason: problems.buyer } } } : d));
+      return;
+    }
+    sendReceipt(sale, built);
+  };
+
+  const retrySend = () => {
+    if (!done?.pdf) return;
+    const failed = ['seller', 'buyer'].filter((p) => done.sendResults?.[p] && !done.sendResults[p].sent && done.sendResults[p].reason === 'SEND_FAILED');
+    sendReceipt(done.sale, { pdf: done.pdf, fileName: done.fileName }, failed.length ? failed : undefined);
+  };
+
+  // ---- Review: the receipt exactly as it will be printed, before anything is saved or sent
+  const [review, setReview] = useState(null); // { loading, pages, error }
+  const openReview = async () => {
+    const problem = validate();
+    if (problem) { setError(problem); return; }
+    setError('');
+    setReview({ loading: true, pages: [], error: '' });
+    const temp = [];
+    try {
+      const shop = await ensureShopInfo();
+      // photos at the size they will be uploaded at; signatures are already small
+      const blobs = await Promise.all(photos.map((p) => resizeImageFileToBlob(p.file, 1280, 0.82)));
+      const photoUrls = blobs.map((b) => { const u = URL.createObjectURL(b); temp.push(u); return { url: u }; });
+      const previewSale = {
+        ...form, saleNumber: '', balanceAmount: balance === null ? 0 : balance, lang: invoiceLang,
+        photos: photoUrls, sellerSignature: { url: sigs.seller.preview }, buyerSignature: { url: sigs.buyer.preview },
+      };
+      const pageImages = [];
+      const { buildVehicleSaleInvoicePdf } = await import('../utils/vehicleSaleInvoicePdf');
+      await buildVehicleSaleInvoicePdf({ sale: previewSale, shop, lang: invoiceLang, registeredByName: user?.name, pageImages });
+      setReview({ loading: false, pages: pageImages, error: '' });
+    } catch (err) {
+      console.error('Could not prepare the receipt preview:', err);
+      setReview({ loading: false, pages: [], error: String(err?.message || err) });
+    } finally {
+      temp.forEach((u) => URL.revokeObjectURL(u));
+    }
   };
 
   // Retries whatever failed to upload (photos and/or signatures), then builds the receipt again so it includes them.
@@ -271,8 +338,10 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
       console.error('Failed to generate the vehicle sale invoice:', err);
     }
     setSaving(false);
+    const alreadySent = !!done.sendResults;
     setDone((d) => ({ ...d, sale, failedFiles, failedSigs, pdf: built?.pdf || null, fileName: built?.fileName || null, invoiceFailed: !built }));
     loadRecent();
+    if (built && !failedFiles.length && !failedSigs.length && !alreadySent) autoSend(sale, built);
   };
 
   const resetForNewSale = () => {
@@ -467,9 +536,14 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
           </div>
         )}
 
-        <button type="submit" className="btn btn-primary" disabled={saving} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          {saving ? <>{spinner} {progress ? fillText(T.photosUploading, progress) : T.saving}</> : <><Car className="h-4 w-4" /> {T.sale}</>}
-        </button>
+        <div style={{ display: 'flex', gap: 10 }}>
+          <button type="button" className="btn btn-outline" onClick={openReview} disabled={saving} style={{ flex: '1 1 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            <Eye className="h-4 w-4" /> {T.receiptReviewBtn}
+          </button>
+          <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: '1.4 1 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            {saving ? <>{spinner} {progress ? fillText(T.photosUploading, progress) : T.saving}</> : <><Car className="h-4 w-4" /> {T.sale}</>}
+          </button>
+        </div>
       </form>
 
       <div className="card" style={{ marginTop: 22, padding: 24 }}>
@@ -527,6 +601,16 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
         />
       )}
 
+      {review && (
+        <ReceiptReviewDialog
+          state={review}
+          T={T}
+          saving={saving}
+          onEdit={() => setReview(null)}
+          onConfirm={() => { setReview(null); handleSale(); }}
+        />
+      )}
+
       {viewer && <ImageZoomViewer images={viewer.images} initialIndex={viewer.index} placeholders={viewer.placeholders} onClose={() => setViewer(null)} />}
 
       {done && createPortal(
@@ -565,6 +649,33 @@ function VehicleSalesView({ t, api, lang = 'en' }) {
                 {(done.failedFiles.length > 0 || done.failedSigs.length > 0) && (
                   <button type="button" className="btn btn-outline btn-sm" onClick={retryUploads} disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                     {saving ? spinner : <RefreshCw className="h-4 w-4" />} {saving && progress ? fillText(T.photosUploading, progress) : T.retryUploads}
+                  </button>
+                )}
+              </div>
+            )}
+            {!done.invoiceFailed && (
+              <div style={{ margin: '0 0 14px', textAlign: 'left' }}>
+                {done.sending && <p className="desc" style={{ margin: 0, display: 'flex', gap: 8, alignItems: 'center' }}>{spinner} {T.autoSending}</p>}
+                {!done.sending && !done.sendResults && !done.sendError && (done.failedFiles.length > 0 || done.failedSigs.length > 0) && <p className="desc" style={{ margin: 0 }}>{T.sendHeld}</p>}
+                {done.sendError && <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: 0, overflowWrap: 'anywhere' }}>{done.sendError}</p>}
+                {done.sendResults && (
+                  <>
+                    {['seller', 'buyer'].every((p) => done.sendResults[p]?.sent) && <p role="status" style={{ color: 'var(--green)', fontSize: 13, fontWeight: 800, margin: '0 0 6px' }}>{T.sendAllOk}</p>}
+                    {['seller', 'buyer'].map((p) => {
+                      const x = done.sendResults[p];
+                      if (!x) return null;
+                      const why = x.reason === 'NO_PHONE' ? T.reasonNoPhone : x.reason === 'INVALID_PHONE' ? T.reasonInvalidPhone : x.message || T.sendFailed;
+                      return (
+                        <div key={p} style={{ fontSize: 13, fontWeight: 700, margin: '2px 0', color: x.sent ? 'var(--green)' : '#B3261E', overflowWrap: 'anywhere' }}>
+                          <span style={{ color: 'var(--text-2)' }}>{p === 'seller' ? T.seller : T.buyer}: </span>{x.sent ? `${T.sentOk} ✓` : `${T.sendFailed}: ${why}`}
+                        </div>
+                      );
+                    })}
+                  </>
+                )}
+                {!done.sending && done.pdf && (done.sendError || ['seller', 'buyer'].some((p) => done.sendResults?.[p]?.reason === 'SEND_FAILED')) && (
+                  <button type="button" className="btn btn-outline btn-sm" onClick={retrySend} style={{ marginTop: 8, display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                    <RefreshCw className="h-4 w-4" /> {T.retryFailed}
                   </button>
                 )}
               </div>

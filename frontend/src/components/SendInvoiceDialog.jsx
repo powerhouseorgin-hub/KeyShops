@@ -10,11 +10,13 @@ const PARTIES = ['seller', 'buyer'];
 export default function SendInvoiceDialog({ state, T, onRetry, onClose }) {
   if (!state) return null;
   const { phase, sale, results = {}, message } = state;
+  // only the people the invoice was sent to (the buyer, the seller or both) get a row
+  const shown = PARTIES.filter((p) => !state.requested || state.requested.includes(p) || results[p]);
   const sending = phase === 'sending';
   const failed = PARTIES.filter((p) => results[p] && !results[p].sent);
   // only a delivery that failed can be retried; a missing / invalid number needs fixing on the sale first
   const retryable = failed.filter((p) => results[p].reason === 'SEND_FAILED');
-  const allSent = phase === 'result' && PARTIES.every((p) => results[p]?.sent);
+  const allSent = phase === 'result' && shown.length > 0 && shown.every((p) => results[p]?.sent);
 
   const reasonText = (r) => {
     if (!r || r.sent) return '';
@@ -62,10 +64,10 @@ export default function SendInvoiceDialog({ state, T, onRetry, onClose }) {
         {phase === 'blocked' && <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: '0 0 12px' }}>{T.noValidNumbers}</p>}
         {phase === 'error' && <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: '0 0 12px', overflowWrap: 'anywhere' }}>{message}</p>}
         {sending && <p className="desc" style={{ margin: '0 0 12px' }}>{T.sendingInvoice}</p>}
-        {allSent && <p role="status" style={{ color: 'var(--green)', fontSize: 13, fontWeight: 800, margin: '0 0 12px' }}>{T.sendAllOk}</p>}
+        {allSent && <p role="status" style={{ color: 'var(--green)', fontSize: 13, fontWeight: 800, margin: '0 0 12px' }}>{shown.length === 2 ? T.sendAllOk : `${T.sentOk} ✓`}</p>}
         {phase === 'result' && failed.length > 0 && <p role="alert" style={{ color: '#8A1C1C', fontSize: 13, fontWeight: 700, margin: '0 0 12px' }}>{T.sendPartial}</p>}
 
-        {phase !== 'error' && <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>{PARTIES.map(row)}</div>}
+        {phase !== 'error' && <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>{shown.map(row)}</div>}
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {(phase === 'error' || (phase === 'result' && retryable.length > 0)) && (

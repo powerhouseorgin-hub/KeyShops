@@ -136,7 +136,7 @@ async function rasterise(html, scale = 2.5) {
 
 // Puts a canvas on the current PDF page, scaled to the page width and - if it is taller than the page (longer text, e.g.
 // Malayalam) - shrunk to fit, so nothing is cut off.
-function placeCanvas(pdf, canvas, quality = 0.95) {
+function placeCanvas(pdf, canvas, quality = 0.95, collect) {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
   const margin = 20;
@@ -148,12 +148,15 @@ function placeCanvas(pdf, canvas, quality = 0.95) {
     imgHeight = maxHeight;
   }
   const x = (pageWidth - imgWidth) / 2;
-  pdf.addImage(canvas.toDataURL('image/jpeg', quality), 'JPEG', x, margin, imgWidth, imgHeight);
+  const pageImage = canvas.toDataURL('image/jpeg', quality);
+  pdf.addImage(pageImage, 'JPEG', x, margin, imgWidth, imgHeight);
+  if (collect) collect.push(pageImage);
 }
 
 // `localUrls` (optional): { storedUrl: localUrl } for images the app still holds (it has just uploaded them), so a fresh sale's
 // receipt is drawn from those instead of downloading them again.
-export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', registeredByName, localUrls = {} }) {
+// `pageImages` (optional array): each rendered page is also pushed to it as a JPEG data URL - used by the Review preview before a sale is saved.
+export async function buildVehicleSaleInvoicePdf({ sale, shop, lang = 'en', registeredByName, localUrls = {}, pageImages }) {
   const T = vehicleSaleText(lang);
   const shopName = (shop && shop.name) || '';
   const shopAddress = (shop && shop.address && shop.address !== 'N/A') ? shop.address : '';
@@ -295,11 +298,11 @@ ${inner}
 
   const pdf = new jsPDF({ unit: 'pt', format: 'a4', compress: true });
   if (!photoImgs.length) {
-    placeCanvas(pdf, await rasterise(frame(topHtml + declHtml)));
+    placeCanvas(pdf, await rasterise(frame(topHtml + declHtml)), 0.95, pageImages);
     return pdf;
   }
   // page 1: details + photos (the photos are already compressed, so a lighter render keeps the file small)
-  placeCanvas(pdf, await rasterise(frame(topHtml + photosSection), 2.2), 0.9);
+  placeCanvas(pdf, await rasterise(frame(topHtml + photosSection), 2.2), 0.9, pageImages);
 
   // page 2: a slim header, then the declarations with the signatures
   const slimHeader = `
@@ -314,6 +317,6 @@ ${inner}
       </div>
     </div>`;
   pdf.addPage();
-  placeCanvas(pdf, await rasterise(frame(slimHeader + declHtml)));
+  placeCanvas(pdf, await rasterise(frame(slimHeader + declHtml)), 0.95, pageImages);
   return pdf;
 }

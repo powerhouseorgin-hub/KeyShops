@@ -2,6 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { downloadPdf } from '../utils/pdfDelivery';
 import { buildSaleInvoice, phoneProblem } from '../utils/vehicleSaleInvoice';
 import SendInvoiceDialog from '../components/SendInvoiceDialog';
+import SendRecipientDialog from '../components/SendRecipientDialog';
 
 // Download Invoice / Send Invoice for one vehicle sale, used by the All Sales screens (Shop Admin and Super Admin) and their details
 // screen. `resolveShop(sale)` supplies the receipt header (a shop's name / address / phone).
@@ -14,6 +15,7 @@ import SendInvoiceDialog from '../components/SendInvoiceDialog';
 export default function useSaleInvoiceActions({ api, T, resolveShop, registeredByName, onDelivery }) {
   const [busy, setBusy] = useState(null);
   const [send, setSend] = useState(null);
+  const [choose, setChoose] = useState(null); // { sale, problems } while the person is picking who to send to
   const kept = useRef(null); // { saleId, file } - the receipt of the last send, reused when retrying
 
   const buildInvoiceFile = useCallback(async (sale) => {
@@ -37,7 +39,8 @@ export default function useSaleInvoiceActions({ api, T, resolveShop, registeredB
   }, [buildInvoiceFile, T]);
 
   const runSend = useCallback(async (sale, parties, reuse) => {
-    setSend((prev) => ({ phase: 'sending', sale, results: reuse ? prev?.results || {} : {} }));
+    const requested = parties && parties.length ? parties : ['seller', 'buyer'];
+    setSend((prev) => ({ phase: 'sending', sale, requested: reuse ? prev?.requested || requested : requested, results: reuse ? prev?.results || {} : {} }));
     try {
       let file = reuse && kept.current?.saleId === sale.id ? kept.current.file : null;
       if (!file) {
@@ -47,11 +50,11 @@ export default function useSaleInvoiceActions({ api, T, resolveShop, registeredB
       }
       const res = await api.sendVehicleSaleInvoice(sale, file, parties && parties.length ? parties.join(',') : undefined);
       // keep the recipients that already succeeded; only the retried ones change
-      setSend((prev) => ({ phase: 'result', sale, results: { ...(reuse ? prev?.results || {} : {}), ...res.results } }));
+      setSend((prev) => ({ phase: 'result', sale, requested: prev?.requested || requested, results: { ...(reuse ? prev?.results || {} : {}), ...res.results } }));
       onDelivery?.(sale, res.results);
     } catch (err) {
       console.error('Vehicle sale invoice send failed:', err);
-      setSend((prev) => ({ phase: 'error', sale, results: prev?.results || {}, message: String(err?.message || err).slice(0, 200) }));
+      setSend((prev) => ({ phase: 'error', sale, requested: prev?.requested || requested, results: prev?.results || {}, message: String(err?.message || err).slice(0, 200) }));
     }
   }, [api, buildInvoiceFile, onDelivery]);
 
@@ -65,13 +68,25 @@ export default function useSaleInvoiceActions({ api, T, resolveShop, registeredB
       });
       return;
     }
-    runSend(sale, undefined, false);
-  }, [runSend]);
+    // ask who to send it to: the buyer, the seller or both
+    setChoose({ sale, problems });
+  }, []);
+
+  const chooseRecipients = useCallback((parties) => {
+    const sale = choose?.sale;
+    setChoose(null);
+    if (sale) runSend(sale, parties, false);
+  }, [choose, runSend]);
 
   const retry = useCallback((parties) => {
     if (send?.sale) runSend(send.sale, parties, true);
   }, [send, runSend]);
 
-  const dialog = <SendInvoiceDialog state={send} T={T} onRetry={retry} onClose={() => setSend(null)} />;
+  const dialog = (
+    <>
+      {choose && <SendRecipientDialog sale={choose.sale} problems={choose.problems} T={T} onChoose={chooseRecipients} onClose={() => setChoose(null)} />}
+      <SendInvoiceDialog state={send} T={T} onRetry={retry} onClose={() => setSend(null)} />
+    </>
+  );
   return { busy, downloadInvoice, sendInvoice, buildInvoiceFile, dialog };
 }
