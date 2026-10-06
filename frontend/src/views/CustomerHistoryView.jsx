@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { getAssetUrl, downloadAsset } from '../apiConfig';
 import { downloadPdf } from '../utils/pdfDelivery';
+import useBulkInvoiceDownload from '../hooks/useBulkInvoiceDownload';
 import { getFresh, setCache } from '../utils/fetchCache';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { ALL_TN_LOCATIONS } from '../utils/tamilNaduLocations';
@@ -298,6 +299,19 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
     });
   };
 
+  // "Download All": select customers (or Select All, across every page of the current search/location) and download their invoices as ZIP
+  // files in the background; progress is behind the download icon in the top bar.
+  const bulk = useBulkInvoiceDownload({
+    t,
+    items: customers,
+    nextCursor,
+    keyOf: (c) => c.id,
+    fetchPage: (cursor, limit) => api.getCustomersPage({ search: debouncedSearch, town, cursor, limit }),
+    onLoaded: (list, cursor) => { setCustomers(list); setNextCursor(cursor); setHasMore(!!cursor); },
+    buildFile: (c) => buildInvoiceForCustomer(c),
+    zipName: 'CustomerInvoices',
+  });
+
   return (
     <div className="animate-fade-in">
       <div className="page-head">
@@ -332,7 +346,10 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
             options={[{ value: '', label: t('allLocationsLabel') }, ...ALL_TN_LOCATIONS.map((loc) => ({ value: loc, label: loc }))]}
             triggerStyle={{ minWidth: 180 }}
           />
+          {bulk.downloadAllButton}
         </div>
+        {bulk.messageBox}
+        {bulk.toolbar}
 
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 200 }}>
@@ -347,6 +364,7 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
           <table className="kee-table history-table">
             <thead>
               <tr>
+                {bulk.selectMode && <th style={{ width: 36 }} />}
                 <th>{t('customerCol')}</th>
                 <th>{t('phoneCol')}</th>
                 <th>{t('vehicleCol')}</th>
@@ -362,7 +380,8 @@ function CustomerHistoryView({ t, api, searchDispatch }) {
                 return customers.map((c, idx) => {
                   const rowColor = rowColors[idx % rowColors.length];
                   return (
-                    <tr key={c.id} onClick={() => setSelectedCust(c)} style={{ cursor: 'pointer' }}>
+                    <tr key={c.id} onClick={() => (bulk.selectMode ? bulk.toggle(c) : setSelectedCust(c))} style={{ cursor: 'pointer' }}>
+                      {bulk.selectMode && <td><bulk.Check on={bulk.isSelected(c)} /></td>}
                       <td data-label={t('customerCol')}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                           <div className={`icon-badge ${rowColor}`} style={{ width: 32, height: 32, borderRadius: 10, flexShrink: 0 }}>

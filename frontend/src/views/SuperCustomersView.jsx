@@ -5,6 +5,7 @@ import { useBackHandler } from '../utils/backHandler';
 import { getFresh, setCache, invalidate } from '../utils/fetchCache';
 import { getAssetUrl, downloadAsset } from '../apiConfig';
 import { downloadPdf } from '../utils/pdfDelivery';
+import useBulkInvoiceDownload from '../hooks/useBulkInvoiceDownload';
 import {
   Key, Plus, FileText, Search, MapPin, Camera, RefreshCw, Edit, ExternalLink,
   Eye, Lock, ShieldCheck, Phone, Calendar, Store, User, FileCheck, KeyRound,
@@ -239,6 +240,24 @@ function SuperCustomersView({ t, api, searchDispatch }) {
     }
   };
 
+  // "Download All": select customers (or Select All, across every page and every shop) and download their invoices as ZIP files in the
+  // background; each invoice carries its own shop's header. Progress is behind the download icon in the top bar.
+  const bulk = useBulkInvoiceDownload({
+    t,
+    items: customers,
+    nextCursor,
+    keyOf: (c) => `${c.shopId || ''}/${c.id}`,
+    fetchPage: (cursor, limit) => api.getSuperCustomersPage({ search: debouncedSearch, cursor, limit }),
+    onLoaded: (list, cursor) => { setCustomers(list); setNextCursor(cursor); setHasMore(!!cursor); },
+    buildFile: async (c) => {
+      const shopRes = await getFullShopDetails(c);
+      const { buildCustomerInvoicePdf } = await import('../utils/customerInvoicePdf');
+      const pdf = await buildCustomerInvoicePdf({ customer: c, shop: shopRes, registeredByName: c.registeredByName || user?.name || 'Key Shops' });
+      return { pdf, fileName: invoiceFileName(c) };
+    },
+    zipName: 'CustomerInvoices',
+  });
+
   return (
     <div className="animate-fade-in">
       <div className="page-head">
@@ -280,7 +299,10 @@ function SuperCustomersView({ t, api, searchDispatch }) {
               placeholder={t('searchByNamePhoneKeyCode')}
             />
           </div>
+          {bulk.downloadAllButton}
         </div>
+        {bulk.messageBox}
+        {bulk.toolbar}
 
         {loading ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, minHeight: 200 }}>
@@ -302,9 +324,11 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 <div
                   key={c.id}
                   className="card"
+                  onClick={bulk.selectMode ? () => bulk.toggle(c) : undefined}
                   style={{
+                    cursor: bulk.selectMode ? 'pointer' : undefined,
                     background: 'var(--card-1, #ffffff)',
-                    border: '1.5px solid var(--border-2)',
+                    border: bulk.selectMode && bulk.isSelected(c) ? '2px solid var(--maroon)' : '1.5px solid var(--border-2)',
                     borderRadius: 18,
                     padding: '20px 22px',
                     width: '100%',
@@ -313,6 +337,7 @@ function SuperCustomersView({ t, api, searchDispatch }) {
                 >
                   {/* Card Header: Icon Badge + Customer Name + Shop */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+                    {bulk.selectMode && <bulk.Check on={bulk.isSelected(c)} />}
                     <div className="icon-badge purple" style={{ width: 38, height: 38, borderRadius: 11, flexShrink: 0 }}>
                       <User style={{ width: 19, height: 19 }} />
                     </div>

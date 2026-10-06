@@ -229,7 +229,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
           { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
           { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
           { title: t('offersLabel'), description: t('activeOffersBannersDesc') || 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: goToOffers },
-          { title: t('customerSupport'), description: t('manageCustomerSupportDesc'), image: customerSupportIcon, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
+          { title: t('customerSupport'), fullWidth: true, description: t('manageCustomerSupportDesc'), image: customerSupportIcon, accent: 'var(--rose)', onClick: () => setActiveTab('support-config') },
         ]} />
       </div>
     );
@@ -308,7 +308,7 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
         { title: t('scanning'), description: t('scanningDesc'), image: scanningServiceImg, accent: 'var(--teal)', onClick: () => goToProductType('Scanning') },
         { title: t('meter'), description: t('meterDesc'), image: meterServiceImg, imgScale: 1.14, accent: 'var(--skyblue)', onClick: () => goToProductType('Meter') },
         { title: t('offersLabel'), description: t('activeOffersBannersDesc') || 'Active offers, banners & promotions', icon: Sparkles, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('offers-ads-banners') },
-        { title: t('customerSupport'), description: t('getHelpSupportDesc'), image: customerSupportIcon, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
+        { title: t('customerSupport'), fullWidth: true, description: t('getHelpSupportDesc'), image: customerSupportIcon, accent: 'var(--rose)', onClick: () => setActiveTab('customer-care') },
       ]} />
 
       {/* Active Announcements Popup Modal - shows 2-3 ads/banners/offers together

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import DownloadsMenu from './components/DownloadsMenu';
 import ModuleSelectView from './components/ModuleSelectView';
+import LanguageDialog from './components/LanguageDialog';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { backHandlerStack, useBackHandler } from './utils/backHandler';
@@ -399,7 +400,8 @@ export default function App() {
   // The app has two separate modules, picked on the screen that follows login:
   //   null        - the module-selection screen (two cards),
   //   'keyshops'  - the Key Shops dashboard and menu (no Vehicle Sale items),
-  //   'vehicle'   - the Vehicle Sale dashboard and menu (only Vehicle Sale and All Sales).
+  //   'vehicle'   - the Vehicle Sale dashboard and menu (Vehicle Sale, All Sales and the account/help entries),
+  //   'general'   - the account/help screens (settings, feedback, terms, customer care ...) opened from the selection screen's own menu.
   // Each module has its own "home" tab; nothing of the other module is reachable from inside it. Logging out always returns to null.
   const [appModule, setAppModule] = useState(null);
   const homeTab = appModule === 'vehicle' ? 'vehicle-dashboard' : 'dashboard';
@@ -407,6 +409,12 @@ export default function App() {
     setNavStack([]);
     setAppModule(module);
     setActiveTabRaw(module === 'vehicle' ? 'vehicle-dashboard' : 'dashboard');
+    setMobileNavOpen(false);
+  };
+  const openShared = (tab) => {
+    setNavStack([]);
+    setAppModule('general');
+    setActiveTabRaw(tab);
     setMobileNavOpen(false);
   };
   const backToModules = () => {
@@ -419,12 +427,37 @@ export default function App() {
     if (!isAuthenticated) { setAppModule(null); setNavStack([]); setActiveTabRaw('dashboard'); }
   }, [isAuthenticated]);
 
+  // The account / help entries of the menus (Shop Admin: shop settings, feedback, terms, privacy, customer care; Super Admin: support
+  // configuration, terms, privacy). Used by the module-selection menu, the Vehicle Sale menu and the general screens' menu.
+  const accountEntries = () => (user.role === 'SUPER_ADMIN'
+    ? [
+      { id: 'support-config', tab: 'support-config', label: t('supportConfig'), colour: 'var(--rose)', Icon: Phone },
+      { id: 'terms', tab: 'terms', label: t('menuTermsConditions'), colour: 'var(--blue)', Icon: FileText },
+      { id: 'privacy', href: `${KEE_LANDING_PAGE_URL}/privacy-policy`, label: t('menuPrivacyPolicy'), colour: 'var(--green)', Icon: ShieldCheck },
+    ]
+    : [
+      { id: 'settings', tab: 'settings', label: t('settings'), colour: 'var(--maroon)', Icon: Settings },
+      { id: 'feedback', tab: 'feedback', label: t('menuFeedback'), colour: 'var(--gold)', Icon: MessageCircle },
+      { id: 'terms', tab: 'terms', label: t('menuTermsConditions'), colour: 'var(--blue)', Icon: FileText },
+      { id: 'privacy', href: `${KEE_LANDING_PAGE_URL}/privacy-policy`, label: t('menuPrivacyPolicy'), colour: 'var(--green)', Icon: ShieldCheck },
+      { id: 'customer-care', tab: 'customer-care', label: t('customerCare'), colour: 'var(--rose)', Icon: Phone },
+    ]);
+  const openEntry = (e) => { if (e.href) window.open(e.href, '_blank', 'noopener'); else setActiveTab(e.tab); };
+  const openEntry2 = (e) => { if (e.href) window.open(e.href, '_blank', 'noopener'); else openShared(e.tab); };
+  const renderAccountLinks = () => accountEntries().map((e) => (
+    <button key={e.id} onClick={() => openEntry(e)} className={`side-link ${e.tab && activeTab === e.tab ? 'active' : ''}`}>
+      <span className="nav-ico" style={{ background: e.colour }}><e.Icon /></span>
+      <span>{e.label}</span>
+    </button>
+  ));
+
   // Module isolation: the Vehicle Sale module only ever shows its own three screens, and the Key Shops module never shows them.
   const VEHICLE_TABS = ['vehicle-dashboard', 'vehicle-sales', 'all-vehicle-sales'];
   // account / help screens that both modules offer in their menus (customer care, settings, terms, feedback, support)
   const SHARED_TABS = ['customer-care', 'support-contact', 'support-config', 'settings', 'terms', 'feedback'];
   const setActiveTab = (nextTab) => {
     if (appModule === 'vehicle' && !VEHICLE_TABS.includes(nextTab) && !SHARED_TABS.includes(nextTab)) return;
+    if (appModule === 'general' && !SHARED_TABS.includes(nextTab)) return;
     if (appModule === 'keyshops' && VEHICLE_TABS.includes(nextTab)) return;
     setActiveTabRaw((current) => {
       if (current === nextTab) return current;
@@ -476,6 +509,11 @@ export default function App() {
         return;
       }
 
+      if (appModule === 'general') {
+        setExitPromptVisible(false);
+        backToModules();
+        return;
+      }
       // On a module's own dashboard, Back returns to the module-selection screen (the app's real root)
       if (appModule !== null && activeTab === homeTab) {
         setExitPromptVisible(false);
@@ -2142,7 +2180,14 @@ export default function App() {
       ) : !langData ? (
         <TranslationsLoadingFallback />
       ) : appModule === null ? (
-        <ModuleSelectView t={t} user={user} onChoose={chooseModule} onLogout={() => { logout(); if (IS_NATIVE_APP) { setPublicInitialTab('home'); setPublicPage('home'); } }} />
+        <>
+        <ModuleSelectView t={t} user={user} entries={accountEntries()} onChoose={chooseModule}
+          onPickEntry={openEntry2}
+          onLanguage={() => setShowLangDialog(true)}
+          onCustomerService={() => openShared(user.role === 'SUPER_ADMIN' ? 'support-config' : 'support-contact')}
+          onLogout={() => { logout(); if (IS_NATIVE_APP) { setPublicInitialTab('home'); setPublicPage('home'); } }} />
+        <LanguageDialog open={showLangDialog} lang={lang} t={t} onClose={() => setShowLangDialog(false)} onSelect={(code) => { setLang(code); localStorage.setItem('kee_lang', code); setShowLangDialog(false); }} />
+        </>
       ) : (
         <div className="min-h-[calc(100vh-40px)] flex flex-col md:flex-row">
           {/* Mobile nav backdrop - must sit above every other fixed/sticky
@@ -2205,52 +2250,13 @@ export default function App() {
                     <span>{t('allSales')}</span>
                   </button>
 
-                  {user.role === 'SUPER_ADMIN' ? (
-                    <>
-                      <div className="side-section-label">{t('navSupport')}</div>
-                      <button
-                        onClick={() => setActiveTab('support-config')}
-                        className={`side-link ${activeTab === 'support-config' ? 'active' : ''}`}
-                      >
-                        <span className="nav-ico" style={{ background: 'var(--rose)' }}><Phone /></span>
-                        <span>{t('supportConfig')}</span>
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div className="side-section-label">{t('navSettingsSection')}</div>
-                      <button
-                        onClick={() => setActiveTab('customer-care')}
-                        className={`side-link ${activeTab === 'customer-care' ? 'active' : ''}`}
-                      >
-                        <span className="nav-ico" style={{ background: 'var(--rose)' }}><Phone /></span>
-                        <span>{t('customerCare')}</span>
-                      </button>
-                          <button
-                        onClick={() => setActiveTab('settings')}
-                        className={`side-link ${activeTab === 'settings' ? 'active' : ''}`}
-                      >
-                        <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Settings /></span>
-                        <span>{t('settings')}</span>
-                      </button>
-    
-                      <div className="side-section-label">{t('navMoreSection')}</div>
-                      <button
-                        onClick={() => setActiveTab('terms')}
-                        className={`side-link ${activeTab === 'terms' ? 'active' : ''}`}
-                      >
-                        <span className="nav-ico" style={{ background: 'var(--blue)' }}><FileText /></span>
-                        <span>{t('menuTermsConditions')}</span>
-                      </button>
-                          <button
-                        onClick={() => setActiveTab('feedback')}
-                        className={`side-link ${activeTab === 'feedback' ? 'active' : ''}`}
-                      >
-                        <span className="nav-ico" style={{ background: 'var(--gold)' }}><MessageCircle /></span>
-                        <span>{t('menuFeedback')}</span>
-                      </button>
-                        </>
-                  )}
+                  <div className="side-section-label">{user.role === 'SUPER_ADMIN' ? t('navSupport') : t('navSettingsSection')}</div>
+                  {renderAccountLinks()}
+                </>
+              ) : appModule === 'general' ? (
+                <>
+                  <div className="side-section-label">{user.role === 'SUPER_ADMIN' ? t('navSupport') : t('navSettingsSection')}</div>
+                  {renderAccountLinks()}
                 </>
               ) : (
               <>
@@ -2412,6 +2418,10 @@ export default function App() {
                   >
                     <span className="nav-ico" style={{ background: 'var(--blue)' }}><FileText /></span>
                     <span>{t('menuTermsConditions')}</span>
+                  </button>
+                  <button onClick={() => window.open(`${KEE_LANDING_PAGE_URL}/privacy-policy`, '_blank', 'noopener')} className="side-link">
+                    <span className="nav-ico" style={{ background: 'var(--green)' }}><ShieldCheck /></span>
+                    <span>{t('menuPrivacyPolicy')}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('feedback')}
@@ -2724,8 +2734,8 @@ export default function App() {
           {/* Mobile Bottom Navigation Bar (mobile only) */}
           <nav className="mobile-bottom-nav md:hidden">
             <button
-              className={`mbn-item ${activeTab === homeTab ? 'active' : ''}`}
-              onClick={() => { resetToDashboard(); setMobileNavOpen(false); }}
+              className={`mbn-item ${appModule !== 'general' && activeTab === homeTab ? 'active' : ''}`}
+              onClick={() => { if (appModule === 'general') backToModules(); else resetToDashboard(); setMobileNavOpen(false); }}
             >
               <span className="nav-ico-sm" style={{ background: 'var(--maroon)' }}><Home /></span>
               <span>{t('dashboard')}</span>
@@ -2808,53 +2818,7 @@ export default function App() {
           )}
 
           {/* Language selection dialog (center-screen modal) */}
-          {showLangDialog && createPortal(
-            <div
-              className="fixed inset-0 z-50 overflow-y-auto flex justify-center items-center p-4"
-              style={{ background: 'rgba(5,4,3,0.72)' }}
-              onClick={() => setShowLangDialog(false)}
-            >
-              <div
-                ref={langDialogCardRef}
-                className="card animate-fade-in"
-                style={{ width: '100%', maxWidth: 340, padding: 24, position: 'relative' }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  onClick={() => setShowLangDialog(false)}
-                  className="icon-btn"
-                  style={{ position: 'absolute', top: 16, right: 16 }}
-                >
-                  <X className="h-4 w-4" />
-                </button>
-                <div className="flex flex-col items-center mb-5" style={{ textAlign: 'center' }}>
-                  <div className="icon-badge solid" style={{ marginBottom: 10 }}><Languages /></div>
-                  <h2 style={{ fontSize: 17 }}>{t('chooseLanguage')}</h2>
-                  <p style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 600, marginTop: 4 }}>{t('selectLanguageDesc')}</p>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {[
-                    { code: 'en', label: 'English' },
-                    { code: 'hi', label: 'Hindi (हिन्दी)' },
-                    { code: 'ta', label: 'Tamil (தமிழ்)' },
-                    { code: 'te', label: 'Telugu (తెలుగు)' },
-                    { code: 'kn', label: 'Kannada (ಕನ್ನಡ)' },
-                    { code: 'ml', label: 'Malayalam (മലയാളം)' },
-                  ].map(l => (
-                    <button
-                      key={l.code}
-                      onClick={() => { setLang(l.code); localStorage.setItem('kee_lang', l.code); setShowLangDialog(false); }}
-                      className={`lang-option-btn ${lang === l.code ? 'active' : ''}`}
-                    >
-                      <span>{l.label}</span>
-                      {lang === l.code && <Check className="h-4 w-4" />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>,
-            document.body
-          )}
+          <LanguageDialog open={showLangDialog} lang={lang} t={t} cardRef={langDialogCardRef} onClose={() => setShowLangDialog(false)} onSelect={(code) => { setLang(code); localStorage.setItem('kee_lang', code); setShowLangDialog(false); }} />
         </div>
       )}
     </>
