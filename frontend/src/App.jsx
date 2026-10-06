@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import DownloadsMenu from './components/DownloadsMenu';
 import ModuleSelectView from './components/ModuleSelectView';
 import LanguageDialog from './components/LanguageDialog';
+import ConfirmDialog from './components/ConfirmDialog';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { backHandlerStack, useBackHandler } from './utils/backHandler';
@@ -756,6 +757,15 @@ export default function App() {
   const [autoOpenListingModal, setAutoOpenListingModal] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [showLangDialog, setShowLangDialog] = useState(false);
+  // Logging out always asks first ("Are you sure you want to log out?"): Cancel keeps the user signed in. (Automatic logouts - an expired
+  // session - are not user actions and do not ask.)
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+  const askLogout = () => { setMobileNavOpen(false); setLogoutConfirmOpen(true); };
+  const doLogout = () => {
+    setLogoutConfirmOpen(false);
+    logout();
+    if (IS_NATIVE_APP) { setPublicInitialTab('home'); setPublicPage('home'); }
+  };
   const [downloadToastVisible, setDownloadToastVisible] = useState(false);
   const langDialogCardRef = useRef(null);
   const notifDropdownRef = useRef(null);
@@ -2160,7 +2170,8 @@ export default function App() {
           onPickEntry={openEntry2}
           onLanguage={() => setShowLangDialog(true)}
           onCustomerService={() => openShared(user.role === 'SUPER_ADMIN' ? 'support-config' : 'support-contact')}
-          onLogout={() => { logout(); if (IS_NATIVE_APP) { setPublicInitialTab('home'); setPublicPage('home'); } }} />
+          onLogout={askLogout} />
+        <ConfirmDialog open={logoutConfirmOpen} message={t('logoutConfirmMessage')} confirmLabel={t('logout')} cancelLabel={t('btnCancel')} onConfirm={doLogout} onCancel={() => setLogoutConfirmOpen(false)} />
         <LanguageDialog open={showLangDialog} lang={lang} t={t} onClose={() => setShowLangDialog(false)} onSelect={(code) => { setLang(code); localStorage.setItem('kee_lang', code); setShowLangDialog(false); }} />
         </>
       ) : (
@@ -2420,7 +2431,7 @@ export default function App() {
                 </div>
               </div>
               <button
-                onClick={() => { logout(); if (IS_NATIVE_APP) { setPublicInitialTab('home'); setPublicPage('home'); } }}
+                onClick={askLogout}
                 className="side-link"
                 style={{ color: 'var(--red)' }}
               >
@@ -2779,6 +2790,8 @@ export default function App() {
             </div>,
             document.body
           )}
+
+          <ConfirmDialog open={logoutConfirmOpen} message={t('logoutConfirmMessage')} confirmLabel={t('logout')} cancelLabel={t('btnCancel')} onConfirm={doLogout} onCancel={() => setLogoutConfirmOpen(false)} />
 
           {/* Language selection dialog (center-screen modal) */}
           <LanguageDialog open={showLangDialog} lang={lang} t={t} cardRef={langDialogCardRef} onClose={() => setShowLangDialog(false)} onSelect={(code) => { setLang(code); localStorage.setItem('kee_lang', code); setShowLangDialog(false); }} />
