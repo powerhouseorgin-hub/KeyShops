@@ -421,8 +421,10 @@ export default function App() {
 
   // Module isolation: the Vehicle Sale module only ever shows its own three screens, and the Key Shops module never shows them.
   const VEHICLE_TABS = ['vehicle-dashboard', 'vehicle-sales', 'all-vehicle-sales'];
+  // account / help screens that both modules offer in their menus (customer care, settings, terms, feedback, support)
+  const SHARED_TABS = ['customer-care', 'support-contact', 'support-config', 'settings', 'terms', 'feedback'];
   const setActiveTab = (nextTab) => {
-    if (appModule === 'vehicle' && !VEHICLE_TABS.includes(nextTab)) return;
+    if (appModule === 'vehicle' && !VEHICLE_TABS.includes(nextTab) && !SHARED_TABS.includes(nextTab)) return;
     if (appModule === 'keyshops' && VEHICLE_TABS.includes(nextTab)) return;
     setActiveTabRaw((current) => {
       if (current === nextTab) return current;
@@ -2178,6 +2180,16 @@ export default function App() {
             <nav style={{ flex: 1, padding: '0 12px', overflowY: 'auto' }} onClick={(e) => { if (e.target.closest('button')) setMobileNavOpen(false); }}>
               {appModule === 'vehicle' ? (
                 <>
+                  <div className="side-section-label">{t('navOverview')}</div>
+                  <button
+                    onClick={() => resetToDashboard()}
+                    className={`side-link ${activeTab === 'vehicle-dashboard' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Sliders /></span>
+                    <span>{t('dashboard')}</span>
+                  </button>
+
+                  <div className="side-section-label">{t('moduleVehicle')}</div>
                   <button
                     onClick={() => setActiveTab('vehicle-sales')}
                     className={`side-link ${activeTab === 'vehicle-sales' ? 'active' : ''}`}
@@ -2192,6 +2204,53 @@ export default function App() {
                     <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Receipt /></span>
                     <span>{t('allSales')}</span>
                   </button>
+
+                  {user.role === 'SUPER_ADMIN' ? (
+                    <>
+                      <div className="side-section-label">{t('navSupport')}</div>
+                      <button
+                        onClick={() => setActiveTab('support-config')}
+                        className={`side-link ${activeTab === 'support-config' ? 'active' : ''}`}
+                      >
+                        <span className="nav-ico" style={{ background: 'var(--rose)' }}><Phone /></span>
+                        <span>{t('supportConfig')}</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="side-section-label">{t('navSettingsSection')}</div>
+                      <button
+                        onClick={() => setActiveTab('customer-care')}
+                        className={`side-link ${activeTab === 'customer-care' ? 'active' : ''}`}
+                      >
+                        <span className="nav-ico" style={{ background: 'var(--rose)' }}><Phone /></span>
+                        <span>{t('customerCare')}</span>
+                      </button>
+                          <button
+                        onClick={() => setActiveTab('settings')}
+                        className={`side-link ${activeTab === 'settings' ? 'active' : ''}`}
+                      >
+                        <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Settings /></span>
+                        <span>{t('settings')}</span>
+                      </button>
+    
+                      <div className="side-section-label">{t('navMoreSection')}</div>
+                      <button
+                        onClick={() => setActiveTab('terms')}
+                        className={`side-link ${activeTab === 'terms' ? 'active' : ''}`}
+                      >
+                        <span className="nav-ico" style={{ background: 'var(--blue)' }}><FileText /></span>
+                        <span>{t('menuTermsConditions')}</span>
+                      </button>
+                          <button
+                        onClick={() => setActiveTab('feedback')}
+                        className={`side-link ${activeTab === 'feedback' ? 'active' : ''}`}
+                      >
+                        <span className="nav-ico" style={{ background: 'var(--gold)' }}><MessageCircle /></span>
+                        <span>{t('menuFeedback')}</span>
+                      </button>
+                        </>
+                  )}
                 </>
               ) : (
               <>
@@ -2372,7 +2431,7 @@ export default function App() {
                 <span className="avatar">{(user.name || 'U').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()}</span>
                 <div style={{ minWidth: 0 }}>
                   <div className="truncate" style={{ fontFamily: 'var(--display)', fontWeight: 700, fontSize: 13, color: 'var(--text-0)' }}>{user.name}</div>
-                  <div className="truncate" style={{ fontSize: 11, color: 'var(--text-3)' }}>{user.email || t('noEmailOnFileLabel')}</div>
+                  {user.email && <div className="truncate" style={{ fontSize: 11, color: 'var(--text-3)' }}>{user.email}</div>}
                 </div>
               </div>
               <button
@@ -2678,7 +2737,6 @@ export default function App() {
               <span className="nav-ico-sm" style={{ background: 'var(--teal)' }}><Languages /></span>
               <span>{t('language')}</span>
             </button>
-            {appModule === 'keyshops' && (
             <button
               className={`mbn-item ${(user.role === 'SUPER_ADMIN' ? activeTab === 'support-config' : activeTab === 'support-contact') ? 'active' : ''}`}
               onClick={() => {
@@ -2692,7 +2750,6 @@ export default function App() {
               <span className="nav-ico-sm" style={{ background: 'var(--rose)' }}><Headset /></span>
               <span>{t('customerService')}</span>
             </button>
-            )}
           </nav>
 
           {/* "Press Back again to exit" toast - shown only when the hardware
