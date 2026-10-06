@@ -106,7 +106,7 @@ import {
   Tag, Package, Boxes, Percent, Image as ImageIcon, Megaphone, BadgePercent,
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
   Download, Fingerprint, Menu, Home, Languages, Globe,
-  Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2,
+  Wrench, Cpu, Gauge, ScanLine, Headset, Copy, Save, Award, Link2,
   GripVertical, Smartphone, History, LayoutGrid
 } from 'lucide-react';
 
@@ -752,31 +752,6 @@ export default function App() {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
-  // Header "Refer" action - Shop Admin only (Super Admin has no shop of its
-  // own, so there's nothing to attach a referral code to). Reuses the same
-  // idempotent generate-or-fetch endpoint as the Shop Settings referral card.
-  const [headerReferralSharing, setHeaderReferralSharing] = useState(false);
-  const handleHeaderReferShare = async () => {
-    if (headerReferralSharing) return;
-    setHeaderReferralSharing(true);
-    try {
-      const { referralCode } = await api.generateReferralCode();
-      const message = t('referralShareMessageTemplate').replace('{code}', referralCode).replace('{url}', KEE_LANDING_PAGE_URL);
-      if (Capacitor.isNativePlatform()) {
-        const { Share } = await import('@capacitor/share');
-        await Share.share({ text: message });
-      } else if (navigator.share) {
-        await navigator.share({ text: message });
-      } else {
-        await navigator.clipboard.writeText(message);
-        alert(t('referralMessageCopiedMsg'));
-      }
-    } catch (err) {
-      alert(err.message || t('failedGenerateReferralCodeMsg'));
-    } finally {
-      setHeaderReferralSharing(false);
-    }
-  };
   const [autoOpenShopModal, setAutoOpenShopModal] = useState(false);
   const [autoOpenListingModal, setAutoOpenListingModal] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -2487,18 +2462,6 @@ export default function App() {
                 >
                   <LayoutGrid className="h-4 w-4" />
                 </button>
-                {user.role !== 'SUPER_ADMIN' && appModule === 'keyshops' && (
-                  <button
-                    onClick={handleHeaderReferShare}
-                    disabled={headerReferralSharing}
-                    className="icon-btn"
-                    title={t('referBtnTitle')}
-                    style={{ width: 38, height: 38 }}
-                  >
-                    {headerReferralSharing ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Share2 className="h-4 w-4" />}
-                  </button>
-                )}
-
                 {/* Downloads: progress of a running download (e.g. Sales > Download All) and the history of recent ones */}
                 <DownloadsMenu t={t} />
 
