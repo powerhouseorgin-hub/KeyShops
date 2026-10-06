@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DashCardGrid from '../components/DashCardGrid';
 import { useAuth } from '../context/AuthContext';
 import { createPortal } from 'react-dom';
 import { cleanGoogleImageUrl } from '../utils/imageUtils';
@@ -10,7 +11,6 @@ import meterServiceImg from '../assets/dashboard-icons/meter-service.png';
 import scanningServiceImg from '../assets/dashboard-icons/scanning-service.png';
 import dealerIcon from '../assets/dashboard-icons/dealer.png';
 import customerSupportIcon from '../assets/dashboard-icons/customer-support.png';
-import vehicleSalesIcon from '../assets/dashboard-icons/vehicle-sales.png';
 import {
   AlertTriangle, Sparkles, Wrench, Cpu, Gauge, ScanLine,
   X,
@@ -53,43 +53,6 @@ const DASHBOARD_PRODUCT_CARDS = [
   { type: 'Meter', icon: Gauge, image: meterServiceImg, description: 'Track and manage meter records', imgScale: 1.14, accent: 'var(--skyblue)' },
   { type: 'Scanning', icon: ScanLine, image: scanningServiceImg, description: 'Scan & process compliance entries', accent: 'var(--teal)' },
 ];
-
-// Generic 2-column "info card" grid used across the dashboards - an icon
-// badge top-left, a bold title, and a short description underneath. Used for
-// the product-type shortcuts, the shop-admin quick actions, and the
-// subscription/inventory shortcuts so all of these read as one consistent
-// card language. When an item provides an `image` (see
-// DASHBOARD_PRODUCT_CARDS), that photo fills the badge instead of the
-// lucide icon, so cards like "Used Machines" show an actual product photo
-// rather than a generic outline glyph.
-function DashCardGrid({ items }) {
-  return (
-    <div className="dash-card-grid">
-      {items.map((item, idx) => {
-        const Icon = item.icon;
-        return (
-          <button
-            key={idx}
-            type="button"
-            className={`dash-card animate-fade-in${item.fullWidth ? ' dash-card-full' : ''}${item.accent ? ' dash-card-tint' : ''}`}
-            style={{ animationDelay: `${idx * 0.05}s`, ...(item.accent ? { '--tint': item.accent } : {}) }}
-            onClick={item.onClick}
-          >
-            {item.image ? (
-              <div className={`icon-badge photo${item.compact ? ' compact' : ''}`}>
-                <img src={item.image} alt="" style={item.imgScale ? { transform: `scale(${item.imgScale})` } : undefined} />
-              </div>
-            ) : (
-              <div className={`icon-badge big${item.iconVariant ? ` ${item.iconVariant}` : ''}${item.compact ? ' compact' : ''}`}><Icon /></div>
-            )}
-            <div className="dash-card-title">{item.title}</div>
-            <div className="dash-card-desc">{item.description}</div>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
 
 // In-memory cache (module scope, resets on a full page reload) so coming
 // back to the Dashboard after visiting another tab shows the last-fetched
@@ -259,7 +222,6 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
             share the same size/spacing via DashCardGrid. */}
         <DashCardGrid items={[
           { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('super-customers') },
-          { title: t('vehicleSales'), description: t('vehicleServiceDesc'), image: vehicleSalesIcon, imgScale: 0.9, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
           { title: t('shopsCardTitle'), description: t('viewManageShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => setActiveTab('shops') },
           { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },
           { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
@@ -336,10 +298,9 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
 
       {/* Compact, approved dashboard layout - only the essential shortcut cards,
           no reports/lists/charts below. One combined grid so every card shares
-          the same size/spacing. The grid has two equal columns and EVERY card is exactly half the width (50 | 50): New Customer | Vehicle Sales first, then the shortcut cards in pairs, ending with Offers | Customer Support. Vehicle Sales opens the Vehicle Sales screen. */}
+          the same size/spacing. The grid has two equal columns and EVERY card is exactly half the width (50 | 50): New Customer first, then the shortcut cards in pairs, ending with Offers | Customer Support. Vehicle Sale is NOT here - it lives in its own module. */}
       <DashCardGrid items={[
         { title: t('newCustomer'), description: t('registerComplianceEntry'), icon: AddCustomerIcon, iconVariant: 'flat-icon', accent: 'var(--gold)', onClick: () => setActiveTab('register') },
-        { title: t('vehicleSales'), description: t('vehicleServiceDesc'), image: vehicleSalesIcon, imgScale: 0.9, accent: 'var(--blue)', onClick: () => setActiveTab('vehicle-sales') },
         { title: t('usedMachines'), description: t('usedMachinesDesc'), image: usedMachinesImg, imgScale: 1.25, accent: 'var(--purple)', onClick: () => goToProductType('Used Machines') },
         { title: t('keyShops'), description: t('keyShopsDesc'), image: keyShopLogo, accent: 'var(--maroon)', onClick: () => goToProductType('Key Shops') },
         { title: t('dealers'), description: t('dealersDesc'), image: dealerIcon, accent: 'var(--maroon)', onClick: () => setActiveTab('dealers') },

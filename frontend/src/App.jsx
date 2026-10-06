@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
 import DownloadsMenu from './components/DownloadsMenu';
+import ModuleSelectView from './components/ModuleSelectView';
 import { createPortal } from 'react-dom';
 import { Capacitor } from '@capacitor/core';
 import { backHandlerStack, useBackHandler } from './utils/backHandler';
@@ -66,6 +67,7 @@ const CustomerRegistrationWizard = lazy(() => import('./views/CustomerRegistrati
 const CustomerHistoryView = lazy(() => import('./views/CustomerHistoryView'));
 const VehicleSalesView = lazy(() => import('./views/VehicleSalesView'));
 const SuperVehicleSalesView = lazy(() => import('./views/SuperVehicleSalesView'));
+const VehicleDashboardView = lazy(() => import('./views/VehicleDashboardView'));
 const SupportConfigView = lazy(() => import('./views/SupportConfigView'));
 // Lazy-loaded (Track B batch 3): AdsManagementView and CategoryShopsView are
 // straightforward; PromotionsView is the nested trio (PromotionsView wraps
@@ -104,7 +106,7 @@ import {
   Receipt, CalendarRange, Banknote, PlayCircle, MessageCircle, LifeBuoy,
   Download, Fingerprint, Menu, Home, Languages, Globe,
   Wrench, Cpu, Gauge, ScanLine, Headset, Share2, Copy, Save, Award, Link2,
-  GripVertical, Smartphone, History
+  GripVertical, Smartphone, History, LayoutGrid
 } from 'lucide-react';
 
 // Product photos shown on the Dashboard's product-type cards instead of the
@@ -394,7 +396,34 @@ export default function App() {
   const [activeTab, setActiveTabRaw] = useState('dashboard');
   const [navStack, setNavStack] = useState([]);
 
+  // The app has two separate modules, picked on the screen that follows login:
+  //   null        - the module-selection screen (two cards),
+  //   'keyshops'  - the Key Shops dashboard and menu (no Vehicle Sale items),
+  //   'vehicle'   - the Vehicle Sale dashboard and menu (only Vehicle Sale and All Sales).
+  // Each module has its own "home" tab; nothing of the other module is reachable from inside it. Logging out always returns to null.
+  const [appModule, setAppModule] = useState(null);
+  const homeTab = appModule === 'vehicle' ? 'vehicle-dashboard' : 'dashboard';
+  const chooseModule = (module) => {
+    setNavStack([]);
+    setAppModule(module);
+    setActiveTabRaw(module === 'vehicle' ? 'vehicle-dashboard' : 'dashboard');
+    setMobileNavOpen(false);
+  };
+  const backToModules = () => {
+    setNavStack([]);
+    setAppModule(null);
+    setActiveTabRaw('dashboard');
+    setMobileNavOpen(false);
+  };
+  useEffect(() => {
+    if (!isAuthenticated) { setAppModule(null); setNavStack([]); setActiveTabRaw('dashboard'); }
+  }, [isAuthenticated]);
+
+  // Module isolation: the Vehicle Sale module only ever shows its own three screens, and the Key Shops module never shows them.
+  const VEHICLE_TABS = ['vehicle-dashboard', 'vehicle-sales', 'all-vehicle-sales'];
   const setActiveTab = (nextTab) => {
+    if (appModule === 'vehicle' && !VEHICLE_TABS.includes(nextTab)) return;
+    if (appModule === 'keyshops' && VEHICLE_TABS.includes(nextTab)) return;
     setActiveTabRaw((current) => {
       if (current === nextTab) return current;
       setNavStack((stack) => [...stack, current]);
@@ -409,7 +438,7 @@ export default function App() {
   // Dashboard".
   const resetToDashboard = () => {
     setNavStack([]);
-    setActiveTabRaw('dashboard');
+    setActiveTabRaw(homeTab);
   };
 
   // Pops one entry off the nav stack and returns to it. If the stack is
@@ -418,7 +447,7 @@ export default function App() {
   const goBack = () => {
     setNavStack((stack) => {
       if (stack.length === 0) {
-        setActiveTabRaw('dashboard');
+        setActiveTabRaw(homeTab);
         return stack;
       }
       setActiveTabRaw(stack[stack.length - 1]);
@@ -445,7 +474,13 @@ export default function App() {
         return;
       }
 
-      if (activeTab !== 'dashboard') {
+      // On a module's own dashboard, Back returns to the module-selection screen (the app's real root)
+      if (appModule !== null && activeTab === homeTab) {
+        setExitPromptVisible(false);
+        backToModules();
+        return;
+      }
+      if (appModule !== null && activeTab !== homeTab) {
         setExitPromptVisible(false);
         goBack();
         return;
@@ -469,7 +504,7 @@ export default function App() {
       listenerHandle.then((l) => l.remove()).catch(() => { });
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab, navStack]);
+  }, [activeTab, navStack, appModule]);
 
   // Shop Admin's workspace name, shown as the header page title on every
   // screen except Dashboard (which shows the live search box instead). Fetched
@@ -556,6 +591,7 @@ export default function App() {
     'search-keys': t('searchKeys'),
     register: t('register'),
     history: t('history'),
+    'vehicle-dashboard': t('moduleVehicle'),
     'vehicle-sales': t('vehicleSales'),
     'all-vehicle-sales': t('allSales'),
     reports: t('reports'),
@@ -2103,6 +2139,8 @@ export default function App() {
         </>
       ) : !langData ? (
         <TranslationsLoadingFallback />
+      ) : appModule === null ? (
+        <ModuleSelectView t={t} user={user} onChoose={chooseModule} onLogout={() => { logout(); if (IS_NATIVE_APP) { setPublicInitialTab('home'); setPublicPage('home'); } }} />
       ) : (
         <div className="min-h-[calc(100vh-40px)] flex flex-col md:flex-row">
           {/* Mobile nav backdrop - must sit above every other fixed/sticky
@@ -2138,6 +2176,25 @@ export default function App() {
             </div>
 
             <nav style={{ flex: 1, padding: '0 12px', overflowY: 'auto' }} onClick={(e) => { if (e.target.closest('button')) setMobileNavOpen(false); }}>
+              {appModule === 'vehicle' ? (
+                <>
+                  <button
+                    onClick={() => setActiveTab('vehicle-sales')}
+                    className={`side-link ${activeTab === 'vehicle-sales' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><Car /></span>
+                    <span>{t('vehicleSales')}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('all-vehicle-sales')}
+                    className={`side-link ${activeTab === 'all-vehicle-sales' ? 'active' : ''}`}
+                  >
+                    <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Receipt /></span>
+                    <span>{t('allSales')}</span>
+                  </button>
+                </>
+              ) : (
+              <>
               <div className="side-section-label">{t('navOverview')}</div>
               <button
                 onClick={() => resetToDashboard()}
@@ -2170,20 +2227,6 @@ export default function App() {
                   >
                     <span className="nav-ico" style={{ background: 'var(--teal)' }}><Database /></span>
                     <span>{t('keys')}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('vehicle-sales')}
-                    className={`side-link ${activeTab === 'vehicle-sales' ? 'active' : ''}`}
-                  >
-                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><Car /></span>
-                    <span>{t('vehicleSales')}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('all-vehicle-sales')}
-                    className={`side-link ${activeTab === 'all-vehicle-sales' ? 'active' : ''}`}
-                  >
-                    <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Receipt /></span>
-                    <span>{t('allSales')}</span>
                   </button>
 
                   <div className="side-section-label">{t('navBusiness')}</div>
@@ -2256,20 +2299,6 @@ export default function App() {
                     <span className="nav-ico" style={{ background: 'var(--purple)' }}><Users /></span>
                     <span>{t('history')}</span>
                   </button>
-                  <button
-                    onClick={() => setActiveTab('vehicle-sales')}
-                    className={`side-link ${activeTab === 'vehicle-sales' ? 'active' : ''}`}
-                  >
-                    <span className="nav-ico" style={{ background: 'var(--blue)' }}><Car /></span>
-                    <span>{t('vehicleSales')}</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveTab('all-vehicle-sales')}
-                    className={`side-link ${activeTab === 'all-vehicle-sales' ? 'active' : ''}`}
-                  >
-                    <span className="nav-ico" style={{ background: 'var(--maroon)' }}><Receipt /></span>
-                    <span>{t('allSales')}</span>
-                  </button>
 
                   <div className="side-section-label">{t('navStore')}</div>
                   <button
@@ -2334,6 +2363,8 @@ export default function App() {
                   </button>
                 </>
               )}
+              </>
+              )}
             </nav>
 
             <div className="sidebar-footer" style={{ borderTop: '1px solid var(--border)', padding: '16px 20px' }}>
@@ -2377,7 +2408,17 @@ export default function App() {
               </div>
 
               <div className="flex items-center gap-3 relative app-topbar-actions">
-                {user.role !== 'SUPER_ADMIN' && (
+                <button
+                  type="button"
+                  onClick={backToModules}
+                  className="icon-btn"
+                  title={t('switchModule')}
+                  aria-label={t('switchModule')}
+                  style={{ width: 38, height: 38 }}
+                >
+                  <LayoutGrid className="h-4 w-4" />
+                </button>
+                {user.role !== 'SUPER_ADMIN' && appModule === 'keyshops' && (
                   <button
                     onClick={handleHeaderReferShare}
                     disabled={headerReferralSharing}
@@ -2397,6 +2438,7 @@ export default function App() {
                     toggling via the bell counts as "inside" (no
                     open-then-immediately-close), while anything else on the
                     page closes the dropdown. */}
+                {appModule === 'keyshops' && (
                 <div ref={notifDropdownRef} style={{ position: 'relative' }}>
                 <button
                   onClick={() => setShowNotifDropdown(!showNotifDropdown)}
@@ -2484,12 +2526,18 @@ export default function App() {
                   </div>
                 )}
                 </div>
+                )}
 
                 <span className="avatar">{(user.name || 'U').trim().split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase()}</span>
               </div>
             </header>
 
-            {activeTab === 'dashboard' && (
+            {activeTab === 'vehicle-dashboard' && appModule === 'vehicle' && (
+              <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
+                <VehicleDashboardView t={t} setActiveTab={setActiveTab} />
+              </Suspense>
+            )}
+            {activeTab === 'dashboard' && appModule === 'keyshops' && (
               <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
                 <DashboardView t={t} setActiveTab={setActiveTab} setSearchDispatch={setSearchDispatch} setAutoOpenListingModal={setAutoOpenListingModal} />
               </Suspense>
@@ -2557,12 +2605,12 @@ export default function App() {
                 <CustomerHistoryView t={t} api={api} searchDispatch={activeTab === 'history' ? searchDispatch : null} />
               </Suspense>
             )}
-            {activeTab === 'all-vehicle-sales' && (
+            {activeTab === 'all-vehicle-sales' && appModule === 'vehicle' && (
               <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
                 <SuperVehicleSalesView t={t} api={api} lang={lang} scope={user.role === 'SUPER_ADMIN' ? 'platform' : 'shop'} />
               </Suspense>
             )}
-            {activeTab === 'vehicle-sales' && (
+            {activeTab === 'vehicle-sales' && appModule === 'vehicle' && (
               <Suspense fallback={<div className="brand-loading-track" style={{ maxWidth: 240, margin: '40px auto' }}><div className="brand-loading-fill" /></div>}>
                 <VehicleSalesView t={t} api={api} lang={lang} />
               </Suspense>
@@ -2617,7 +2665,7 @@ export default function App() {
           {/* Mobile Bottom Navigation Bar (mobile only) */}
           <nav className="mobile-bottom-nav md:hidden">
             <button
-              className={`mbn-item ${activeTab === 'dashboard' ? 'active' : ''}`}
+              className={`mbn-item ${activeTab === homeTab ? 'active' : ''}`}
               onClick={() => { resetToDashboard(); setMobileNavOpen(false); }}
             >
               <span className="nav-ico-sm" style={{ background: 'var(--maroon)' }}><Home /></span>
@@ -2630,6 +2678,7 @@ export default function App() {
               <span className="nav-ico-sm" style={{ background: 'var(--teal)' }}><Languages /></span>
               <span>{t('language')}</span>
             </button>
+            {appModule === 'keyshops' && (
             <button
               className={`mbn-item ${(user.role === 'SUPER_ADMIN' ? activeTab === 'support-config' : activeTab === 'support-contact') ? 'active' : ''}`}
               onClick={() => {
@@ -2643,6 +2692,7 @@ export default function App() {
               <span className="nav-ico-sm" style={{ background: 'var(--rose)' }}><Headset /></span>
               <span>{t('customerService')}</span>
             </button>
+            )}
           </nav>
 
           {/* "Press Back again to exit" toast - shown only when the hardware
