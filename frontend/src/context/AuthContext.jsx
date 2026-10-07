@@ -796,6 +796,9 @@ export const AuthProvider = ({ children }) => {
     },
 
     getSupportConfig: async () => request('/api/support-config'),
+    // Super Admin: state of the WhatsApp OTP setup (checked daily by the server); run = check right now
+    getWhatsappHealth: async () => request('/api/super/whatsapp-health'),
+    runWhatsappHealth: async () => request('/api/super/whatsapp-health/run', 'POST'),
     updateSupportConfig: async (dto) => request('/api/super/support-config', 'POST', dto),
 
     // A Shop Admin's request is automatically scoped to their own shop

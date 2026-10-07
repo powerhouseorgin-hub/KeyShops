@@ -4,6 +4,7 @@ import {
   IndianRupee, User, Tag, Percent, PlayCircle, MessageCircle, LifeBuoy, GripVertical,
   X, Clock,
 } from 'lucide-react';
+import WhatsappHealthCard from '../components/WhatsappHealthCard';
 
 export function SupportConfigView({ t, api }) {
   const [whatsapp, setWhatsapp] = useState('');
@@ -272,6 +273,8 @@ export function SupportConfigView({ t, api }) {
           <p>{t('configureGlobalSupportDesc')}</p>
         </div>
       </div>
+
+      <WhatsappHealthCard t={t} api={api} />
 
       <div className="card" style={{ maxWidth: 720 }}>
         <form onSubmit={handleSave}>
