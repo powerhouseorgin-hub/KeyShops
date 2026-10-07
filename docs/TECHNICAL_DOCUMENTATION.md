@@ -228,6 +228,8 @@ OTP gates sensitive, unauthenticated or high-risk actions. It does **not** creat
 
 \* There is **no on-screen fallback in production**: the deployed API never returns a code in a response and never writes one to the logs. `devCode` exists only for local smoke tests: it is returned solely when the server runs against the Firebase emulator (`FIRESTORE_EMULATOR_HOST` set) **and** `OTP_SHOW_CODE_IN_UI=true`, for the allow-listed purposes (`register`, `customer_verify`, `change-credentials`).
 
+**Daily health check** (`firestore/whatsapp-health.service.ts`, scheduled function `whatsappHealthCheck`, every day 09:00 IST). Added after the `keyshops` system user lost its asset assignment on the WhatsApp Business account and OTPs silently stopped arriving. Read-only; it checks (1) the access token can read the phone number, (2) the token can read the WhatsApp Business account (`WHATSAPP_BUSINESS_ACCOUNT_ID`) and the Key Shops app (`WHATSAPP_APP_ID`) is still subscribed to it, (3) the last 24 hours of `otpCodes`: 3 or more requests and none ever answered, or 2 or more failed replies. The result is stored in `systemHealth/whatsapp`; a problem is logged with `console.error('[WhatsApp health] PROBLEM: ...')` and added to the Super Admin's notifications (type `WHATSAPP_HEALTH`); a recovery is announced once.
+
 Mechanics (`firestore/whatsapp-otp.service.ts`, collection `otpCodes`):
 
 - 4-digit code (1000-9999, `crypto.randomInt`), **unique among all live codes**: before use a code is claimed in `otpCodeLocks/<code>` inside a transaction (holder id + expiry = code TTL + 10 s), so two live requests can never share a code; a claim that is not used (mismatch, expired, repeated message, failed write) is released by its holder, and an expired claim can be reused. If all 9000 codes were live at once the request is refused with 503 instead of repeating a code. The code is **bcrypt-hashed** (cost 10), 5-minute TTL, max 5 wrong attempts per code; a new send supersedes any pending code for the same `(identifier, purpose)`.
@@ -443,6 +445,8 @@ Conventions:
 | POST | `/super/vehicle-sales/:id/signatures/:party` | Super | Same as the shop route, for the Super Admin's own sales. |
 | POST | `/super/vehicle-sales/:id/send-invoice` | Super | Same as the shop route, for the Super Admin's own sales. |
 | GET | `/super/all-vehicle-sales/item` | Super | `?path=` the sale's document path (`shops/{id}/vehicleSales/{id}` or `users/{uid}/vehicleSales/{id}`, validated): one sale of ANY shop in full, with its inline thumbnails and signatures. |
+| GET | `/super/whatsapp-health` | Super | Outcome of the last WhatsApp health check (`ok`, `checkedAt`, `problems[]`, 24-hour OTP `stats`). |
+| POST | `/super/whatsapp-health/run` | Super | Runs the health check now (throttled 6/min) and returns the result. |
 | POST | `/super/all-vehicle-sales/send-invoice` | Super | multipart `file` + form field `path` (+ `recipients`): the same send for ANY sale on the platform. |
 | GET | `/super/all-vehicle-sales` | Super | **Review of every sale on the platform** (all shops plus the Super Admin), newest first. Query: `limit` (up to 100, default 30), `cursor` (the `nextCursor` of the previous page), `shopId` (a shop id, or the literal `SUPER_ADMIN` for the Super Admin's own sales). Returns `{ items, nextCursor }`; each item is the full sale plus `ownerType`, `ownerId`, `shopId`, `ownerName` and `path`. |
 
@@ -513,7 +517,7 @@ The routes under `/shop/vehicle-sales` remain Shop Admin only; a Super Admin get
 | GET | `/super/contact-messages` (`cursor, limit`), PUT `/super/contact-messages/:id/read` | Inbox of public contact messages. |
 | POST | `/super/support-config` | Update platform settings (whatsapp, videos, price, GST, email, care number, trial days). |
 
-> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (115 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
+> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (117 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
 
 ## 9. Third-party integrations
 

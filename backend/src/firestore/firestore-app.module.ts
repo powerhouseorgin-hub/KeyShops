@@ -21,6 +21,8 @@ import { FirestoreAdService } from './ad/firestore-ad.service';
 import { FirestoreAdController } from './ad/firestore-ad.controller';
 import { PublicAdController } from './ad/public-ad.controller';
 import { FirestoreNotificationService } from './notification/firestore-notification.service';
+import { WhatsappHealthService } from './whatsapp-health.service';
+import { WhatsappHealthController } from './whatsapp-health.controller';
 import { FirestoreNotificationController, FirestoreSuperNotificationController } from './notification/firestore-notification.controller';
 import { FirestoreActivityLogService } from './report/firestore-activity-log.service';
 import { FirestoreRevenueService } from './report/firestore-revenue.service';
@@ -104,6 +106,7 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
     FirestorePaymentController,
     FirestoreVehicleSaleController,
     FirestoreSuperVehicleSaleController,
+    WhatsappHealthController,
   ],
   providers: [
     { provide: APP_GUARD, useClass: ClientIpThrottlerGuard },
@@ -118,6 +121,7 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
     FirebaseFileService,
     FirestoreAdService,
     FirestoreNotificationService,
+    WhatsappHealthService,
     FirestoreActivityLogService,
     FirestoreRevenueService,
     FirestoreDashboardService,

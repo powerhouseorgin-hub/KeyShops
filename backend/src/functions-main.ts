@@ -4,6 +4,7 @@ import { NestFactory } from '@nestjs/core';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { FirestorePromotionService } from './firestore/promotion/firestore-promotion.service';
+import { WhatsappHealthService } from './firestore/whatsapp-health.service';
 import * as express from 'express';
 import * as compression from 'compression';
 import { FirestoreAppModule } from './firestore/firestore-app.module';
@@ -80,6 +81,14 @@ export const purgeExpiredProducts = onSchedule({ schedule: 'every 60 minutes', r
   if (!appReady) appReady = bootstrap();
   const app = await appReady;
   await app.get(FirestorePromotionService).deleteExpiredProducts();
+});
+
+// Daily WhatsApp health check (09:00 India time): can the access token still reach the WhatsApp Business account, is the app still subscribed
+// to it, and are OTP requests being answered? A problem is logged and put in the Super Admin's notifications - see WhatsappHealthService.
+export const whatsappHealthCheck = onSchedule({ schedule: 'every day 09:00', timeZone: 'Asia/Kolkata', region: 'us-central1' }, async () => {
+  if (!appReady) appReady = bootstrap();
+  const app = await appReady;
+  await app.get(WhatsappHealthService).run();
 });
 
 // invoker: 'public' is required explicitly - 2nd-gen HTTPS functions don't
