@@ -10,7 +10,7 @@ import vehicleSalesIcon from '../assets/dashboard-icons/vehicle-sales.png';
 // existing dashboard and menu, without any Vehicle Sale item) and Vehicle Sale (a dashboard and menu with Vehicle Sale and All Sales, plus
 // the account/help entries). Role-based permissions are unchanged inside each module.
 //
-// Like the rest of the app this screen also has a hamburger menu (shop settings, feedback, terms, privacy, customer care - `entries`,
+// Like the rest of the app this screen also has a hamburger menu (shop settings, feedback, terms, customer care - `entries`,
 // built by the app for the role) and a bottom bar with Language and Customer Service.
 function greeting() {
   const hour = new Date().getHours();

@@ -428,19 +428,17 @@ export default function App() {
     if (!isAuthenticated) { setAppModule(null); setNavStack([]); setActiveTabRaw('dashboard'); }
   }, [isAuthenticated]);
 
-  // The account / help entries of the menus (Shop Admin: shop settings, feedback, terms, privacy, customer care; Super Admin: support
-  // configuration, terms, privacy). Used by the module-selection menu, the Vehicle Sale menu and the general screens' menu.
+  // The account / help entries of the menus (Shop Admin: shop settings, feedback, terms, customer care; Super Admin: support
+  // configuration, terms). Used by the module-selection menu, the Vehicle Sale menu and the general screens' menu.
   const accountEntries = () => (user.role === 'SUPER_ADMIN'
     ? [
       { id: 'support-config', tab: 'support-config', label: t('supportConfig'), colour: 'var(--rose)', Icon: Phone },
       { id: 'terms', tab: 'terms', label: t('menuTermsConditions'), colour: 'var(--blue)', Icon: FileText },
-      { id: 'privacy', href: `${KEE_LANDING_PAGE_URL}/privacy-policy`, label: t('menuPrivacyPolicy'), colour: 'var(--green)', Icon: ShieldCheck },
     ]
     : [
       { id: 'settings', tab: 'settings', label: t('settings'), colour: 'var(--maroon)', Icon: Settings },
       { id: 'feedback', tab: 'feedback', label: t('menuFeedback'), colour: 'var(--gold)', Icon: MessageCircle },
       { id: 'terms', tab: 'terms', label: t('menuTermsConditions'), colour: 'var(--blue)', Icon: FileText },
-      { id: 'privacy', href: `${KEE_LANDING_PAGE_URL}/privacy-policy`, label: t('menuPrivacyPolicy'), colour: 'var(--green)', Icon: ShieldCheck },
       { id: 'customer-care', tab: 'customer-care', label: t('customerCare'), colour: 'var(--rose)', Icon: Phone },
     ]);
   const openEntry = (e) => { if (e.href) window.open(e.href, '_blank', 'noopener'); else setActiveTab(e.tab); };
@@ -2442,10 +2440,6 @@ export default function App() {
                   >
                     <span className="nav-ico" style={{ background: 'var(--blue)' }}><FileText /></span>
                     <span>{t('menuTermsConditions')}</span>
-                  </button>
-                  <button onClick={() => window.open(`${KEE_LANDING_PAGE_URL}/privacy-policy`, '_blank', 'noopener')} className="side-link">
-                    <span className="nav-ico" style={{ background: 'var(--green)' }}><ShieldCheck /></span>
-                    <span>{t('menuPrivacyPolicy')}</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('feedback')}
