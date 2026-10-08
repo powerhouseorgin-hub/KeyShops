@@ -10,6 +10,12 @@ const server = new SMTPServer({
   disabledCommands: ['STARTTLS'],
   allowInsecureAuth: true,
   onAuth(auth, session, cb) { cb(null, { user: auth.username }); },
+  // QUOTA_USERS=one@gmail.com,two@gmail.com: those logins work but every message from them is refused like Gmail does at its daily limit
+  onMailFrom(address, session, cb) {
+    const quota = (process.env.QUOTA_USERS || '').split(',').filter(Boolean);
+    if (session.user && quota.includes(session.user)) return cb(Object.assign(new Error('5.4.5 Daily user sending quota exceeded.'), { responseCode: 550 }));
+    cb();
+  },
   onData(stream, session, cb) {
     let raw = '';
     stream.on('data', (c) => { raw += c.toString('utf8'); });

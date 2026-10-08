@@ -4,11 +4,16 @@ import { EmailService } from './email.service';
 class FakeTransportEmail extends EmailService {
   connections: Array<{ host: string; options: any; sent: any[] }> = [];
   fail = new Set<string>();
+  failWith = new Map<string, any>(); // SMTP user -> the error that mailbox throws
+  attempts: string[] = []; // the mailbox (SMTP user, or host for direct delivery) of every send attempt, in order
   protected makeTransport(options: any): any {
     const entry = { host: options.host, options, sent: [] as any[] };
     this.connections.push(entry);
     return {
       sendMail: async (message: any) => {
+        this.attempts.push(options.auth?.user || options.host);
+        const custom = this.failWith.get(options.auth?.user);
+        if (custom) throw custom;
         if (this.fail.has(options.host)) throw Object.assign(new Error('connection refused'), { code: 'ECONNREFUSED' });
         entry.sent.push(message);
       },
@@ -20,7 +25,7 @@ describe('EmailService', () => {
   const oldEnv = { ...process.env };
   beforeEach(() => {
     process.env = { ...oldEnv };
-    for (const k of ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'EMAIL_DIRECT', 'EMAIL_DIRECT_PORT', 'EMAIL_HELO_HOSTNAME', 'DKIM_DOMAIN', 'DKIM_SELECTOR', 'DKIM_PRIVATE_KEY']) delete process.env[k];
+    for (const k of ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM', 'SMTP_USER_2', 'SMTP_PASS_2', 'EMAIL_FROM_2', 'SMTP_HOST_2', 'SMTP_PORT_2', 'SMTP_USER_3', 'SMTP_PASS_3', 'SMTP_HOST_3', 'SMTP_PORT_3', 'EMAIL_FROM_3', 'EMAIL_DIRECT', 'EMAIL_DIRECT_PORT', 'EMAIL_HELO_HOSTNAME', 'DKIM_DOMAIN', 'DKIM_SELECTOR', 'DKIM_PRIVATE_KEY']) delete process.env[k];
     jest.spyOn(console, 'error').mockImplementation(() => undefined);
   });
   afterEach(() => { process.env = { ...oldEnv }; jest.restoreAllMocks(); });
@@ -50,6 +55,114 @@ describe('EmailService', () => {
     process.env.EMAIL_FROM = 'Key Shops <no-reply@keyshops.in>';
     expect(await new EmailService().sendCode('a@example.com', '4821', 'verify your email address', 5)).toBe(false);
     expect((console.error as jest.Mock).mock.calls.flat().join(' ')).not.toContain('4821');
+  });
+
+  describe('backup mailboxes (relay failover)', () => {
+    const quota = () => Object.assign(new Error('Daily user sending quota exceeded'), { responseCode: 550, response: '550-5.4.5 Daily user sending quota exceeded. For more information on Gmail' });
+    const badLogin = () => Object.assign(new Error('Invalid login'), { code: 'EAUTH', responseCode: 535, response: '535-5.7.8 Username and Password not accepted' });
+    const noSuchUser = () => Object.assign(new Error('no such user'), { responseCode: 550, response: '550-5.1.1 The email account that you tried to reach does not exist' });
+    const timeout = () => Object.assign(new Error('Connection timeout'), { code: 'ETIMEDOUT' });
+    const two = () => {
+      process.env.SMTP_HOST = 'smtp.gmail.com'; process.env.SMTP_PORT = '587';
+      process.env.SMTP_USER = 'one@gmail.com'; process.env.SMTP_PASS = 'p1'; process.env.EMAIL_FROM = 'Key Shops <one@gmail.com>';
+      process.env.SMTP_USER_2 = 'two@gmail.com'; process.env.SMTP_PASS_2 = 'p2'; // no EMAIL_FROM_2: defaults to the mailbox itself
+    };
+    const send = (svc: EmailService) => svc.sendCode('customer@example.com', '4821', 'verify your email address', 5);
+
+    it('uses the first mailbox while it works, and sends as that mailbox', async () => {
+      two();
+      const svc = new FakeTransportEmail();
+      expect(await send(svc)).toBe(true);
+      expect(svc.attempts).toEqual(['one@gmail.com']);
+      expect(svc.connections[0].sent[0].from).toBe('Key Shops <one@gmail.com>');
+    });
+
+    it('moves to the next mailbox when the first has reached its daily limit, then leaves the first alone for an hour', async () => {
+      two();
+      const svc = new FakeTransportEmail();
+      svc.failWith.set('one@gmail.com', quota());
+      expect(await send(svc)).toBe(true);
+      expect(svc.attempts).toEqual(['one@gmail.com', 'two@gmail.com']);
+      const second = svc.connections.find((c) => c.options.auth.user === 'two@gmail.com')!;
+      expect(second.sent[0].from).toBe('Key Shops <two@gmail.com>');
+
+      svc.attempts.length = 0;
+      expect(await send(svc)).toBe(true);
+      expect(svc.attempts).toEqual(['two@gmail.com']); // the first is not even tried
+
+      // after the pause the first mailbox is tried again - and it has recovered
+      svc.failWith.clear(); svc.attempts.length = 0;
+      const realNow = Date.now();
+      jest.spyOn(Date, 'now').mockReturnValue(realNow + 61 * 60 * 1000);
+      expect(await send(svc)).toBe(true);
+      expect(svc.attempts).toEqual(['one@gmail.com']);
+    });
+
+    it('a rejected login also moves on and pauses that mailbox', async () => {
+      two();
+      const svc = new FakeTransportEmail();
+      svc.failWith.set('one@gmail.com', badLogin());
+      expect(await send(svc)).toBe(true);
+      svc.attempts.length = 0;
+      await send(svc);
+      expect(svc.attempts).toEqual(['two@gmail.com']);
+    });
+
+    it('a timeout moves on for this email but does not pause the mailbox', async () => {
+      two();
+      const svc = new FakeTransportEmail();
+      svc.failWith.set('one@gmail.com', timeout());
+      expect(await send(svc)).toBe(true);
+      svc.attempts.length = 0;
+      await send(svc);
+      expect(svc.attempts).toEqual(['one@gmail.com', 'two@gmail.com']); // the first is still tried first
+    });
+
+    it('a recipient that does not exist stops right there: no other mailbox is tried and nothing is paused', async () => {
+      two();
+      const svc = new FakeTransportEmail();
+      svc.failWith.set('one@gmail.com', noSuchUser());
+      expect(await send(svc)).toBe(false);
+      expect(svc.attempts).toEqual(['one@gmail.com']);
+      svc.failWith.clear(); svc.attempts.length = 0;
+      expect(await send(svc)).toBe(true);
+      expect(svc.attempts).toEqual(['one@gmail.com']); // not paused by a customer typo
+    });
+
+    it('reports false when every mailbox refuses, and still retries the one that recovers first once all are paused', async () => {
+      two();
+      const svc = new FakeTransportEmail();
+      svc.failWith.set('one@gmail.com', quota()); svc.failWith.set('two@gmail.com', quota());
+      expect(await send(svc)).toBe(false);
+      expect(svc.attempts).toEqual(['one@gmail.com', 'two@gmail.com']);
+
+      // both paused: a send still probes ONE of them (the one whose pause ends first), so recovery is noticed
+      svc.attempts.length = 0; svc.failWith.clear();
+      expect(await send(svc)).toBe(true);
+      expect(svc.attempts).toEqual(['one@gmail.com']);
+    });
+
+    it('a backup mailbox needs its own user and password, may use another provider, and a lone first mailbox still works', async () => {
+      process.env.SMTP_HOST = 'smtp.gmail.com'; process.env.SMTP_USER = 'one@gmail.com'; process.env.SMTP_PASS = 'p1'; process.env.EMAIL_FROM = 'Key Shops <one@gmail.com>';
+      process.env.SMTP_USER_2 = 'two@gmail.com'; // no password: ignored
+      process.env.SMTP_USER_3 = 'three@example.org'; process.env.SMTP_PASS_3 = 'p3'; process.env.SMTP_HOST_3 = 'smtp.example.org'; process.env.SMTP_PORT_3 = '465'; process.env.EMAIL_FROM_3 = 'Key Shops <three@example.org>';
+      const svc = new FakeTransportEmail();
+      svc.failWith.set('one@gmail.com', quota());
+      expect(await send(svc)).toBe(true);
+      expect(svc.attempts).toEqual(['one@gmail.com', 'three@example.org']);
+      const third = svc.connections.find((c) => c.options.auth.user === 'three@example.org')!;
+      expect(third.options).toMatchObject({ host: 'smtp.example.org', port: 465, secure: true });
+    });
+
+    it('never writes the code or a password to the log', async () => {
+      two();
+      const svc = new FakeTransportEmail();
+      svc.failWith.set('one@gmail.com', quota()); svc.failWith.set('two@gmail.com', quota());
+      await send(svc);
+      const logged = (console.error as jest.Mock).mock.calls.flat().join(' ');
+      expect(logged).not.toContain('4821');
+      expect(logged).not.toMatch(/\bp[12]\b/);
+    });
   });
 
   describe('direct delivery (no provider)', () => {
