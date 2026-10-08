@@ -127,34 +127,6 @@ describe('WhatsappOtpService', () => {
       expect(out).toEqual({ success: true, delivered: true });
       expect(sent[0]).toMatchObject({ type: 'template', to: FROM });
     });
-
-    const templateComponents = () => sent[0].template.components.map((c: any) => c.type);
-
-    it('an Authentication template carries the code on the Copy code button too; a body-only template has no button component', async () => {
-      inboundEnv(); process.env.WHATSAPP_OTP_TEMPLATE_NAME = 'keyshops_otp';
-      await new WhatsappOtpService(fakeFirestore().firestore).sendOtp(PHONE, 'register');
-      expect(templateComponents()).toEqual(['body', 'button']);
-
-      sent.length = 0; process.env.WHATSAPP_OTP_TEMPLATE_BUTTON = 'false';
-      await new WhatsappOtpService(fakeFirestore().firestore).sendOtp(PHONE, 'register');
-      expect(templateComponents()).toEqual(['body']);
-      expect(sent[0].template.components[0].parameters[0].text).toMatch(/^[0-9]{4}$/);
-    });
-
-    it('a template that cannot be sent falls back to the inbound flow when it is set up, and frees the code it had claimed', async () => {
-      inboundEnv(); process.env.WHATSAPP_OTP_TEMPLATE_NAME = 'keyshops_otp'; nextOk = false;
-      const fx = fakeFirestore();
-      const out: any = await new WhatsappOtpService(fx.firestore).sendOtp(PHONE, 'customer_verify');
-      expect(out).toMatchObject({ success: true, delivered: false, mode: 'inbound', message: expect.stringMatching(/^KEYSHOPS [A-Z0-9]{8}$/) });
-      expect(out.waLink).toContain('wa.me/919025088853');
-      expect([...fx.docs.keys()].filter((k) => k.startsWith('otpCodeLocks/'))).toHaveLength(0);
-    });
-
-    it('a template that cannot be sent, with no inbound flow set up, is reported as not delivered (as before)', async () => {
-      process.env.WHATSAPP_ACCESS_TOKEN = 'tok'; process.env.WHATSAPP_PHONE_NUMBER_ID = '123'; process.env.WHATSAPP_OTP_TEMPLATE_NAME = 'keyshops_otp'; nextOk = false;
-      const out: any = await new WhatsappOtpService(fakeFirestore().firestore).sendOtp(PHONE, 'register');
-      expect(out).toEqual({ success: true, delivered: false });
-    });
   });
 
   describe('inbound flow', () => {

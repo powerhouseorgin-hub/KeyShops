@@ -102,7 +102,15 @@ export class WhatsappOtpService {
     }
 
     const mode = this.deliveryMode(purpose);
-    if (mode === 'inbound') return this.startInbound(identifier, purpose);
+    if (mode === 'inbound') {
+      const ref = generateRef();
+      await this.createRecord(identifier, purpose, { codeHash: null, ref, state: 'WAITING' });
+      return {
+        success: true, delivered: false, mode, ref, waLink: this.waLink(ref),
+        businessNumber: (process.env.WHATSAPP_BUSINESS_NUMBER || '').replace(/[^0-9]/g, ''), message: `KEYSHOPS ${ref}`,
+        expiresInSeconds: OTP_TTL_MS / 1000,
+      };
+    }
 
     const claim = await this.claimCode();
     const code = claim.code;
@@ -115,30 +123,12 @@ export class WhatsappOtpService {
     }
 
     const delivered = mode === 'template' ? await this.sendWhatsAppTemplate(identifier, code) : false;
-    // The template could not be sent (paused or rejected by Meta, a token problem, a Meta outage): when the inbound flow is also set up,
-    // switch to it instead of leaving the user without any way to get a code. The code made above is dropped; the new request supersedes it.
-    if (mode === 'template' && !delivered && this.inboundEnabled()) {
-      console.error('[WhatsApp OTP] template send failed - falling back to the inbound flow');
-      await this.releaseCode(claim);
-      return this.startInbound(identifier, purpose);
-    }
     if (!delivered && this.localTestingMode() && UI_FALLBACK_PURPOSES.has(purpose)) {
       console.log(`[WhatsApp OTP local testing] delivery not configured/failed - code for ${identifier}: ${code}`);
       return { success: true, delivered: false, devCode: code };
     }
 
     return { success: true, delivered };
-  }
-
-  // The inbound flow: the user sends "KEYSHOPS <ref>" to the business number and the webhook replies with the code.
-  private async startInbound(identifier: string, purpose: string): Promise<SendOtpResult> {
-    const ref = generateRef();
-    await this.createRecord(identifier, purpose, { codeHash: null, ref, state: 'WAITING' });
-    return {
-      success: true, delivered: false, mode: 'inbound', ref, waLink: this.waLink(ref),
-      businessNumber: (process.env.WHATSAPP_BUSINESS_NUMBER || '').replace(/[^0-9]/g, ''), message: `KEYSHOPS ${ref}`,
-      expiresInSeconds: OTP_TTL_MS / 1000,
-    };
   }
 
   // True only on a developer machine talking to the Firebase emulator, with the explicit switch on. Never true when deployed.
@@ -407,15 +397,16 @@ export class WhatsappOtpService {
               language: { code: 'en' },
               components: [
                 { type: 'body', parameters: [{ type: 'text', text: code }] },
-                // An Authentication template has a "Copy code" button that needs the code again. A body-only template (a Utility
-                // template carrying the code) has no button, and sending a button component for it is an error: set
-                // WHATSAPP_OTP_TEMPLATE_BUTTON=false for that kind.
-                ...(process.env.WHATSAPP_OTP_TEMPLATE_BUTTON === 'false' ? [] : [{
+                // Meta's OTP templates require the code again on the button
+                // component when a "Copy Code" quick-reply button is
+                // configured on the template - harmless to include if the
+                // approved template has no button, per Meta's docs.
+                {
                   type: 'button',
                   sub_type: 'url',
                   index: '0',
                   parameters: [{ type: 'text', text: code }],
-                }]),
+                },
               ],
             },
           }),
