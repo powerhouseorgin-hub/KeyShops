@@ -22,6 +22,8 @@ import { FirestoreAdController } from './ad/firestore-ad.controller';
 import { PublicAdController } from './ad/public-ad.controller';
 import { FirestoreNotificationService } from './notification/firestore-notification.service';
 import { WhatsappHealthService } from './whatsapp-health.service';
+import { EmailService } from './email.service';
+import { EmailOtpService } from './email-otp.service';
 import { WhatsappHealthController } from './whatsapp-health.controller';
 import { FirestoreNotificationController, FirestoreSuperNotificationController } from './notification/firestore-notification.controller';
 import { FirestoreActivityLogService } from './report/firestore-activity-log.service';
@@ -122,6 +124,8 @@ export class ClientIpThrottlerGuard extends ThrottlerGuard {
     FirestoreAdService,
     FirestoreNotificationService,
     WhatsappHealthService,
+    EmailService,
+    EmailOtpService,
     FirestoreActivityLogService,
     FirestoreRevenueService,
     FirestoreDashboardService,

@@ -225,6 +225,19 @@ export const AuthProvider = ({ children }) => {
       return res;
     },
 
+    // Marks the caller's own email as verified, after they entered the code emailed to it (OtpVerificationModal, method 'email',
+    // purpose 'verify-email'). The server re-checks that verification - the client's say-so is never enough.
+    confirmEmail: async () => {
+      const res = await request('/api/auth/confirm-email', 'POST', {});
+      setUser((prev) => {
+        if (!prev) return prev;
+        const next = { ...prev, emailVerified: true };
+        localStorage.setItem('kee_auth_user', JSON.stringify(next));
+        return next;
+      });
+      return res;
+    },
+
     // Requires a recently-verified OTP against the caller's own phone
     // (purpose: 'delete-account') - see AuthService.deleteOwnAccount. Only
     // clears local session state on success; the caller is responsible for

@@ -228,6 +228,8 @@ OTP gates sensitive, unauthenticated or high-risk actions. It does **not** creat
 
 \* There is **no on-screen fallback in production**: the deployed API never returns a code in a response and never writes one to the logs. `devCode` exists only for local smoke tests: it is returned solely when the server runs against the Firebase emulator (`FIRESTORE_EMULATOR_HOST` set) **and** `OTP_SHOW_CODE_IN_UI=true`, for the allow-listed purposes (`register`, `customer_verify`, `change-credentials`).
 
+**Email codes** (`firestore/email-otp.service.ts`, `email.service.ts`). The same code rules as WhatsApp (unique among live codes, bcrypt-hashed, 5 minutes, 5 wrong tries, single use - shared through `WhatsappOtpService.issueCode / verifyIdentifier / redeemIdentifier`), delivered by SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `EMAIL_FROM`; not set = fail-soft, the app says the email could not be sent). An email proves a mailbox, not a phone number, so only two purposes accept it: `verify-email` (proves the address; the code goes to the address typed; shop registration marks `emailVerified` only after redeeming it server-side, Settings uses `POST /auth/confirm-email`) and `reset` (password reset). A reset code is sent only to an address that belongs to an active account AND is marked `emailVerified`; for any other address nothing is sent but the answer is identical, so registered emails cannot be discovered. Limits: 3 codes per address per 10 minutes (`emailOtpRate`), plus the per-IP route limits. Registration, customer verification, login-phone change and account deletion stay phone-only. `scripts/smoke-test-email-otp.ts` runs the whole flow against a local backend and a local test SMTP server.
+
 **Daily health check** (`firestore/whatsapp-health.service.ts`, scheduled function `whatsappHealthCheck`, every day 09:00 IST). Added after the `keyshops` system user lost its asset assignment on the WhatsApp Business account and OTPs silently stopped arriving. Read-only; it checks (1) the access token can read the phone number, (2) the token can read the WhatsApp Business account (`WHATSAPP_BUSINESS_ACCOUNT_ID`) and the Key Shops app (`WHATSAPP_APP_ID`) is still subscribed to it, (3) the last 24 hours of `otpCodes`: 3 or more requests and none ever answered, or 2 or more failed replies. The result is stored in `systemHealth/whatsapp` and shown to the Super Admin on the Support Configuration screen (card `WhatsappHealthCard`, with a Check now button); a problem is logged with `console.error('[WhatsApp health] PROBLEM: ...')` and added to the Super Admin's notifications (type `WHATSAPP_HEALTH`); a recovery is announced once.
 
 Mechanics (`firestore/whatsapp-otp.service.ts`, collection `otpCodes`):
@@ -373,11 +375,12 @@ Conventions:
 | POST | `/auth/login` | Public | 20/600s | `{ email, password, platform }` — `email` holds an email **or** phone; `platform` = `native` for the app. Returns `{ accessToken, user, subscription? }`; web also gets the cookie. |
 | POST | `/auth/logout` | Public | — | Clears the session cookie. |
 | GET | `/auth/me` | Any | — | `{ user, subscription? }` (`subscription` only during grace period). |
-| POST | `/auth/send-otp` | Public | 6/600s | `{ identifier (phone), purpose }` → `{ success, delivered, devCode? }`; in inbound mode `{ success, delivered:false, mode:"inbound", ref, waLink, businessNumber, message, expiresInSeconds }`. |
+| POST | `/auth/send-otp` | Public | 6/600s | `{ identifier (phone, or an email with method "email"), purpose }`; an email gets its code by email (`{ success, delivered, mode:"email", expiresInSeconds }`) and only for the purposes `verify-email` and `reset`. For a phone: `{ identifier, purpose }` → `{ success, delivered, devCode? }`; in inbound mode `{ success, delivered:false, mode:"inbound", ref, waLink, businessNumber, message, expiresInSeconds }`. |
 | GET | `/auth/otp-status` | Public | 90/60s | `?ref=` → `{ state }` (inbound OTP progress: WAITING / CODE_SENT / MISMATCH / EXPIRED / SEND_FAILED / DONE / UNKNOWN). Never returns the code. |
 | POST | `/auth/verify-otp` | Public | 10/600s | `{ identifier, purpose, code }` → `{ success }`. |
 | POST | `/auth/register-shop` | Public | 5/600s | Shop self-registration. `{ shopName, ownerName, email?, phone, password, location, town?, district?, latitude?, longitude?, categoryId, aadhaarNumber? (12 digits), referralCode?, startTrial?, razorpayOrderId?, razorpayPaymentId?, razorpaySignature? }`. Payment fields are mandatory unless `startTrial`. Returns `{ success, shopId, loginPhone, message }`. |
-| POST | `/auth/reset-password-public` | Public | 6/600s | `{ identifier (phone), newPassword }` after a verified `reset` OTP. |
+| POST | `/auth/reset-password-public` | Public | 6/600s | `{ identifier (phone, or a verified account email with method "email"), newPassword }` after a verified `reset` OTP. |
+| POST | `/auth/confirm-email` | Shop/Super | 10/600s | Marks the caller's own email as verified, after the emailed `verify-email` code for that address was verified (single use). Sets `users/{uid}.emailVerified`. |
 | POST | `/auth/change-password` | Any | — | `{ oldPassword, newPassword }`. |
 | POST | `/auth/update-credentials` | Any | — | `{ newPhone }` after a verified `change-credentials` OTP on the new number. |
 | DELETE | `/auth/account` | Any | — | After a verified `delete-account` OTP. |
@@ -517,7 +520,7 @@ The routes under `/shop/vehicle-sales` remain Shop Admin only; a Super Admin get
 | GET | `/super/contact-messages` (`cursor, limit`), PUT `/super/contact-messages/:id/read` | Inbox of public contact messages. |
 | POST | `/super/support-config` | Update platform settings (whatsapp, videos, price, GST, email, care number, trial days). |
 
-> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (117 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
+> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (118 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
 
 ## 9. Third-party integrations
 

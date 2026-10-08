@@ -76,6 +76,8 @@ export default function OtpVerificationModal({
     try {
       const result = await api.sendOtp(identifier, method, purpose);
       const inbound = result?.mode === 'inbound' && !!result.ref;
+      // Email codes: the server says whether the email actually went out.
+      if (result?.mode === 'email' && !result.delivered) setOtpError(t('otpEmailNotSent'));
       setWaRef(inbound ? result.ref : '');
       setWaLink(inbound ? result.waLink || '' : '');
       setWaState(inbound ? 'WAITING' : '');

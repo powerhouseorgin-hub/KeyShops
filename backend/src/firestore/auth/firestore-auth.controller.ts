@@ -6,6 +6,7 @@ import { FirebaseAuthService, syntheticEmailForPhone } from './firebase-auth.ser
 import { UnauthorizedException } from '@nestjs/common';
 import { ShopRegistrationService, type RegisterShopInput } from '../shop/shop-registration.service';
 import { WhatsappOtpService } from '../whatsapp-otp.service';
+import { EmailOtpService } from '../email-otp.service';
 import { FirebaseAuthGuard } from './firebase-auth.guard';
 import { FirestoreService } from '../firestore.service';
 import { UserRepository } from '../shop/user.repository';
@@ -14,6 +15,7 @@ import { SUBSCRIPTION_EXPIRED_MESSAGE } from '../../common/subscription-status';
 import { sessionCookieOptions, clearedSessionCookieOptions, SESSION_COOKIE_NAME } from '../../common/session-cookie';
 import { verifyRazorpaySignature } from '../payment/verify-razorpay-signature';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
+import { normalizeEmail } from '../../common/validators/email';
 
 // Authentication endpoints (/auth/*): login (Firebase password sign-in + session cookie / ID token), logout,
 // OTP send/verify, shop self-registration, password reset/change, login-phone change and account deletion.
@@ -49,6 +51,7 @@ export class FirestoreAuthController {
     private readonly firebaseAuth: FirebaseAuthService,
     private readonly registration: ShopRegistrationService,
     private readonly otp: WhatsappOtpService,
+    private readonly emailOtp: EmailOtpService,
     private readonly firestore: FirestoreService,
     private readonly users: UserRepository,
   ) {}
@@ -110,7 +113,7 @@ export class FirestoreAuthController {
       ipAddress: null, createdAt: Date.now(),
     }).catch((err) => console.error('Failed to write LOGIN activity log for user', uid, err));
 
-    const user = { id: uid, email: profile.email, phone: profile.phone, name: profile.name, role: profile.role, shopId: profile.shopId };
+    const user = { id: uid, email: profile.email, emailVerified: profile.emailVerified === true, phone: profile.phone, name: profile.name, role: profile.role, shopId: profile.shopId };
     const extra = subscription && subscription.state === 'GRACE_PERIOD' ? { subscription } : {};
 
     if (dto.platform !== 'native') {
@@ -131,8 +134,15 @@ export class FirestoreAuthController {
   // could brute-force one inside its 5-minute window.
   @Throttle({ default: { limit: 6, ttl: 600000 } })
   @Post('send-otp')
-  async sendOtp(@Body() dto: { identifier: string; purpose: string }) {
+  async sendOtp(@Body() dto: { identifier: string; purpose: string; method?: string }) {
+    // An email address (method 'email', or an identifier with an @) gets its code by email; anything else is a phone number and
+    // goes over WhatsApp as before.
+    if (this.isEmail(dto)) return this.emailOtp.send(dto.identifier, dto.purpose);
     return this.otp.sendOtp(dto.identifier, dto.purpose);
+  }
+
+  private isEmail(dto: { identifier?: string; method?: string }): boolean {
+    return dto?.method === 'email' || String(dto?.identifier || '').includes('@');
   }
 
   // WhatsApp OTP, inbound flow: what the app polls while it waits for the user's WhatsApp message to arrive. ref is the
@@ -145,7 +155,8 @@ export class FirestoreAuthController {
 
   @Throttle({ default: { limit: 10, ttl: 600000 } })
   @Post('verify-otp')
-  async verifyOtp(@Body() dto: { identifier: string; purpose: string; code: string }) {
+  async verifyOtp(@Body() dto: { identifier: string; purpose: string; code: string; method?: string }) {
+    if (this.isEmail(dto)) return this.emailOtp.verify(dto.identifier, dto.purpose, dto.code);
     return this.otp.verifyOtp(dto.identifier, dto.purpose, dto.code);
   }
 
@@ -218,6 +229,10 @@ export class FirestoreAuthController {
     try {
       const result = await this.registration.registerShop(input);
       await this.firebaseAuth.setCustomClaims(authUser.uid, { role: 'SHOP_ADMIN', shopId: result.shopId });
+      // The email is marked verified only when its emailed code was just verified here (server-side), never on the client's say-so.
+      if (dto.email && (await this.emailOtp.redeem(dto.email, 'verify-email').catch(() => false))) {
+        await this.emailOtp.markVerified(authUser.uid).catch((e) => console.error('Could not mark the email verified', e?.message));
+      }
       return {
         success: true,
         shopId: result.shopId,
@@ -239,6 +254,22 @@ export class FirestoreAuthController {
   @Throttle({ default: { limit: 6, ttl: 600000 } })
   @Post('reset-password-public')
   async resetPasswordPublic(@Body() dto: { identifier: string; method?: string; newPassword: string }) {
+    // By email: the code was emailed to a VERIFIED address of this account (see EmailOtpService), so that address is the proof.
+    if (this.isEmail(dto)) {
+      if (!dto.newPassword || dto.newPassword.length < 6) {
+        throw new BadRequestException('New password must be at least 6 characters long');
+      }
+      if (!(await this.emailOtp.redeem(dto.identifier, 'reset'))) {
+        throw new BadRequestException('Please verify your email code again before resetting your password.');
+      }
+      const account = await this.emailOtp.findVerifiedAccount(dto.identifier);
+      if (!account) throw new BadRequestException('No account with a verified email address was found.');
+      await this.firebaseAuth.updatePassword(account.uid, dto.newPassword);
+      invalidateAuthCache(account.uid);
+      await this.logActivity(account.uid, account.shopId, 'RESET_PASSWORD_PUBLIC', 'Password reset successfully via a verified email code');
+      return { success: true, message: 'Password reset successfully' };
+    }
+
     const phone = normalizePhone(dto.identifier);
     if (!phone) throw new BadRequestException(PHONE_REGEX_MESSAGE);
     if (!dto.newPassword || dto.newPassword.length < 6) {
@@ -254,6 +285,23 @@ export class FirestoreAuthController {
     invalidateAuthCache(profile.id);
     await this.logActivity(profile.id, profile.shopId, 'RESET_PASSWORD_PUBLIC', 'Password reset successfully via public phone recovery');
     return { success: true, message: 'Password reset successfully' };
+  }
+
+  // Marks the caller's own email address as verified, after they entered the code emailed to it (purpose 'verify-email'). Only a
+  // verified email can be used to reset the password by email.
+  @UseGuards(FirebaseAuthGuard)
+  @Throttle({ default: { limit: 10, ttl: 600000 } })
+  @Post('confirm-email')
+  async confirmEmail(@Req() req: any) {
+    const email = normalizeEmail(req.user.email || '');
+    if (!email) throw new BadRequestException('Add an email address to your account first.');
+    if (!(await this.emailOtp.redeem(email, 'verify-email'))) {
+      throw new BadRequestException('Please verify your email with the code we sent before confirming.');
+    }
+    await this.emailOtp.markVerified(req.user.id);
+    invalidateAuthCache(req.user.id);
+    await this.logActivity(req.user.id, req.user.shopId, 'VERIFY_EMAIL', 'Email address verified', { email });
+    return { success: true, emailVerified: true };
   }
 
   @UseGuards(FirebaseAuthGuard)

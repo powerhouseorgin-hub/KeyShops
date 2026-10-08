@@ -131,6 +131,25 @@ export class WhatsappOtpService {
     return { success: true, delivered };
   }
 
+  // Claims a unique live code for (identifier, purpose), stores it hashed (superseding any earlier one) and returns it so the caller
+  // can deliver it by some channel. If delivery fails the caller must call release() to give the code back.
+  async issueCode(identifier: string, purpose: string): Promise<{ code: string; release: () => Promise<void> }> {
+    const claim = await this.claimCode();
+    try {
+      const codeHash = await bcrypt.hash(claim.code, OTP_HASH_COST);
+      await this.createRecord(identifier, purpose, { codeHash });
+    } catch (e) {
+      await this.releaseCode(claim);
+      throw e;
+    }
+    return { code: claim.code, release: () => this.releaseCode(claim) };
+  }
+
+  get ttlMinutes(): number { return OTP_TTL_MS / 60000; }
+
+  // True only on a developer machine talking to the Firebase emulator
+  localTesting(): boolean { return this.localTestingMode(); }
+
   // True only on a developer machine talking to the Firebase emulator, with the explicit switch on. Never true when deployed.
   private localTestingMode(): boolean {
     return !!process.env.FIRESTORE_EMULATOR_HOST && process.env.OTP_SHOW_CODE_IN_UI === 'true';
@@ -286,6 +305,11 @@ export class WhatsappOtpService {
   async redeemVerification(identifierRaw: string, purpose: string): Promise<boolean> {
     const identifier = normalizePhone(identifierRaw);
     if (!identifier) return false;
+    return this.redeemIdentifier(identifier, purpose);
+  }
+
+  // The same redemption for any already-normalised identifier (a phone number, or an email address for the email codes).
+  async redeemIdentifier(identifier: string, purpose: string): Promise<boolean> {
     const snap = await this.firestore.db
       .collection(OTP_COLLECTION)
       .where('identifier', '==', identifier)
@@ -306,7 +330,12 @@ export class WhatsappOtpService {
     if (!identifier) {
       throw new BadRequestException(PHONE_REGEX_MESSAGE);
     }
+    return this.verifyIdentifier(identifier, purpose, code);
+  }
 
+  // The same check for any already-normalised identifier (a phone number, or an email address for the email codes): newest live
+  // code, 5-minute expiry, 5 wrong tries, bcrypt compare, single use.
+  async verifyIdentifier(identifier: string, purpose: string, code: string): Promise<VerifyOtpResult> {
     const col = this.firestore.db.collection(OTP_COLLECTION);
     const snap = await col
       .where('identifier', '==', identifier)

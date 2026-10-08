@@ -13,6 +13,9 @@ export type Role = 'SUPER_ADMIN' | 'SHOP_ADMIN';
 
 export interface UserDoc {
   email: string | null;
+  // true once the owner proved the mailbox with an emailed code (see EmailOtpService); only then may it be used to reset the password
+  emailVerified?: boolean;
+  emailVerifiedAt?: number;
   phone: string | null;
   name: string;
   role: Role;

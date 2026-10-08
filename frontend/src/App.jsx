@@ -934,7 +934,7 @@ export default function App() {
 
   // Forgot password flow states
   const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [resetMethod] = useState('phone'); // phone-only - email OTP removed
+  const [resetMethod, setResetMethod] = useState('phone'); // 'phone' (WhatsApp code) or 'email' (code to a verified email)
   const [resetIdentifier, setResetIdentifier] = useState('');
   const [otpVerified, setOtpVerified] = useState(false);
   const [showResetOtpModal, setShowResetOtpModal] = useState(false);
@@ -957,6 +957,8 @@ export default function App() {
   // and only sent to the backend, when enabled).
   const [regEmailEnabled, setRegEmailEnabled] = useState(false);
   const [regEmail, setRegEmail] = useState('');
+  const [regEmailVerified, setRegEmailVerified] = useState(false); // the typed email was verified with an emailed code
+  const [showRegEmailOtpModal, setShowRegEmailOtpModal] = useState(false);
   const [regPhone, setRegPhone] = useState('');
   const [regPhoneError, setRegPhoneError] = useState('');
   const [regLocation, setRegLocation] = useState('');
@@ -1128,6 +1130,7 @@ export default function App() {
 
   const resetForgotPasswordFlow = () => {
     setShowForgotPassword(false);
+    setResetMethod('phone');
     setResetIdentifier('');
     setOtpVerified(false);
     setShowResetOtpModal(false);
@@ -1307,6 +1310,7 @@ export default function App() {
     setRegShopName('');
     setRegOwnerName('');
     setRegEmail('');
+    setRegEmailVerified(false);
     setRegPhone('');
     setRegLocation('');
     setRegLat(null);
@@ -1605,17 +1609,17 @@ export default function App() {
                   ) : !otpVerified ? (
                     <form onSubmit={(e) => { e.preventDefault(); setShowResetOtpModal(true); }}>
                       <p style={{ color: 'var(--text-2)', fontSize: 12.5, fontWeight: 600, textAlign: 'center', marginBottom: 16 }}>
-                        {t('enterRegisteredMethodTemplate').split('{method}')[0]}{t('phoneOtpLabel')}{t('enterRegisteredMethodTemplate').split('{method}')[1]}
+                        {t('enterRegisteredMethodTemplate').split('{method}')[0]}{resetMethod === 'email' ? t('emailOtpLabel') : t('phoneOtpLabel')}{t('enterRegisteredMethodTemplate').split('{method}')[1]}
                       </p>
                       <div className="reg-field">
-                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('registeredPhoneNumberLabel')} <span className="req">*</span></b></div>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: resetMethod === 'email' ? 'var(--red)' : 'var(--teal)' }}>{resetMethod === 'email' ? <Mail /> : <Phone />}</div><b>{resetMethod === 'email' ? t('registeredEmailLabel') : t('registeredPhoneNumberLabel')} <span className="req">*</span></b></div>
                         <div className="input-wrap">
                           <input
-                            type="text"
+                            type={resetMethod === 'email' ? 'email' : 'text'}
                             required
                             value={resetIdentifier}
                             onChange={(e) => setResetIdentifier(e.target.value)}
-                            placeholder="e.g. +91 99999 99999"
+                            placeholder={resetMethod === 'email' ? 'you@example.com' : 'e.g. +91 99999 99999'}
                           />
                         </div>
                       </div>
@@ -1638,6 +1642,17 @@ export default function App() {
                           {resetLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : t('sendOtpCodeBtn')}
                         </button>
                       </div>
+                      <button
+                        type="button"
+                        className="forgot-link"
+                        style={{ display: 'block', margin: '14px auto 0', background: 'none', border: 'none', cursor: 'pointer' }}
+                        onClick={() => { setResetMethod(resetMethod === 'email' ? 'phone' : 'email'); setResetIdentifier(''); setResetError(''); }}
+                      >
+                        {resetMethod === 'email' ? t('resetUsePhoneLink') : t('resetUseEmailLink')}
+                      </button>
+                      {resetMethod === 'email' && (
+                        <p style={{ color: 'var(--text-3)', fontSize: 11.5, fontWeight: 600, textAlign: 'center', margin: '8px 0 0' }}>{t('resetEmailNote')}</p>
+                      )}
 
                       <Suspense fallback={null}>
                       <OtpVerificationModal
@@ -1646,10 +1661,10 @@ export default function App() {
                         onVerified={() => setOtpVerified(true)}
                         api={api}
                         identifier={resetIdentifier}
-                        method="phone"
+                        method={resetMethod}
                         purpose="reset"
-                        title={t('verifyOtpModalTitle')}
-                        description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', resetIdentifier)}
+                        title={resetMethod === 'email' ? t('verifyEmailModalTitle') : t('verifyOtpModalTitle')}
+                        description={resetMethod === 'email' ? t('otpEmailSentTemplate').replace('{email}', resetIdentifier) : t('fourDigitCodeDispatchedTemplate').replace('{identifier}', resetIdentifier)}
                         t={t}
                       />
                       </Suspense>
@@ -1866,11 +1881,34 @@ export default function App() {
                               {regEmailEnabled && (
                                 <div className="input-wrap">
                                   <input
-                                    type="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)}
+                                    type="email" value={regEmail} onChange={(e) => { setRegEmail(e.target.value); setRegEmailVerified(false); }}
                                     placeholder="you@example.com"
                                   />
                                 </div>
                               )}
+                              {regEmailEnabled && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(regEmail.trim()) && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
+                                  {regEmailVerified ? (
+                                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--green)', fontWeight: 800, fontSize: 12.5 }}><Check className="h-4 w-4" /> {t('emailVerifiedBadge')}</span>
+                                  ) : (
+                                    <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowRegEmailOtpModal(true)}>{t('verifyEmailBtn')}</button>
+                                  )}
+                                </div>
+                              )}
+                              <Suspense fallback={null}>
+                                <OtpVerificationModal
+                                  open={showRegEmailOtpModal}
+                                  onClose={() => setShowRegEmailOtpModal(false)}
+                                  onVerified={() => setRegEmailVerified(true)}
+                                  api={api}
+                                  identifier={regEmail.trim()}
+                                  method="email"
+                                  purpose="verify-email"
+                                  title={t('verifyEmailModalTitle')}
+                                  description={t('otpEmailSentTemplate').replace('{email}', regEmail.trim())}
+                                  t={t}
+                                />
+                              </Suspense>
                             </div>
                             <div className="reg-field">
                               <div className="toggle-field-row">

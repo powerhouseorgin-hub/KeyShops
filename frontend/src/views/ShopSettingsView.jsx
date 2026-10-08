@@ -34,6 +34,7 @@ function ShopSettingsView({ t, api, shopId }) {
   const referralCacheKey = shopId || 'own';
   const cachedReferral = referralOverviewCache[referralCacheKey] || null;
   const [shopName, setShopName] = useState('');
+  const [showEmailOtpModal, setShowEmailOtpModal] = useState(false);
   const [address, setAddress] = useState('');
   const [gst, setGst] = useState('');
   const [phone, setPhone] = useState('');
@@ -707,6 +708,19 @@ function ShopSettingsView({ t, api, shopId }) {
                 <div className="reg-field" style={{ marginBottom: 12 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--blue)' }}><Mail /></div><b>{t('emailAddressLabel')}</b></div>
                   <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>{user.email || t('noEmailOnFileLabel')}</p>
+                  {!shopId && user.email && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, flexWrap: 'wrap' }}>
+                      {user.emailVerified ? (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, color: 'var(--green)', fontWeight: 800, fontSize: 12.5 }}><CheckCircle2 size={15} /> {t('emailVerifiedBadge')}</span>
+                      ) : (
+                        <>
+                          <span style={{ color: 'var(--text-3)', fontSize: 12, fontWeight: 700 }}>{t('emailNotVerifiedBadge')}</span>
+                          <button type="button" className="btn btn-outline btn-sm" onClick={() => setShowEmailOtpModal(true)}>{t('verifyEmailBtn')}</button>
+                          <span className="cell-sub" style={{ flexBasis: '100%' }}>{t('emailVerifyHint')}</span>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--teal)' }}><Phone /></div><b>{t('phoneNumberLabel')}</b></div>
@@ -940,6 +954,23 @@ function ShopSettingsView({ t, api, shopId }) {
         purpose="change-credentials"
         title={t('verifyOtpModalTitle')}
         description={t('fourDigitCodeDispatchedTemplate').replace('{identifier}', credNewValue.trim())}
+        t={t}
+      />
+      </Suspense>
+
+      <Suspense fallback={null}>
+      <OtpVerificationModal
+        open={showEmailOtpModal}
+        onClose={() => setShowEmailOtpModal(false)}
+        onVerified={async () => {
+          try { await api.confirmEmail(); } catch (e) { window.alert(e.message || 'Could not verify the email'); }
+        }}
+        api={api}
+        identifier={user.email || ''}
+        method="email"
+        purpose="verify-email"
+        title={t('verifyEmailModalTitle')}
+        description={t('otpEmailSentTemplate').replace('{email}', user.email || '')}
         t={t}
       />
       </Suspense>
