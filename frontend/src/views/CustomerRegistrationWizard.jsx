@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '../context/AuthContext';
 import { useBackHandler } from '../utils/backHandler';
@@ -23,9 +23,6 @@ import {
   UploadCloud, Crosshair, FileCheck, Navigation, KeyRound, Car, Download, Home, Save,
   X, MessageCircle,
 } from 'lucide-react';
-
-// Lazy-loaded - see the identical import in App.jsx for why this is deferred rather than static.
-const OtpVerificationModal = lazy(() => import('../components/OtpVerificationModal'));
 
 function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = [], editCustomer = null, onDone, onCancel }) {
   const { user } = useAuth();
@@ -88,10 +85,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   const [billAmountEnabled, setBillAmountEnabled] = useState(false);
   const [homeOfficeNameEnabled, setHomeOfficeNameEnabled] = useState(false);
 
-  // OTP verification - shared OtpVerificationModal (Page 1's Mobile Number
-  // field trigger), phone-only.
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [showCustomerOtpModal, setShowCustomerOtpModal] = useState(false);
   const [duplicateKeyWarning, setDuplicateKeyWarning] = useState(false);
 
   // Document Uploads
@@ -345,10 +338,9 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
   };
 
-  // Page 1's Mobile Number OTP trigger - actual send/verify/resend/countdown
-  // lives in the shared OtpVerificationModal (see showCustomerOtpModal below).
-  // Always opens the popup - see handleOpenRegOtpModal's comment above.
-  const handleOpenCustomerOtpModal = () => {
+  // Page 1 -> Page 2. A new customer's phone number is not verified with a code; it only has to be a valid number (the server checks
+  // it again when the customer is saved).
+  const handleNextFromPageOne = () => {
     const normalized = normalizePhone(phone);
     if (!normalized) {
       setPhoneError(PHONE_REGEX_MESSAGE);
@@ -356,7 +348,7 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     }
     setPhoneError('');
     if (normalized !== phone) setPhone(normalized);
-    setShowCustomerOtpModal(true);
+    setWizardPage(2);
   };
 
   // Duplicate-key check, relocated here (from the old OTP-send handler) since
@@ -534,8 +526,6 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setHomeOfficeNameEnabled(false);
     setAddressLine('');
     setDistrict('');
-    setOtpVerified(false);
-    setShowCustomerOtpModal(false);
     setDuplicateKeyWarning(false);
     setUploadedDocs([]);
     setLatitude(null);
@@ -854,38 +844,13 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   <div className="input-wrap">
                     <input
                       type="tel" required value={phone}
-                      onChange={(e) => { setPhone(e.target.value); setOtpVerified(false); setPhoneError(''); }}
+                      onChange={(e) => { setPhone(e.target.value); setPhoneError(''); }}
                       placeholder={t('phoneNumberPlaceholderEg')}
                     />
                   </div>
                   {phoneError && (
                     <span style={{ display: 'block', marginTop: 6, fontSize: 11, fontWeight: 700, color: 'var(--red)' }}>{phoneError}</span>
                   )}
-                  {!otpVerified && (
-                    <button type="button" onClick={handleOpenCustomerOtpModal} className="btn btn-primary btn-sm" style={{ width: '100%', marginTop: 8 }}>
-                      {t('sendOtpToVerifyBtn')}
-                    </button>
-                  )}
-                  {otpVerified && (
-                    <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
-                      <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--green)' }} />
-                      <span style={{ color: 'var(--green)', fontSize: 12, fontWeight: 700 }}>{t('mobileNumberVerifiedMsg')}</span>
-                    </div>
-                  )}
-                  <Suspense fallback={null}>
-                  <OtpVerificationModal
-                    open={showCustomerOtpModal}
-                    onClose={() => setShowCustomerOtpModal(false)}
-                    onVerified={() => setOtpVerified(true)}
-                    api={api}
-                    identifier={phone}
-                    method="phone"
-                    purpose="customer_verify"
-                    title={t('verifyOtpModalTitle')}
-                    description={t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', phone)}
-                    t={t}
-                  />
-                  </Suspense>
                 </div>
                 <div className="reg-field" style={{ marginBottom: 0 }}>
                   <div className="reg-field-label">
@@ -926,8 +891,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                 <span />
                 <button
                   type="button" className="btn btn-primary" style={{ minWidth: 150 }}
-                  disabled={!vehicleCategory || !name || !phone || !otpVerified || !addressLine || (superAdminMode && !selectedShopId)}
-                  onClick={() => setWizardPage(2)}
+                  disabled={!vehicleCategory || !name || !phone || !addressLine || (superAdminMode && !selectedShopId)}
+                  onClick={handleNextFromPageOne}
                 >
                   {t('btnNext')} <ArrowRight style={{ width: 18, height: 18 }} />
                 </button>

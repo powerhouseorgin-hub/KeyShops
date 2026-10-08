@@ -221,7 +221,7 @@ OTP gates sensitive, unauthenticated or high-risk actions. It does **not** creat
 | `purpose` | Used for | Code may be shown in UI as fallback* |
 |---|---|---|
 | `register` | Shop self-registration | yes |
-| `customer_verify` | Verifying a customer's phone during registration | yes |
+| `customer_verify` | (no longer used by the app: a new customer's phone is not verified with a code; the server still supports the purpose) | yes |
 | `change-credentials` | Changing the login phone | yes |
 | `reset` | Public password reset | **never** |
 | `delete-account` | Account deletion | **never** |
