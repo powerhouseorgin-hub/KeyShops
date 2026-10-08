@@ -93,16 +93,7 @@ describe('EmailOtpService', () => {
     expect(await svc.redeem(EMAIL, 'verify-email')).toBe(false); // one verification, one action
   });
 
-  it('a customer email is verified with its own purpose, and nothing else can use that code', async () => {
-    const { svc } = setup();
-    expect(await svc.send(EMAIL, 'customer-email')).toMatchObject({ delivered: true });
-    expect(mail.sendCode).toHaveBeenCalledWith(EMAIL, expect.stringMatching(/^[0-9]{4}$/), 'verify your email address', 5);
-    await expect(svc.verify(EMAIL, 'reset', codeSent())).rejects.toThrow(/No pending OTP/);
-    await expect(svc.verify(EMAIL, 'verify-email', codeSent())).rejects.toThrow(/No pending OTP/);
-    await expect(svc.verify(EMAIL, 'customer-email', codeSent())).resolves.toEqual({ success: true });
-  });
-
-  it('rejects an invalid address and any purpose other than the email purposes', async () => {
+  it('rejects an invalid address and any purpose other than verify-email and reset', async () => {
     const { svc } = setup();
     await expect(svc.send('not-an-email', 'verify-email')).rejects.toThrow(/valid email/);
     for (const purpose of ['register', 'customer_verify', 'delete-account', 'change-credentials']) {
