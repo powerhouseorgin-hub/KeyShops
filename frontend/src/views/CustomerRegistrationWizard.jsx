@@ -21,7 +21,7 @@ import {
   Key, Check, MapPin, Camera, AlertTriangle, RefreshCw, Edit, Eye, CheckCircle2,
   Lock, Phone, ArrowRight, ArrowLeft, Store, UserPlus, IndianRupee, User,
   UploadCloud, Crosshair, FileCheck, Navigation, KeyRound, Car, Download, Home, Save,
-  X, MessageCircle,
+  X, MessageCircle, Mail,
 } from 'lucide-react';
 
 // Lazy-loaded - see the identical import in App.jsx for why this is deferred rather than static.
@@ -92,6 +92,14 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
   // field trigger), phone-only.
   const [otpVerified, setOtpVerified] = useState(false);
   const [showCustomerOtpModal, setShowCustomerOtpModal] = useState(false);
+  // Two ways to verify the customer: their WhatsApp message (default) or a code emailed to them. verifiedVia remembers which one
+  // succeeded so the saved record says how the customer was verified.
+  const [emailMode, setEmailMode] = useState(false);
+  const [custEmail, setCustEmail] = useState('');
+  const [custEmailError, setCustEmailError] = useState('');
+  const [showCustomerEmailOtpModal, setShowCustomerEmailOtpModal] = useState(false);
+  const [verifiedVia, setVerifiedVia] = useState(null); // 'whatsapp' | 'email'
+  const [verifiedEmail, setVerifiedEmail] = useState('');
   const [duplicateKeyWarning, setDuplicateKeyWarning] = useState(false);
 
   // Document Uploads
@@ -359,6 +367,23 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setShowCustomerOtpModal(true);
   };
 
+  // "Send OTP to email": the phone number still has to be a valid one (it is what gets saved); the code goes to the email typed.
+  const handleSendCustomerEmailCode = () => {
+    const normalized = normalizePhone(phone);
+    if (!normalized) {
+      setPhoneError(PHONE_REGEX_MESSAGE);
+      return;
+    }
+    setPhoneError('');
+    if (normalized !== phone) setPhone(normalized);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(custEmail.trim())) {
+      setCustEmailError(t('pleaseEnterValidEmailMsg'));
+      return;
+    }
+    setCustEmailError('');
+    setShowCustomerEmailOtpModal(true);
+  };
+
   // Duplicate-key check, relocated here (from the old OTP-send handler) since
   // Key Code now lives on Page 2, entered after phone/OTP verification. Fired
   // on the Key Code field's blur (see Page 2 below).
@@ -445,8 +470,8 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
         }
       } else {
         customer = superAdminMode
-          ? await api.createSuperCustomer({ shopId: selectedShopId, ...payload })
-          : await api.createCustomer(payload);
+          ? await api.createSuperCustomer({ shopId: selectedShopId, ...payload, phoneVerifiedVia: verifiedVia || undefined, ...(verifiedVia === 'email' ? { verifiedEmail } : {}) })
+          : await api.createCustomer({ ...payload, phoneVerifiedVia: verifiedVia || undefined, ...(verifiedVia === 'email' ? { verifiedEmail } : {}) });
       }
 
       // Attempt every document even if one fails; failures are collected and offered for retry on the
@@ -535,6 +560,11 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
     setAddressLine('');
     setDistrict('');
     setOtpVerified(false);
+    setEmailMode(false);
+    setCustEmail('');
+    setCustEmailError('');
+    setVerifiedVia(null);
+    setVerifiedEmail('');
     setShowCustomerOtpModal(false);
     setDuplicateKeyWarning(false);
     setUploadedDocs([]);
@@ -861,28 +891,69 @@ function CustomerRegistrationWizard({ t, api, superAdminMode = false, shops = []
                   {phoneError && (
                     <span style={{ display: 'block', marginTop: 6, fontSize: 11, fontWeight: 700, color: 'var(--red)' }}>{phoneError}</span>
                   )}
-                  {!otpVerified && (
-                    <button type="button" onClick={handleOpenCustomerOtpModal} className="btn btn-primary btn-sm" style={{ width: '100%', marginTop: 8 }}>
-                      {t('sendOtpToVerifyBtn')}
-                    </button>
+                  {!otpVerified && !emailMode && (
+                    <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
+                      <button type="button" onClick={handleOpenCustomerOtpModal} className="btn btn-primary btn-sm" style={{ flex: '1 1 150px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                        <MessageCircle className="h-4 w-4" /> {t('verifyByWhatsappBtn')}
+                      </button>
+                      <button type="button" onClick={() => { setEmailMode(true); setCustEmailError(''); }} className="btn btn-outline btn-sm" style={{ flex: '1 1 150px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                        <Mail className="h-4 w-4" /> {t('verifyByEmailBtn')}
+                      </button>
+                    </div>
+                  )}
+                  {!otpVerified && emailMode && (
+                    <div className="animate-fade-in" style={{ marginTop: 10, padding: 12, border: '1px solid var(--border-2)', borderRadius: 12 }}>
+                      <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--red)' }}><Mail /></div><b>{t('customerEmailLabel')} <span className="req">*</span></b></div>
+                      <div className="input-wrap">
+                        <input
+                          type="email" value={custEmail} autoComplete="off"
+                          onChange={(e) => { setCustEmail(e.target.value); setCustEmailError(''); }}
+                          placeholder="customer@example.com"
+                        />
+                      </div>
+                      <span className="cell-sub" style={{ display: 'block', marginTop: 6 }}>{t('customerEmailHint')}</span>
+                      {custEmailError && (
+                        <span style={{ display: 'block', marginTop: 6, fontSize: 11, fontWeight: 700, color: 'var(--red)' }}>{custEmailError}</span>
+                      )}
+                      <button type="button" onClick={handleSendCustomerEmailCode} className="btn btn-primary btn-sm" style={{ width: '100%', marginTop: 10 }}>
+                        {t('sendEmailCodeBtn')}
+                      </button>
+                      <button type="button" onClick={() => { setEmailMode(false); setCustEmailError(''); }} className="forgot-link" style={{ display: 'block', margin: '10px auto 0', background: 'none', border: 'none', cursor: 'pointer' }}>
+                        {t('verifyByWhatsappInstead')}
+                      </button>
+                    </div>
                   )}
                   {otpVerified && (
                     <div className="animate-fade-in" style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 8 }}>
                       <CheckCircle2 className="h-4 w-4" style={{ color: 'var(--green)' }} />
-                      <span style={{ color: 'var(--green)', fontSize: 12, fontWeight: 700 }}>{t('mobileNumberVerifiedMsg')}</span>
+                      <span style={{ color: 'var(--green)', fontSize: 12, fontWeight: 700 }}>
+                        {verifiedVia === 'email' ? t('customerEmailVerifiedMsg').replace('{email}', verifiedEmail) : t('mobileNumberVerifiedMsg')}
+                      </span>
                     </div>
                   )}
                   <Suspense fallback={null}>
                   <OtpVerificationModal
                     open={showCustomerOtpModal}
                     onClose={() => setShowCustomerOtpModal(false)}
-                    onVerified={() => setOtpVerified(true)}
+                    onVerified={() => { setOtpVerified(true); setVerifiedVia('whatsapp'); setVerifiedEmail(''); }}
                     api={api}
                     identifier={phone}
                     method="phone"
                     purpose="customer_verify"
                     title={t('verifyOtpModalTitle')}
                     description={t('enterOtpCodeSentToPhoneTemplate').replace('{phone}', phone)}
+                    t={t}
+                  />
+                  <OtpVerificationModal
+                    open={showCustomerEmailOtpModal}
+                    onClose={() => setShowCustomerEmailOtpModal(false)}
+                    onVerified={() => { setOtpVerified(true); setVerifiedVia('email'); setVerifiedEmail(custEmail.trim()); }}
+                    api={api}
+                    identifier={custEmail.trim()}
+                    method="email"
+                    purpose="customer-email"
+                    title={t('verifyEmailModalTitle')}
+                    description={t('otpEmailSentTemplate').replace('{email}', custEmail.trim())}
                     t={t}
                   />
                   </Suspense>

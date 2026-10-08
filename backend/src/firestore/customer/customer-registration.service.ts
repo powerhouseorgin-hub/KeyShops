@@ -26,6 +26,9 @@ export interface CreateCustomerInput {
   addKey?: boolean;
   homeOfficeName?: string;
   vehicleCategory?: string;
+  // How the customer's contact was verified when the shop registered them: the customer's WhatsApp message, or a code emailed to verifiedEmail
+  phoneVerifiedVia?: 'whatsapp' | 'email';
+  verifiedEmail?: string;
 }
 
 // Customer registration: upserts a shop-scoped MasterKey catalog entry (find-or-create by the
@@ -100,6 +103,8 @@ export class CustomerRegistrationService {
         addKey: input.addKey ?? false,
         homeOfficeName: input.homeOfficeName || null,
         vehicleCategory: input.vehicleCategory || null,
+        phoneVerifiedVia: input.phoneVerifiedVia || null,
+        verifiedEmail: input.verifiedEmail || null,
         deletedAt: null,
         createdAt: now,
         updatedAt: now,

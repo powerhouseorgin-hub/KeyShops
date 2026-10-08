@@ -8,19 +8,21 @@ import { EMAIL_REGEX_MESSAGE, normalizeEmail } from '../common/validators/email'
 // Verification codes by email, next to the WhatsApp ones. Same code rules (unique among live codes, bcrypt-hashed, 5 minutes, 5 wrong
 // tries, single use) - they come from WhatsappOtpService - only the way the code travels differs.
 //
-// Two purposes, and no others (an email proves a mailbox, not a phone number, so it must not unlock phone-bound actions):
+// Three purposes, and no others (an email proves a mailbox, not a phone number, so it must not unlock phone-bound actions):
 //   'verify-email' - proves the user controls an address (shop registration, settings). The code goes to the address typed.
+//   'customer-email' - the same proof for a CUSTOMER being registered by a shop: the customer reads the code from their own inbox.
 //   'reset'        - password reset for someone who forgot their password. The code goes ONLY to an address that belongs to an account
 //                    AND was verified earlier; for any other address nothing is sent but the answer looks exactly the same, so the
 //                    endpoint cannot be used to find out which emails are registered.
 // Abuse limits: 3 codes per address per 10 minutes (on top of the per-IP limit on the route).
-export const EMAIL_OTP_PURPOSES = new Set(['verify-email', 'reset']);
+export const EMAIL_OTP_PURPOSES = new Set(['verify-email', 'customer-email', 'reset']);
 const RATE_COLLECTION = 'emailOtpRate';
 const RATE_WINDOW_MS = 10 * 60 * 1000;
 const RATE_MAX = 3;
 
 const REASON: Record<string, string> = {
   'verify-email': 'verify your email address',
+  'customer-email': 'verify your email address',
   reset: 'reset your password',
 };
 

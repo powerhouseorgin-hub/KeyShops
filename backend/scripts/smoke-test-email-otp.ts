@@ -1,5 +1,5 @@
 // End-to-end check of the email code flow against a local backend (port 4100, Firebase emulators) whose SMTP settings point at a local
-// test SMTP server that records every email as one JSON line in $MAIL_LOG (see the test setup in docs/TECHNICAL_DOCUMENTATION.md).
+// test SMTP server (node scripts/test-smtp-sink.js) that records every email as one JSON line in $MAIL_LOG.
 //
 //   MAIL_LOG=/path/to/mails.log npx ts-node scripts/smoke-test-email-otp.ts
 // Needs the seeded accounts (scripts/seed-ui-test-accounts.ts): shopadmin@uitest.com / TestPass123.

@@ -6,6 +6,7 @@ import { CryptoService } from '../../crypto/crypto.service';
 import { FirebaseFileService } from '../storage/firebase-file.service';
 import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.service';
 import { normalizePhone, PHONE_REGEX_MESSAGE } from '../../common/validators/phone';
+import { normalizeEmail } from '../../common/validators/email';
 
 // Firestore port of CustomerService's remaining surface - creation itself
 // already lives in CustomerRegistrationService (the transactional
@@ -51,6 +52,9 @@ export interface CreateCustomerDtoInput extends UpdateCustomerInput {
   phone: string;
   photoBase64?: string;
   manualKey?: { category: string };
+  // How the shop verified the customer: 'whatsapp' (the customer's own message) or 'email' (a code emailed to verifiedEmail)
+  phoneVerifiedVia?: string;
+  verifiedEmail?: string;
 }
 
 @Injectable()
@@ -127,6 +131,7 @@ export class FirestoreCustomerService {
       addKey: dto.addKey,
       homeOfficeName: dto.homeOfficeName,
       vehicleCategory: dto.vehicleCategory || dto.manualKey?.category,
+      ...this.verificationFields(dto),
     };
 
     const { customerId } = await this.registration.createCustomer(input);
@@ -137,6 +142,15 @@ export class FirestoreCustomerService {
 
     const doc = await this.shops.customers(shopId).doc(customerId).get();
     return this.enrichCustomerRow(customerId, shopId, doc.data());
+  }
+
+  // Only the two known channels are kept, and an email is stored only with the 'email' channel and only when it is a real address.
+  private verificationFields(dto: CreateCustomerDtoInput): Pick<CreateCustomerInput, 'phoneVerifiedVia' | 'verifiedEmail'> {
+    if (dto.phoneVerifiedVia === 'email') {
+      const email = normalizeEmail(dto.verifiedEmail || '');
+      return email ? { phoneVerifiedVia: 'email', verifiedEmail: email } : {};
+    }
+    return dto.phoneVerifiedVia === 'whatsapp' ? { phoneVerifiedVia: 'whatsapp' } : {};
   }
 
   // Re-fetches customers by (shopId, id) - used for Algolia search hits, which only give an
