@@ -56,6 +56,24 @@ export class FirestoreAuthController {
     private readonly users: UserRepository,
   ) {}
 
+  // The email Firebase Auth has on file for whoever the login form's identifier names. A PHONE NUMBER is resolved through our own
+  // phoneIndex (phone -> the profile's uid -> that user's email), not through Firebase's own "user by phone number" lookup: a phone number
+  // can also sit on an older phone-only Auth user (left over from the Phone Auth sign-in era) with no email and no password, and Firebase
+  // then returns THAT user - so the shop's real account could never be reached by its phone number, and its password reset (which goes
+  // through the index) never helped. Firebase's lookup stays as the fallback for a number that has no index entry.
+  private async resolveLoginEmail(identifier: string): Promise<string | null> {
+    if (identifier.includes('@')) return identifier;
+    const phone = normalizePhone(identifier);
+    if (phone) {
+      const profile = await this.users.findByEmailOrPhone(phone);
+      if (profile) {
+        const email = await this.firebaseAuth.getAuthEmail(profile.id).catch(() => null);
+        if (email) return email;
+      }
+    }
+    return this.firebaseAuth.resolveLoginEmail(identifier);
+  }
+
   // Backs GET /auth/me. `subscription` is only present during GRACE_PERIOD (not on every healthy
   // subscription): a bare truthiness check on the frontend would otherwise misread an always-present
   // field as "expired".
@@ -82,7 +100,7 @@ export class FirestoreAuthController {
     // field) - resolved to whatever email Firebase
     // Auth actually has on file (real or synthetic) before attempting
     // sign-in, since Firebase's password sign-in only accepts an email.
-    const resolvedEmail = await this.firebaseAuth.resolveLoginEmail(dto.email);
+    const resolvedEmail = await this.resolveLoginEmail(dto.email);
     if (!resolvedEmail) throw new UnauthorizedException('Invalid email or password');
 
     const { idToken, uid } = await this.firebaseAuth.signInWithPassword(resolvedEmail, dto.password);
