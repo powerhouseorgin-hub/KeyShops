@@ -8,6 +8,7 @@ import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../
 import { useSubmitting } from '../hooks/useSubmitting';
 import TrialControl from '../components/TrialControl';
 import ExtendSubscriptionDialog from '../components/ExtendSubscriptionDialog';
+import RenewSubscriptionDialog from '../components/RenewSubscriptionDialog';
 import { shopAccess } from '../utils/shopAccess';
 import { txt } from '../utils/i18nFallback';
 import {
@@ -52,6 +53,7 @@ function ShopSettingsView({ t, api, shopId }) {
   // Can the shop actually get in? (server: subscription + grace period) - the Super Admin's Account Status reads this, not just isActive.
   const [accessInfo, setAccessInfo] = useState({ accessState: undefined, graceDaysRemaining: null });
   const [showExtend, setShowExtend] = useState(false);
+  const [showRenew, setShowRenew] = useState(false); // a Shop Admin paying for their own renewal
   // Workspace Profile fields are read-only until Edit is tapped - guards
   // against an accidental keystroke/paste silently changing the shop's
   // name/phone/address while just viewing this screen.
@@ -549,13 +551,13 @@ function ShopSettingsView({ t, api, shopId }) {
                   alert). The trial control and the Account Status are Super Admin only (shopId is only set when a Super Admin manages another
                   shop). Account Status shows whether the shop can ACTUALLY get in: a shop whose subscription and grace period are over is locked
                   out at login, so it reads Suspended even though the manual switch (isActive) is still on. */}
-              {(subscriptionInfo || shopId) && (() => {
+              {(() => {
                 const access = shopAccess({ isActive: shopIsActive, accessState: accessInfo.accessState, graceDaysRemaining: accessInfo.graceDaysRemaining }, subscriptionInfo);
                 const suspended = access.tone === 'suspended';
                 const sep = { borderTop: '1px solid var(--border-2)', marginTop: 14, paddingTop: 14 };
                 return (
                   <div className="reg-section" style={{ marginBottom: 0 }}>
-                    {(subscriptionInfo || shopId) && (
+                    {(
                       <div className="reg-field" style={{ marginBottom: 0 }}>
                         <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Calendar /></div><b>{t('subscriptionValidUntilLabel')}</b></div>
                         <div className="flex items-center justify-between">
@@ -570,6 +572,15 @@ function ShopSettingsView({ t, api, shopId }) {
                             </span>
                           )}
                         </div>
+                        {/* Shop Admin (their own settings): pay for the next year now - it starts after the current end date, no days lost */}
+                        {!shopId && (
+                          <button
+                            type="button" onClick={() => setShowRenew(true)} className="btn btn-sm"
+                            style={{ width: '100%', marginTop: 10, background: 'var(--gold)', borderColor: 'var(--gold)', color: '#1a1100', fontWeight: 800, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                          >
+                            <RefreshCw className="h-4 w-4" /> {txt(t, 'renewBtn', 'Renew / Extend subscription')}
+                          </button>
+                        )}
                         {/* Super Admin only: extend by 1, 3, 6, 12 or 24 months (ExtendSubscriptionDialog) */}
                         {shopId && (
                           <button
@@ -644,6 +655,13 @@ function ShopSettingsView({ t, api, shopId }) {
                   </div>
                 );
               })()}
+
+              {!shopId && (
+                <RenewSubscriptionDialog
+                  open={showRenew} onClose={() => setShowRenew(false)} t={t} api={api} user={user}
+                  onRenewed={applySubscriptionResult}
+                />
+              )}
 
               {shopId && (
                 <ExtendSubscriptionDialog

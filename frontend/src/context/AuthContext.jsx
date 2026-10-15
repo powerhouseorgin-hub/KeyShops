@@ -191,6 +191,9 @@ export const AuthProvider = ({ children }) => {
       .catch(() => {});
   }, [user?.id, token]);
 
+  // Re-reads the grace-period alert state (e.g. after the shop renewed, so the "subscription ended" banner goes away at once).
+  const refreshSubscription = () => request('/api/auth/me').then((res) => setSubscription(res.subscription || null)).catch(() => {});
+
   // Unified API Methods, backed entirely by the live NestJS backend.
   // Memoized so this object keeps one identity across renders instead of a
   // brand-new one every time - AuthProvider wraps the entire app (see
@@ -468,6 +471,9 @@ export const AuthProvider = ({ children }) => {
     updateSubscription: async (shopId, dto) => request(`/api/super/subscriptions/${shopId}`, 'POST', dto),
     // Super Admin: { mode: 'extend' | 'set', days } on ONE shop's free trial (see TrialControl)
     // Super Admin: { months: 1|3|6|12|24, reason?, notes? } - extend ONE shop's subscription (see ExtendSubscriptionDialog)
+    // Shop Admin renews their OWN subscription by paying: 1) an order for the platform price, 2) after Razorpay's checkout, verify + add a year
+    createRenewalOrder: async () => request('/api/shop/subscription/renew/order', 'POST', {}),
+    verifyRenewal: async (dto) => request('/api/shop/subscription/renew/verify', 'POST', dto),
     extendShopSubscription: async (shopId, dto) => request(`/api/super/subscriptions/${shopId}/extend`, 'POST', dto),
     updateShopTrial: async (shopId, dto) => request(`/api/super/subscriptions/${shopId}/trial`, 'POST', dto),
 
@@ -875,7 +881,7 @@ export const AuthProvider = ({ children }) => {
   }), [token, user?.role]);
 
   return (
-    <AuthContext.Provider value={{ user, token, isAuthenticated: !!user, loading, login, logout, api, subscription }}>
+    <AuthContext.Provider value={{ user, token, isAuthenticated: !!user, loading, login, logout, api, subscription, refreshSubscription }}>
       {children}
     </AuthContext.Provider>
   );

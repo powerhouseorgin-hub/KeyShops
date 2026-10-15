@@ -3,7 +3,9 @@ import DashCardGrid from '../components/DashCardGrid';
 import { useAuth } from '../context/AuthContext';
 import { createPortal } from 'react-dom';
 import { cleanGoogleImageUrl } from '../utils/imageUtils';
-import { getFresh, setCache } from '../utils/fetchCache';
+import { getFresh, setCache, invalidate } from '../utils/fetchCache';
+import RenewSubscriptionDialog from '../components/RenewSubscriptionDialog';
+import { txt } from '../utils/i18nFallback';
 import keyShopLogo from '../assets/branding/keyshop-logo.png';
 import usedMachinesImg from '../assets/dashboard-icons/used-machines.png';
 import ecmServiceImg from '../assets/dashboard-icons/ecm-service.png';
@@ -77,7 +79,8 @@ function getTimeBasedGreeting() {
 }
 
 function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingModal }) {
-  const { user, api, subscription } = useAuth();
+  const { user, api, subscription, refreshSubscription } = useAuth();
+  const [showRenew, setShowRenew] = useState(false); // a Shop Admin paying for their own renewal (RenewSubscriptionDialog)
   const dashboardCacheKey = `dashboard:${user.id}`;
   const cachedData = getFresh(dashboardCacheKey, DASHBOARD_TTL_MS) || null;
   const [data, setData] = useState(cachedData);
@@ -277,6 +280,10 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
                 .replace('{dayWord}', subscription.daysRemaining === 1 ? t('dayLabel') : t('daysLabel'))}
             </p>
           </div>
+          <button type="button" className="btn btn-sm" onClick={() => setShowRenew(true)}
+            style={{ background: 'var(--gold)', borderColor: 'var(--gold)', color: '#1a1100', fontWeight: 800 }}>
+            {txt(t, 'renewNow', 'Renew now')}
+          </button>
         </div>
       ) : sub && sub.daysRemaining > 0 && sub.daysRemaining <= 7 && (
         <div className="card" style={{ marginBottom: 10, padding: 14, borderColor: 'rgba(240,185,11,0.4)', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 14 }}>
@@ -289,12 +296,24 @@ function DashboardView({ t, setActiveTab, setSearchDispatch, setAutoOpenListingM
               </p>
             </div>
           </div>
-          <div className="pill-badge">
-            <span className="dot"></span>
-            {sub.plan} {t('planSuffix')}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+            <div className="pill-badge">
+              <span className="dot"></span>
+              {sub.plan} {t('planSuffix')}
+            </div>
+            <button type="button" className="btn btn-sm" onClick={() => setShowRenew(true)}
+            style={{ background: 'var(--gold)', borderColor: 'var(--gold)', color: '#1a1100', fontWeight: 800 }}>
+            {txt(t, 'renewNow', 'Renew now')}
+          </button>
           </div>
         </div>
       )}
+
+      {/* Paying before the end date stacks the new year AFTER the current one - nothing already paid for is lost. After paying, the alerts clear. */}
+      <RenewSubscriptionDialog
+        open={showRenew} onClose={() => setShowRenew(false)} t={t} api={api} user={user}
+        onRenewed={() => { invalidate(dashboardCacheKey); fetchDashboardData(); refreshSubscription && refreshSubscription(); }}
+      />
 
       {/* Compact, approved dashboard layout - only the essential shortcut cards,
           no reports/lists/charts below. One combined grid so every card shares

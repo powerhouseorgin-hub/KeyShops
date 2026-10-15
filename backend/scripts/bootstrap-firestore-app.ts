@@ -17,6 +17,9 @@ import { FirestoreAppModule } from '../src/firestore/firestore-app.module';
 // reach live payment infrastructure.
 delete process.env.RAZORPAY_KEY_ID;
 delete process.env.RAZORPAY_KEY_SECRET;
+// A THROWAWAY secret for local tests of the signature check (renewal payments). It is only ever used to verify an HMAC the test itself
+// computed; with no key id the server still cannot create an order, so nothing here can reach live payment infrastructure.
+if (process.env.LOCAL_TEST_RAZORPAY_SECRET) process.env.RAZORPAY_KEY_SECRET = process.env.LOCAL_TEST_RAZORPAY_SECRET;
 
 async function bootstrap() {
   // No cookie-parser needed - both the guard's extractToken() and the login cookie-set below work off the

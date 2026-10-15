@@ -1,5 +1,7 @@
 import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Throttle } from '@nestjs/throttler';
+import { FirestorePaymentService } from '../payment/firestore-payment.service';
 import { FirestoreShopService, type CreateShopInput, type UpdateShopInput, type UpdateSettingsInput } from './firestore-shop.service';
 import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 import { RolesGuard } from '../../auth/roles.guard';
@@ -9,7 +11,7 @@ import { Role } from '../../auth/role.enum';
 @Controller()
 @UseGuards(FirebaseAuthGuard, RolesGuard)
 export class FirestoreShopController {
-  constructor(private readonly shopService: FirestoreShopService) {}
+  constructor(private readonly shopService: FirestoreShopService, private readonly payment: FirestorePaymentService) {}
 
   // ==========================================
   // SUPER ADMIN ENDPOINTS
@@ -54,6 +56,26 @@ export class FirestoreShopController {
   @Roles(Role.SUPER_ADMIN)
   async manageSubscription(@Param('shopId') shopId: string, @Body() dto: { status: string }, @Req() req: any) {
     return this.shopService.updateSubscription(shopId, dto, req.user.id);
+  }
+
+  // ==========================================
+  // SHOP ADMIN: pay for the next year of the shop's own subscription (a prepaid renewal stacked after the current end date)
+  // ==========================================
+
+  // Step 1: a Razorpay order for the platform's yearly price, recorded against this shop.
+  @Throttle({ default: { limit: 10, ttl: 600000 } })
+  @Post('shop/subscription/renew/order')
+  @Roles(Role.SHOP_ADMIN)
+  async createRenewalOrder(@Req() req: any) {
+    return this.payment.createRenewalOrder(req.user.shopId);
+  }
+
+  // Step 2: after Razorpay's checkout succeeds - the signed payment is verified and the year is added.
+  @Throttle({ default: { limit: 10, ttl: 600000 } })
+  @Post('shop/subscription/renew/verify')
+  @Roles(Role.SHOP_ADMIN)
+  async renewSubscription(@Req() req: any, @Body() dto: { razorpayOrderId?: string; razorpayPaymentId?: string; razorpaySignature?: string }) {
+    return this.shopService.renewSubscription(req.user.shopId, dto, req.user.id);
   }
 
   // Super Admin: extend one shop's subscription by { months: 1 | 3 | 6 | 12 | 24, reason?, notes? }.

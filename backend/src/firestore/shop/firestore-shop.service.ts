@@ -13,7 +13,8 @@ import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.serv
 import { pick } from '../../common/pick.util';
 import { daysLeft, planTrialUpdate, TrialError } from '../../common/trial';
 import { computeSubscriptionState } from '../../common/subscription-status';
-import { cleanText, ExtensionError, MAX_NOTES_LENGTH, MAX_REASON_LENGTH, planSubscriptionExtension } from '../../common/subscription-extension';
+import { cleanText, ExtensionError, MAX_NOTES_LENGTH, MAX_REASON_LENGTH, planRenewal, planSubscriptionExtension, RENEWAL_MONTHS } from '../../common/subscription-extension';
+import { verifyRazorpaySignature } from '../payment/verify-razorpay-signature';
 import { getShopSubscriptionStateFirestore } from '../auth/firestore-subscription-status';
 
 // Shops: Super Admin shop provisioning/management, Shop Admin settings, the public shop directory and
@@ -375,6 +376,91 @@ export class FirestoreShopService {
     }).catch((err) => console.error('Failed to write SUBSCRIPTION_RENEWED activity log for shop', shopId, err));
 
     return subscription;
+  }
+
+  // A shop admin pays for the next year of their OWN shop (like a prepaid recharge): the year is stacked after the current end date, so nothing
+  // already paid for is lost (common/subscription-extension.ts, planRenewal). The payment is accepted only when its Razorpay signature is valid,
+  // the order was created for THIS shop (FirestorePaymentService.createRenewalOrder) and neither the order nor the payment was used before.
+  // Once money has been taken the renewal is always applied - the longest-period limit is only enforced when the order is created.
+  async renewSubscription(shopId: string, dto: { razorpayOrderId?: unknown; razorpayPaymentId?: unknown; razorpaySignature?: unknown }, actorUserId: string) {
+    const orderId = String(dto.razorpayOrderId || '');
+    const paymentId = String(dto.razorpayPaymentId || '');
+    const idShape = /^[A-Za-z0-9_]{1,64}$/;
+    if (!idShape.test(orderId) || !idShape.test(paymentId)) throw new BadRequestException('Payment details are missing or invalid.');
+    if (!verifyRazorpaySignature(orderId, paymentId, String(dto.razorpaySignature || ''))) {
+      throw new BadRequestException('Payment verification failed. If money was deducted, please contact support and quote your payment ID.');
+    }
+
+    const shopDoc = await this.db.collection('shops').doc(shopId).get();
+    if (!shopDoc.exists) throw new NotFoundException('Shop not found');
+    const shop = shopDoc.data() as any;
+    const now = Date.now();
+    const orderRef = this.db.collection('renewalOrders').doc(orderId);
+    const paymentRef = this.db.collection('razorpayPayments').doc(paymentId);
+
+    const result = await this.db.runTransaction(async (tx) => {
+      const [orderSnap, paymentSnap, activeSnap] = await Promise.all([
+        tx.get(orderRef), tx.get(paymentRef), tx.get(this.shops.subscriptions(shopId).where('status', '==', 'ACTIVE')),
+      ]);
+      const order = orderSnap.exists ? (orderSnap.data() as any) : null;
+      if (!order || order.shopId !== shopId) throw new BadRequestException('This payment does not belong to your shop.');
+      if (order.status !== 'CREATED' || paymentSnap.exists) throw new BadRequestException('This payment has already been used.');
+
+      const active = activeSnap.docs
+        .map((d) => ({ ref: d.ref, data: d.data() as any }))
+        .sort((a, b) => b.data.endDate - a.data.endDate)[0] || null;
+      const current = active ? { plan: active.data.plan, startDate: active.data.startDate, endDate: active.data.endDate } : null;
+      let plan;
+      try {
+        plan = planRenewal(current, now);
+      } catch (e) {
+        if (!(e instanceof ExtensionError)) throw e;
+        plan = planSubscriptionExtension(current, RENEWAL_MONTHS, now); // paid already: apply it even past the prepaid limit
+      }
+
+      let subscriptionId: string;
+      let startDate: number;
+      if (plan.action === 'update' && active) {
+        tx.update(active.ref, { plan: plan.plan, endDate: plan.endDate, updatedAt: now });
+        subscriptionId = active.ref.id; startDate = active.data.startDate;
+      } else if (plan.action === 'create') {
+        activeSnap.docs.forEach((d) => tx.update(d.ref, { status: 'EXPIRED', updatedAt: now }));
+        const ref = this.shops.subscriptions(shopId).doc();
+        tx.set(ref, { plan: plan.plan, status: 'ACTIVE', startDate: plan.startDate, endDate: plan.endDate, createdAt: now, updatedAt: now });
+        subscriptionId = ref.id; startDate = plan.startDate;
+      } else {
+        throw new BadRequestException('Could not apply the renewal.');
+      }
+
+      tx.update(orderRef, { status: 'PAID', paymentId, paidAt: now, subscriptionId });
+      tx.set(paymentRef, { shopId, orderId, purpose: 'renewal', createdAt: now });
+      tx.set(this.db.collection('revenueRecords').doc(), {
+        month: new Date(now).getMonth() + 1,
+        year: new Date(now).getFullYear(),
+        amount: order.baseAmount,
+        notes: `Revenue from a subscription renewal paid by the shop - ${shop.name}.`,
+        createdAt: now,
+        updatedAt: now,
+      });
+      return { subscriptionId, plan: plan.plan as string, startDate, endDate: plan.endDate, previousEndDate: active ? (active.data.endDate as number) : null, amount: order.totalAmount as number };
+    });
+    await this.invalidateShopAuthCache(shopId);
+
+    await this.db.collection('activityLogs').add({
+      userId: actorUserId, shopId, action: 'SUBSCRIPTION_RENEWED_BY_SHOP',
+      details: JSON.stringify({
+        message: `Shop "${shop.name}" renewed its subscription (paid)`,
+        orderId, paymentId, amount: result.amount, previousEndDate: result.previousEndDate, endDate: result.endDate,
+      }),
+      ipAddress: null, createdAt: now,
+    }).catch((err) => console.error('Failed to write SUBSCRIPTION_RENEWED_BY_SHOP activity log for shop', shopId, err));
+
+    const access = computeSubscriptionState(new Date(result.endDate), new Date(now));
+    return {
+      subscriptionId: result.subscriptionId, plan: result.plan, status: 'ACTIVE',
+      accessState: access.state, graceDaysRemaining: access.daysRemaining,
+      startDate: result.startDate, endDate: result.endDate, daysLeft: daysLeft(result.endDate, now),
+    };
   }
 
   // Super Admin: extend ONE shop's subscription by 1, 3, 6, 12 or 24 months, with a reason and internal notes (kept in the activity log).

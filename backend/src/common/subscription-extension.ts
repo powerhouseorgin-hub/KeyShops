@@ -55,3 +55,18 @@ export function cleanText(value: unknown, max: number, label: string): string | 
   if (text.length > max) throw new ExtensionError(`${label} must be at most ${max} characters.`);
   return text || null;
 }
+
+// ---- a shop renews its OWN subscription by paying (like a prepaid recharge) -----------------------------------------------------------
+// One year is bought at a time. Paying before the end date stacks the new year AFTER the current end date, so no paid day is lost; a shop whose
+// subscription has ended gets a new year starting today (planSubscriptionExtension decides which). So nobody locks in today's price for ever,
+// a shop can be paid up at most MAX_PREPAID_MONTHS ahead of today.
+export const RENEWAL_MONTHS = 12;
+export const MAX_PREPAID_MONTHS = 36;
+
+export function planRenewal(current: SubscriptionRow | null, now: number): ExtensionPlan {
+  const plan = planSubscriptionExtension(current, RENEWAL_MONTHS, now);
+  if (plan.endDate > addMonthsUTC(now, MAX_PREPAID_MONTHS)) {
+    throw new ExtensionError('Your subscription is already paid for the longest period allowed. You can renew again closer to its end date.');
+  }
+  return plan;
+}

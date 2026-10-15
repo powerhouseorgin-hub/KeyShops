@@ -65,3 +65,34 @@ describe('cleanText', () => {
     expect(() => cleanText('x'.repeat(MAX_NOTES_LENGTH + 1), MAX_NOTES_LENGTH, 'Notes')).toThrow(/at most 1000/);
   });
 });
+
+import { MAX_PREPAID_MONTHS, planRenewal, RENEWAL_MONTHS } from './subscription-extension';
+
+describe('planRenewal (a shop pays for its own renewal)', () => {
+  it('paying before the end date stacks one year AFTER it - no paid day is lost', () => {
+    const plan = planRenewal(row('YEARLY', 335, 30), NOW);
+    expect(plan).toEqual({ action: 'update', plan: 'YEARLY', endDate: addMonthsUTC(NOW + 30 * DAY, RENEWAL_MONTHS) });
+  });
+
+  it('a trial that is still running keeps its remaining days: the year starts after the trial ends', () => {
+    expect(planRenewal(row('TRIAL', 2, 5), NOW)).toEqual({ action: 'update', plan: 'YEARLY', endDate: addMonthsUTC(NOW + 5 * DAY, 12) });
+  });
+
+  it('a subscription that has ended (grace period or locked out) starts a new year today', () => {
+    for (const ended of [row('TRIAL', 10, -2), row('YEARLY', 400, -35)]) {
+      expect(planRenewal(ended, NOW)).toEqual({ action: 'create', plan: 'YEARLY', startDate: NOW, endDate: addMonthsUTC(NOW, 12) });
+    }
+  });
+
+  it('a shop with no subscription gets a new year today', () => {
+    expect(planRenewal(null, NOW)).toEqual({ action: 'create', plan: 'YEARLY', startDate: NOW, endDate: addMonthsUTC(NOW, 12) });
+  });
+
+  it(`refuses to go more than ${MAX_PREPAID_MONTHS} months ahead of today`, () => {
+    // 24 months already paid + 12 more = exactly 36 months: allowed
+    expect(() => planRenewal({ plan: 'YEARLY', startDate: NOW, endDate: addMonthsUTC(NOW, 24) }, NOW)).not.toThrow();
+    // 25 months paid + 12 = 37 months: refused
+    expect(() => planRenewal({ plan: 'YEARLY', startDate: NOW, endDate: addMonthsUTC(NOW, 25) }, NOW)).toThrow(/longest period allowed/);
+    expect(() => planRenewal({ plan: 'YEARLY', startDate: NOW, endDate: addMonthsUTC(NOW, 35) }, NOW)).toThrow(ExtensionError);
+  });
+});
