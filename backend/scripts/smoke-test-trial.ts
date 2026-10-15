@@ -127,6 +127,37 @@ async function main() {
   await Promise.all((await subs.get()).docs.map((d) => d.ref.update({ status: 'EXPIRED' })));
   check('until: with no running trial a past date is refused', (await call(trialUrl, 'POST', { mode: 'until', date: istDay(Date.now() - 3 * DAY) }, superToken)).status === 400);
 
+  // --- extending the SUBSCRIPTION (1 / 3 / 6 / 12 / 24 months, with a reason and internal notes)
+  const extUrl = `/super/subscriptions/${shopId}/extend`;
+  const extStartedAt = Date.now();
+  const addMonths = (ms: number, m: number) => { const d = new Date(ms); const day = d.getUTCDate(); d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() + m); d.setUTCDate(Math.min(day, new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate())); return d.getTime(); };
+  await reset(2, 5);
+  check('extend subscription: a Shop Admin cannot use it', (await call(extUrl, 'POST', { months: 3 }, shopToken)).status === 403);
+  check('extend subscription: an unknown shop is a 404', (await call('/super/subscriptions/nope-nope/extend', 'POST', { months: 3 }, superToken)).status === 404);
+  for (const [label, body] of [['2 months', { months: 2 }], ['36 months', { months: 36 }], ['no months', {}], ['reason over 200 characters', { months: 3, reason: 'x'.repeat(201) }], ['notes over 1000 characters', { months: 3, notes: 'x'.repeat(1001) }]] as const) {
+    check(`extend subscription refused: ${label}`, (await call(extUrl, 'POST', body, superToken)).status === 400);
+  }
+  const beforeExt = await live();
+  r = await call(extUrl, 'POST', { months: 1, reason: 'Payment received offline', notes: 'Cash, receipt 4411' }, superToken);
+  s = await live();
+  check('extend a running trial by 1 month: from the trial end, and it becomes a YEARLY subscription', r.status === 201 && s.plan === 'YEARLY' && s.endDate === addMonths(beforeExt.endDate, 1) && r.json.plan === 'YEARLY', `plan=${s.plan}`);
+  const beforeYear = await live();
+  r = await call(extUrl, 'POST', { months: 12 }, superToken);
+  s = await live();
+  check('extend a running YEARLY subscription by 1 year: the days already paid for are kept', r.status === 201 && s.endDate === addMonths(beforeYear.endDate, 12) && (await subs.where('status', '==', 'ACTIVE').get()).size === 1);
+
+  await reset(400, -40); // a subscription that ended 40 days ago (locked out)
+  const lockedOut = await login('shopadmin@uitest.com');
+  r = await call(extUrl, 'POST', { months: 3 }, superToken);
+  s = await live();
+  check('extend an ended subscription: a NEW one starts today', lockedOut.status === 401 && r.status === 201 && Math.abs(s.startDate - Date.now()) < 60000 && s.endDate === addMonths(s.startDate, 3) && s.plan === 'YEARLY');
+  check('...the old one is closed, not deleted', (await subs.get()).size === 2 && (await subs.where('status', '==', 'EXPIRED').get()).size === 1);
+  check('...and the shop signs in again straight away', (await login('shopadmin@uitest.com')).status === 201);
+
+  const extLogs = (await db.collection('activityLogs').where('shopId', '==', shopId).where('action', '==', 'SUBSCRIPTION_EXTENDED').get()).docs.map((d) => d.data() as any).filter((l) => l.createdAt >= extStartedAt);
+  const withNotes = extLogs.find((l) => JSON.parse(l.details).reason === 'Payment received offline');
+  check('each extension is in the activity log, with the reason and internal notes', extLogs.length === 3 && !!withNotes && JSON.parse(withNotes.details).notes === 'Cash, receipt 4411', `${extLogs.length} entries`);
+
   // --- audit trail
   const logs = (await db.collection('activityLogs').where('shopId', '==', shopId).where('action', '==', 'TRIAL_UPDATED').get()).docs.map((d) => d.data()).filter((l: any) => l.createdAt >= startedAt);
   check('every successful change is in the activity log', logs.length === 6, `${logs.length} TRIAL_UPDATED entries`);

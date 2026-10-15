@@ -13,6 +13,7 @@ import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.serv
 import { pick } from '../../common/pick.util';
 import { daysLeft, planTrialUpdate, TrialError } from '../../common/trial';
 import { computeSubscriptionState } from '../../common/subscription-status';
+import { cleanText, ExtensionError, MAX_NOTES_LENGTH, MAX_REASON_LENGTH, planSubscriptionExtension } from '../../common/subscription-extension';
 import { getShopSubscriptionStateFirestore } from '../auth/firestore-subscription-status';
 
 // Shops: Super Admin shop provisioning/management, Shop Admin settings, the public shop directory and
@@ -374,6 +375,67 @@ export class FirestoreShopService {
     }).catch((err) => console.error('Failed to write SUBSCRIPTION_RENEWED activity log for shop', shopId, err));
 
     return subscription;
+  }
+
+  // Super Admin: extend ONE shop's subscription by 1, 3, 6, 12 or 24 months, with a reason and internal notes (kept in the activity log).
+  // The rules live in common/subscription-extension.ts (planSubscriptionExtension). No revenue record: nothing was paid through the app.
+  async extendSubscription(shopId: string, dto: { months?: unknown; reason?: unknown; notes?: unknown }, actorUserId: string) {
+    const doc = await this.db.collection('shops').doc(shopId).get();
+    if (!doc.exists) throw new NotFoundException('Shop not found');
+    const shop = doc.data() as any;
+    const now = Date.now();
+
+    let reason: string | null; let notes: string | null;
+    try {
+      reason = cleanText(dto.reason, MAX_REASON_LENGTH, 'Reason');
+      notes = cleanText(dto.notes, MAX_NOTES_LENGTH, 'Internal notes');
+    } catch (e) {
+      if (e instanceof ExtensionError) throw new BadRequestException(e.message);
+      throw e;
+    }
+
+    let result: { id: string; plan: string; startDate: number; endDate: number; previousEndDate: number | null; previousPlan: string | null; created: boolean };
+    try {
+      result = await this.db.runTransaction(async (tx) => {
+        const activeSnap = await tx.get(this.shops.subscriptions(shopId).where('status', '==', 'ACTIVE'));
+        const active = activeSnap.docs
+          .map((d) => ({ ref: d.ref, data: d.data() as any }))
+          .sort((a, b) => b.data.endDate - a.data.endDate)[0] || null;
+
+        const plan = planSubscriptionExtension(active ? { plan: active.data.plan, startDate: active.data.startDate, endDate: active.data.endDate } : null, dto.months, now);
+        if (plan.action === 'update' && active) {
+          tx.update(active.ref, { plan: plan.plan, endDate: plan.endDate, updatedAt: now });
+          return { id: active.ref.id, plan: plan.plan, startDate: active.data.startDate, endDate: plan.endDate, previousEndDate: active.data.endDate, previousPlan: active.data.plan as string, created: false };
+        }
+        if (plan.action !== 'create') throw new ExtensionError('Could not work out the extension.');
+
+        // The previous subscription has ended (or there was none): close what is still marked ACTIVE and start a new one now.
+        activeSnap.docs.forEach((d) => tx.update(d.ref, { status: 'EXPIRED', updatedAt: now }));
+        const ref = this.shops.subscriptions(shopId).doc();
+        tx.set(ref, { plan: plan.plan, status: 'ACTIVE', startDate: plan.startDate, endDate: plan.endDate, createdAt: now, updatedAt: now });
+        return { id: ref.id, plan: plan.plan, startDate: plan.startDate, endDate: plan.endDate, previousEndDate: active ? active.data.endDate : null, previousPlan: active ? (active.data.plan as string) : null, created: true };
+      });
+    } catch (e) {
+      if (e instanceof ExtensionError) throw new BadRequestException(e.message);
+      throw e;
+    }
+    await this.invalidateShopAuthCache(shopId);
+
+    await this.db.collection('activityLogs').add({
+      userId: actorUserId, shopId, action: 'SUBSCRIPTION_EXTENDED',
+      details: JSON.stringify({
+        message: `Subscription extended by ${Number(dto.months)} month(s) for shop "${shop.name}" by Super Admin`,
+        months: Number(dto.months), reason, notes, previousPlan: result.previousPlan, previousEndDate: result.previousEndDate, endDate: result.endDate, newSubscription: result.created,
+      }),
+      ipAddress: null, createdAt: now,
+    }).catch((err) => console.error('Failed to write SUBSCRIPTION_EXTENDED activity log for shop', shopId, err));
+
+    const access = computeSubscriptionState(new Date(result.endDate), new Date(now));
+    return {
+      subscriptionId: result.id, plan: result.plan, status: 'ACTIVE',
+      accessState: access.state, graceDaysRemaining: access.daysRemaining,
+      startDate: result.startDate, endDate: result.endDate, daysLeft: daysLeft(result.endDate, now),
+    };
   }
 
   // Super Admin: change ONE shop's free trial - add days ('extend') or set its total length ('set'); a shop with no live trial gets a new one.

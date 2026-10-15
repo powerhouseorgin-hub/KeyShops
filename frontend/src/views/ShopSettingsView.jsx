@@ -7,6 +7,7 @@ import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../utils/platform';
 import { useSubmitting } from '../hooks/useSubmitting';
 import TrialControl from '../components/TrialControl';
+import ExtendSubscriptionDialog from '../components/ExtendSubscriptionDialog';
 import { shopAccess } from '../utils/shopAccess';
 import { txt } from '../utils/i18nFallback';
 import {
@@ -50,6 +51,7 @@ function ShopSettingsView({ t, api, shopId }) {
   const [subscriptionInfo, setSubscriptionInfo] = useState(null);
   // Can the shop actually get in? (server: subscription + grace period) - the Super Admin's Account Status reads this, not just isActive.
   const [accessInfo, setAccessInfo] = useState({ accessState: 'ACTIVE', graceDaysRemaining: null });
+  const [showExtend, setShowExtend] = useState(false);
   // Workspace Profile fields are read-only until Edit is tapped - guards
   // against an accidental keystroke/paste silently changing the shop's
   // name/phone/address while just viewing this screen.
@@ -445,6 +447,12 @@ function ShopSettingsView({ t, api, shopId }) {
   // Super Admin only (shopId set) - only suspending needs a confirm, since it
   // blocks the shop's login immediately (see AuthService.login's
   // suspended-account check), while reactivating is safe/reversible-in-place.
+  // After a Super Admin changes the trial or extends the subscription: show the shop's new subscription and access state straight away.
+  const applySubscriptionResult = (res) => {
+    setSubscriptionInfo((prev) => ({ ...(prev || {}), plan: res.plan || 'TRIAL', status: 'ACTIVE', startDate: res.startDate, endDate: res.endDate }));
+    setAccessInfo({ accessState: res.accessState || 'ACTIVE', graceDaysRemaining: res.graceDaysRemaining ?? null });
+  };
+
   const handleToggleShopStatus = async () => {
     if (shopIsActive && !confirm(t('confirmSuspendShopMsg').replace('{name}', shopName))) return;
     setSuspendBusy(true);
@@ -547,17 +555,30 @@ function ShopSettingsView({ t, api, shopId }) {
                 const sep = { borderTop: '1px solid var(--border-2)', marginTop: 14, paddingTop: 14 };
                 return (
                   <div className="reg-section" style={{ marginBottom: 0 }}>
-                    {subscriptionInfo && (
+                    {(subscriptionInfo || shopId) && (
                       <div className="reg-field" style={{ marginBottom: 0 }}>
                         <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Calendar /></div><b>{t('subscriptionValidUntilLabel')}</b></div>
                         <div className="flex items-center justify-between">
                           <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>
-                            {new Date(subscriptionInfo.endDate).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
+                            {subscriptionInfo
+                              ? new Date(subscriptionInfo.endDate).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })
+                              : txt(t, 'noSubscription', 'No subscription')}
                           </p>
-                          <span className={`badge ${subscriptionInfo.status === 'ACTIVE' ? 'badge-active' : 'badge-suspended'}`}>
-                            <span className="dot"></span>{subscriptionInfo.plan}
-                          </span>
+                          {subscriptionInfo && (
+                            <span className={`badge ${subscriptionInfo.status === 'ACTIVE' ? 'badge-active' : 'badge-suspended'}`}>
+                              <span className="dot"></span>{subscriptionInfo.plan}
+                            </span>
+                          )}
                         </div>
+                        {/* Super Admin only: extend by 1, 3, 6, 12 or 24 months (ExtendSubscriptionDialog) */}
+                        {shopId && (
+                          <button
+                            type="button" onClick={() => setShowExtend(true)} className="btn btn-sm"
+                            style={{ width: '100%', marginTop: 10, background: 'var(--gold)', borderColor: 'var(--gold)', color: '#1a1100', fontWeight: 800, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+                          >
+                            <RefreshCw className="h-4 w-4" /> {txt(t, 'extendSubscriptionBtn', 'Extend Subscription...')}
+                          </button>
+                        )}
                       </div>
                     )}
 
@@ -565,10 +586,7 @@ function ShopSettingsView({ t, api, shopId }) {
                       <div style={subscriptionInfo ? sep : undefined}>
                         <TrialControl
                           t={t} api={api} shopId={shopId} subscription={subscriptionInfo}
-                          onChanged={(res) => {
-                            setSubscriptionInfo((prev) => ({ ...(prev || {}), plan: 'TRIAL', status: 'ACTIVE', startDate: res.startDate, endDate: res.endDate }));
-                            setAccessInfo({ accessState: res.accessState || 'ACTIVE', graceDaysRemaining: res.graceDaysRemaining ?? null });
-                          }}
+                          onChanged={applySubscriptionResult}
                         />
                       </div>
                     )}
@@ -626,6 +644,13 @@ function ShopSettingsView({ t, api, shopId }) {
                   </div>
                 );
               })()}
+
+              {shopId && (
+                <ExtendSubscriptionDialog
+                  open={showExtend} onClose={() => setShowExtend(false)} t={t} api={api}
+                  shopId={shopId} shopName={shopName} subscription={subscriptionInfo} onExtended={applySubscriptionResult}
+                />
+              )}
 
               {/* Shop Verification Document Section */}
               <div className="reg-section" style={{ marginBottom: 0 }}>
