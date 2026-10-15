@@ -94,9 +94,42 @@ async function main() {
   s = await live();
   check('a running yearly subscription refuses a trial change', renew.status === 201 && r.status === 400 && s.plan === 'YEARLY', String(r.json.message || '').slice(0, 70));
 
+  // --- a date picked on the calendar (the trial ends at the END of that day, India time)
+  await reset(2, 5);
+  const IST = 5.5 * 60 * 60 * 1000;
+  const istDay = (ms: number) => new Date(ms + IST).toISOString().slice(0, 10);
+  const pick = istDay(Date.now() + 10 * DAY);
+  r = await call(trialUrl, 'POST', { mode: 'until', date: pick }, superToken);
+  s = await live();
+  check('until: the trial ends at the end of the picked day (India time)', r.status === 201 && s.endDate === Date.parse(pick + 'T23:59:59.999+05:30'), `picked ${pick}`);
+  check('until: a malformed date is refused', (await call(trialUrl, 'POST', { mode: 'until', date: '15/10/2026' }, superToken)).status === 400);
+  check('until: an impossible date is refused', (await call(trialUrl, 'POST', { mode: 'until', date: '2026-02-30' }, superToken)).status === 400);
+  check('until: more than 365 days ahead is refused', (await call(trialUrl, 'POST', { mode: 'until', date: istDay(Date.now() + 400 * DAY) }, superToken)).status === 400);
+
+  // --- the shop's access state, as the Super Admin screens read it (same rule login applies)
+  const stateOf = async () => (await call(`/super/shops/${shopId}`, 'GET', undefined, superToken)).json;
+  await reset(2, 5);
+  let shop = await stateOf();
+  check('access state: a running trial is ACTIVE', shop.accessState === 'ACTIVE' && shop.isActive === true);
+  await reset(10, -1); // ended yesterday: inside the 3-day grace period
+  shop = await stateOf();
+  check('access state: just ended = GRACE_PERIOD with days left', shop.accessState === 'GRACE_PERIOD' && shop.graceDaysRemaining >= 1 && shop.graceDaysRemaining <= 3, `graceDaysRemaining=${shop.graceDaysRemaining}`);
+  await reset(30, -10); // ended 10 days ago: locked out
+  shop = await stateOf();
+  check('access state: long ended = GRACE_PERIOD_EXPIRED (the shop must read Suspended)', shop.accessState === 'GRACE_PERIOD_EXPIRED' && shop.isActive === true);
+  r = await call(trialUrl, 'POST', { mode: 'until', date: istDay(Date.now() + 3 * DAY) }, superToken);
+  check('the response carries the new access state', r.status === 201 && r.json.accessState === 'ACTIVE');
+  shop = await stateOf();
+  check('access state flips back to ACTIVE once the date is moved forward', shop.accessState === 'ACTIVE');
+
+  // a shop with no live trial: a past date cannot start one
+  await reset(30, -40);
+  await Promise.all((await subs.get()).docs.map((d) => d.ref.update({ status: 'EXPIRED' })));
+  check('until: with no running trial a past date is refused', (await call(trialUrl, 'POST', { mode: 'until', date: istDay(Date.now() - 3 * DAY) }, superToken)).status === 400);
+
   // --- audit trail
   const logs = (await db.collection('activityLogs').where('shopId', '==', shopId).where('action', '==', 'TRIAL_UPDATED').get()).docs.map((d) => d.data()).filter((l: any) => l.createdAt >= startedAt);
-  check('every successful change is in the activity log', logs.length === 4, `${logs.length} TRIAL_UPDATED entries (extend, set, extend on an ended trial, new trial)`);
+  check('every successful change is in the activity log', logs.length === 6, `${logs.length} TRIAL_UPDATED entries`);
 
   console.log(failures === 0 ? '\nAll trial checks passed.' : `\n${failures} check(s) FAILED.`);
   process.exit(failures === 0 ? 0 : 1);

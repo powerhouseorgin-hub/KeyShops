@@ -12,6 +12,8 @@ import { TtlCache } from '../../common/ttl-cache';
 import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.service';
 import { pick } from '../../common/pick.util';
 import { daysLeft, planTrialUpdate, TrialError } from '../../common/trial';
+import { computeSubscriptionState } from '../../common/subscription-status';
+import { getShopSubscriptionStateFirestore } from '../auth/firestore-subscription-status';
 
 // Shops: Super Admin shop provisioning/management, Shop Admin settings, the public shop directory and
 // referral queries (the largest service in the backend). Two Firestore limits to know about:
@@ -127,14 +129,19 @@ export class FirestoreShopService {
   }
 
   private async enrichShopRow(id: string, data: any) {
-    const [subsSnap, adminsSnap, docsSnap] = await Promise.all([
+    const [subsSnap, adminsSnap, docsSnap, access] = await Promise.all([
       this.shops.subscriptions(id).orderBy('createdAt', 'desc').limit(1).get(),
       this.db.collection('users').where('shopId', '==', id).where('role', '==', 'SHOP_ADMIN').get(),
       this.shops.documents(id).orderBy('createdAt', 'desc').get(),
+      // the same rule login applies: a shop whose subscription AND grace period are over cannot sign in
+      getShopSubscriptionStateFirestore(this.firestore, id),
     ]);
     return {
       id,
       ...data,
+      // 'ACTIVE' | 'GRACE_PERIOD' (past the end date, still allowed in for a few days) | 'GRACE_PERIOD_EXPIRED' (locked out)
+      accessState: access.state,
+      graceDaysRemaining: access.daysRemaining,
       subscriptions: subsSnap.docs.map((d) => ({ id: d.id, ...d.data() })),
       users: adminsSnap.docs.map((d) => ({ id: d.id, email: (d.data() as any).email, name: (d.data() as any).name })),
       documents: docsSnap.docs.map((d) => ({ id: d.id, ...d.data() })),
@@ -371,7 +378,7 @@ export class FirestoreShopService {
 
   // Super Admin: change ONE shop's free trial - add days ('extend') or set its total length ('set'); a shop with no live trial gets a new one.
   // The rules live in common/trial.ts (planTrialUpdate). Returns the shop's trial as it is afterwards.
-  async updateTrial(shopId: string, dto: { mode?: string; days?: unknown }, actorUserId: string) {
+  async updateTrial(shopId: string, dto: { mode?: string; days?: unknown; date?: unknown }, actorUserId: string) {
     const doc = await this.db.collection('shops').doc(shopId).get();
     if (!doc.exists) throw new NotFoundException('Shop not found');
     const shop = doc.data() as any;
@@ -385,7 +392,7 @@ export class FirestoreShopService {
           .map((d) => ({ ref: d.ref, data: d.data() as any }))
           .sort((a, b) => b.data.endDate - a.data.endDate)[0] || null;
 
-        const plan = planTrialUpdate(active ? { plan: active.data.plan, startDate: active.data.startDate, endDate: active.data.endDate } : null, String(dto.mode), dto.days, now);
+        const plan = planTrialUpdate(active ? { plan: active.data.plan, startDate: active.data.startDate, endDate: active.data.endDate } : null, String(dto.mode), dto.mode === 'until' ? dto.date : dto.days, now);
         if (plan.action === 'update' && active) {
           tx.update(active.ref, { endDate: plan.endDate, updatedAt: now });
           return { id: active.ref.id, startDate: active.data.startDate, endDate: plan.endDate, previousEndDate: active.data.endDate, created: false };
@@ -407,14 +414,16 @@ export class FirestoreShopService {
     await this.db.collection('activityLogs').add({
       userId: actorUserId, shopId, action: 'TRIAL_UPDATED',
       details: JSON.stringify({
-        message: `Trial period ${dto.mode === 'extend' ? 'extended' : 'set'} for shop "${shop.name}" by Super Admin`,
-        mode: dto.mode, days: Number(dto.days), previousEndDate: result.previousEndDate, endDate: result.endDate, newTrial: result.created,
+        message: `Trial period ${dto.mode === 'extend' ? 'extended' : dto.mode === 'until' ? 'moved to a picked end date' : 'set'} for shop "${shop.name}" by Super Admin`,
+        mode: dto.mode, ...(dto.mode === 'until' ? { date: dto.date } : { days: Number(dto.days) }), previousEndDate: result.previousEndDate, endDate: result.endDate, newTrial: result.created,
       }),
       ipAddress: null, createdAt: now,
     }).catch((err) => console.error('Failed to write TRIAL_UPDATED activity log for shop', shopId, err));
 
+    const access = computeSubscriptionState(new Date(result.endDate), new Date(now));
     return {
       subscriptionId: result.id, plan: 'TRIAL', status: 'ACTIVE',
+      accessState: access.state, graceDaysRemaining: access.daysRemaining,
       startDate: result.startDate, endDate: result.endDate, daysLeft: daysLeft(result.endDate, now),
       trialDays: Math.round((result.endDate - result.startDate) / (24 * 60 * 60 * 1000)),
     };

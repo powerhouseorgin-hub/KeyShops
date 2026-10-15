@@ -56,10 +56,11 @@ export class FirestoreShopController {
     return this.shopService.updateSubscription(shopId, dto, req.user.id);
   }
 
-  // Super Admin: add days to one shop's free trial ({ mode: 'extend', days }) or set its total length ({ mode: 'set', days }).
+  // Super Admin: change one shop's free trial - add days ({ mode: 'extend', days }), set its total length ({ mode: 'set', days }) or end it
+  // on a date picked on a calendar ({ mode: 'until', date: 'YYYY-MM-DD' }).
   @Post('super/subscriptions/:shopId/trial')
   @Roles(Role.SUPER_ADMIN)
-  async updateTrial(@Param('shopId') shopId: string, @Body() dto: { mode?: string; days?: number }, @Req() req: any) {
+  async updateTrial(@Param('shopId') shopId: string, @Body() dto: { mode?: string; days?: number; date?: string }, @Req() req: any) {
     return this.shopService.updateTrial(shopId, dto, req.user.id);
   }
 

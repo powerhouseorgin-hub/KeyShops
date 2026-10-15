@@ -78,3 +78,55 @@ describe('daysLeft', () => {
     expect(daysLeft(NOW - day(23), NOW)).toBe(-23);
   });
 });
+
+import { endOfDayIST } from './trial';
+
+// ---- 'until': an end date picked on a calendar -------------------------------------------------------------------------------------
+describe('planTrialUpdate - until (calendar date)', () => {
+  const NOW_U = Date.UTC(2026, 9, 15, 12, 0, 0); // 15 Oct 2026, 17:30 in India
+  const dayU = (n: number) => n * DAY_MS;
+  const trialU = (startAgo: number, endIn: number) => ({ plan: 'TRIAL', startDate: NOW_U - dayU(startAgo), endDate: NOW_U + dayU(endIn) });
+  const endOf = (d: string) => endOfDayIST(d) as number;
+
+  it('endOfDayIST is the last millisecond of that day in India time', () => {
+    // 2026-10-20 23:59:59.999 IST = 2026-10-20 18:29:59.999 UTC
+    expect(endOfDayIST('2026-10-20')).toBe(Date.UTC(2026, 9, 20, 18, 29, 59, 999));
+    expect(endOfDayIST('2026-02-31')).toBeNull();
+    expect(endOfDayIST('20-10-2026')).toBeNull();
+    expect(endOfDayIST(undefined)).toBeNull();
+    expect(endOfDayIST(20261020)).toBeNull();
+  });
+
+  it('moves a running trial to the picked date (later or earlier)', () => {
+    expect(planTrialUpdate(trialU(2, 5), 'until', '2026-10-30', NOW_U)).toEqual({ action: 'update', endDate: endOf('2026-10-30') });
+    expect(planTrialUpdate(trialU(2, 12), 'until', '2026-10-17', NOW_U)).toEqual({ action: 'update', endDate: endOf('2026-10-17') });
+  });
+
+  it('an ended trial can be given a future date', () => {
+    expect(planTrialUpdate(trialU(30, -23), 'until', '2026-10-22', NOW_U)).toEqual({ action: 'update', endDate: endOf('2026-10-22') });
+  });
+
+  it('a date before now ends the trial (allowed, the end date is simply in the past) but not before its start day', () => {
+    const plan = planTrialUpdate(trialU(10, 4), 'until', '2026-10-10', NOW_U) as { endDate: number };
+    expect(plan.endDate).toBeLessThan(NOW_U);
+    expect(() => planTrialUpdate(trialU(10, 4), 'until', '2026-09-01', NOW_U)).toThrow(/before the day the trial started/);
+  });
+
+  it('with no running trial, a date from today onwards starts a new trial now; an earlier date is refused', () => {
+    expect(planTrialUpdate(null, 'until', '2026-10-25', NOW_U)).toEqual({ action: 'create', startDate: NOW_U, endDate: endOf('2026-10-25') });
+    expect(planTrialUpdate(null, 'until', '2026-10-15', NOW_U)).toEqual({ action: 'create', startDate: NOW_U, endDate: endOf('2026-10-15') }); // today is fine
+    expect(() => planTrialUpdate(null, 'until', '2026-10-14', NOW_U)).toThrow(/pick today or a later date/);
+  });
+
+  it('is limited to 365 days from today, and needs a real date', () => {
+    expect(() => planTrialUpdate(trialU(1, 6), 'until', '2028-01-01', NOW_U)).toThrow(/at most 365 days/);
+    expect(() => planTrialUpdate(trialU(1, 6), 'until', '2027-10-15', NOW_U)).not.toThrow();
+    for (const bad of ['', 'tomorrow', '2026-13-01', '2026-02-30', null, undefined, 5]) {
+      expect(() => planTrialUpdate(trialU(1, 6), 'until', bad, NOW_U)).toThrow(/valid end date/);
+    }
+  });
+
+  it('a running paid yearly subscription is still refused', () => {
+    expect(() => planTrialUpdate({ plan: 'YEARLY', startDate: NOW_U - dayU(36), endDate: NOW_U + dayU(329) }, 'until', '2026-10-30', NOW_U)).toThrow(/paid yearly/);
+  });
+});

@@ -17,6 +17,8 @@ import {
   Mail, Phone, Calendar, Store, User, Crosshair, Tag, Percent, Globe,
   X,
 } from 'lucide-react';
+import { shopAccess } from '../utils/shopAccess';
+import { txt } from '../utils/i18nFallback';
 
 // Lazy-loaded (Track B): keeps the Shop Settings modal ("Manage Settings"
 // from this screen's shop list) out of the initial bundle - see App.jsx's
@@ -139,7 +141,7 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
   useBackHandler(showAddModal, () => { resetAddForm(); setShowAddModal(false); });
   useBackHandler(showSubModal, () => setShowSubModal(false));
   useBackHandler(showEditModal, () => setShowEditModal(false));
-  useBackHandler(!!fullSettingsShopId, () => { setFullSettingsShopId(null); fetchShops(); });
+  useBackHandler(!!fullSettingsShopId, () => { setFullSettingsShopId(null); invalidate(SHOPS_CACHE_KEY); fetchShops(); });
 
   // Form States for Add Shop
   const [shopName, setShopName] = useState('');
@@ -635,9 +637,19 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
                       <div className="dealer-info">
                         <div className="dealer-name" style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                           <span>{s.name}</span>
-                          <span className={`badge ${s.isActive ? 'badge-active' : 'badge-suspended'}`} style={{ padding: '2px 8px', fontSize: 10 }}>
-                            <span className="dot" />{s.isActive ? t('active') : t('suspended')}
-                          </span>
+                          {(() => {
+                            // reads Suspended also when the subscription and grace period are over (the shop is locked out at login)
+                            const access = shopAccess(s);
+                            return (
+                              <>
+                                <span className={`badge ${access.tone === 'suspended' ? 'badge-suspended' : 'badge-active'}`} style={{ padding: '2px 8px', fontSize: 10 }}>
+                                  <span className="dot" />{access.tone === 'suspended' ? t('suspended') : t('active')}
+                                </span>
+                                {access.expired && <span className="cell-sub" style={{ fontSize: 10.5, color: '#B3261E', fontWeight: 700 }}>{txt(t, 'accessExpiredShort', 'Subscription expired')}</span>}
+                                {access.reason === 'grace' && <span className="cell-sub" style={{ fontSize: 10.5, color: '#9A6700', fontWeight: 700 }}>{txt(t, 'accessGraceShort', 'Grace period: {n} days left', { n: access.graceDays })}</span>}
+                              </>
+                            );
+                          })()}
                         </div>
                         {shopCategory && (
                           <div className="dealer-line">
@@ -1164,8 +1176,9 @@ function ShopsManagementView({ t, api, initiallyOpenAddModal, onCloseInitiallyOp
             <div className="flex justify-end" style={{ marginBottom: 10 }}>
               {/* Closing re-fetches the shop list - the settings screen
                   now includes the Suspend/Reactivate action, and the list's
-                  own status badge needs to reflect any change made in there. */}
-              <button onClick={() => { setFullSettingsShopId(null); fetchShops(); }} className="icon-btn" style={{ background: 'var(--card)' }}>
+                  own status badge needs to reflect any change made in there (a suspend, or a trial change). The cached list is dropped first,
+                  or fetchShops() would hand back the stale copy. */}
+              <button onClick={() => { setFullSettingsShopId(null); invalidate(SHOPS_CACHE_KEY); fetchShops(); }} className="icon-btn" style={{ background: 'var(--card)' }}>
                 <X className="h-4 w-4" />
               </button>
             </div>

@@ -7,6 +7,8 @@ import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../utils/platform';
 import { useSubmitting } from '../hooks/useSubmitting';
 import TrialControl from '../components/TrialControl';
+import { shopAccess } from '../utils/shopAccess';
+import { txt } from '../utils/i18nFallback';
 import {
   AlertTriangle, Award, BadgePercent, Ban, Calendar, Camera, Check, CheckCircle2, Copy,
   Download, Edit, Eye, EyeOff, FileCheck, FileText,
@@ -46,6 +48,8 @@ function ShopSettingsView({ t, api, shopId }) {
   // shown read-only here so a Shop Admin can see their own renewal date
   // without needing to hit the grace-period alert first.
   const [subscriptionInfo, setSubscriptionInfo] = useState(null);
+  // Can the shop actually get in? (server: subscription + grace period) - the Super Admin's Account Status reads this, not just isActive.
+  const [accessInfo, setAccessInfo] = useState({ accessState: 'ACTIVE', graceDaysRemaining: null });
   // Workspace Profile fields are read-only until Edit is tapped - guards
   // against an accidental keystroke/paste silently changing the shop's
   // name/phone/address while just viewing this screen.
@@ -131,6 +135,7 @@ function ShopSettingsView({ t, api, shopId }) {
       // row (see ShopService.getSettings's `subscriptions` include) - just
       // wasn't being read into state or rendered before.
       setSubscriptionInfo((res.subscriptions && res.subscriptions[0]) || null);
+      setAccessInfo({ accessState: res.accessState || 'ACTIVE', graceDaysRemaining: res.graceDaysRemaining ?? null });
 
       if (res.companyDetails) {
         try {
@@ -531,71 +536,96 @@ function ShopSettingsView({ t, api, shopId }) {
                 </div>
               </div>
 
-              {/* Subscription Validity - read-only, sourced from
-                  getSettings()'s `subscriptions` relation. Renewal itself is
-                  a Super Admin action (see ShopService.updateSubscription);
-                  this is purely informational so a Shop Admin can check their
-                  own expiry date without waiting for the grace-period alert. */}
-              {subscriptionInfo && (
-                <div className="reg-section" style={{ marginBottom: 0 }}>
-                  <div className="reg-field" style={{ marginBottom: 0 }}>
-                    <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Calendar /></div><b>{t('subscriptionValidUntilLabel')}</b></div>
-                    <div className="flex items-center justify-between">
-                      <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>
-                        {new Date(subscriptionInfo.endDate).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
-                      </p>
-                      <span className={`badge ${subscriptionInfo.status === 'ACTIVE' ? 'badge-active' : 'badge-suspended'}`}>
-                        <span className="dot"></span>{subscriptionInfo.plan}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Free-trial length for THIS shop - Super Admin only (shopId is only set when a Super Admin manages another shop). */}
-              {shopId && (
-                <TrialControl
-                  t={t} api={api} shopId={shopId} subscription={subscriptionInfo}
-                  onChanged={(res) => setSubscriptionInfo((prev) => ({ ...(prev || {}), plan: 'TRIAL', status: 'ACTIVE', startDate: res.startDate, endDate: res.endDate }))}
-                />
-              )}
-
-              {/* Account Status - Super Admin only. Placed here (inside the
-                  shop being managed's own Workspace Profile) rather than as
-                  an icon on the Shops Management list card, so the action
-                  sits alongside the rest of that shop's details instead of
-                  cluttering the list with a per-row control. */}
-              {shopId && (
-                <div className="reg-section" style={{ marginBottom: 0 }}>
-                  <div className="reg-field" style={{ marginBottom: 0 }}>
-                    <div className="reg-field-label">
-                      <div className="reg-ico" style={{ background: shopIsActive ? 'var(--jgreen)' : 'var(--red)' }}>
-                        {shopIsActive ? <ShieldCheck /> : <Ban />}
+              {/* Subscription, trial and account status share ONE card. The subscription line is read-only for everybody (sourced from
+                  getSettings()'s `subscriptions` relation, so a Shop Admin can check their own expiry date without waiting for the grace-period
+                  alert). The trial control and the Account Status are Super Admin only (shopId is only set when a Super Admin manages another
+                  shop). Account Status shows whether the shop can ACTUALLY get in: a shop whose subscription and grace period are over is locked
+                  out at login, so it reads Suspended even though the manual switch (isActive) is still on. */}
+              {(subscriptionInfo || shopId) && (() => {
+                const access = shopAccess({ isActive: shopIsActive, accessState: accessInfo.accessState, graceDaysRemaining: accessInfo.graceDaysRemaining });
+                const suspended = access.tone === 'suspended';
+                const sep = { borderTop: '1px solid var(--border-2)', marginTop: 14, paddingTop: 14 };
+                return (
+                  <div className="reg-section" style={{ marginBottom: 0 }}>
+                    {subscriptionInfo && (
+                      <div className="reg-field" style={{ marginBottom: 0 }}>
+                        <div className="reg-field-label"><div className="reg-ico" style={{ background: 'var(--jgreen)' }}><Calendar /></div><b>{t('subscriptionValidUntilLabel')}</b></div>
+                        <div className="flex items-center justify-between">
+                          <p style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--text-0)' }}>
+                            {new Date(subscriptionInfo.endDate).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' })}
+                          </p>
+                          <span className={`badge ${subscriptionInfo.status === 'ACTIVE' ? 'badge-active' : 'badge-suspended'}`}>
+                            <span className="dot"></span>{subscriptionInfo.plan}
+                          </span>
+                        </div>
                       </div>
-                      <b>{t('accountStatusLabel')}</b>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className={`badge ${shopIsActive ? 'badge-active' : 'badge-suspended'}`}>
-                        <span className="dot"></span>{shopIsActive ? t('active') : t('suspended')}
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleToggleShopStatus}
-                        disabled={suspendBusy}
-                        className="btn btn-sm"
-                        style={{
-                          background: shopIsActive ? 'var(--red-dim)' : 'var(--jgreen-dim)',
-                          color: shopIsActive ? 'var(--red)' : 'var(--jgreen)',
-                          border: `1px solid ${shopIsActive ? 'var(--red)' : 'var(--jgreen)'}`,
-                        }}
-                      >
-                        {suspendBusy && <RefreshCw className="h-4 w-4 animate-spin" />}
-                        <span>{shopIsActive ? t('suspendShopBtn') : t('reactivateShopBtn')}</span>
-                      </button>
-                    </div>
+                    )}
+
+                    {shopId && (
+                      <div style={subscriptionInfo ? sep : undefined}>
+                        <TrialControl
+                          t={t} api={api} shopId={shopId} subscription={subscriptionInfo}
+                          onChanged={(res) => {
+                            setSubscriptionInfo((prev) => ({ ...(prev || {}), plan: 'TRIAL', status: 'ACTIVE', startDate: res.startDate, endDate: res.endDate }));
+                            setAccessInfo({ accessState: res.accessState || 'ACTIVE', graceDaysRemaining: res.graceDaysRemaining ?? null });
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    {shopId && (
+                      <div style={sep}>
+                        <div className="reg-field" style={{ marginBottom: 0 }}>
+                          <div className="reg-field-label">
+                            <div className="reg-ico" style={{ background: suspended ? 'var(--red)' : 'var(--jgreen)' }}>
+                              {suspended ? <Ban /> : <ShieldCheck />}
+                            </div>
+                            <b>{t('accountStatusLabel')}</b>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className={`badge ${suspended ? 'badge-suspended' : 'badge-active'}`}>
+                              <span className="dot"></span>{suspended ? t('suspended') : t('active')}
+                            </span>
+                            {/* Manual switch: Suspend while the shop is on, Reactivate when a Super Admin switched it off. Nothing to switch
+                                for a shop that is only locked out by an expired subscription - extending the trial lets it in again. */}
+                            {(shopIsActive === false || access.reason !== 'expired') && (
+                              <button
+                                type="button"
+                                onClick={handleToggleShopStatus}
+                                disabled={suspendBusy}
+                                className="btn btn-sm"
+                                style={{
+                                  background: shopIsActive ? 'var(--red-dim)' : 'var(--jgreen-dim)',
+                                  color: shopIsActive ? 'var(--red)' : 'var(--jgreen)',
+                                  border: `1px solid ${shopIsActive ? 'var(--red)' : 'var(--jgreen)'}`,
+                                }}
+                              >
+                                {suspendBusy && <RefreshCw className="h-4 w-4 animate-spin" />}
+                                <span>{shopIsActive ? t('suspendShopBtn') : t('reactivateShopBtn')}</span>
+                              </button>
+                            )}
+                          </div>
+                          {access.reason === 'expired' && (
+                            <span className="cell-sub" style={{ display: 'block', marginTop: 8, color: '#B3261E', fontWeight: 700 }}>
+                              {txt(t, 'accessExpiredHint', 'Suspended because the subscription and grace period have ended. Extend the trial above, or renew, to let this shop in again.')}
+                            </span>
+                          )}
+                          {access.reason === 'manual' && access.expired && (
+                            <span className="cell-sub" style={{ display: 'block', marginTop: 8 }}>
+                              {txt(t, 'accessAlsoExpired', 'The subscription has also ended, so reactivating alone will not let the shop in.')}
+                            </span>
+                          )}
+                          {access.reason === 'grace' && (
+                            <span className="cell-sub" style={{ display: 'block', marginTop: 8, color: '#9A6700', fontWeight: 700 }}>
+                              {txt(t, 'accessGraceHint', 'The subscription has ended - grace period: {n} days left. The shop can still sign in until then.', { n: access.graceDays })}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                );
+              })()}
 
               {/* Shop Verification Document Section */}
               <div className="reg-section" style={{ marginBottom: 0 }}>
