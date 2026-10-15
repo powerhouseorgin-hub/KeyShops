@@ -50,7 +50,7 @@ function ShopSettingsView({ t, api, shopId }) {
   // without needing to hit the grace-period alert first.
   const [subscriptionInfo, setSubscriptionInfo] = useState(null);
   // Can the shop actually get in? (server: subscription + grace period) - the Super Admin's Account Status reads this, not just isActive.
-  const [accessInfo, setAccessInfo] = useState({ accessState: 'ACTIVE', graceDaysRemaining: null });
+  const [accessInfo, setAccessInfo] = useState({ accessState: undefined, graceDaysRemaining: null });
   const [showExtend, setShowExtend] = useState(false);
   // Workspace Profile fields are read-only until Edit is tapped - guards
   // against an accidental keystroke/paste silently changing the shop's
@@ -137,7 +137,7 @@ function ShopSettingsView({ t, api, shopId }) {
       // row (see ShopService.getSettings's `subscriptions` include) - just
       // wasn't being read into state or rendered before.
       setSubscriptionInfo((res.subscriptions && res.subscriptions[0]) || null);
-      setAccessInfo({ accessState: res.accessState || 'ACTIVE', graceDaysRemaining: res.graceDaysRemaining ?? null });
+      setAccessInfo({ accessState: res.accessState, graceDaysRemaining: res.graceDaysRemaining ?? null });
 
       if (res.companyDetails) {
         try {
@@ -450,7 +450,7 @@ function ShopSettingsView({ t, api, shopId }) {
   // After a Super Admin changes the trial or extends the subscription: show the shop's new subscription and access state straight away.
   const applySubscriptionResult = (res) => {
     setSubscriptionInfo((prev) => ({ ...(prev || {}), plan: res.plan || 'TRIAL', status: 'ACTIVE', startDate: res.startDate, endDate: res.endDate }));
-    setAccessInfo({ accessState: res.accessState || 'ACTIVE', graceDaysRemaining: res.graceDaysRemaining ?? null });
+    setAccessInfo({ accessState: res.accessState, graceDaysRemaining: res.graceDaysRemaining ?? null });
   };
 
   const handleToggleShopStatus = async () => {
@@ -550,7 +550,7 @@ function ShopSettingsView({ t, api, shopId }) {
                   shop). Account Status shows whether the shop can ACTUALLY get in: a shop whose subscription and grace period are over is locked
                   out at login, so it reads Suspended even though the manual switch (isActive) is still on. */}
               {(subscriptionInfo || shopId) && (() => {
-                const access = shopAccess({ isActive: shopIsActive, accessState: accessInfo.accessState, graceDaysRemaining: accessInfo.graceDaysRemaining });
+                const access = shopAccess({ isActive: shopIsActive, accessState: accessInfo.accessState, graceDaysRemaining: accessInfo.graceDaysRemaining }, subscriptionInfo);
                 const suspended = access.tone === 'suspended';
                 const sep = { borderTop: '1px solid var(--border-2)', marginTop: 14, paddingTop: 14 };
                 return (
