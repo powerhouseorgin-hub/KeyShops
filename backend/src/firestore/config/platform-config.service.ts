@@ -22,7 +22,7 @@ const DEFAULTS: PlatformConfigData = {
   gstPercent: 18,
   email: null,
   customerCareNumber: null,
-  trialDays: 14,
+  trialDays: 7,
 };
 
 @Injectable()

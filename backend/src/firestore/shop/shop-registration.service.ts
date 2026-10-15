@@ -100,7 +100,7 @@ export class ShopRegistrationService {
       // ---- WRITES ----
       const now = Date.now();
       const platformConfig = platformConfigSnap.exists ? (platformConfigSnap.data() as any) : {};
-      const trialDays = platformConfig.trialDays ?? 14;
+      const trialDays = platformConfig.trialDays ?? 7;
       const subscriptionPrice = platformConfig.subscriptionPrice ?? 999;
 
       tx.set(shopRef, {

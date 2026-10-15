@@ -6,6 +6,7 @@ import { getAssetUrl, downloadAsset, filenameForAsset } from '../apiConfig';
 import { PHONE_REGEX, PHONE_REGEX_MESSAGE } from '../utils/phone';
 import { IS_NATIVE_APP, KEE_LANDING_PAGE_URL, primeStoragePermission } from '../utils/platform';
 import { useSubmitting } from '../hooks/useSubmitting';
+import TrialControl from '../components/TrialControl';
 import {
   AlertTriangle, Award, BadgePercent, Ban, Calendar, Camera, Check, CheckCircle2, Copy,
   Download, Edit, Eye, EyeOff, FileCheck, FileText,
@@ -549,6 +550,14 @@ function ShopSettingsView({ t, api, shopId }) {
                     </div>
                   </div>
                 </div>
+              )}
+
+              {/* Free-trial length for THIS shop - Super Admin only (shopId is only set when a Super Admin manages another shop). */}
+              {shopId && (
+                <TrialControl
+                  t={t} api={api} shopId={shopId} subscription={subscriptionInfo}
+                  onChanged={(res) => setSubscriptionInfo((prev) => ({ ...(prev || {}), plan: 'TRIAL', status: 'ACTIVE', startDate: res.startDate, endDate: res.endDate }))}
+                />
               )}
 
               {/* Account Status - Super Admin only. Placed here (inside the

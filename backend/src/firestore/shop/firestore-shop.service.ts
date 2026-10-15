@@ -11,6 +11,7 @@ import { invalidateAuthCache } from '../../auth/auth-cache';
 import { TtlCache } from '../../common/ttl-cache';
 import { AlgoliaSearchService, facetFilter } from '../search/algolia-search.service';
 import { pick } from '../../common/pick.util';
+import { daysLeft, planTrialUpdate, TrialError } from '../../common/trial';
 
 // Shops: Super Admin shop provisioning/management, Shop Admin settings, the public shop directory and
 // referral queries (the largest service in the backend). Two Firestore limits to know about:
@@ -366,6 +367,57 @@ export class FirestoreShopService {
     }).catch((err) => console.error('Failed to write SUBSCRIPTION_RENEWED activity log for shop', shopId, err));
 
     return subscription;
+  }
+
+  // Super Admin: change ONE shop's free trial - add days ('extend') or set its total length ('set'); a shop with no live trial gets a new one.
+  // The rules live in common/trial.ts (planTrialUpdate). Returns the shop's trial as it is afterwards.
+  async updateTrial(shopId: string, dto: { mode?: string; days?: unknown }, actorUserId: string) {
+    const doc = await this.db.collection('shops').doc(shopId).get();
+    if (!doc.exists) throw new NotFoundException('Shop not found');
+    const shop = doc.data() as any;
+    const now = Date.now();
+
+    let result: { id: string; startDate: number; endDate: number; previousEndDate: number | null; created: boolean };
+    try {
+      result = await this.db.runTransaction(async (tx) => {
+        const activeSnap = await tx.get(this.shops.subscriptions(shopId).where('status', '==', 'ACTIVE'));
+        const active = activeSnap.docs
+          .map((d) => ({ ref: d.ref, data: d.data() as any }))
+          .sort((a, b) => b.data.endDate - a.data.endDate)[0] || null;
+
+        const plan = planTrialUpdate(active ? { plan: active.data.plan, startDate: active.data.startDate, endDate: active.data.endDate } : null, String(dto.mode), dto.days, now);
+        if (plan.action === 'update' && active) {
+          tx.update(active.ref, { endDate: plan.endDate, updatedAt: now });
+          return { id: active.ref.id, startDate: active.data.startDate, endDate: plan.endDate, previousEndDate: active.data.endDate, created: false };
+        }
+        if (plan.action !== 'create') throw new TrialError('Could not work out the trial change.');
+
+        // A fresh trial: whatever was still marked ACTIVE (a lapsed subscription) is closed first.
+        activeSnap.docs.forEach((d) => tx.update(d.ref, { status: 'EXPIRED', updatedAt: now }));
+        const ref = this.shops.subscriptions(shopId).doc();
+        tx.set(ref, { plan: 'TRIAL', status: 'ACTIVE', startDate: plan.startDate, endDate: plan.endDate, createdAt: now, updatedAt: now });
+        return { id: ref.id, startDate: plan.startDate, endDate: plan.endDate, previousEndDate: active ? active.data.endDate : null, created: true };
+      });
+    } catch (e) {
+      if (e instanceof TrialError) throw new BadRequestException(e.message);
+      throw e;
+    }
+    await this.invalidateShopAuthCache(shopId);
+
+    await this.db.collection('activityLogs').add({
+      userId: actorUserId, shopId, action: 'TRIAL_UPDATED',
+      details: JSON.stringify({
+        message: `Trial period ${dto.mode === 'extend' ? 'extended' : 'set'} for shop "${shop.name}" by Super Admin`,
+        mode: dto.mode, days: Number(dto.days), previousEndDate: result.previousEndDate, endDate: result.endDate, newTrial: result.created,
+      }),
+      ipAddress: null, createdAt: now,
+    }).catch((err) => console.error('Failed to write TRIAL_UPDATED activity log for shop', shopId, err));
+
+    return {
+      subscriptionId: result.id, plan: 'TRIAL', status: 'ACTIVE',
+      startDate: result.startDate, endDate: result.endDate, daysLeft: daysLeft(result.endDate, now),
+      trialDays: Math.round((result.endDate - result.startDate) / (24 * 60 * 60 * 1000)),
+    };
   }
 
   private mapPublicShop(id: string, shop: any, categoryName: string | null) {

@@ -466,6 +466,8 @@ export const AuthProvider = ({ children }) => {
     updateShop: async (id, dto) => request(`/api/super/shops/${id}`, 'PUT', dto),
     suspendShop: async (id, isActive) => request(`/api/super/shops/${id}/suspend`, 'POST', { isActive }),
     updateSubscription: async (shopId, dto) => request(`/api/super/subscriptions/${shopId}`, 'POST', dto),
+    // Super Admin: { mode: 'extend' | 'set', days } on ONE shop's free trial (see TrialControl)
+    updateShopTrial: async (shopId, dto) => request(`/api/super/subscriptions/${shopId}/trial`, 'POST', dto),
 
     // --- MASTER KEYS (shop-scoped for Shop Admin, all-shops for Super Admin) ---
     // When Super Admin passes a shopId (e.g. registering a customer on behalf of

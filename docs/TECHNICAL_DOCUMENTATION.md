@@ -212,7 +212,9 @@ Rules enforced at login:
 | `GRACE_PERIOD` | up to **3 days** after `endDate` | Login and API work; `/auth/me` and login return `subscription.daysRemaining`. |
 | `GRACE_PERIOD_EXPIRED` | beyond grace | Login and API calls rejected until the Super Admin renews (`POST /api/super/subscriptions/:shopId`). |
 
-Plans: `TRIAL` (default 14 days, `config/platform.trialDays`) and `YEARLY` (price `config/platform.subscriptionPrice`, default ₹999 + GST 18 %). The "latest" subscription document of a shop decides the state.
+**Per-shop trial.** The Super Admin changes a single shop's trial from Shops Management → the shop → Shop Settings → "Trial period" (`frontend/src/components/TrialControl.jsx`, which previews the new end date) or `POST /super/subscriptions/:shopId/trial`. Rules (`backend/src/common/trial.ts`, `planTrialUpdate`): `extend` adds N days to the current end date, or to today when the trial has already ended; `set` makes the trial last N days in total counted from its start day (it can shorten a trial); a shop with no live trial (none, or an expired/lapsed subscription) gets a new N-day trial starting now; a paid yearly subscription that is still running is refused; N must be a whole number from 1 to 365. The change is written to the shop's live subscription document, the shop's cached auth state is cleared so a locked-out shop can sign in at once, and an activity-log row is written. The 3-day grace period after the end date is unchanged. `scripts/smoke-test-trial.ts` checks all of this against the emulators.
+
+Plans: `TRIAL` (default 7 days, `config/platform.trialDays`; a value saved in the Super Admin Support panel overrides the default; a single shop's trial can be changed afterwards, see "Per-shop trial" below) and `YEARLY` (price `config/platform.subscriptionPrice`, default ₹999 + GST 18 %). The "latest" subscription document of a shop decides the state.
 
 ### 4.5 OTP
 
@@ -325,7 +327,7 @@ config/platform                          Singleton platform/support settings
 | `advertisements/{id}` | `title`, `imageUrl`, `type`, `startDate`, `endDate`, `priority`, `targetAll`, `targetShops[]` |
 | `notifications/{id}` | `shopId` (null = broadcast), `title`, `message`, `type`, `audience`, `isRead`, `createdAt` |
 | `activityLogs/{id}` | `shopId`, `userId`, `action` (e.g. `LOGIN`, `SHOP_REGISTERED`, `DOC_UPLOAD`, `CHANGE_PASSWORD`, `DELETE_ACCOUNT`…), `details` (JSON string), `ipAddress`, `createdAt` |
-| `config/platform` | `whatsapp`, `videos[{name,url}]`, `subscriptionPrice`, `gstPercent`, `email`, `customerCareNumber`, `trialDays` (defaults: price 999, GST 18, trial 14 days) |
+| `config/platform` | `whatsapp`, `videos[{name,url}]`, `subscriptionPrice`, `gstPercent`, `email`, `customerCareNumber`, `trialDays` (defaults: price 999, GST 18, trial 7 days) |
 | `otpCodes/{id}` | `identifier`, `purpose`, `codeHash`, `attempts`, `consumed`, `verifiedAt`, `createdAt`, expiry |
 | `otpCodeLocks/{code}` | `holder`, `expiresAt` - one doc per 4-digit code that is currently live; makes codes unique across users. |
 
@@ -494,6 +496,7 @@ The routes under `/shop/vehicle-sales` remain Shop Admin only; a Super Admin get
 | PUT | `/super/shops/:id` | Update a shop. |
 | POST | `/super/shops/:id/suspend` | `{ isActive }` — suspend/restore; invalidates the shop's auth cache. |
 | POST | `/super/subscriptions/:shopId` | `{ status }` — manage/renew the subscription. |
+| POST | `/super/subscriptions/:shopId/trial` | `{ mode: "extend" \| "set", days }` (1–365) — change ONE shop's free trial; see "Per-shop trial" in section 4. Super Admin only; logs `TRIAL_UPDATED`. |
 | GET | `/super/shops/:shopId/keys` | A shop's key catalogue (`search`). |
 | GET | `/super/customers` | Platform-wide customer list (collection-group query; `search, cursor, limit, keysOnly`). |
 | POST | `/super/customers` | Register a customer on behalf of a shop. |
@@ -520,7 +523,7 @@ The routes under `/shop/vehicle-sales` remain Shop Admin only; a Super Admin get
 | GET | `/super/contact-messages` (`cursor, limit`), PUT `/super/contact-messages/:id/read` | Inbox of public contact messages. |
 | POST | `/super/support-config` | Update platform settings (whatsapp, videos, price, GST, email, care number, trial days). |
 
-> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (118 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
+> The generated route table behind sections 8.1–8.10 can be re-created at any time: it is produced by scanning `@Controller/@Get/@Post/@Roles/@Throttle` decorators (119 routes at the time of writing). When adding an endpoint, add it here and add its read route to `smoke-test-read-routes.ts` if it is a GET.
 
 ## 9. Third-party integrations
 

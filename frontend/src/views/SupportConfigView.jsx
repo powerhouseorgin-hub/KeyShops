@@ -13,7 +13,7 @@ export function SupportConfigView({ t, api }) {
   const [videos, setVideos] = useState([]);
   const [subscriptionPrice, setSubscriptionPrice] = useState(999);
   const [gstPercent, setGstPercent] = useState(18);
-  const [trialDays, setTrialDays] = useState(14);
+  const [trialDays, setTrialDays] = useState(7);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
@@ -62,7 +62,7 @@ export function SupportConfigView({ t, api }) {
       setVideos(res.videos || []);
       setSubscriptionPrice(res.subscriptionPrice ?? 999);
       setGstPercent(res.gstPercent ?? 18);
-      setTrialDays(res.trialDays ?? 14);
+      setTrialDays(res.trialDays ?? 7);
     } catch (e) {
       console.error('Failed to load support config:', e);
     } finally {
